@@ -1,0 +1,50 @@
+# --- Jekyll (standaard generator van GitHub Pages) ---
+_site/
+.sass-cache/
+.jekyll-cache/
+.jekyll-metadata
+.bundle/
+vendor/
+
+# --- Node.js (als je later een build tool of framework gebruikt) ---
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.npm/
+.parcel-cache/
+.cache/
+dist/
+build/
+.astro/
+.next/
+.nuxt/
+
+# --- Omgevingsvariabelen en geheimen ---
+.env
+.env.*
+!.env.example
+
+# --- Windows ---
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# --- macOS ---
+.DS_Store
+._*
+
+# --- Editors / IDE's ---
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+.idea/
+*.swp
+*.swo
+*~
+
+# --- Logs en tijdelijke bestanden ---
+*.log
+*.tmp

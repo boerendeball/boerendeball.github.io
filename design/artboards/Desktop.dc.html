@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<title>Pino's Adventkalender – desktop</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&amp;family=Nunito:wght@400;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:'Nunito',sans-serif;color:#1E3A4C}
+a{color:#1E3A4C;text-decoration:none}a:hover{color:#0E7FB5}
+.kop{font-family:'Fredoka',sans-serif;font-weight:700;line-height:1.1}
+.vloer{background-image:repeating-linear-gradient(30deg,rgba(255,255,255,0.38) 0 2px,transparent 2px 48px),repeating-linear-gradient(150deg,rgba(255,255,255,0.38) 0 2px,transparent 2px 48px)}
+.ic{display:block}
+.kaart{background:#FFFFFF;border-radius:26px;box-shadow:0 7px 0 0 #CDE4F0,0 14px 28px rgba(30,58,76,0.12)}
+.deur{box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;width:100%;height:100%;border-radius:26px;cursor:pointer;position:relative;padding:12px}
+.deur-open{background:#FFFFFF;box-shadow:0 6px 0 0 #CDE4F0,0 12px 22px rgba(30,58,76,0.10)}
+.deur-dicht{background:#E6EFF5;box-shadow:inset 0 0 0 2px #D3E1EA}
+.deur-vandaag{background:#FFFFFF;box-shadow:0 0 0 5px #1FA3DC,0 7px 0 0 #0E7FB5,0 14px 26px rgba(14,127,181,0.28)}
+.bol{width:84px;height:84px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:inset 0 -5px 0 0 rgba(0,0,0,0.08)}
+.datum{font-size:14px;font-weight:800;letter-spacing:1px;color:#4F6B7E}
+.pil{font-size:15px;font-weight:800;padding:4px 12px;border-radius:999px}
+.chip{font-size:14px;font-weight:700;padding:6px 12px;border-radius:999px;background:#E3F4FC;color:#0E6A98}
+.nood{display:flex;flex-direction:column;gap:5px}
+.nood-label{font-size:14px;font-weight:800;color:#35505F}
+.nood-balk{display:block;height:16px;border-radius:999px;background:#E6EFF5;overflow:hidden;box-shadow:inset 0 2px 0 0 #D3E1EA}
+.nood-balk>span{display:block;height:100%;border-radius:999px}
+.vaard{display:flex;flex-direction:column;gap:5px}
+.vaard-label{font-size:13px;font-weight:800;color:#35505F}
+.vaard-balk{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:3px}
+.vaard-balk>span{display:block;height:12px;border-radius:3px;background:#E6EFF5;box-shadow:inset 0 2px 0 0 #D3E1EA}
+.vaard-balk>span.vol{background:#1FA3DC;box-shadow:inset 0 -3px 0 0 #0E7FB5}
+.vaard-balk>span.straks{background:#FFF1D6;box-shadow:inset 0 0 0 2px #FFC93C}
+.wolkje{display:flex;align-items:center;gap:8px;padding:8px 12px 8px 10px;background:#FFFFFF;border-radius:999px;box-shadow:0 4px 0 0 #CDE4F0,0 8px 16px rgba(30,58,76,0.16);white-space:nowrap}
+.wolk-tekst{font-size:14px;font-weight:800;color:#4F6B7E}
+.wolk-icoon{position:relative;width:40px;height:40px;border-radius:50%;background:#F3F8FB;display:flex;align-items:center;justify-content:center}
+.wolk-vraag{position:absolute;right:-6px;top:-6px;width:20px;height:20px;border-radius:50%;background:#FFC93C;color:#6B4A10;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 0 0 #D97A00}
+.wolk-stip{display:block;border-radius:50%;background:#FFFFFF;box-shadow:0 2px 0 0 #CDE4F0}
+.klap{display:flex;justify-content:space-between;align-items:center;width:100%;min-height:44px;padding:0;border:0;background:transparent;font-family:inherit;color:inherit;cursor:pointer;text-align:left}
+.pijl{width:34px;height:34px;border-radius:50%;background:#E3F4FC;display:flex;align-items:center;justify-content:center;transition:transform 0.2s ease}
+</style>
+</helmet>
+<div class="vloer" style="width: 1280px; height: 940px; box-sizing: border-box; background-color: #BFE6FA; display: flex; gap: 32px; padding: 32px; overflow: hidden; position: relative;">
+
+  <div aria-hidden="true" style="position: absolute; left: 120px; top: -20px; width: 260px; height: 90px; background: #FFFFFF; opacity: 0.55; border-radius: 999px;"></div>
+  <div aria-hidden="true" style="position: absolute; right: 60px; bottom: -30px; width: 320px; height: 100px; background: #FFFFFF; opacity: 0.45; border-radius: 999px;"></div>
+
+  <!-- Linker paneel -->
+  <div style="width: 380px; flex-shrink: 0; display: flex; flex-direction: column; gap: 20px; position: relative;">
+
+    <div class="kaart" style="margin-top: 40px; padding: 26px 24px 22px; display: flex; flex-direction: column; gap: 16px;">
+      <div style="display: flex; align-items: center; gap: 16px;">
+        <div style="position: relative; width: 88px; height: 88px; flex-shrink: 0;">
+          <!-- Gedachtenwolkje: hint voor morgen -->
+          <div class="wolkje" role="img" aria-label="Pino denkt aan morgen: een geheim spel op de markt" style="position: absolute; left: 44px; top: -78px;">
+            <span class="wolk-tekst">Morgen…</span>
+            <span class="wolk-icoon">
+              <svg class="ic" viewBox="0 0 48 48" width="32" height="32" aria-hidden="true"><circle cx="17" cy="31" r="10" fill="#E6EFF5" stroke="#8AA0AF" stroke-width="2"/><circle cx="17" cy="31" r="5" fill="none" stroke="#8AA0AF" stroke-width="2"/><circle cx="31" cy="20" r="10" fill="#E6EFF5" stroke="#8AA0AF" stroke-width="2"/><circle cx="31" cy="20" r="5" fill="none" stroke="#8AA0AF" stroke-width="2"/></svg>
+              <span class="wolk-vraag">?</span>
+            </span>
+          </div>
+          <span class="wolk-stip" aria-hidden="true" style="position: absolute; left: 60px; top: -24px; width: 12px; height: 12px;"></span>
+          <span class="wolk-stip" aria-hidden="true" style="position: absolute; left: 50px; top: -8px; width: 8px; height: 8px;"></span>
+          <div class="kop" style="width: 88px; height: 88px; border-radius: 50%; background: #FFD6E6; border: 5px solid #FFFFFF; box-shadow: 0 0 0 3px #1FA3DC; box-sizing: border-box; display: flex; align-items: center; justify-content: center; font-size: 40px; color: #B23A6A;">P</div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 6px;">
+          <h1 class="kop" style="margin: 0; font-size: 30px;">Pino's verjaardags&shy;kalender</h1>
+          <div style="font-size: 15px; color: #4F6B7E; font-weight: 700;">24 november t/m 3 december</div>
+        </div>
+      </div>
+      <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+        <span class="chip">Verloskundige</span>
+        <span class="chip" style="background: #E9F8EC; color: #1F7A3A;">Ganzenfluisteraar</span>
+        <span class="chip" style="background: #FFF1D6; color: #9A5B00;">Bordspelbaas</span>
+        <span class="chip" style="background: #F1E8FF; color: #6B3FCF;">Jiujitsu</span>
+        <span class="chip" style="background: #FFE0EE; color: #B23A6A;">Zoetekauw</span>
+        <span class="chip" style="background: #E3F4FC; color: #0E6A98;">Wereldreiziger</span>
+      </div>
+    </div>
+
+    <div class="kaart" style="padding: 18px 24px 18px; display: flex; flex-direction: column; gap: 12px;">
+      <button type="button" class="klap" onClick="{{toggleNood}}" aria-expanded="{{noodOpen}}" aria-controls="nood-inhoud" style="">
+        <span class="kop" style="font-size: 22px;">Behoeften</span>
+        <span style="display: flex; align-items: center; gap: 12px;">
+          <span style="display: flex; align-items: baseline; gap: 6px;">
+            <span class="kop" style="font-size: 34px; color: #D97A00;">{{dagen}}</span>
+            <span style="font-size: 14px; font-weight: 800; color: #4F6B7E;">dagen tot 3 dec</span>
+          </span>
+          <span class="pijl" style="transform: {{noodDraai}};" aria-hidden="true">
+            <svg class="ic" viewBox="0 0 48 48" width="18" height="18"><path d="M12 18 L24 30 L36 18" fill="none" stroke="#0E7FB5" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+        </span>
+      </button>
+
+      <sc-if value="{{noodOpen}}" hint-placeholder-val="{{true}}">
+      <div id="nood-inhoud" style="display: flex; flex-direction: column; gap: 12px;">
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 22px;">
+        <div class="nood" style="">
+          <span class="nood-label">Verjaardag vieren</span>
+          <span class="nood-balk" role="img" aria-label="Verjaardag vieren: 30 procent"><span style="width: 30%; background: #FFC93C; box-shadow: inset 0 -4px 0 0 #D97A00;"></span></span>
+        </div>
+        <div class="nood" style="">
+          <span class="nood-label">Gansjes</span>
+          <span class="nood-balk" role="img" aria-label="Gansjes: vol"><span style="width: 100%; background: #39D353; box-shadow: inset 0 -4px 0 0 #1FA34A;"></span></span>
+        </div>
+        <div class="nood" style="">
+          <span class="nood-label">Lammetjes</span>
+          <span class="nood-balk" role="img" aria-label="Lammetjes: vol"><span style="width: 100%; background: #39D353; box-shadow: inset 0 -4px 0 0 #1FA34A;"></span></span>
+        </div>
+        <div class="nood" style="">
+          <span class="nood-label">Snoepjes</span>
+          <span class="nood-balk" role="img" aria-label="Snoepjes: vol"><span style="width: 100%; background: #39D353; box-shadow: inset 0 -4px 0 0 #1FA34A;"></span></span>
+        </div>
+        <div class="nood" style="">
+          <span class="nood-label">Jiujitsu</span>
+          <span class="nood-balk" role="img" aria-label="Jiujitsu: 45 procent"><span style="width: 45%; background: #FFC93C; box-shadow: inset 0 -4px 0 0 #D97A00;"></span></span>
+        </div>
+        <div class="nood" style="">
+          <span class="nood-label">Bordspellen</span>
+          <span class="nood-balk" role="img" aria-label="Bordspellen: 20 procent"><span style="width: 20%; background: #FF5E5B; box-shadow: inset 0 -4px 0 0 #C43B38;"></span></span>
+        </div>
+        <div class="nood" style="">
+          <span class="nood-label">Reizen</span>
+          <span class="nood-balk" role="img" aria-label="Reizen: 10 procent"><span style="width: 10%; background: #FF5E5B; box-shadow: inset 0 -4px 0 0 #C43B38;"></span></span>
+        </div>
+        <div class="nood" style="">
+          <span class="nood-label">Sieraden</span>
+          <span class="nood-balk" role="img" aria-label="Sieraden: 15 procent"><span style="width: 15%; background: #FF5E5B; box-shadow: inset 0 -4px 0 0 #C43B38;"></span></span>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; font-size: 14px; color: #4F6B7E; font-weight: 700; border-top: 2px solid #E6EFF5; padding-top: 12px;">
+        <span>Stemming: <strong style="color: #1F7A3A;">Goed</strong></span>
+        <span>3 van 10 deurtjes open</span>
+      </div>
+      </div>
+      </sc-if>
+    </div>
+
+    <div class="kaart" style="padding: 20px 24px 20px; display: flex; flex-direction: column; gap: 12px;">
+      <button type="button" class="klap" onClick="{{toggleVaard}}" aria-expanded="{{vaardOpen}}" aria-controls="vaard-inhoud" style="">
+        <span class="kop" style="font-size: 20px;">Vaardigheden</span>
+        <span style="display: flex; align-items: center; gap: 12px;">
+          <span style="font-size: 12px; font-weight: 800; padding: 4px 10px; border-radius: 999px; background: #F1E8FF; color: #6B3FCF;">Vandaag: +1 Charisma</span>
+          <span class="pijl" style="transform: {{vaardDraai}};" aria-hidden="true">
+            <svg class="ic" viewBox="0 0 48 48" width="18" height="18"><path d="M12 18 L24 30 L36 18" fill="none" stroke="#0E7FB5" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+        </span>
+      </button>
+      <sc-if value="{{vaardOpen}}" hint-placeholder-val="{{true}}">
+      <div id="vaard-inhoud" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 20px;">
+        <div class="vaard" style="">
+          <span class="vaard-label">Koken</span>
+          <span class="vaard-balk" role="img" aria-label="Koken: 0 van 10"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span>
+        </div>
+        <div class="vaard" style="">
+          <span class="vaard-label">Techniek</span>
+          <span class="vaard-balk" role="img" aria-label="Techniek: 0 van 10"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span>
+        </div>
+        <div class="vaard" style="">
+          <span class="vaard-label">Charisma</span>
+          <span class="vaard-balk" role="img" aria-label="Charisma: 0 van 10, vandaag te verdienen"><span class="straks"></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span>
+        </div>
+        <div class="vaard" style="">
+          <span class="vaard-label">Conditie</span>
+          <span class="vaard-balk" role="img" aria-label="Conditie: 1 van 10"><span class="vol"></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span>
+        </div>
+        <div class="vaard" style="">
+          <span class="vaard-label">Logica</span>
+          <span class="vaard-balk" role="img" aria-label="Logica: 1 van 10"><span class="vol"></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span>
+        </div>
+        <div class="vaard" style="">
+          <span class="vaard-label">Creativiteit</span>
+          <span class="vaard-balk" role="img" aria-label="Creativiteit: 1 van 10"><span class="vol"></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span>
+        </div>
+      </div>
+      </sc-if>
+    </div>
+
+  </div>
+
+  <!-- Rechter deel -->
+  <div style="flex: 1; display: flex; flex-direction: column; gap: 18px; position: relative;">
+    <div style="display: flex; justify-content: space-between; align-items: baseline; padding: 0 6px;">
+      <div class="kop" style="font-size: 26px;">Kies een deurtje</div>
+      <div style="font-size: 16px; font-weight: 800; color: #0E7FB5;">Vandaag: donderdag 27 november</div>
+    </div>
+
+    <div style="flex: 1; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); grid-template-rows: repeat(2, minmax(0, 1fr)); gap: 22px;">
+
+      <a href="Open.dc.html" class="deur deur-open" style="" aria-label="24 november, gespeeld: Princess Presence">
+        <span class="datum">24 NOV</span>
+        <span class="bol" style="background: #FFE0EE;">
+          <svg class="ic" viewBox="0 0 48 48" width="58" height="58" aria-hidden="true"><path d="M8 36 L6 14 L17 24 L24 10 L31 24 L42 14 L40 36z" fill="#FFC93C"/><rect x="8" y="36" width="32" height="6" rx="2" fill="#D97A00"/><circle cx="24" cy="10" r="3" fill="#FF6FAE"/><circle cx="6" cy="14" r="2.5" fill="#1FA3DC"/><circle cx="42" cy="14" r="2.5" fill="#1FA3DC"/><circle cx="24" cy="30" r="3" fill="#FF6FAE"/></svg>
+        </span>
+        <span class="pil" style="background: #E9F8EC; color: #1F7A3A;">Gespeeld</span>
+      </a>
+
+      <a href="Open.dc.html" class="deur deur-open" style="" aria-label="25 november, gespeeld: Tuin van de koningin">
+        <span class="datum">25 NOV</span>
+        <span class="bol" style="background: #D9F5DE;">
+          <svg class="ic" viewBox="0 0 48 48" width="58" height="58" aria-hidden="true"><polygon points="24,2 44,13 44,35 24,46 4,35 4,13" fill="#1FA34A"/><polygon points="24,6 40,15 40,33 24,42 8,33 8,15" fill="#39D353"/><g transform="translate(24 25) scale(1.5)"><circle cx="0" cy="-4" r="5" fill="#FFFFFF" opacity="0.95"/><circle cx="-4" cy="-1.5" r="3.8" fill="#FFFFFF" opacity="0.95"/><circle cx="4" cy="-1.5" r="3.8" fill="#FFFFFF" opacity="0.95"/><circle cx="0" cy="0" r="3.5" fill="#FFFFFF" opacity="0.95"/><rect x="-1" y="1.5" width="2" height="5.5" rx="0.6" fill="#FFFFFF" opacity="0.95"/></g></svg>
+        </span>
+        <span class="pil" style="background: #E9F8EC; color: #1F7A3A;">Gespeeld</span>
+      </a>
+
+      <a href="Open.dc.html" class="deur deur-open" style="" aria-label="26 november, gespeeld: Complete the family (blije familie)">
+        <span class="datum">26 NOV</span>
+        <span class="bol" style="background: #FFF1D6;">
+          <svg class="ic" viewBox="0 0 48 48" width="58" height="58" aria-hidden="true"><circle cx="10" cy="27" r="7" fill="#FFFFFF"/><path d="M16 26 l6 1.5 -6 1.5z" fill="#FF8A3D"/><circle cx="12" cy="25" r="1.2" fill="#1E3A4C"/><path d="M8 29 q2 2 4 0" fill="none" stroke="#1E3A4C" stroke-width="1" stroke-linecap="round"/><circle cx="24" cy="27" r="7" fill="#FFF7EA"/><circle cx="18" cy="22" r="2.5" fill="#FFF7EA"/><circle cx="30" cy="22" r="2.5" fill="#FFF7EA"/><ellipse cx="24" cy="29" rx="4" ry="3" fill="#4A3426"/><circle cx="22.5" cy="28" r="0.8" fill="#FFFFFF"/><circle cx="25.5" cy="28" r="0.8" fill="#FFFFFF"/><path d="M22.5 30.5 q1.5 1.5 3 0" fill="none" stroke="#FFFFFF" stroke-width="0.9" stroke-linecap="round"/><circle cx="38" cy="27" r="7" fill="#FFB8D4"/><path d="M32 22 l2 -5 3 3z M44 22 l-2 -5 -3 3z" fill="#FFB8D4"/><ellipse cx="38" cy="29" rx="3" ry="2" fill="#FF6FAE"/><circle cx="37" cy="29" r="0.7" fill="#B23A6A"/><circle cx="39" cy="29" r="0.7" fill="#B23A6A"/><circle cx="35.5" cy="26" r="1" fill="#1E3A4C"/><circle cx="40.5" cy="26" r="1" fill="#1E3A4C"/><path d="M35 32 q3 2.5 6 0" fill="none" stroke="#B23A6A" stroke-width="1" stroke-linecap="round"/><circle cx="8" cy="23" r="1.6" fill="#FF6FAE"/><circle cx="40" cy="23" r="1.6" fill="#FF6FAE"/><path d="M24 12 c-3 -4 -8 -1 -5 3 l5 5 5 -5 c3 -4 -2 -7 -5 -3z" fill="#FF6FAE"/><path d="M10 9 c-2 -2.5 -5 -0.5 -3 2 l3 3 3 -3 c2 -2.5 -1 -4.5 -3 -2z" fill="#FFC93C"/><path d="M38 9 c-2 -2.5 -5 -0.5 -3 2 l3 3 3 -3 c2 -2.5 -1 -4.5 -3 -2z" fill="#5BC0EB"/></svg>
+        </span>
+        <span class="pil" style="background: #E9F8EC; color: #1F7A3A;">Gespeeld</span>
+      </a>
+
+      <a href="Open.dc.html" class="deur deur-vandaag" style="" aria-label="27 november, vandaag: (Social)ize the family">
+        <span class="datum" style="color: #0E7FB5;">27 NOV</span>
+        <span class="bol" style="background: #DDF1FB;">
+          <svg class="ic" viewBox="0 0 48 48" width="58" height="58" aria-hidden="true"><rect x="16" y="9" width="14" height="7" rx="2" fill="#1E3A4C"/><rect x="6" y="14" width="36" height="26" rx="5" fill="#1E3A4C"/><circle cx="24" cy="27" r="9" fill="#5BC0EB"/><circle cx="24" cy="27" r="5" fill="#0E7FB5"/><circle cx="21" cy="24" r="1.8" fill="#FFFFFF"/><rect x="34" y="18" width="5" height="3" rx="1" fill="#FFC93C"/><path d="M4 6 l3 3 M44 6 l-3 3" stroke="#FFC93C" stroke-width="2.5" stroke-linecap="round"/></svg>
+        </span>
+        <span class="pil" style="background: #1FA3DC; color: #FFFFFF; box-shadow: 0 3px 0 0 #0E7FB5;">Vandaag!</span>
+      </a>
+
+      <a href="Vergrendeld.dc.html" class="deur deur-dicht" style="" aria-label="28 november, nog gesloten">
+        <span class="kop" style="font-size: 40px; color: #4F6B7E;">28</span><span class="datum">NOV</span>
+        <svg class="ic" viewBox="0 0 48 48" width="30" height="30" aria-hidden="true" style="position: absolute; right: 14px; top: 14px;"><path d="M17 20 v-5 a7 7 0 0 1 14 0 v5" fill="none" stroke="#B8860B" stroke-width="3.5"/><rect x="12" y="20" width="24" height="20" rx="6" fill="#FFC93C"/><circle cx="24" cy="29" r="3" fill="#6B4A10"/></svg>
+      </a>
+
+      <a href="Vergrendeld.dc.html" class="deur deur-dicht" style="" aria-label="29 november, nog gesloten">
+        <span class="kop" style="font-size: 40px; color: #4F6B7E;">29</span><span class="datum">NOV</span>
+        <svg class="ic" viewBox="0 0 48 48" width="30" height="30" aria-hidden="true" style="position: absolute; right: 14px; top: 14px;"><path d="M17 20 v-5 a7 7 0 0 1 14 0 v5" fill="none" stroke="#B8860B" stroke-width="3.5"/><rect x="12" y="20" width="24" height="20" rx="6" fill="#FFC93C"/><circle cx="24" cy="29" r="3" fill="#6B4A10"/></svg>
+      </a>
+
+      <a href="Vergrendeld.dc.html" class="deur deur-dicht" style="" aria-label="30 november, nog gesloten">
+        <span class="kop" style="font-size: 40px; color: #4F6B7E;">30</span><span class="datum">NOV</span>
+        <svg class="ic" viewBox="0 0 48 48" width="30" height="30" aria-hidden="true" style="position: absolute; right: 14px; top: 14px;"><path d="M17 20 v-5 a7 7 0 0 1 14 0 v5" fill="none" stroke="#B8860B" stroke-width="3.5"/><rect x="12" y="20" width="24" height="20" rx="6" fill="#FFC93C"/><circle cx="24" cy="29" r="3" fill="#6B4A10"/></svg>
+      </a>
+
+      <a href="Vergrendeld.dc.html" class="deur deur-dicht" style="" aria-label="1 december, nog gesloten">
+        <span class="kop" style="font-size: 40px; color: #4F6B7E;">1</span><span class="datum">DEC</span>
+        <svg class="ic" viewBox="0 0 48 48" width="30" height="30" aria-hidden="true" style="position: absolute; right: 14px; top: 14px;"><path d="M17 20 v-5 a7 7 0 0 1 14 0 v5" fill="none" stroke="#B8860B" stroke-width="3.5"/><rect x="12" y="20" width="24" height="20" rx="6" fill="#FFC93C"/><circle cx="24" cy="29" r="3" fill="#6B4A10"/></svg>
+      </a>
+
+      <a href="Vergrendeld.dc.html" class="deur deur-dicht" style="" aria-label="2 december, nog gesloten">
+        <span class="kop" style="font-size: 40px; color: #4F6B7E;">2</span><span class="datum">DEC</span>
+        <svg class="ic" viewBox="0 0 48 48" width="30" height="30" aria-hidden="true" style="position: absolute; right: 14px; top: 14px;"><path d="M17 20 v-5 a7 7 0 0 1 14 0 v5" fill="none" stroke="#B8860B" stroke-width="3.5"/><rect x="12" y="20" width="24" height="20" rx="6" fill="#FFC93C"/><circle cx="24" cy="29" r="3" fill="#6B4A10"/></svg>
+      </a>
+
+      <a href="Vergrendeld.dc.html" class="deur deur-dicht" style="background: #FFE0EE; box-shadow: inset 0 0 0 2px #FFB8D4;" aria-label="3 december, verjaardag, nog gesloten">
+        <span class="kop" style="font-size: 40px; color: #B23A6A;">3</span><span class="datum" style="color: #B23A6A;">DEC · JARIG!</span>
+        <svg class="ic" viewBox="0 0 48 48" width="38" height="38" aria-hidden="true" style="position: absolute; left: 14px; top: 12px;"><rect x="8" y="24" width="32" height="16" rx="4" fill="#F4C7A1"/><path d="M8 24 h32 v5 q-4 5 -8 0 t-8 0 t-8 0 t-8 0z" fill="#FF6FAE"/><rect x="15" y="12" width="3" height="12" rx="1.5" fill="#5BC0EB"/><rect x="23" y="10" width="3" height="14" rx="1.5" fill="#FFC93C"/><rect x="31" y="12" width="3" height="12" rx="1.5" fill="#9B6BFF"/><circle cx="16.5" cy="10" r="2.5" fill="#FF8A3D"/><circle cx="24.5" cy="8" r="2.5" fill="#FF8A3D"/><circle cx="32.5" cy="10" r="2.5" fill="#FF8A3D"/></svg>
+        <svg class="ic" viewBox="0 0 48 48" width="30" height="30" aria-hidden="true" style="position: absolute; right: 14px; top: 14px;"><path d="M17 20 v-5 a7 7 0 0 1 14 0 v5" fill="none" stroke="#B8860B" stroke-width="3.5"/><rect x="12" y="20" width="24" height="20" rx="6" fill="#FFC93C"/><circle cx="24" cy="29" r="3" fill="#6B4A10"/></svg>
+      </a>
+    </div>
+
+    <div class="kaart" style="padding: 14px 22px; display: flex; justify-content: space-between; align-items: center; font-size: 16px;">
+      <span>Elke dag een nieuw spelletje – gemaakt voor Pino</span>
+      <span style="font-weight: 800; color: #0E7FB5;">24 nov – 3 dec</span>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"dagen":{"editor":"int","default":7,"min":0,"max":10,"section":"Aftellen"},"$preview":{"width":1280,"height":940}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { noodOpen: true, vaardOpen: true };
+  }
+  renderVals() {
+    var self = this;
+    return {
+      dagen: this.props.dagen ?? 7,
+      noodOpen: this.state.noodOpen,
+      vaardOpen: this.state.vaardOpen,
+      noodDraai: this.state.noodOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+      vaardDraai: this.state.vaardOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+      toggleNood: function () { self.setState({ noodOpen: !self.state.noodOpen }); },
+      toggleVaard: function () { self.setState({ vaardOpen: !self.state.vaardOpen }); }
+    };
+  }
+}
+</script>
+</body>
+</html>

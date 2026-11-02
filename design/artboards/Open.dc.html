@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<title>Geopend deurtje – dag 4</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&amp;family=Nunito:wght@400;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:'Nunito',sans-serif;color:#1E3A4C}
+a{color:#1E3A4C;text-decoration:none}a:hover{color:#0E7FB5}
+.kop{font-family:'Fredoka',sans-serif;font-weight:700;line-height:1.1}
+.vloer{background-image:repeating-linear-gradient(30deg,rgba(255,255,255,0.38) 0 2px,transparent 2px 40px),repeating-linear-gradient(150deg,rgba(255,255,255,0.38) 0 2px,transparent 2px 40px)}
+.ic{display:block}
+.kaart{background:#FFFFFF;border-radius:22px;box-shadow:0 6px 0 0 #CDE4F0,0 12px 24px rgba(30,58,76,0.12)}
+.knop{font-family:'Nunito',sans-serif;font-weight:800;font-size:19px;border-radius:999px;border:0;cursor:pointer;min-height:56px;padding:0 24px}
+.chip{font-size:13px;font-weight:800;padding:5px 12px;border-radius:999px;background:#E3F4FC;color:#0E6A98}
+.sticker{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:inset 0 -4px 0 0 rgba(0,0,0,0.08)}
+</style>
+</helmet>
+<div class="vloer" style="width: 390px; height: 960px; box-sizing: border-box; background-color: #BFE6FA; display: flex; flex-direction: column; overflow: hidden; position: relative;">
+
+  <div aria-hidden="true" style="position: absolute; left: -40px; top: 60px; width: 180px; height: 70px; background: #FFFFFF; opacity: 0.6; border-radius: 999px;"></div>
+
+  <!-- Kopbalk -->
+  <div style="padding: 20px 16px 0; display: flex; align-items: center; gap: 12px; position: relative;">
+    <a href="Main.dc.html" aria-label="Terug naar de kalender" style="display: flex; align-items: center; justify-content: center; width: 46px; height: 46px; border-radius: 50%; background: #FFFFFF; box-shadow: 0 4px 0 0 #CDE4F0; flex-shrink: 0;">
+      <svg class="ic" viewBox="0 0 48 48" width="24" height="24" aria-hidden="true"><path d="M30 10 L16 24 L30 38" fill="none" stroke="#0E7FB5" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+    <div style="display: flex; flex-direction: column; gap: 2px;">
+      <div style="font-size: 12px; font-weight: 800; color: #0E7FB5; letter-spacing: 1px;">DAG 4 VAN 10</div>
+      <div class="kop" style="font-size: 22px;">Donderdag 27 november</div>
+    </div>
+  </div>
+
+  <!-- Spelkaart -->
+  <div class="kaart" style="margin: 64px 16px 0; padding: 0 20px 20px; display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; position: relative;">
+    <div style="width: 136px; height: 136px; border-radius: 50%; background: #DDF1FB; border: 6px solid #FFFFFF; box-shadow: 0 0 0 3px #1FA3DC, 0 8px 18px rgba(30,58,76,0.18); box-sizing: border-box; display: flex; align-items: center; justify-content: center; margin-top: -48px;">
+      <svg class="ic" viewBox="0 0 48 48" width="96" height="96" role="img" aria-label="Fototoestel voor de familiefoto">
+        <rect x="16" y="9" width="14" height="7" rx="2" fill="#1E3A4C"/>
+        <rect x="6" y="14" width="36" height="26" rx="5" fill="#1E3A4C"/>
+        <circle cx="24" cy="27" r="9" fill="#5BC0EB"/><circle cx="24" cy="27" r="5" fill="#0E7FB5"/><circle cx="21" cy="24" r="1.8" fill="#FFFFFF"/>
+        <rect x="34" y="18" width="5" height="3" rx="1" fill="#FFC93C"/>
+        <path d="M4 6 l3 3 M44 6 l-3 3" stroke="#FFC93C" stroke-width="2.5" stroke-linecap="round"/>
+      </svg>
+    </div>
+
+    <span class="chip" style="background: #DDF1FB; color: #0E6A98;">Spel van vandaag</span>
+    <h1 class="kop" style="margin: 0; font-size: 30px;">(Social)ize the family</h1>
+    <p style="margin: 0; font-size: 16px; line-height: 1.45; color: #35505F;">Op vakantie is het tijd voor dé familiefoto. Zoek op de tekening de perfecte plek voor het hele gezin, en daarna nog één voor mama en één voor papa.</p>
+
+    <div style="display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;">
+      <span class="chip">Zoekplaatje</span>
+      <span class="chip">± 2 minuten</span>
+      <span class="chip">3 foto's</span>
+    </div>
+
+    <a href="Main.dc.html" class="knop" style="display: inline-flex; align-items: center; justify-content: center; gap: 10px; background: #39D353; color: #0E3D1C; width: 100%; box-sizing: border-box; box-shadow: 0 5px 0 0 #1FA34A; margin-top: 4px;">
+      <svg class="ic" viewBox="0 0 48 48" width="22" height="22" aria-hidden="true"><path d="M14 8 L40 24 L14 40z" fill="#0E3D1C"/></svg>
+      Speel nu
+    </a>
+  </div>
+
+  <!-- Briefje -->
+  <div class="kaart" style="margin: 16px 16px 0; padding: 14px 16px; display: flex; gap: 12px; align-items: flex-start;">
+    <div style="width: 44px; height: 44px; border-radius: 50%; background: #FFE0EE; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+      <svg class="ic" viewBox="0 0 48 48" width="26" height="26" aria-hidden="true"><path d="M24 42 C10 32 4 24 4 16 a10 10 0 0 1 20 -4 a10 10 0 0 1 20 4 c0 8 -6 16 -20 26z" fill="#FF6FAE"/></svg>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 4px;">
+      <div style="font-size: 12px; font-weight: 800; color: #B23A6A; letter-spacing: 1px;">BRIEFJE VOOR PINO</div>
+      <p style="margin: 0; font-size: 15px; line-height: 1.4; color: #35505F;">[Een persoonlijk zinnetje per dag – herinnering, grapje of hint voor het volgende deurtje.]</p>
+    </div>
+  </div>
+
+  <!-- Aftelvoet -->
+  <div style="margin-top: auto; background: #FFFFFF; border-radius: 28px 28px 0 0; box-shadow: 0 -6px 18px rgba(30,58,76,0.10); padding: 16px 24px 20px; display: flex; justify-content: space-between; align-items: center;">
+    <div style="display: flex; flex-direction: column; gap: 2px;">
+      <span style="font-size: 13px; font-weight: 800; color: #4F6B7E;">VERJAARDAGSDRANG</span>
+      <span style="font-size: 16px;">Nog <strong style="color: #1F7A3A;">6 dagen</strong> tot 3 december</span>
+    </div>
+    <div style="width: 48px; height: 48px; border-radius: 50%; background: #FFE0EE; display: flex; align-items: center; justify-content: center;">
+      <svg class="ic" viewBox="0 0 48 48" width="30" height="30" aria-hidden="true"><rect x="8" y="24" width="32" height="16" rx="4" fill="#F4C7A1"/><path d="M8 24 h32 v5 q-4 5 -8 0 t-8 0 t-8 0 t-8 0z" fill="#FF6FAE"/><rect x="15" y="12" width="3" height="12" rx="1.5" fill="#5BC0EB"/><rect x="23" y="10" width="3" height="14" rx="1.5" fill="#FFC93C"/><rect x="31" y="12" width="3" height="12" rx="1.5" fill="#9B6BFF"/><circle cx="16.5" cy="10" r="2.5" fill="#FF8A3D"/><circle cx="24.5" cy="8" r="2.5" fill="#FF8A3D"/><circle cx="32.5" cy="10" r="2.5" fill="#FF8A3D"/></svg>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"band":{"editor":"color","default":"#3B7DD8","options":["#FFFFFF","#3B7DD8","#9B6BFF","#A0522D","#1A1A1A"],"section":"Jiujitsu"},"$preview":{"width":390,"height":960}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return { band: this.props.band ?? '#3B7DD8' };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<title>Laadscherm – spel wordt geladen</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&amp;family=Nunito:wght@400;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:'Nunito',sans-serif;color:#1E3A4C}
+a{color:#1E3A4C;text-decoration:none}a:hover{color:#0E7FB5}
+.kop{font-family:'Fredoka',sans-serif;font-weight:700;line-height:1.1}
+.vloer{background-image:repeating-linear-gradient(30deg,rgba(255,255,255,0.38) 0 2px,transparent 2px 40px),repeating-linear-gradient(150deg,rgba(255,255,255,0.38) 0 2px,transparent 2px 40px)}
+.ic{display:block}
+.kaart{background:#FFFFFF;border-radius:26px;box-shadow:0 7px 0 0 #CDE4F0,0 14px 28px rgba(30,58,76,0.12)}
+.regel{display:flex;align-items:center;gap:10px;font-size:15px;font-weight:700;color:#8AA0AF}
+.vink{width:22px;height:22px;border-radius:50%;background:#E9F8EC;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+</style>
+</helmet>
+<div class="vloer" style="width: 390px; height: 960px; box-sizing: border-box; background-color: #BFE6FA; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; position: relative; overflow: hidden;">
+
+  <div aria-hidden="true" style="position: absolute; left: -60px; top: 80px; width: 220px; height: 80px; background: #FFFFFF; opacity: 0.55; border-radius: 999px;"></div>
+  <div aria-hidden="true" style="position: absolute; right: -70px; top: 300px; width: 240px; height: 90px; background: #FFFFFF; opacity: 0.45; border-radius: 999px;"></div>
+  <div aria-hidden="true" style="position: absolute; left: 20px; bottom: 120px; width: 200px; height: 70px; background: #FFFFFF; opacity: 0.4; border-radius: 999px;"></div>
+
+  <div class="kaart" style="width: 100%; padding: 0 24px 26px; display: flex; flex-direction: column; align-items: center; gap: 18px; text-align: center; position: relative; margin-top: 40px;">
+
+    <div style="width: 120px; height: 120px; border-radius: 50%; background: #DDF1FB; border: 6px solid #FFFFFF; box-shadow: 0 0 0 3px #1FA3DC, 0 8px 18px rgba(30,58,76,0.18); box-sizing: border-box; display: flex; align-items: center; justify-content: center; margin-top: -44px;">
+      <svg class="ic" viewBox="0 0 48 48" width="84" height="84" role="img" aria-label="Fototoestel">
+        <rect x="16" y="9" width="14" height="7" rx="2" fill="#1E3A4C"/>
+        <rect x="6" y="14" width="36" height="26" rx="5" fill="#1E3A4C"/>
+        <circle cx="24" cy="27" r="9" fill="#5BC0EB"/><circle cx="24" cy="27" r="5" fill="#0E7FB5"/><circle cx="21" cy="24" r="1.8" fill="#FFFFFF"/>
+        <rect x="34" y="18" width="5" height="3" rx="1" fill="#FFC93C"/>
+      </svg>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 4px;">
+      <div style="font-size: 12px; font-weight: 800; color: #0E7FB5; letter-spacing: 1px;">DAG 4 · 27 NOVEMBER</div>
+      <h1 class="kop" style="margin: 0; font-size: 28px;">(Social)ize the family</h1>
+      <div style="font-size: 14px; font-weight: 700; color: #4F6B7E;">wordt geladen</div>
+    </div>
+
+    <!-- Voortgangsbalk -->
+    <div style="width: 100%; display: flex; flex-direction: column; gap: 8px;">
+      <div role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{procent}}" aria-label="Laadvoortgang" style="height: 22px; border-radius: 999px; background: #E6EFF5; overflow: hidden; box-shadow: inset 0 2px 0 0 #D3E1EA;">
+        <div style="width: {{breedte}}; height: 100%; border-radius: 999px; background: #39D353; box-shadow: inset 0 -6px 0 0 #1FA34A; transition: width 0.6s ease;"></div>
+      </div>
+      <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: 800; color: #4F6B7E;">
+        <span>Even geduld…</span>
+        <span>{{procent}}%</span>
+      </div>
+    </div>
+
+    <!-- Huidige laadtekst -->
+    <div style="width: 100%; background: #F3F8FB; border-radius: 18px; padding: 16px 18px; box-sizing: border-box; min-height: 64px; display: flex; align-items: center; justify-content: center;">
+      <div class="kop" style="font-size: 21px; color: #0E6A98;" aria-live="polite">{{huidig}}</div>
+    </div>
+
+    <!-- Al gedaan -->
+    <div style="width: 100%; display: flex; flex-direction: column; gap: 8px; text-align: left;">
+      <sc-for list="{{klaar}}" as="r" hint-placeholder-count="3">
+        <div class="regel">
+          <span class="vink" aria-hidden="true">
+            <svg class="ic" viewBox="0 0 48 48" width="14" height="14"><path d="M10 26 L20 36 L38 14" fill="none" stroke="#1F7A3A" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          <span>{{r.tekst}}</span>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <!-- Tip onderaan -->
+  <div style="margin-top: 22px; width: 100%; background: #FFFFFF; border-radius: 18px; padding: 12px 16px; box-sizing: border-box; box-shadow: 0 5px 0 0 #CDE4F0; display: flex; gap: 12px; align-items: center;">
+    <div style="width: 40px; height: 40px; border-radius: 50%; background: #FFF1D6; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+      <svg class="ic" viewBox="0 0 48 48" width="24" height="24" aria-hidden="true"><path d="M24 6 a12 12 0 0 1 7 21.7 V32 H17 v-4.3 A12 12 0 0 1 24 6z" fill="#FFC93C"/><rect x="18" y="34" width="12" height="4" rx="2" fill="#9A5B00"/><rect x="20" y="39" width="8" height="3" rx="1.5" fill="#9A5B00"/></svg>
+    </div>
+    <div style="font-size: 14px; line-height: 1.35;"><strong>Tip:</strong> elk gespeeld spelletje vult een behoefte aan. Op 3 december staat alles op groen.</div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"snelheid":{"editor":"range","default":1400,"min":400,"max":4000,"step":100,"unit":"ms","section":"Animatie"},"$preview":{"width":390,"height":960}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.regels = [
+      'Ganzen aan het kalibreren…',
+      'Potlammetjes aan het voeden…',
+      'Dobbelstenen aan het balanceren…',
+      'Hechtingen aan het tellen…',
+      'Snoeppapiertjes aan het ritselen…',
+      'Jiujitsu-banden aan het strikken…',
+      'Koffers aan het overpakken…',
+      'Sieraden aan het poetsen…',
+      'Hartslagjes aan het tellen…',
+      'Gans aan het overhalen om opzij te gaan…',
+      'Verjaardagskaarsjes aan het tellen…',
+      'Splines aan het reticuleren…'
+    ];
+    this.state = { stap: 3 };
+  }
+  componentDidMount() {
+    var self = this;
+    this.timer = setInterval(function () {
+      self.setState({ stap: (self.state.stap + 1) % self.regels.length });
+    }, this.props.snelheid || 1400);
+  }
+  componentWillUnmount() {
+    if (this.timer) { clearInterval(this.timer); }
+  }
+  renderVals() {
+    var n = this.regels.length;
+    var stap = this.state.stap;
+    var procent = Math.round(8 + (stap / (n - 1)) * 88);
+    var klaar = [];
+    for (var i = Math.max(0, stap - 3); i < stap; i++) {
+      klaar.push({ tekst: this.regels[i] });
+    }
+    return {
+      huidig: this.regels[stap],
+      procent: procent,
+      breedte: procent + '%',
+      klaar: klaar
+    };
+  }
+}
+</script>
+</body>
+</html>

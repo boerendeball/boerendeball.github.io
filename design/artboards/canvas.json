@@ -1,0 +1,584 @@
+{
+  "v": 3,
+  "attachments": {},
+  "boards": {
+    "Desktop.dc.html": {
+      "h": 940,
+      "is_interactive": true,
+      "title": "Kalender – desktop",
+      "w": 1280,
+      "x": 0,
+      "y": 1680
+    },
+    "Laden.dc.html": {
+      "h": 960,
+      "is_interactive": true,
+      "title": "Laadscherm",
+      "w": 390,
+      "x": 1880,
+      "y": 0
+    },
+    "Main.dc.html": {
+      "h": 1440,
+      "is_interactive": true,
+      "title": "Kalender – mobiel",
+      "w": 390,
+      "x": 0,
+      "y": 0
+    },
+    "Open.dc.html": {
+      "h": 960,
+      "title": "Geopend deurtje",
+      "w": 390,
+      "x": 940,
+      "y": 0
+    },
+    "Spel1-Klaar.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Spel 1 – resultaat",
+      "w": 390,
+      "x": 470,
+      "y": 3000
+    },
+    "Spel1-Sprites.dc.html": {
+      "h": 640,
+      "title": "Spel 1 – sprite-set (poppenhuisstijl)",
+      "w": 1000,
+      "x": 3045,
+      "y": 3000
+    },
+    "Spel1.dc.html": {
+      "h": 844,
+      "title": "Spel 1 – Princess Presence",
+      "w": 390,
+      "x": 0,
+      "y": 3000
+    },
+    "Spel10-Auto.dc.html": {
+      "h": 844,
+      "title": "Spel 10 – in de auto",
+      "w": 390,
+      "x": 1570,
+      "y": 6600
+    },
+    "Spel10-Finale.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Spel 10 – finale: jarig!",
+      "w": 390,
+      "x": 2040,
+      "y": 6600
+    },
+    "Spel10.dc.html": {
+      "h": 844,
+      "title": "Spel 10 – te voet",
+      "w": 390,
+      "x": 1100,
+      "y": 6600
+    },
+    "Spel2-Edelsteen.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Spel 2 – edelsteen kiezen",
+      "w": 390,
+      "x": 2040,
+      "y": 3000
+    },
+    "Spel2-Klaar.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Spel 2 – resultaat",
+      "w": 390,
+      "x": 2510,
+      "y": 3000
+    },
+    "Spel2-Menu.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Spel 2 – tegel kiezen",
+      "w": 390,
+      "x": 1570,
+      "y": 3000
+    },
+    "Spel2-Sprites.dc.html": {
+      "h": 560,
+      "title": "Spel 2 – sprite-set",
+      "w": 1000,
+      "x": 4145,
+      "y": 3000
+    },
+    "Spel2.dc.html": {
+      "h": 844,
+      "title": "Spel 2 – Tuin van de koningin",
+      "w": 390,
+      "x": 1100,
+      "y": 3000
+    },
+    "Spel3-Klaar.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Spel 3 – resultaat",
+      "w": 390,
+      "x": 470,
+      "y": 4200
+    },
+    "Spel3-Sprites.dc.html": {
+      "h": 620,
+      "title": "Spel 3 – sprite-set",
+      "w": 1000,
+      "x": 3687,
+      "y": 3920
+    },
+    "Spel3.dc.html": {
+      "h": 844,
+      "title": "Spel 3 – Complete the family",
+      "w": 390,
+      "x": 0,
+      "y": 4200
+    },
+    "Spel4-Klaar.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Spel 4 – resultaat",
+      "w": 390,
+      "x": 1570,
+      "y": 4200
+    },
+    "Spel4.dc.html": {
+      "h": 844,
+      "title": "Spel 4 – (Social)ize the family",
+      "w": 390,
+      "x": 1100,
+      "y": 4200
+    },
+    "Spel5-Klaar.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Spel 5 – resultaat",
+      "w": 390,
+      "x": 3140,
+      "y": 4200
+    },
+    "Spel5-Onderhandel.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Spel 5 – onderhandelen",
+      "w": 390,
+      "x": 2670,
+      "y": 4200
+    },
+    "Spel5.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Spel 5 – Negotiate trade deal",
+      "w": 390,
+      "x": 2200,
+      "y": 4200
+    },
+    "Spel6-Controle.dc.html": {
+      "h": 844,
+      "title": "Spel 6 – controle",
+      "w": 390,
+      "x": 470,
+      "y": 5400
+    },
+    "Spel6-Klaar.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Spel 6 – resultaat",
+      "w": 390,
+      "x": 940,
+      "y": 5400
+    },
+    "Spel6.dc.html": {
+      "h": 844,
+      "title": "Spel 6 – Selfdefense",
+      "w": 390,
+      "x": 0,
+      "y": 5400
+    },
+    "Spel7-Klaar.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Spel 7 – resultaat",
+      "w": 390,
+      "x": 2040,
+      "y": 5400
+    },
+    "Spel7.dc.html": {
+      "h": 844,
+      "title": "Spel 7 – Spot the peasant",
+      "w": 390,
+      "x": 1570,
+      "y": 5400
+    },
+    "Spel8-Klaar.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Spel 8 – resultaat",
+      "w": 390,
+      "x": 3610,
+      "y": 5400
+    },
+    "Spel8-Levels.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Spel 8 – levels",
+      "w": 390,
+      "x": 2670,
+      "y": 5400
+    },
+    "Spel8.dc.html": {
+      "h": 844,
+      "title": "Spel 8 – level 2: tijger-toren",
+      "w": 390,
+      "x": 3140,
+      "y": 5400
+    },
+    "Spel9-Klaar.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Spel 9 – resultaat",
+      "w": 390,
+      "x": 470,
+      "y": 6600
+    },
+    "Spel9.dc.html": {
+      "h": 844,
+      "title": "Spel 9 – Vang de baby",
+      "w": 390,
+      "x": 0,
+      "y": 6600
+    },
+    "Taartmenu.dc.html": {
+      "h": 1180,
+      "is_interactive": true,
+      "title": "Taartmenu – deurtje aangetikt",
+      "w": 390,
+      "x": 1410,
+      "y": 0
+    },
+    "Telefoon.dc.html": {
+      "h": 1180,
+      "is_interactive": true,
+      "title": "Telefoon – er wordt gebeld",
+      "w": 390,
+      "x": 2350,
+      "y": 0
+    },
+    "Vergrendeld.dc.html": {
+      "h": 960,
+      "title": "Vergrendeld deurtje",
+      "w": 390,
+      "x": 470,
+      "y": 0
+    },
+    "Spel4-Sprites.dc.html": {
+      "x": 4745,
+      "y": 3920,
+      "w": 1000,
+      "h": 720,
+      "title": "Spel 4 – sprite-set"
+    },
+    "Spel5-Sprites.dc.html": {
+      "x": 5825,
+      "y": 3920,
+      "w": 1000,
+      "h": 640,
+      "title": "Spel 5 – sprite-set"
+    },
+    "Spel6-Sprites.dc.html": {
+      "x": 6905,
+      "y": 3920,
+      "w": 1000,
+      "h": 600,
+      "title": "Spel 6 – sprite-set"
+    },
+    "Spel7-Sprites.dc.html": {
+      "x": 7985,
+      "y": 3920,
+      "w": 1000,
+      "h": 560,
+      "title": "Spel 7 – sprite-set"
+    },
+    "Spel8-Sprites.dc.html": {
+      "x": 9065,
+      "y": 3920,
+      "w": 1000,
+      "h": 660,
+      "title": "Spel 8 – sprite-set"
+    },
+    "Spel9-Sprites.dc.html": {
+      "x": 10145,
+      "y": 3920,
+      "w": 1000,
+      "h": 640,
+      "title": "Spel 9 – sprite-set"
+    },
+    "Spel10-Sprites.dc.html": {
+      "x": 11225,
+      "y": 3920,
+      "w": 1000,
+      "h": 720,
+      "title": "Spel 10 – sprite-set"
+    }
+  },
+  "createdOnFiles": {
+    "at": "2026-10-19T18:45:00Z",
+    "v": 1
+  },
+  "designSystems": [],
+  "launch": {
+    "view": "canvas"
+  },
+  "noteOrder": [
+    "mobiel",
+    "desktop",
+    "spellen",
+    "sprites1",
+    "sprites2",
+    "sprites3",
+    "sprites4",
+    "sprites5",
+    "sprites6",
+    "sprites7",
+    "sprites8",
+    "sprites9",
+    "sprites10",
+    "spel2",
+    "spel3",
+    "spel4",
+    "spel5",
+    "spel6",
+    "spel7",
+    "spel8",
+    "spel9",
+    "spel10"
+  ],
+  "notes": {
+    "desktop": {
+      "kind": "title1",
+      "maxW": 1280,
+      "text": "Desktop – 1280 px",
+      "w": 240,
+      "x": 0,
+      "y": 1420
+    },
+    "mobiel": {
+      "kind": "title1",
+      "maxW": 2740,
+      "text": "Mobiel – 390 px",
+      "w": 240,
+      "x": 0,
+      "y": -280
+    },
+    "spel10": {
+      "kind": "title1",
+      "maxW": 1330,
+      "text": "Spel 10 – Bereik de bevalling",
+      "w": 240,
+      "x": 1100,
+      "y": 6360
+    },
+    "spel2": {
+      "kind": "title1",
+      "maxW": 1800,
+      "text": "Spel 2 – Tuin van de koningin",
+      "w": 240,
+      "x": 1100,
+      "y": 2760
+    },
+    "spel3": {
+      "kind": "title1",
+      "maxW": 860,
+      "text": "Spel 3 – Complete the family",
+      "w": 240,
+      "x": 0,
+      "y": 3960
+    },
+    "spel4": {
+      "kind": "title1",
+      "maxW": 860,
+      "text": "Spel 4 – (Social)ize the family",
+      "w": 240,
+      "x": 1100,
+      "y": 3960
+    },
+    "spel5": {
+      "kind": "title1",
+      "maxW": 1330,
+      "text": "Spel 5 – Negotiate trade deal",
+      "w": 240,
+      "x": 2200,
+      "y": 3960
+    },
+    "spel6": {
+      "kind": "title1",
+      "maxW": 1330,
+      "text": "Spel 6 – Selfdefense",
+      "w": 240,
+      "x": 0,
+      "y": 5160
+    },
+    "spel7": {
+      "kind": "title1",
+      "maxW": 860,
+      "text": "Spel 7 – Spot the peasant",
+      "w": 240,
+      "x": 1570,
+      "y": 5160
+    },
+    "spel8": {
+      "kind": "title1",
+      "maxW": 1330,
+      "text": "Spel 8 – Check mate",
+      "w": 240,
+      "x": 2670,
+      "y": 5160
+    },
+    "spel9": {
+      "kind": "title1",
+      "maxW": 860,
+      "text": "Spel 9 – Vang de baby",
+      "w": 240,
+      "x": 0,
+      "y": 6360
+    },
+    "spellen": {
+      "kind": "title1",
+      "maxW": 860,
+      "text": "Spel 1 – Princess Presence",
+      "w": 240,
+      "x": 0,
+      "y": 2760
+    },
+    "sprites1": {
+      "kind": "title1",
+      "maxW": 1000,
+      "text": "Spel 1 – sprite-set",
+      "w": 240,
+      "x": 3000,
+      "y": 2760
+    },
+    "sprites2": {
+      "kind": "title1",
+      "maxW": 1000,
+      "text": "Spel 2 – sprite-set",
+      "w": 240,
+      "x": 4145,
+      "y": 2760
+    },
+    "sprites3": {
+      "kind": "title1",
+      "maxW": 1000,
+      "text": "Spel 3 – sprite-set",
+      "w": 240,
+      "x": 3687,
+      "y": 3725
+    },
+    "sprites4": {
+      "kind": "title1",
+      "maxW": 1000,
+      "text": "Spel 4 – sprite-set",
+      "w": 240,
+      "x": 4745,
+      "y": 3725
+    },
+    "sprites5": {
+      "kind": "title1",
+      "maxW": 1000,
+      "text": "Spel 5 – sprite-set",
+      "w": 240,
+      "x": 5825,
+      "y": 3725
+    },
+    "sprites6": {
+      "kind": "title1",
+      "maxW": 1000,
+      "text": "Spel 6 – sprite-set",
+      "w": 240,
+      "x": 6905,
+      "y": 3725
+    },
+    "sprites7": {
+      "kind": "title1",
+      "maxW": 1000,
+      "text": "Spel 7 – sprite-set",
+      "w": 240,
+      "x": 7985,
+      "y": 3725
+    },
+    "sprites8": {
+      "kind": "title1",
+      "maxW": 1000,
+      "text": "Spel 8 – sprite-set",
+      "w": 240,
+      "x": 9065,
+      "y": 3725
+    },
+    "sprites9": {
+      "kind": "title1",
+      "maxW": 1000,
+      "text": "Spel 9 – sprite-set",
+      "w": 240,
+      "x": 10145,
+      "y": 3725
+    },
+    "sprites10": {
+      "kind": "title1",
+      "maxW": 1000,
+      "text": "Spel 10 – sprite-set",
+      "w": 240,
+      "x": 11225,
+      "y": 3725
+    }
+  },
+  "order": [
+    "Main.dc.html",
+    "Vergrendeld.dc.html",
+    "Open.dc.html",
+    "Taartmenu.dc.html",
+    "Laden.dc.html",
+    "Telefoon.dc.html",
+    "Desktop.dc.html",
+    "Spel1.dc.html",
+    "Spel1-Klaar.dc.html",
+    "Spel1-Sprites.dc.html",
+    "Spel2-Sprites.dc.html",
+    "Spel3-Sprites.dc.html",
+    "Spel4-Sprites.dc.html",
+    "Spel5-Sprites.dc.html",
+    "Spel6-Sprites.dc.html",
+    "Spel7-Sprites.dc.html",
+    "Spel8-Sprites.dc.html",
+    "Spel9-Sprites.dc.html",
+    "Spel10-Sprites.dc.html",
+    "Spel2.dc.html",
+    "Spel2-Menu.dc.html",
+    "Spel2-Edelsteen.dc.html",
+    "Spel2-Klaar.dc.html",
+    "Spel3.dc.html",
+    "Spel3-Klaar.dc.html",
+    "Spel4.dc.html",
+    "Spel4-Klaar.dc.html",
+    "Spel5.dc.html",
+    "Spel5-Onderhandel.dc.html",
+    "Spel5-Klaar.dc.html",
+    "Spel6.dc.html",
+    "Spel6-Controle.dc.html",
+    "Spel6-Klaar.dc.html",
+    "Spel7.dc.html",
+    "Spel7-Klaar.dc.html",
+    "Spel8-Levels.dc.html",
+    "Spel8.dc.html",
+    "Spel8-Klaar.dc.html",
+    "Spel9.dc.html",
+    "Spel9-Klaar.dc.html",
+    "Spel10.dc.html",
+    "Spel10-Auto.dc.html",
+    "Spel10-Finale.dc.html"
+  ],
+  "pages": [],
+  "title": "Pino's Adventkalender"
+}

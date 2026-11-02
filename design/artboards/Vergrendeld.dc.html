@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<title>Vergrendeld deurtje – nog even wachten</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&amp;family=Nunito:wght@400;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:'Nunito',sans-serif;color:#1E3A4C}
+a{color:#1E3A4C;text-decoration:none}a:hover{color:#0E7FB5}
+.kop{font-family:'Fredoka',sans-serif;font-weight:700;line-height:1.1}
+.vloer{background-image:repeating-linear-gradient(30deg,rgba(255,255,255,0.38) 0 2px,transparent 2px 40px),repeating-linear-gradient(150deg,rgba(255,255,255,0.38) 0 2px,transparent 2px 40px)}
+.ic{display:block}
+.schim{border-radius:22px;height:124px}
+.knop{font-family:'Nunito',sans-serif;font-weight:800;font-size:18px;border-radius:999px;border:0;cursor:pointer;min-height:54px;padding:0 24px}
+</style>
+</helmet>
+<div class="vloer" style="width: 390px; height: 960px; box-sizing: border-box; background-color: #BFE6FA; position: relative; overflow: hidden; display: flex; flex-direction: column;">
+
+  <!-- Vervaagde kalender -->
+  <div aria-hidden="true" style="margin: 20px 16px 0; height: 150px; background: #FFFFFF; border-radius: 22px;"></div>
+  <div aria-hidden="true" style="margin: 14px 16px 0; height: 96px; background: #FFFFFF; border-radius: 22px;"></div>
+  <div aria-hidden="true" style="padding: 48px 16px 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; flex: 1;">
+    <div class="schim" style="background: #FFFFFF;"></div><div class="schim" style="background: #FFFFFF;"></div>
+    <div class="schim" style="background: #FFFFFF;"></div><div class="schim" style="background: #FFFFFF; box-shadow: 0 0 0 4px #1FA3DC;"></div>
+    <div class="schim" style="background: #E6EFF5;"></div><div class="schim" style="background: #E6EFF5;"></div>
+    <div class="schim" style="background: #E6EFF5;"></div><div class="schim" style="background: #E6EFF5;"></div>
+    <div class="schim" style="background: #E6EFF5;"></div><div class="schim" style="background: #FFE0EE;"></div>
+  </div>
+  <div aria-hidden="true" style="height: 88px; background: #FFFFFF; border-radius: 28px 28px 0 0; margin-top: 14px;"></div>
+
+  <!-- Overlay -->
+  <div aria-hidden="true" style="position: absolute; inset: 0; background: rgba(30, 58, 76, 0.55);"></div>
+
+  <!-- Melding bovenin (Sims-achtige notificatie) -->
+  <div style="position: absolute; left: 16px; right: 16px; top: 20px; background: #FFFFFF; border-radius: 18px; box-shadow: 0 8px 20px rgba(30,58,76,0.25); padding: 12px 14px; display: flex; align-items: center; gap: 12px;">
+    <div style="width: 40px; height: 40px; border-radius: 50%; background: #FFF1D6; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+      <svg class="ic" viewBox="0 0 48 48" width="26" height="26" aria-hidden="true">
+        <path d="M17 20 v-5 a7 7 0 0 1 14 0 v5" fill="none" stroke="#B8860B" stroke-width="3.5"/><rect x="12" y="20" width="24" height="20" rx="6" fill="#FFC93C"/><circle cx="24" cy="29" r="3" fill="#6B4A10"/>
+      </svg>
+    </div>
+    <div style="font-size: 14px; line-height: 1.3;"><strong>Actie niet beschikbaar.</strong> Dit deurtje is nog vergrendeld.</div>
+  </div>
+
+  <!-- Dialoog -->
+  <div role="dialog" aria-labelledby="wacht-titel" style="position: absolute; left: 20px; right: 20px; top: 250px; background: #FFFFFF; border-radius: 28px; box-shadow: 0 8px 0 0 #CDE4F0, 0 20px 40px rgba(30,58,76,0.30); padding: 0 22px 22px; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center;">
+
+    <!-- Gans als poortwachter -->
+    <div style="width: 124px; height: 124px; border-radius: 50%; background: #D9F5DE; border: 5px solid #FFFFFF; box-shadow: 0 0 0 3px #39D353, 0 8px 18px rgba(30,58,76,0.18); box-sizing: border-box; display: flex; align-items: center; justify-content: center; margin-top: -62px;">
+      <svg class="ic" viewBox="0 0 48 48" width="88" height="88" role="img" aria-label="Gans die de weg verspert">
+        <ellipse cx="20" cy="30" rx="13" ry="8" fill="#FFFFFF"/><rect x="27" y="12" width="6" height="18" rx="3" fill="#FFFFFF"/><circle cx="31" cy="12" r="5" fill="#FFFFFF"/>
+        <path d="M35 12 l7 2 -7 2z" fill="#FF8A3D"/><circle cx="32" cy="11" r="1.2" fill="#1E3A4C"/>
+        <path d="M29 8 l5 1.5" stroke="#1E3A4C" stroke-width="1.5" stroke-linecap="round"/>
+        <rect x="15" y="36" width="3" height="6" rx="1.5" fill="#FF8A3D"/><rect x="23" y="36" width="3" height="6" rx="1.5" fill="#FF8A3D"/>
+        <path d="M6 10 l-3 -4 M9 8 l-1 -5 M4 14 l-4 -1" stroke="#1E3A4C" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </div>
+
+    <div style="font-size: 13px; font-weight: 800; color: #B23A6A; letter-spacing: 1px;">KWAK KWAK KWAAAK!</div>
+    <h2 id="wacht-titel" class="kop" style="margin: 0; font-size: 28px;">Nog even wachten, Pino!</h2>
+    <p style="margin: 0; font-size: 17px; line-height: 1.4; max-width: 280px; color: #35505F;">Dit deurtje gaat pas open op <strong>28 november</strong>. De gans laat je er nog niet langs.</p>
+
+    <!-- Timer-balk -->
+    <div style="width: 100%; display: flex; flex-direction: column; gap: 6px; background: #F3F8FB; border-radius: 16px; padding: 12px 16px; box-sizing: border-box;">
+      <div style="display: flex; justify-content: space-between; align-items: baseline; font-size: 14px; font-weight: 800;">
+        <span>Ontgrendelt over</span>
+        <span class="kop" style="font-size: 22px; color: #1F7A3A;">1 dag</span>
+      </div>
+      <div aria-hidden="true" style="height: 12px; border-radius: 999px; background: #E6EFF5; overflow: hidden;">
+        <div style="width: 78%; height: 100%; border-radius: 999px; background: #39D353; box-shadow: inset 0 -3px 0 0 #1FA34A;"></div>
+      </div>
+    </div>
+
+    <a href="Main.dc.html" class="knop" style="display: inline-flex; align-items: center; justify-content: center; background: #1FA3DC; color: #FFFFFF; width: 100%; box-sizing: border-box; box-shadow: 0 5px 0 0 #0E7FB5; margin-top: 4px;">Oké, ik wacht wel</a>
+    <a href="Open.dc.html" style="font-size: 15px; font-weight: 800; color: #0E7FB5; padding: 6px;">Naar het deurtje van vandaag</a>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":960}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

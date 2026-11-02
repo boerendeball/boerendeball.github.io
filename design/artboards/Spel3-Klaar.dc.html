@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<title>Spel 3 – resultaat</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&amp;family=Nunito:wght@400;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:'Nunito',sans-serif;color:#1E3A4C}
+a{color:#1E3A4C;text-decoration:none}a:hover{color:#0E7FB5}
+.kop{font-family:'Fredoka',sans-serif;font-weight:700;line-height:1.1}
+.ic{display:block}
+.vloer{background-image:repeating-linear-gradient(30deg,rgba(255,255,255,0.38) 0 2px,transparent 2px 40px),repeating-linear-gradient(150deg,rgba(255,255,255,0.38) 0 2px,transparent 2px 40px)}
+.kaart{background:#FFFFFF;border-radius:26px;box-shadow:0 7px 0 0 #CDE4F0,0 14px 28px rgba(30,58,76,0.12)}
+.knop{font-family:'Nunito',sans-serif;font-weight:800;font-size:18px;border-radius:999px;border:0;cursor:pointer;min-height:54px;padding:0 22px;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.tegel{display:flex;flex-direction:column;align-items:center;gap:4px;background:#F3F8FB;border-radius:16px;padding:12px 8px}
+.tegel-label{font-size:11px;font-weight:800;color:#4F6B7E;letter-spacing:0.5px}
+</style>
+</helmet>
+<div class="vloer" style="width: 390px; height: 844px; box-sizing: border-box; background-color: #BFE6FA; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; position: relative; overflow: hidden;">
+
+  <!-- confetti -->
+  <div aria-hidden="true" style="position: absolute; left: 30px; top: 60px; width: 10px; height: 10px; border-radius: 3px; background: #FF6FAE; box-shadow: 70px 30px 0 0 #FFC93C, 140px -10px 0 0 #39D353, 220px 24px 0 0 #9B6BFF, 290px 4px 0 0 #1FA3DC, 330px 50px 0 0 #FF6FAE, 100px 90px 0 0 #1FA3DC, 250px 80px 0 0 #FFC93C;"></div>
+
+  <div class="kaart" style="width: 100%; padding: 0 22px 24px; display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center; margin-top: 30px;">
+
+    <div style="width: 128px; height: 128px; border-radius: 50%; background: #FFF1D6; border: 6px solid #FFFFFF; box-shadow: 0 0 0 3px #FFC93C, 0 8px 18px rgba(30,58,76,0.18); box-sizing: border-box; display: flex; align-items: center; justify-content: center; margin-top: -50px;">
+      <svg class="ic" viewBox="0 0 48 48" width="84" height="84" role="img" aria-label="Complete familie"><circle cx="10" cy="27" r="7" fill="#FFFFFF"/><path d="M16 26 l6 1.5 -6 1.5z" fill="#FF8A3D"/><circle cx="12" cy="25" r="1.2" fill="#1E3A4C"/><path d="M8 29 q2 2 4 0" fill="none" stroke="#1E3A4C" stroke-width="1" stroke-linecap="round"/><circle cx="24" cy="27" r="7" fill="#FFF7EA"/><circle cx="18" cy="22" r="2.5" fill="#FFF7EA"/><circle cx="30" cy="22" r="2.5" fill="#FFF7EA"/><ellipse cx="24" cy="29" rx="4" ry="3" fill="#4A3426"/><circle cx="22.5" cy="28" r="0.8" fill="#FFFFFF"/><circle cx="25.5" cy="28" r="0.8" fill="#FFFFFF"/><path d="M22.5 30.5 q1.5 1.5 3 0" fill="none" stroke="#FFFFFF" stroke-width="0.9" stroke-linecap="round"/><circle cx="38" cy="27" r="7" fill="#FFB8D4"/><path d="M32 22 l2 -5 3 3z M44 22 l-2 -5 -3 3z" fill="#FFB8D4"/><ellipse cx="38" cy="29" rx="3" ry="2" fill="#FF6FAE"/><circle cx="37" cy="29" r="0.7" fill="#B23A6A"/><circle cx="39" cy="29" r="0.7" fill="#B23A6A"/><circle cx="35.5" cy="26" r="1" fill="#1E3A4C"/><circle cx="40.5" cy="26" r="1" fill="#1E3A4C"/><path d="M35 32 q3 2.5 6 0" fill="none" stroke="#B23A6A" stroke-width="1" stroke-linecap="round"/><circle cx="8" cy="23" r="1.6" fill="#FF6FAE"/><circle cx="40" cy="23" r="1.6" fill="#FF6FAE"/><path d="M24 12 c-3 -4 -8 -1 -5 3 l5 5 5 -5 c3 -4 -2 -7 -5 -3z" fill="#FF6FAE"/><path d="M10 9 c-2 -2.5 -5 -0.5 -3 2 l3 3 3 -3 c2 -2.5 -1 -4.5 -3 -2z" fill="#FFC93C"/><path d="M38 9 c-2 -2.5 -5 -0.5 -3 2 l3 3 3 -3 c2 -2.5 -1 -4.5 -3 -2z" fill="#5BC0EB"/></svg>
+    </div>
+
+    <div style="font-size: 12px; font-weight: 800; color: #0E7FB5; letter-spacing: 1px;">COMPLETE THE FAMILY · KLAAR</div>
+    <h1 class="kop" style="margin: 0; font-size: 30px;">Iedereen is weer thuis!</h1>
+    <p style="margin: 0; font-size: 16px; line-height: 1.45; color: #35505F;">Familie Tan is compleet en nodigt Pino uit op vakantie: er moet een familiefoto komen.</p>
+
+    <!-- sterren -->
+    <div style="display: flex; gap: 6px;" role="img" aria-label="Drie van de drie sterren">
+      <svg class="ic" viewBox="0 0 48 48" width="40" height="40" aria-hidden="true"><path d="M24 4 l6 13 14 1.5 -10.5 9.5 3 14 -12.5 -7.5 -12.5 7.5 3 -14 -10.5 -9.5 14 -1.5z" fill="#FFC93C" stroke="#D97A00" stroke-width="2"/></svg>
+      <svg class="ic" viewBox="0 0 48 48" width="48" height="48" aria-hidden="true" style="margin-top: -8px;"><path d="M24 4 l6 13 14 1.5 -10.5 9.5 3 14 -12.5 -7.5 -12.5 7.5 3 -14 -10.5 -9.5 14 -1.5z" fill="#FFC93C" stroke="#D97A00" stroke-width="2"/></svg>
+      <svg class="ic" viewBox="0 0 48 48" width="40" height="40" aria-hidden="true"><path d="M24 4 l6 13 14 1.5 -10.5 9.5 3 14 -12.5 -7.5 -12.5 7.5 3 -14 -10.5 -9.5 14 -1.5z" fill="#FFC93C" stroke="#D97A00" stroke-width="2"/></svg>
+    </div>
+
+    <!-- scoretegels -->
+    <div style="width: 100%; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px;">
+      <div class="tegel"><span class="tegel-label">GEKOPPELD</span><span class="kop" style="font-size: 26px; color: #1F7A3A;">3/3</span></div>
+      <div class="tegel"><span class="tegel-label">FOUT</span><span class="kop" style="font-size: 26px; color: #C43B38;">1</span></div>
+      <div class="tegel"><span class="tegel-label">EDELSTENEN OVER</span><span class="kop" style="font-size: 26px; color: #9A5B00;">1</span></div>
+    </div>
+
+    <!-- beloning -->
+    <div style="width: 100%; display: flex; align-items: center; gap: 12px; background: #F1E8FF; border-radius: 16px; padding: 12px 14px; box-sizing: border-box; text-align: left;">
+      <div style="width: 44px; height: 44px; border-radius: 50%; background: #FFFFFF; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+        <svg class="ic" viewBox="0 0 48 48" width="28" height="28" aria-hidden="true"><path d="M8 40 L30 8 l10 10 -22 22z" fill="#6B3FCF"/><path d="M8 40 l4 -10 6 6z" fill="#F6C9A8"/><path d="M30 8 l10 10" stroke="#B894FF" stroke-width="4"/></svg>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 2px;">
+        <div style="font-size: 12px; font-weight: 800; color: #6B3FCF; letter-spacing: 0.5px;">VAARDIGHEID VERDIEND</div>
+        <div style="font-size: 16px; font-weight: 800;">Creativiteit +1 <span style="font-weight: 700; color: #4F6B7E;">· Behoefte "Verjaardag" +10%</span></div>
+      </div>
+    </div>
+
+    <div style="width: 100%; display: flex; flex-direction: column; gap: 10px; margin-top: 4px;">
+      <a href="Main.dc.html" class="knop" style="background: #39D353; color: #0E3D1C; box-shadow: 0 5px 0 0 #1FA34A;">Terug naar de kalender</a>
+      <a href="Spel3.dc.html" class="knop" style="background: #E6EFF5; color: #4F6B7E; box-shadow: 0 5px 0 0 #CDE4F0;">Nog een keer</a>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

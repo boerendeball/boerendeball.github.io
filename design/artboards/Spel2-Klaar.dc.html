@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<title>Spel 2 – resultaat</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&amp;family=Nunito:wght@400;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:'Nunito',sans-serif;color:#1E3A4C}
+a{color:#1E3A4C;text-decoration:none}a:hover{color:#0E7FB5}
+.kop{font-family:'Fredoka',sans-serif;font-weight:700;line-height:1.1}
+.ic{display:block}
+.vloer{background-image:repeating-linear-gradient(30deg,rgba(255,255,255,0.38) 0 2px,transparent 2px 40px),repeating-linear-gradient(150deg,rgba(255,255,255,0.38) 0 2px,transparent 2px 40px)}
+.kaart{background:#FFFFFF;border-radius:26px;box-shadow:0 7px 0 0 #CDE4F0,0 14px 28px rgba(30,58,76,0.12)}
+.knop{font-family:'Nunito',sans-serif;font-weight:800;font-size:18px;border-radius:999px;border:0;cursor:pointer;min-height:54px;padding:0 22px;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.tegel{display:flex;flex-direction:column;align-items:center;gap:4px;background:#F3F8FB;border-radius:16px;padding:12px 8px}
+.tegel-label{font-size:11px;font-weight:800;color:#4F6B7E;letter-spacing:0.5px}
+</style>
+</helmet>
+<div class="vloer" style="width: 390px; height: 844px; box-sizing: border-box; background-color: #BFE6FA; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; position: relative; overflow: hidden;">
+
+  <!-- confetti -->
+  <div aria-hidden="true" style="position: absolute; left: 30px; top: 60px; width: 10px; height: 10px; border-radius: 3px; background: #FF6FAE; box-shadow: 70px 30px 0 0 #FFC93C, 140px -10px 0 0 #39D353, 220px 24px 0 0 #9B6BFF, 290px 4px 0 0 #1FA3DC, 330px 50px 0 0 #FF6FAE, 100px 90px 0 0 #1FA3DC, 250px 80px 0 0 #FFC93C;"></div>
+
+  <div class="kaart" style="width: 100%; padding: 0 22px 24px; display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center; margin-top: 30px;">
+
+    <div style="width: 128px; height: 128px; border-radius: 50%; background: #D9F5DE; border: 6px solid #FFFFFF; box-shadow: 0 0 0 3px #39D353, 0 8px 18px rgba(30,58,76,0.18); box-sizing: border-box; display: flex; align-items: center; justify-content: center; margin-top: -50px;">
+      <svg class="ic" viewBox="0 0 56 64" width="80" height="92" role="img" aria-label="Tuintegel met boom">
+        <polygon points="28,2 54,17 54,47 28,62 2,47 2,17" fill="#1FA34A"/><polygon points="28,6 50,19 50,45 28,58 6,45 6,19" fill="#39D353"/>
+        <g transform="translate(28 30) scale(1.9)"><circle cx="0" cy="-4" r="5" fill="#FFFFFF"/><circle cx="-4" cy="-1.5" r="3.8" fill="#FFFFFF"/><circle cx="4" cy="-1.5" r="3.8" fill="#FFFFFF"/><circle cx="0" cy="0" r="3.5" fill="#FFFFFF"/><rect x="-1" y="1.5" width="2" height="5.5" rx="0.6" fill="#FFFFFF"/></g>
+      </svg>
+    </div>
+
+    <div style="font-size: 12px; font-weight: 800; color: #0E7FB5; letter-spacing: 1px;">TUIN VAN DE KONINGIN · KLAAR</div>
+    <h1 class="kop" style="margin: 0; font-size: 30px;">Het pad is gelegd!</h1>
+    <p style="margin: 0; font-size: 16px; line-height: 1.45; color: #35505F;">De koningin kan weer naar haar fontein wandelen. Elke tegel past precies bij zijn buur.</p>
+
+    <!-- sterren -->
+    <div style="display: flex; gap: 6px;" role="img" aria-label="Drie van de drie sterren">
+      <svg class="ic" viewBox="0 0 48 48" width="40" height="40" aria-hidden="true"><path d="M24 4 l6 13 14 1.5 -10.5 9.5 3 14 -12.5 -7.5 -12.5 7.5 3 -14 -10.5 -9.5 14 -1.5z" fill="#FFC93C" stroke="#D97A00" stroke-width="2"/></svg>
+      <svg class="ic" viewBox="0 0 48 48" width="48" height="48" aria-hidden="true" style="margin-top: -8px;"><path d="M24 4 l6 13 14 1.5 -10.5 9.5 3 14 -12.5 -7.5 -12.5 7.5 3 -14 -10.5 -9.5 14 -1.5z" fill="#FFC93C" stroke="#D97A00" stroke-width="2"/></svg>
+      <svg class="ic" viewBox="0 0 48 48" width="40" height="40" aria-hidden="true"><path d="M24 4 l6 13 14 1.5 -10.5 9.5 3 14 -12.5 -7.5 -12.5 7.5 3 -14 -10.5 -9.5 14 -1.5z" fill="#FFC93C" stroke="#D97A00" stroke-width="2"/></svg>
+    </div>
+
+    <!-- scoretegels -->
+    <div style="width: 100%; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px;">
+      <div class="tegel"><span class="tegel-label">TEGELS</span><span class="kop" style="font-size: 26px; color: #1F7A3A;">12</span></div>
+      <div class="tegel"><span class="tegel-label">ZETTEN</span><span class="kop" style="font-size: 26px; color: #0E6A98;">14</span></div>
+      <div class="tegel"><span class="tegel-label">BESTE</span><span class="kop" style="font-size: 26px; color: #D97A00;">14</span></div>
+    </div>
+
+    <!-- beloning -->
+    <div style="width: 100%; display: flex; align-items: center; gap: 12px; background: #F1E8FF; border-radius: 16px; padding: 12px 14px; box-sizing: border-box; text-align: left;">
+      <div style="width: 44px; height: 44px; border-radius: 50%; background: #FFFFFF; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+        <svg class="ic" viewBox="0 0 48 48" width="28" height="28" aria-hidden="true"><path d="M24 6 a12 12 0 0 1 7 21.7 V32 H17 v-4.3 A12 12 0 0 1 24 6z" fill="#6B3FCF"/><rect x="18" y="34" width="12" height="4" rx="2" fill="#6B3FCF"/><rect x="20" y="39" width="8" height="3" rx="1.5" fill="#6B3FCF"/></svg>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 2px;">
+        <div style="font-size: 12px; font-weight: 800; color: #6B3FCF; letter-spacing: 0.5px;">VAARDIGHEID VERDIEND</div>
+        <div style="font-size: 16px; font-weight: 800;">Logica +1 <span style="font-weight: 700; color: #4F6B7E;">· Behoefte "Verjaardag" +10%</span></div>
+      </div>
+    </div>
+
+    <div style="width: 100%; display: flex; flex-direction: column; gap: 10px; margin-top: 4px;">
+      <a href="Main.dc.html" class="knop" style="background: #39D353; color: #0E3D1C; box-shadow: 0 5px 0 0 #1FA34A;">Terug naar de kalender</a>
+      <a href="Spel2.dc.html" class="knop" style="background: #E6EFF5; color: #4F6B7E; box-shadow: 0 5px 0 0 #CDE4F0;">Nog een keer</a>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

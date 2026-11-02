@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<title>Telefoon – er wordt gebeld</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&amp;family=Nunito:wght@400;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:'Nunito',sans-serif;color:#1E3A4C}
+a{color:#1E3A4C;text-decoration:none}a:hover{color:#0E7FB5}
+.kop{font-family:'Fredoka',sans-serif;font-weight:700;line-height:1.1}
+.ic{display:block}
+.knop{font-family:'Nunito',sans-serif;font-weight:800;font-size:18px;border-radius:999px;border:0;cursor:pointer;min-height:54px;padding:0 22px;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+@keyframes rinkel{0%,100%{transform:rotate(0deg)}10%{transform:rotate(-12deg)}20%{transform:rotate(10deg)}30%{transform:rotate(-10deg)}40%{transform:rotate(8deg)}50%{transform:rotate(-6deg)}60%{transform:rotate(4deg)}70%{transform:rotate(0deg)}}
+.rinkelt{animation:rinkel 1.6s ease-in-out infinite;transform-origin:50% 80%}
+@keyframes golf{0%{opacity:0.9;transform:scale(0.7)}100%{opacity:0;transform:scale(1.6)}}
+.golf{position:absolute;border-radius:50%;border:4px solid #1FA3DC;animation:golf 1.6s ease-out infinite}
+</style>
+</helmet>
+<div style="width: 390px; height: 1180px; box-sizing: border-box; position: relative; overflow: hidden; background: #BFE6FA;">
+
+  <!-- De kalender eronder -->
+  <div style="position: absolute; inset: 0;">
+    <dc-import name="Main" dagen="{{dagen}}" hint-size="390px,1180px"></dc-import>
+  </div>
+  <div aria-hidden="true" style="position: absolute; inset: 0; background: rgba(30, 58, 76, 0.45);"></div>
+
+  <!-- Melding bovenin -->
+  <div role="status" style="position: absolute; left: 16px; right: 16px; top: 20px; background: #FFFFFF; border-radius: 18px; box-shadow: 0 8px 20px rgba(30,58,76,0.25); padding: 12px 14px; display: flex; align-items: center; gap: 12px;">
+    <div style="width: 40px; height: 40px; border-radius: 50%; background: #E3F4FC; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+      <svg class="ic rinkelt" viewBox="0 0 48 48" width="24" height="24" aria-hidden="true"><path d="M14 6 h8 l4 10 -6 4 c2 6 6 10 12 12 l4 -6 10 4 v8 c0 2 -2 4 -4 4 C22 42 6 26 6 10 c0 -2 2 -4 4 -4z" fill="#0E7FB5"/></svg>
+    </div>
+    <div style="font-size: 14px; line-height: 1.3;"><strong>Er wordt gebeld!</strong> Een nieuw deurtje staat voor je klaar.</div>
+  </div>
+
+  <!-- Belscherm -->
+  <div role="dialog" aria-labelledby="bel-titel" style="position: absolute; left: 20px; right: 20px; top: 300px; background: #FFFFFF; border-radius: 28px; box-shadow: 0 8px 0 0 #CDE4F0, 0 20px 40px rgba(30,58,76,0.30); padding: 0 22px 22px; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center;">
+
+    <!-- Rinkelende telefoon -->
+    <div style="position: relative; width: 128px; height: 128px; margin-top: -64px;">
+      <span class="golf" aria-hidden="true" style="inset: 0;"></span>
+      <span class="golf" aria-hidden="true" style="inset: 0; animation-delay: 0.8s;"></span>
+      <div style="position: absolute; inset: 0; border-radius: 50%; background: #E3F4FC; border: 5px solid #FFFFFF; box-shadow: 0 0 0 3px #1FA3DC, 0 8px 18px rgba(30,58,76,0.18); box-sizing: border-box; display: flex; align-items: center; justify-content: center;">
+        <svg class="ic rinkelt" viewBox="0 0 64 64" width="84" height="84" role="img" aria-label="Ouderwetse telefoon die rinkelt">
+          <rect x="8" y="30" width="48" height="26" rx="8" fill="#FF6FAE"/>
+          <rect x="14" y="36" width="36" height="14" rx="4" fill="#FFE0EE"/>
+          <circle cx="22" cy="43" r="3" fill="#B23A6A"/><circle cx="32" cy="43" r="3" fill="#B23A6A"/><circle cx="42" cy="43" r="3" fill="#B23A6A"/>
+          <path d="M10 26 c0 -8 10 -12 22 -12 s22 4 22 12 v4 h-10 v-4 c0 -2 -5 -4 -12 -4 s-12 2 -12 4 v4 h-10z" fill="#B23A6A"/>
+          <rect x="30" y="20" width="4" height="10" fill="#B23A6A"/>
+        </svg>
+      </div>
+    </div>
+
+    <div style="font-size: 13px; font-weight: 800; color: #0E7FB5; letter-spacing: 1px;">RING RING!</div>
+    <h2 id="bel-titel" class="kop" style="margin: 0; font-size: 28px;">Deurtje 27 november is open!</h2>
+    <p style="margin: 0; font-size: 17px; line-height: 1.4; max-width: 290px; color: #35505F;">Dag 4 van 10 staat klaar: <strong>(Social)ize the family</strong>. Neem op om te zien wat Pino vandaag te doen heeft.</p>
+
+    <!-- Beller -->
+    <div style="width: 100%; display: flex; align-items: center; gap: 12px; background: #F3F8FB; border-radius: 16px; padding: 12px 14px; box-sizing: border-box; text-align: left;">
+      <div style="width: 44px; height: 44px; border-radius: 50%; background: #D9F5DE; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+        <svg class="ic" viewBox="0 0 48 48" width="30" height="30" aria-hidden="true"><ellipse cx="20" cy="30" rx="13" ry="8" fill="#FFFFFF"/><rect x="27" y="12" width="6" height="18" rx="3" fill="#FFFFFF"/><circle cx="31" cy="12" r="5" fill="#FFFFFF"/><path d="M35 12 l7 2 -7 2z" fill="#FF8A3D"/><circle cx="32" cy="11" r="1.2" fill="#1E3A4C"/></svg>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 2px;">
+        <div style="font-size: 12px; font-weight: 800; color: #4F6B7E; letter-spacing: 0.5px;">BELLER</div>
+        <div style="font-size: 16px; font-weight: 800;">De Gans · Kalendercentrale</div>
+      </div>
+    </div>
+
+    <div style="width: 100%; display: flex; gap: 10px; margin-top: 4px;">
+      <a href="Main.dc.html" class="knop" style="flex: 1; background: #E6EFF5; color: #4F6B7E; box-shadow: 0 5px 0 0 #CDE4F0;">Later</a>
+      <a href="Taartmenu.dc.html" class="knop" style="flex: 1.4; background: #39D353; color: #0E3D1C; box-shadow: 0 5px 0 0 #1FA34A;">
+        <svg class="ic" viewBox="0 0 48 48" width="20" height="20" aria-hidden="true"><path d="M14 6 h8 l4 10 -6 4 c2 6 6 10 12 12 l4 -6 10 4 v8 c0 2 -2 4 -4 4 C22 42 6 26 6 10 c0 -2 2 -4 4 -4z" fill="#0E3D1C"/></svg>
+        Opnemen
+      </a>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"dagen":{"editor":"int","default":7,"min":0,"max":10,"section":"Aftellen"},"$preview":{"width":390,"height":1180}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return { dagen: this.props.dagen ?? 7 };
+  }
+}
+</script>
+</body>
+</html>

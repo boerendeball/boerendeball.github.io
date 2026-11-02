@@ -1,0 +1,312 @@
+/* Basis: palet, fonts, vloer, kaarten, knoppen. Alle schermen bouwen hierop voort.
+   Waarden komen uit CLAUDE.md (palet) en design/artboards/*.dc.html (maten). */
+
+:root {
+  /* app */
+  --achtergrond: #BFE6FA;
+  --tekst: #1E3A4C;
+  --gedempt: #4F6B7E;
+  --gedempt-2: #35505F;
+  --gedempt-3: #8AA0AF;
+  --kaart: #FFFFFF;
+  --kaart-schaduw: #CDE4F0;
+  --vlak: #E6EFF5;
+  --vlak-rand: #D3E1EA;
+  --vlak-licht: #F3F8FB;
+
+  /* teal */
+  --teal: #1FA3DC;
+  --teal-schaduw: #0E7FB5;
+  --teal-donker: #0E6A98;
+  --teal-licht: #E3F4FC;
+  --teal-lichter: #DDF1FB;
+
+  /* groen */
+  --groen: #39D353;
+  --groen-schaduw: #1FA34A;
+  --groen-licht: #E9F8EC;
+  --groen-tekst: #1F7A3A;
+  --gras: #8BD35A;
+  --gras-2: #9ADB7A;
+  --gras-schaduw: #5FB05A;
+  --jungle: #4E9A3E;
+  --jungle-schaduw: #2E7D1E;
+
+  /* geel */
+  --geel: #FFC93C;
+  --geel-schaduw: #D97A00;
+  --geel-licht: #FFF1D6;
+  --geel-tekst: #9A5B00;
+  --lichtgeel: #FFE08A;
+
+  /* rood */
+  --rood: #FF5E5B;
+  --rood-schaduw: #C43B38;
+
+  /* roze (Pino) */
+  --roze: #FF6FAE;
+  --roze-schaduw: #B23A6A;
+  --roze-licht: #FFD6E6;
+
+  /* paars (vaardigheid) */
+  --paars: #9B6BFF;
+  --paars-schaduw: #6B3FCF;
+  --paars-licht: #F1E8FF;
+
+  /* materialen */
+  --hout: #D98E55;
+  --hout-2: #C2743C;
+  --hout-donker: #8B4A1E;
+  --stro: #D9B27C;
+  --riet: #C9A77A;
+  --huid: #F6C9A8;
+  --huid-2: #E8B48A;
+  --huid-3: #C98B5A;
+  --zand: #FDE9B6;
+  --zand-schaduw: #F2CF8A;
+  --zee: #1FA3DC;
+  --zee-schaduw: #0E7FB5;
+  --lucht: #8ED8F8;
+  --avondlucht: #2B4A66;
+  --kassei: #556B8E;
+  --kassei-schaduw: #4E6384;
+  --asfalt: #4F6B7E;
+  --stoep: #CFD8DC;
+  --stoep-2: #DDE7EE;
+  --klinker: #C2743C;
+  --klinker-2: #D98E55;
+  --bord-licht: #D9CFA8;
+  --bord-donker: #8AA66E;
+  --bord-rand: #3D7A30;
+
+  /* typografie */
+  --font-kop: 'Fredoka', 'Nunito', system-ui, sans-serif;
+  --font-tekst: 'Nunito', system-ui, sans-serif;
+
+  /* maten uit het ontwerp */
+  --scherm-breedte: 390px;
+  --scene-breedte: 358px;
+  --radius-kaart: 22px;
+  --radius-knop: 16px;
+}
+
+/* ---------- reset ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  min-height: 100dvh;
+  background-color: var(--achtergrond);
+  color: var(--tekst);
+  font-family: var(--font-tekst);
+  font-size: 16px;
+  line-height: 1.35;
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior-y: none;
+}
+
+button, input { font: inherit; color: inherit; }
+
+button { cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+
+a { color: inherit; text-decoration: none; }
+a:hover { color: var(--teal-schaduw); }
+
+img, svg { display: block; }
+
+:focus-visible { outline: 3px solid var(--teal); outline-offset: 3px; border-radius: 6px; }
+
+/* ---------- vloer: isometrische tegellijnen (uit het ontwerp) ---------- */
+.vloer {
+  background-color: var(--achtergrond);
+  background-image:
+    repeating-linear-gradient(30deg, rgba(255, 255, 255, 0.38) 0 2px, transparent 2px 40px),
+    repeating-linear-gradient(150deg, rgba(255, 255, 255, 0.38) 0 2px, transparent 2px 40px);
+}
+
+/* ---------- typografie ---------- */
+.kop {
+  font-family: var(--font-kop);
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.gedempt { color: var(--gedempt); }
+
+.label-klein {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: var(--gedempt);
+  text-transform: uppercase;
+}
+
+/* ---------- lay-out ---------- */
+#app {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Eén telefoonscherm breed, gecentreerd op grotere schermen. */
+.scherm {
+  width: 100%;
+  max-width: var(--scherm-breedte);
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  padding: 16px 16px calc(16px + env(safe-area-inset-bottom));
+  position: relative;
+}
+
+/* ---------- kaarten ---------- */
+.kaart {
+  background: var(--kaart);
+  border-radius: var(--radius-kaart);
+  box-shadow: 0 6px 0 0 var(--kaart-schaduw), 0 12px 24px rgba(30, 58, 76, 0.12);
+}
+
+.kaart-plat {
+  background: var(--kaart);
+  border-radius: 18px;
+  box-shadow: 0 5px 0 0 var(--kaart-schaduw);
+}
+
+.chip {
+  display: inline-block;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 5px 11px;
+  border-radius: 999px;
+  background: var(--teal-licht);
+  color: var(--teal-donker);
+}
+.chip-groen { background: var(--groen-licht); color: var(--groen-tekst); }
+.chip-geel { background: var(--geel-licht); color: var(--geel-tekst); }
+.chip-paars { background: var(--paars-licht); color: var(--paars-schaduw); }
+.chip-roze { background: var(--roze-licht); color: var(--roze-schaduw); }
+
+.pil {
+  display: inline-block;
+  font-size: 13px;
+  font-weight: 800;
+  padding: 3px 10px;
+  border-radius: 999px;
+}
+
+/* ---------- knoppen ---------- */
+/* Witte icoonknop (pijlen, D-pad, terug) — 52 px, schaduw als 3D-rand. */
+.knop-icoon {
+  width: 52px;
+  height: 52px;
+  border: 0;
+  border-radius: var(--radius-knop);
+  background: var(--kaart);
+  box-shadow: 0 4px 0 0 var(--kaart-schaduw);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  color: var(--teal-schaduw);
+  transition: transform 0.08s ease, box-shadow 0.08s ease;
+}
+.knop-icoon:active { transform: translateY(3px); box-shadow: 0 1px 0 0 var(--kaart-schaduw); }
+
+/* Ronde terug-knop in de kopbalk (44 px). */
+.knop-rond {
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--kaart);
+  box-shadow: 0 4px 0 0 var(--kaart-schaduw);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  color: var(--teal-schaduw);
+}
+.knop-rond:active { transform: translateY(3px); box-shadow: 0 1px 0 0 var(--kaart-schaduw); }
+
+/* Gekleurde primaire knop (teal), met variant rood/groen. */
+.knop {
+  min-height: 52px;
+  border: 0;
+  border-radius: var(--radius-knop);
+  padding: 0 22px;
+  background: var(--teal);
+  color: #fff;
+  font-family: var(--font-kop);
+  font-weight: 700;
+  font-size: 18px;
+  box-shadow: 0 5px 0 0 var(--teal-schaduw);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: transform 0.08s ease, box-shadow 0.08s ease;
+}
+.knop:active { transform: translateY(4px); box-shadow: 0 1px 0 0 var(--teal-schaduw); }
+.knop-rood { background: var(--rood); box-shadow: 0 5px 0 0 var(--rood-schaduw); }
+.knop-rood:active { box-shadow: 0 1px 0 0 var(--rood-schaduw); }
+.knop-groen { background: var(--groen); box-shadow: 0 5px 0 0 var(--groen-schaduw); }
+.knop-groen:active { box-shadow: 0 1px 0 0 var(--groen-schaduw); }
+.knop[disabled], .knop-icoon[disabled] { opacity: 0.5; cursor: default; transform: none; }
+
+/* ---------- iconen en tellers ---------- */
+.ic { display: block; flex-shrink: 0; }
+
+/* Teller: altijd icoon + getal, nooit een label. */
+.teller {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 0 12px 0 8px;
+  border-radius: 999px;
+  background: var(--kaart);
+  box-shadow: 0 3px 0 0 var(--kaart-schaduw);
+  font-family: var(--font-kop);
+  font-weight: 700;
+  font-size: 20px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- balken ---------- */
+.balk {
+  display: block;
+  height: 12px;
+  border-radius: 999px;
+  background: var(--vlak);
+  overflow: hidden;
+  box-shadow: inset 0 2px 0 0 var(--vlak-rand);
+}
+.balk > span { display: block; height: 100%; border-radius: 999px; transition: width 0.4s ease; }
+.balk-groen > span { background: var(--groen); box-shadow: inset 0 -3px 0 0 var(--groen-schaduw); }
+.balk-geel > span { background: var(--geel); box-shadow: inset 0 -3px 0 0 var(--geel-schaduw); }
+.balk-rood > span { background: var(--rood); box-shadow: inset 0 -3px 0 0 var(--rood-schaduw); }
+
+/* ---------- hulpjes ---------- */
+.verborgen { display: none !important; }
+
+.visueel-verborgen {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.noscript { margin: 32px auto; max-width: 320px; padding: 24px; text-align: center; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+}

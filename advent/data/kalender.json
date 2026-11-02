@@ -1,0 +1,17 @@
+{
+  "_opmerking": "Titels, iconen en vaardigheidspunten per deurtje. Datums staan in js/datum.js. Briefjes vult Benjamin nog in (null = placeholder).",
+  "dagen": [
+    { "dag": 1,  "titel": "Princess Presence",      "icoon": "kroon",    "vaardigheid": "lichaam",      "briefje": null },
+    { "dag": 2,  "titel": "Tuin van de koningin",   "icoon": "tuin",     "vaardigheid": "logica",       "briefje": null },
+    { "dag": 3,  "titel": "Complete the family",    "icoon": "familie",  "vaardigheid": "creativiteit", "briefje": null },
+    { "dag": 4,  "titel": "(Social)ize the family", "icoon": "camera",   "vaardigheid": "charisma",     "briefje": null },
+    { "dag": 5,  "titel": "Negotiate trade deal",   "icoon": "munten",   "vaardigheid": "charisma",     "briefje": null },
+    { "dag": 6,  "titel": "Selfdefense",            "icoon": "gi",       "vaardigheid": "lichaam",      "briefje": null },
+    { "dag": 7,  "titel": "Spot the peasant",       "icoon": "loep",     "vaardigheid": "logica",       "briefje": null },
+    { "dag": 8,  "titel": "Check mate",             "icoon": "tijger",   "vaardigheid": "logica",       "briefje": null },
+    { "dag": 9,  "titel": "Vang de baby",           "icoon": "baby",     "vaardigheid": "lichaam",      "briefje": null },
+    { "dag": 10, "titel": "Bereik de bevalling",    "icoon": "taart",    "vaardigheid": null,           "briefje": null }
+  ],
+  "vaardigheden": ["koken", "mechanica", "charisma", "lichaam", "logica", "creativiteit"],
+  "behoeften": ["verjaardag", "gansjes", "lammetjes", "snoepjes", "jiujitsu", "bordspellen", "reizen", "sieraden"]
+}

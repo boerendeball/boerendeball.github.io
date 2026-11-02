@@ -61,10 +61,14 @@ Als een scherm in `design/previews` nog tekst bevat die hiermee in strijd is, is
 
 ## Technische uitgangspunten (al afgesproken)
 
-- **GitHub Pages**, statische site. Geen build-stap die nodig is om de site te laten werken; alles moet direct vanuit de repo serveren. Of er toch een framework of bundler komt, is nog niet besloten — bespreek dat eerst.
+- **GitHub Pages**, statische site. Geen build-stap die nodig is om de site te laten werken; alles moet direct vanuit de repo serveren.
+- **Gekozen stack (besluit Benjamin, 2 november 2026): vanilla HTML/CSS/JS met native ES-modules, geen framework, geen bundler, geen packages.** De kalender is één app onder `/advent/` met hash-routing (`#/`, `#/spel/3`, …). Kalme spellen zijn SVG-DOM; de actiespellen (1, 6, 9, 10) tekenen op canvas met een sprite sheet die tijdens runtime uit dezelfde SVG-symbolen wordt gerasterd. Dev-tooling: alleen een lokale statische server (`npx serve .`, zie `.claude/launch.json`); geen `package.json`, geen testrunner.
+- Code-indeling: `advent/index.html` (schil), `advent/css/` (`basis.css` = palet als custom properties, vloer, kaarten, knoppen), `advent/js/` (`app.js`, `router.js`, `staat.js`, `datum.js`, `sprites.js`, `invoer.js`, `ui/`, `spellen/`), `advent/data/` (`kalender.json`, `laadteksten.json`). Een spel exporteert `start({ root, staat, klaar })` en geeft een opruimfunctie terug. Spellogica zonder DOM komt in losse modules (bv. `spellen/hex.js`).
+- Sprites: `sprites.js` laadt `assets/sprites/sprites.svg` één keer en injecteert de `<symbol>`s in het document; bouw scènes met `use()`, `pino()`, `persoon()`, `dier()` uit `sprites.js` (JS-port van de Python-helpers). `#/test` toont een sprite-controlescherm.
+- Jekyll staat uit (`.nojekyll`); `404.html` stuurt paden onder `/advent/` terug naar de app.
 - Mobiel eerst: ontwerp is 390×844 (telefoon); er is ook een desktop-variant van de kalender (1280 breed). Alles moet werken met touch én toetsenbord (pijltjestoetsen in spel 1, 5, 8, 10).
 - Spelstaat in `localStorage`, altijd in `try/catch` (privé-modus kan storage weigeren). Zie `design/economie-en-spelstaat.md` voor de velden.
-- Deurtjes gaan open op datum (24 nov t/m 3 dec); met `?test=1` in de URL zijn alle deurtjes open voor testen.
+- Deurtjes gaan open op datum (24 nov t/m 3 dec); met `?test=1` in de URL zijn alle deurtjes open voor testen, `?dag=5` doet alsof het dag 5 is, `?datum=2026-11-27` zet een vaste datum (zie `datum.js`).
 - Toegankelijkheid zoals in het ontwerp: echte `<button>`/`<a>`, `aria-label` op icoon-knoppen, `role="img"` + `aria-label` op scènes, decoratieve SVG `aria-hidden="true"`.
 - Geen externe afhankelijkheden behalve Google Fonts, tenzij Benjamin anders beslist.
 

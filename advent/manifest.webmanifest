@@ -1,0 +1,12 @@
+{
+  "name": "Pino's verjaardagskalender",
+  "short_name": "Pino",
+  "lang": "nl",
+  "start_url": "/advent/",
+  "scope": "/advent/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#BFE6FA",
+  "theme_color": "#BFE6FA",
+  "icons": [{ "src": "icoon.svg", "sizes": "any", "type": "image/svg+xml" }]
+}

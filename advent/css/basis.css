@@ -127,6 +127,14 @@ img, svg { display: block; }
     repeating-linear-gradient(150deg, rgba(255, 255, 255, 0.38) 0 2px, transparent 2px 40px);
 }
 
+@media (min-width: 1000px) {
+  .vloer {
+    background-image:
+      repeating-linear-gradient(30deg, rgba(255, 255, 255, 0.38) 0 2px, transparent 2px 48px),
+      repeating-linear-gradient(150deg, rgba(255, 255, 255, 0.38) 0 2px, transparent 2px 48px);
+  }
+}
+
 /* ---------- typografie ---------- */
 .kop {
   font-family: var(--font-kop);

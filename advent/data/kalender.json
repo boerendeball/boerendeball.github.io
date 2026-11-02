@@ -1,16 +1,16 @@
 {
-  "_opmerking": "Titels, iconen en vaardigheidspunten per deurtje. Datums staan in js/datum.js. Briefjes vult Benjamin nog in (null = placeholder).",
+  "_opmerking": "Titels, iconen, vaardigheidspunten en kalenderteksten per deurtje. Datums staan in js/datum.js. 'omschrijving' en 'chips' staan op het Open-scherm (kalender, dus tekst mag) en zijn voorstellen die Benjamin aanpast; 'briefje' vult Benjamin in (null = placeholder).",
   "dagen": [
-    { "dag": 1,  "titel": "Princess Presence",      "icoon": "kroon",    "vaardigheid": "lichaam",      "briefje": null },
-    { "dag": 2,  "titel": "Tuin van de koningin",   "icoon": "tuin",     "vaardigheid": "logica",       "briefje": null },
-    { "dag": 3,  "titel": "Complete the family",    "icoon": "familie",  "vaardigheid": "creativiteit", "briefje": null },
-    { "dag": 4,  "titel": "(Social)ize the family", "icoon": "camera",   "vaardigheid": "charisma",     "briefje": null },
-    { "dag": 5,  "titel": "Negotiate trade deal",   "icoon": "munten",   "vaardigheid": "charisma",     "briefje": null },
-    { "dag": 6,  "titel": "Selfdefense",            "icoon": "gi",       "vaardigheid": "lichaam",      "briefje": null },
-    { "dag": 7,  "titel": "Spot the peasant",       "icoon": "loep",     "vaardigheid": "logica",       "briefje": null },
-    { "dag": 8,  "titel": "Check mate",             "icoon": "tijger",   "vaardigheid": "logica",       "briefje": null },
-    { "dag": 9,  "titel": "Vang de baby",           "icoon": "baby",     "vaardigheid": "lichaam",      "briefje": null },
-    { "dag": 10, "titel": "Bereik de bevalling",    "icoon": "taart",    "vaardigheid": null,           "briefje": null }
+    { "dag": 1,  "titel": "Princess Presence",      "icoon": "kroon",   "vaardigheid": "lichaam",      "omschrijving": "Pino is prinses voor één avond en de slaapzaal zit vol nichtjes en neefjes. Hou de boel netjes.", "chips": ["Actie", "± 2 minuten"], "briefje": null },
+    { "dag": 2,  "titel": "Tuin van de koningin",   "icoon": "tuin",    "vaardigheid": "logica",       "omschrijving": "De koningin wil naar de tuinpoort, maar het pad ligt er nog niet. Leg jij het?", "chips": ["Puzzel", "± 5 minuten"], "briefje": null },
+    { "dag": 3,  "titel": "Complete the family",    "icoon": "familie", "vaardigheid": "creativiteit", "omschrijving": "Drie families, drie huizen, en overal lege plekken. Wie hoort waar?", "chips": ["Puzzel", "± 5 minuten"], "briefje": null },
+    { "dag": 4,  "titel": "(Social)ize the family", "icoon": "camera",  "vaardigheid": "charisma",     "omschrijving": "Op vakantie is het tijd voor dé familiefoto. Zoek op de tekening de perfecte plek voor het hele gezin, en daarna nog één voor mama en één voor papa.", "chips": ["Zoekplaatje", "± 2 minuten", "3 foto's"], "briefje": null },
+    { "dag": 5,  "titel": "Negotiate trade deal",   "icoon": "munten",  "vaardigheid": "charisma",     "omschrijving": "Op de nachtmarkt hangt iets moois tussen de lampions. Hoe goed kun jij afdingen?", "chips": ["Onderhandelen", "± 3 minuten"], "briefje": null },
+    { "dag": 6,  "titel": "Selfdefense",            "icoon": "gi",      "vaardigheid": "lichaam",      "omschrijving": "Een drukke steeg, een volle tas en iemand die te dichtbij komt. Snel reageren!", "chips": ["Reactie", "± 2 minuten"], "briefje": null },
+    { "dag": 7,  "titel": "Spot the peasant",       "icoon": "loep",    "vaardigheid": "logica",       "omschrijving": "Een album vol vakantiefoto's. Iemand stond steeds nét in beeld…", "chips": ["Zoeken", "± 5 minuten"], "briefje": null },
+    { "dag": 8,  "titel": "Check mate",             "icoon": "tijger",  "vaardigheid": "logica",       "omschrijving": "In de jungle ligt een oud bord in de grond. De dieren zetten ook een stap.", "chips": ["Denkspel", "5 levels"], "briefje": null },
+    { "dag": 9,  "titel": "Vang de baby",           "icoon": "baby",    "vaardigheid": "lichaam",      "omschrijving": "De ooievaar heeft het druk vandaag. Zorg dat alles zacht landt.", "chips": ["Actie", "± 2 minuten"], "briefje": null },
+    { "dag": 10, "titel": "Bereik de bevalling",    "icoon": "taart",   "vaardigheid": null,           "omschrijving": "De weeën zijn begonnen. Door de stad, over de weg, op tijd bij de bevalling.", "chips": ["Actie", "± 3 minuten"], "briefje": null }
   ],
   "vaardigheden": ["koken", "mechanica", "charisma", "lichaam", "logica", "creativiteit"],
   "behoeften": ["verjaardag", "gansjes", "lammetjes", "snoepjes", "jiujitsu", "bordspellen", "reizen", "sieraden"]

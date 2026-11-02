@@ -23,6 +23,7 @@ export function legeStaat() {
     vaardigheden: { koken: 0, mechanica: 0, charisma: 0, lichaam: 0, logica: 0, creativiteit: 0 },
     behoeften: { verjaardag: 0, gansjes: 100, lammetjes: 100, snoepjes: 100, jiujitsu: 45, bordspellen: 20, reizen: 10, sieraden: 15 },
     scores: {},                   // per spel een klein object, bv. { "1": { onderbroken: 7 } }
+    telefoonGezien: 0,            // laatste dag waarop de telefoon-notificatie is getoond
   };
 }
 

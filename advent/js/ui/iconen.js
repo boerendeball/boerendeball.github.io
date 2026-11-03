@@ -24,6 +24,16 @@ const PADEN = {
   lamp: '<path d="M24 6 a12 12 0 0 1 7 21.7 V32 H17 v-4.3 A12 12 0 0 1 24 6z" fill="#FFC93C"/><rect x="18" y="34" width="12" height="4" rx="2" fill="#9A5B00"/><rect x="20" y="39" width="8" height="3" rx="1.5" fill="#9A5B00"/>',
   vink: '<path d="M10 26 L20 36 L38 14" fill="none" stroke="#1F7A3A" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>',
   huis: '<path d="M8 24 L24 10 L40 24 V40 H30 V30 H18 V40 H8z" fill="currentColor"/>',
+  vaardigheid: '<path d="M10 30 q14 -20 28 0" fill="none" stroke="#6B3FCF" stroke-width="6" stroke-linecap="round"/><circle cx="10" cy="30" r="5" fill="#6B3FCF"/><circle cx="38" cy="30" r="5" fill="#6B3FCF"/>',
+  // hand die naar rechts wijst (actieknop spel 1)
+  hand: '<path d="M6 20 a4 4 0 0 1 4 -4 h4 v-3 a3.5 3.5 0 0 1 7 0 v3 h20 a4 4 0 0 1 0 8 h-14 v3.5 a3.5 3.5 0 0 1 -0.5 1.8 a3.5 3.5 0 0 1 -1 6 a3.5 3.5 0 0 1 -2 6 h-8 a9.5 9.5 0 0 1 -9.5 -9.5z" fill="#FFFFFF"/><path d="M18 28 h8 M18 34.5 h7 M18 41 h5" stroke="#FF5E5B" stroke-width="2" stroke-linecap="round"/>',
+  // D-pad-chevrons (stroke 6, currentColor)
+  pijlOmhoog: '<path d="M10 30 L24 16 L38 30" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>',
+  pijlLinks: '<path d="M30 10 L16 24 L30 38" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>',
+  pijlOmlaag: '<path d="M10 18 L24 32 L38 18" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>',
+  pijlRechts: '<path d="M18 10 L32 24 L18 38" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>',
+  // kroon zonder zijstippen (teller in de kopbalk van spel 1)
+  kroonKlein: '<path d="M8 36 L6 14 L17 24 L24 10 L31 24 L42 14 L40 36z" fill="#FFC93C"/><rect x="8" y="36" width="32" height="6" rx="2" fill="#D97A00"/><circle cx="24" cy="30" r="3" fill="#FF6FAE"/>',
 };
 
 // Telefoon 64×64 (belscherm).
@@ -35,6 +45,7 @@ const SPRITE_ICONEN = {
   loep: ['s7-loep', 48, 48, null],
   tijger: ['s8-stuk-tijger', 48, 60, null],
   baby: ['s9-bundel', 48, 48, '#FFD6E6'],
+  klok: ['s9-klok', 48, 48, null],
 };
 
 function maakSvg(vbB, vbH, maat, attrs) {

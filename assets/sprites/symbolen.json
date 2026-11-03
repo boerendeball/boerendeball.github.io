@@ -18,6 +18,10 @@
   "pino-staan",
   "pino-loop",
   "pino-vinger",
+  "pino-romp",
+  "pino-arm-links",
+  "pino-arm-rechts",
+  "pino-arm-vinger",
   "raam",
   "nachtlamp",
   "kleedje"

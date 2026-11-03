@@ -1,0 +1,79 @@
+/* Spelschermen: kopbalk met teller, tijdkaart, scène-kaart, D-pad, actieknop en het resultaatscherm.
+   Maten uit design/artboards/Spel1.dc.html en Spel1-Klaar.dc.html. */
+
+.spel { padding: 14px 16px calc(16px + env(safe-area-inset-bottom)); gap: 12px; }
+.spel .kopbalk { padding: 0; gap: 10px; }
+.spel .kopbalk-label { font-size: 11px; }
+.spel .kopbalk-titel { font-size: 20px; }
+
+/* teller-pil in de kopbalk: icoon + getal */
+.teller-pil {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: #fff; border-radius: 999px; padding: 6px 12px 6px 8px;
+  box-shadow: 0 4px 0 0 var(--kaart-schaduw);
+  font-family: var(--font-kop); font-weight: 700; font-size: 18px; color: var(--roze-schaduw);
+  font-variant-numeric: tabular-nums;
+}
+
+/* tijdkaart: klok + balk + m:ss */
+.tijdkaart { padding: 10px 14px; display: flex; align-items: center; gap: 12px; }
+.tijdkaart .balk { flex: 1; height: 14px; }
+.balk-tijd > span { background: var(--geel); box-shadow: inset 0 -4px 0 0 var(--geel-schaduw); transition: none; }
+.tijd-tekst { font-size: 18px; color: var(--geel-schaduw); min-width: 44px; text-align: right; font-variant-numeric: tabular-nums; }
+
+/* scène */
+.scene-kaart {
+  position: relative; width: 100%; max-width: var(--scene-breedte); margin: 0 auto;
+  border-radius: 22px; overflow: hidden; box-shadow: 0 6px 0 0 var(--kaart-schaduw);
+  background: var(--vlak-licht);
+  touch-action: none; user-select: none; -webkit-user-select: none;
+}
+.scene-canvas { display: block; width: 100%; height: auto; }
+
+/* besturing */
+.besturing { margin-top: auto; padding-top: 4px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.dpad { display: grid; grid-template-columns: repeat(3, 52px); grid-template-rows: repeat(3, 52px); gap: 4px; }
+.dpad .knop-icoon { touch-action: none; }
+.knop-actie {
+  width: 128px; height: 128px; border-radius: 50%; border: 0;
+  background: var(--rood); color: #fff;
+  box-shadow: 0 8px 0 0 var(--rood-schaduw), 0 14px 24px rgba(196, 59, 56, 0.35);
+  display: flex; align-items: center; justify-content: center; padding: 0;
+  touch-action: none; transition: transform 0.06s ease, box-shadow 0.06s ease;
+}
+.knop-actie:active, .knop-actie.ingedrukt { transform: translateY(6px); box-shadow: 0 2px 0 0 var(--rood-schaduw), 0 6px 12px rgba(196, 59, 56, 0.3); }
+
+/* kleine schermen: scène krimpt mee, knoppen blijven bereikbaar */
+@media (max-height: 820px) {
+  .spel { gap: 10px; }
+  .knop-actie { width: 108px; height: 108px; }
+  .dpad { grid-template-columns: repeat(3, 46px); grid-template-rows: repeat(3, 46px); }
+  .dpad .knop-icoon { width: 46px; height: 46px; }
+}
+
+/* ---------- resultaatscherm ---------- */
+.resultaat { align-items: center; justify-content: center; padding: 24px; position: relative; overflow: hidden; }
+.confetti {
+  position: absolute; left: 30px; top: 60px; width: 10px; height: 10px; border-radius: 3px; background: var(--roze);
+  box-shadow: 70px 30px 0 0 #FFC93C, 140px -10px 0 0 #39D353, 220px 24px 0 0 #9B6BFF, 290px 4px 0 0 #1FA3DC, 330px 50px 0 0 #FF6FAE, 100px 90px 0 0 #1FA3DC, 250px 80px 0 0 #FFC93C;
+}
+.resultaat-kaart {
+  width: 100%; padding: 0 22px 24px; margin-top: 30px; border-radius: 26px;
+  display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center; position: relative;
+}
+.resultaat-bol { width: 128px; height: 128px; margin-top: -50px; }
+.resultaat-titel { margin: 0; font-size: 30px; }
+.resultaat-zin { margin: 0; font-size: 16px; line-height: 1.45; color: var(--gedempt-2); }
+.tegels { width: 100%; display: grid; gap: 8px; }
+.tegel { display: flex; flex-direction: column; align-items: center; gap: 4px; background: var(--vlak-licht); border-radius: 16px; padding: 12px 8px; }
+.tegel-label { font-size: 11px; font-weight: 800; color: var(--gedempt); letter-spacing: 0.5px; }
+.tegel-waarde { font-size: 26px; }
+.beloning { width: 100%; display: flex; align-items: center; gap: 12px; background: var(--paars-licht); border-radius: 16px; padding: 12px 14px; text-align: left; }
+.beloning-bol { width: 44px; height: 44px; border-radius: 50%; background: #fff; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.beloning-tekst { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.beloning-label { font-size: 12px; font-weight: 800; color: var(--paars-schaduw); letter-spacing: 0.5px; }
+.beloning-regel { font-size: 16px; font-weight: 800; }
+.beloning-extra { font-weight: 700; color: var(--gedempt); }
+.beloning-hint { font-size: 13px; font-weight: 700; color: var(--paars-schaduw); font-style: italic; }
+.resultaat-knoppen { width: 100%; display: flex; flex-direction: column; gap: 10px; margin-top: 4px; }
+.resultaat-knoppen .knop-pil { min-height: 54px; font-size: 18px; }

@@ -7,8 +7,17 @@ import { zetKalenderData, schermKalender, schermDeur } from './kalender.js';
 import { schermLaden } from './ui/laadscherm.js';
 import { schermSpel } from './spellen/index.js';
 import { schermTest } from './test.js';
+import { wis, vulTestStaat } from './staat.js';
 
 const app = document.getElementById('app');
+
+// Dev-schakelaars in de URL (zie specs/README.md): ?reset=1 wist de staat, ?vul=1 vult testvoorraad.
+function devSchakelaars() {
+  let params;
+  try { params = new URLSearchParams(location.search); } catch { return; }
+  if (params.get('reset') === '1') wis();
+  if (params.get('vul') === '1') vulTestStaat();
+}
 
 async function laadKalenderData() {
   const r = await fetch(new URL('../data/kalender.json', import.meta.url));
@@ -41,6 +50,7 @@ async function start() {
     return;
   }
 
+  devSchakelaars();
   route('/', schermKalender);
   route('/deur/:n', schermDeur);
   route('/laden/:n', schermLaden);

@@ -32,9 +32,8 @@ export async function schermSpel({ root, params }) {
   const nu = datum.vandaag();
   if (!datum.deurOpen(n, nu)) { ga(`/deur/${n}`, { vervang: true }); return; }
 
-  const klaar = ({ vaardigheid = info.vaardigheid, score = null } = {}) => {
-    staat.rondSpelAf(n, { vaardigheid, score });
-  };
+  /** Schrijft de afronding weg; geeft true terug als dit de eerste afronding van deze dag was. */
+  const klaar = ({ vaardigheid = info.vaardigheid, score = null } = {}) => staat.rondSpelAf(n, { vaardigheid, score });
 
   const module = await laadSpel(n);
   if (module && typeof module.start === 'function') {

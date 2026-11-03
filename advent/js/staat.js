@@ -149,15 +149,36 @@ export function markeerLevelGehaald(level) {
   });
 }
 
-/** Elk afgerond spel: +1 vaardigheid (max 10) en +10 % "Verjaardag vieren". */
+/**
+ * Elk afgerond spel: +1 vaardigheid (max 10) en +10 % "Verjaardag vieren", alleen bij de eerste afronding
+ * van die dag (besluiten.md #9). Score wordt altijd bijgewerkt. Geeft terug of dit de eerste keer was.
+ */
 export function rondSpelAf(dag, { vaardigheid = null, score = null } = {}) {
-  return schrijf((s) => {
+  let eersteKeer = false;
+  schrijf((s) => {
+    eersteKeer = s.deurtjes[dag] !== 'gespeeld';
     s.deurtjes[dag] = 'gespeeld';
-    if (vaardigheid && vaardigheid in s.vaardigheden) {
-      s.vaardigheden[vaardigheid] = Math.min(10, s.vaardigheden[vaardigheid] + 1);
+    if (eersteKeer) {
+      if (vaardigheid && vaardigheid in s.vaardigheden) {
+        s.vaardigheden[vaardigheid] = Math.min(10, s.vaardigheden[vaardigheid] + 1);
+      }
+      s.behoeften.verjaardag = Math.min(100, s.behoeften.verjaardag + 10);
     }
-    s.behoeften.verjaardag = Math.min(100, s.behoeften.verjaardag + 10);
     if (score) s.scores[dag] = { ...(s.scores[dag] || {}), ...score };
+  });
+  return eersteKeer;
+}
+
+/** Ontwikkelaarsschakelaar (?vul=1): voorraad voor alle ketens, zodat elk spel los te testen is. */
+export function vulTestStaat() {
+  return schrijf((s) => {
+    for (const kleur of ['groen', 'geel', 'blauw']) {
+      for (const figuur of ['vlinder', 'boom', 'vogel']) s.tegels[`${kleur}-${figuur}`] = 3;
+    }
+    s.edelstenen = { blauw: 3, groen: 3, geel: 3 };
+    s.familie = s.familie || 'tan';
+    s.geld = Math.max(s.geld, 60);
+    s.levels = { gehaald: [1, 2], actief: 3 };
   });
 }
 

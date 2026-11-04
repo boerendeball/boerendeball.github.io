@@ -54,6 +54,21 @@ toonResultaat({ root, dag, icoon, label: 'PRINCESS PRESENCE · KLAAR', titel, zi
 ```
 Confetti-stipjes (acht vaste posities uit het artboard), kaart met bol 128 px (ring in de kleur van het spel), label, titel (Fredoka 30), één zin, **geen sterren** (het artboard toont er drie; weggelaten, besluiten.md 16), 1–3 scoretegels (`#F3F8FB`, label 11 px, getal Fredoka 26; één tegel krijgt max. 180 px breed; geen highscore-tegel, zie besluiten.md 15), paars beloningsblok "VAARDIGHEID VERDIEND" met "Conditie +1 · Behoefte "Verjaardag" +10%" en een optionele cursieve regel, knoppen **Terug naar de kalender** (groen) en **Nog een keer** (grijs). Geen uitlegzin die de oplossing verraadt; de zin is sfeer, geen instructie.
 
+## Joystick (`ui/joystick.js`, gebouwd bij spel 1)
+
+Touch- en muisbesturing zonder vast paneel (besluiten.md #23). Gebruik via `invoer.js`:
+```
+const invoer = maakInvoer({ joystick: { element: schermEl, vertraging: 250, tik: 'actie' }, bijActie });
+invoer.as() → { dx, dy }   // toetsenbord/D-pad als die actief zijn, anders de joystick (kracht 0–1)
+```
+- **Verschijnen**: `pointerdown` op het vlak (niet op een knop of link) start een timer; na `vertraging` ms (250) komt de joystick op de drukplek, met een korte schaal/fade-in (0,15 s; geen animatie bij `prefers-reduced-motion`).
+- **Graphics** (kalenderstijl): ring 120 px, wit 45 % met witte rand 4 px, 3D-schaduw `0 6px 0 0 #CDE4F0`, dunne teal binnenring (72 px); knop 52 px teal `#1FA3DC` met witte rand 3 px en schaduw `0 4px 0 0 #0E7FB5`. Vast gepositioneerd boven alles (`z-index: 40`), negeert pointer-events zelf.
+- **Sturen**: de knop volgt de vinger tot maximaal 34 px uit het midden; richting = vector vanaf de drukplek, kracht = uitslag/34 met een dode zone van 12 %. Ook diagonaal.
+- **Loslaten** (`pointerup`, `pointercancel`, verlies van capture, venster verliest focus): joystick weg, vector (0, 0).
+- **Tik**: loslaten binnen 250 ms en 10 px, vóór de joystick verschijnt → `bijActie(tik)` (spel 1: onderbreken, besluiten.md #24).
+- Het vlak krijgt `touch-action: none` zodat de pagina niet scrolt of zoomt tijdens het spelen; muis: alleen de linkerknop; een tweede vinger wordt genegeerd.
+- Hergebruik: spel 5 (lopen over de markt), spel 8 (stap voor stap: lees `as()` en zet een stap als de kracht boven een drempel komt en weer loslaat), spel 10 fase 1 en 2.
+
 ## Melding (toast)
 
 `toonMelding({ icoon, kleur, html })` toont 2,6 s een kaartje bovenaan (zelfde opmaak als in de dialogen). Nog niet in gebruik buiten dialogen; bedoeld voor bijvoorbeeld "werker gevonden" in spel 7.

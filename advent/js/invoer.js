@@ -1,13 +1,16 @@
 // Invoer voor de spellen: toetsenbord (pijltjes, WASD, spatie/Enter) en D-pad-knoppen met vasthouden.
 //
 // const invoer = maakInvoer({
-//   richtingen: { omhoog: knopEl, omlaag: knopEl, links: knopEl, rechts: knopEl },   // optioneel
-//   acties: { actie: knopEl },                                                     // optioneel
+//   richtingen: { omhoog: knopEl, omlaag: knopEl, links: knopEl, rechts: knopEl },   // optioneel (D-pad)
+//   acties: { actie: knopEl },                                                     // optioneel (actieknop)
+//   joystick: { element: schermEl, vertraging: 250, tik: 'actie' },                // optioneel (ui/joystick.js)
 //   bijActie(naam) {},                                                             // 'actie' | 'terug'
 // });
 // invoer.richting → { omhoog, omlaag, links, rechts } (booleans, live)
-// invoer.as() → { dx, dy } genormaliseerd
+// invoer.as() → { dx, dy }: toetsenbord/D-pad genormaliseerd, anders de joystick (analoog, kracht 0–1)
 // invoer.vernietig();
+
+import { maakJoystick } from './ui/joystick.js';
 
 const TOETSEN = {
   ArrowUp: 'omhoog', ArrowDown: 'omlaag', ArrowLeft: 'links', ArrowRight: 'rechts',
@@ -15,10 +18,17 @@ const TOETSEN = {
   W: 'omhoog', S: 'omlaag', A: 'links', D: 'rechts',
 };
 
-export function maakInvoer({ richtingen = {}, acties = {}, bijActie = () => {}, toetsenbord = true } = {}) {
+export function maakInvoer({ richtingen = {}, acties = {}, joystick = null, bijActie = () => {}, toetsenbord = true } = {}) {
   const richting = { omhoog: false, omlaag: false, links: false, rechts: false };
   const opruimers = [];
   const ingedrukteToetsen = new Set();
+
+  let stick = null;
+  if (joystick && joystick.element) {
+    const { tik = null, ...rest } = joystick;
+    stick = maakJoystick({ ...rest, bijTik: tik ? () => bijActie(tik) : null });
+    opruimers.push(() => stick.vernietig());
+  }
 
   function luister(el, type, fn, opties) {
     el.addEventListener(type, fn, opties);
@@ -76,8 +86,10 @@ export function maakInvoer({ richtingen = {}, acties = {}, bijActie = () => {}, 
       let dx = (richting.rechts ? 1 : 0) - (richting.links ? 1 : 0);
       let dy = (richting.omlaag ? 1 : 0) - (richting.omhoog ? 1 : 0);
       if (dx && dy) { dx *= Math.SQRT1_2; dy *= Math.SQRT1_2; }
+      if (!dx && !dy && stick) return stick.as();
       return { dx, dy };
     },
+    get joystick() { return stick; },
     vernietig() { for (const f of opruimers) f(); opruimers.length = 0; },
   };
 }

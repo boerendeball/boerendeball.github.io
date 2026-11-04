@@ -37,6 +37,7 @@ const POSE_DUUR = 0.45;       // s vinger uitgestoken na een treffer
 const POSE_MIS = 0.3;         // s vinger uitgestoken zonder treffer
 const VERRAST_DUUR = 1.2;     // s verrast gezicht
 const BEVRIES = 0.8;          // s stilstand voor het resultaatscherm
+const JOYSTICK_VERTRAGING = 250;  // ms vasthouden voordat de joystick verschijnt (besluiten.md #23)
 
 /* ---------- scène ---------- */
 const B = 358;
@@ -89,8 +90,8 @@ function speel({ root, dag, info, klaar, opnieuw }) {
   const tijdTekst = h('span', { class: 'kop tijd-tekst' }, formatteerTijd(DUUR));
   const { canvas, ctx, begin } = maakCanvas(B, H, { label: 'Slaapzaal met negen bedden; Pino loopt tussen de bedden' });
 
-  // Onder de scène staat bewust geen besturingspaneel (D-pad/actieknop): daar komt nieuwe functionaliteit
-  // (besluiten.md #22). Tot die tijd: toetsenbord (pijltjes/WASD, spatie/Enter).
+  // Geen besturingspaneel (besluiten.md #22): touch/muis gaat via de joystick (vasthouden op het scherm,
+  // besluiten.md #23) en een tik om te onderbreken (#24); daarnaast toetsenbord (pijltjes/WASD, spatie/Enter).
   const scherm = h('div', { class: 'scherm spel' }, [
     kopbalk({ label: datum.dagLabel(dag), titel: info.titel, terugNaar: `/deur/${dag}`, terugLabel: 'Terug naar het deurtje' }),
     h('div', { class: 'kaart tijdkaart' }, [
@@ -116,6 +117,7 @@ function speel({ root, dag, info, klaar, opnieuw }) {
 
   /* ---------- invoer ---------- */
   const invoer = maakInvoer({
+    joystick: { element: scherm, vertraging: JOYSTICK_VERTRAGING, tik: 'actie' },
     bijActie(naam) {
       if (naam === 'terug') { ga(`/deur/${dag}`); return; }
       if (naam === 'actie') onderbreek();

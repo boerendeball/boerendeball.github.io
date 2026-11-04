@@ -16,7 +16,7 @@ Verborgen keten: elke gelukte onderbreking levert een **token** (in code en staa
 1. **Kopbalk** (`ui/kopbalk.js`): terugknop (44 px rond) → `#/deur/1`; label `DAG 1 · 24 NOVEMBER`; titel `Princess Presence` (Fredoka 20). **Geen teller rechts**: het artboard toont een kroon-pil met score, maar er worden geen kroontjes verzameld (besluit 19). Het aantal onderbrekingen is pas op het resultaatscherm te zien.
 2. **Tijdkaart** (`.kaart`, 12 px marge): klok-icoon (`s9-klok`, 22 px) + balk (14 px hoog, `#E6EFF5`, vulling `#FFC93C` met schaduw `#D97A00`, krimpt van 100 % naar 0 %) + resttijd `m:ss` (Fredoka 18, `#D97A00`, min-width 44 px, rechts uitgelijnd). **Geen tekst "TIJD"** (artboard heeft dat wel; de regel wint).
 3. **Scène**: canvas 358×500 CSS-px in een afgeronde kaart (radius 22, schaduw `0 6px 0 0 #CDE4F0`, `overflow: hidden`). Interne resolutie × `devicePixelRatio` (max 3).
-4. **Besturing** (onderaan, `margin-top: auto`, padding 12 16 16): links een D-pad van 3×3 cellen van 52 px (gap 4): omhoog / links / omlaag / rechts als `.knop-icoon` met chevron-iconen (`#0E7FB5`, stroke 6). Rechts de **actieknop**: 128 px rond, `#FF5E5B`, schaduw `0 8px 0 0 #C43B38, 0 14px 24px rgba(196,59,56,0.35)`, witte hand die naar rechts wijst (54 px). `aria-label="Onderbreek de gaap"`.
+4. **Onder de scène: nog leeg.** Het besturingspaneel uit het artboard (D-pad links, grote rode actieknop rechts) is verwijderd (besluiten.md #22); Benjamin bepaalt wat hier komt. Tot die tijd is spel 1 alleen met toetsenbord speelbaar.
 
 Op desktop staat het scherm 390 px breed gecentreerd; de knoppen blijven zichtbaar (toetsenbord werkt daarnaast).
 
@@ -93,7 +93,7 @@ Constanten staan bovenaan `spel1.js` en zijn tuning-waarden:
 
 ## Besturing
 
-- **Touch**: D-pad-knoppen met `pointerdown`/`pointerup`/`pointercancel`; vasthouden = blijven lopen (geen klikherhaling, maar een richtingsvlag in de lus). Twee richtingen tegelijk mogen (diagonaal, genormaliseerd). Actieknop op `pointerdown` (niet `click`, voor snelheid).
+- **Touch**: nog geen (het D-pad/actieknop-paneel is verwijderd; nieuwe functionaliteit volgt, besluiten.md #22). `invoer.js` ondersteunt D-pad-knoppen met vasthouden nog wel, voor de andere spellen.
 - **Toetsenbord**: pijltjes en WASD lopen; spatie of Enter onderbreekt; Escape = terug. `preventDefault` op pijltjes zodat de pagina niet scrolt.
 - **Botsing**: Pino's voetvlak (24×16 onder haar) mag niet in een bed-voetafdruk komen (bed x+4, y+30, 56×48) en blijft binnen de vloer (x 0–310, voeten-y 130–500). Langs een bed glijden (per as botsen) zodat ze niet blijft haken.
 - Looppose: `pino-loop` en `pino-staan` wisselen elke 0,18 s zolang ze beweegt; stilstaan = `pino-staan`. Spiegeling volgt de laatste horizontale richting.
@@ -116,14 +116,14 @@ Weggelaten uit het artboard: het woord "TIJD" bij de balk. Niet aanwezig: de kro
 
 - Canvas: `role="img"`, `aria-label="Slaapzaal met negen bedden; Pino loopt tussen de bedden"`.
 - Score-pil `aria-live="polite"`; bij een onderbreking wordt de nieuwe score voorgelezen, niet elke frame.
-- Alle knoppen echte `<button>`s met `aria-label`; D-pad in `role="group" aria-label="Lopen"`.
+- Alle knoppen echte `<button>`s met `aria-label`.
 - `prefers-reduced-motion`: geen zwevende z's.
 
 ## Acceptatiecriteria
 
 - [x] Scène volgt de opbouw van `Spel1.png` (muur, plint, planken, raam, kleedje, negen bedden met de bezetting uit de tabel, nachtlamp); gecontroleerd op DPR 2 in de browser-preview.
 - [x] Alle dekenkleuren en motieven kloppen; `currentColor` valt nergens terug op `#1E3A4C`.
-- [x] Pino loopt met pijltjes (gecontroleerd), botst op bedden (stopt op x = 114 naast het middelste bed), blijft binnen de vloer, en wordt per bedrij voor/achter getekend. D-pad met vasthouden: nog op een echte telefoon te controleren.
+- [x] Pino loopt met pijltjes (gecontroleerd), botst op bedden (stopt op x = 114 naast het middelste bed), blijft binnen de vloer, en wordt per bedrij voor/achter getekend.
 - [x] Gapen verschijnen volgens de constanten, zonder aflopende ring; afgelopen gaap telt als gemist.
 - [ ] Onderbreken naast het bed (links of rechts): verrast gezicht, dekenflits, arm aan de kant van het kind over het bed heen naar de mond; boven/onder het bed of te ver weg: alleen de pose met de arm recht vooruit. (Nog te controleren in de browser na deze wijziging.)
 - [x] Tijdbalk en `m:ss` lopen gelijk; op 0:00 volgt het resultaatscherm met het juiste getal.
@@ -131,7 +131,7 @@ Weggelaten uit het artboard: het woord "TIJD" bij de balk. Niet aanwezig: de kro
 - [x] "Nog een keer" start schoon opnieuw; terugknop ruimt lus, invoer en debug-haak op.
 - [ ] Tab verbergen pauzeert; terugkomen geeft geen tijdsprong (code aanwezig, nog niet handmatig gezien).
 - [x] Geen zichtbare uitlegtekst of labels buiten titel/kopbalk; geen consolefouten.
-- [ ] Beoordeling door Benjamin op telefoon (touch, D-pad vasthouden, grootte van de knoppen) en desktop.
+- [ ] Beoordeling door Benjamin op telefoon en desktop; touch-besturing volgt met de nieuwe functionaliteit onder de scène.
 
 In testmodus (`?test=1`) staat de spelstaat op `window.pinoDebug` (`s`, `pino`, `bedden`) om in de console te sturen, bijvoorbeeld `pinoDebug.s.tijd = 1` om het einde te forceren of `pinoDebug.bedden[4].status = 'gaap'`.
 

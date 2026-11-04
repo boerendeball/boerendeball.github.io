@@ -89,13 +89,8 @@ function speel({ root, dag, info, klaar, opnieuw }) {
   const tijdTekst = h('span', { class: 'kop tijd-tekst' }, formatteerTijd(DUUR));
   const { canvas, ctx, begin } = maakCanvas(B, H, { label: 'Slaapzaal met negen bedden; Pino loopt tussen de bedden' });
 
-  const knop = (naam, label) => h('button', { type: 'button', class: 'knop-icoon', 'aria-label': label }, [icoon(naam, 22)]);
-  const knoppen = {
-    omhoog: knop('pijlOmhoog', 'Omhoog'), links: knop('pijlLinks', 'Links'),
-    omlaag: knop('pijlOmlaag', 'Omlaag'), rechts: knop('pijlRechts', 'Rechts'),
-  };
-  const actieKnop = h('button', { type: 'button', class: 'knop-actie', 'aria-label': 'Onderbreek de gaap' }, [icoon('hand', 54)]);
-
+  // Onder de scène staat bewust geen besturingspaneel (D-pad/actieknop): daar komt nieuwe functionaliteit
+  // (besluiten.md #22). Tot die tijd: toetsenbord (pijltjes/WASD, spatie/Enter).
   const scherm = h('div', { class: 'scherm spel' }, [
     kopbalk({ label: datum.dagLabel(dag), titel: info.titel, terugNaar: `/deur/${dag}`, terugLabel: 'Terug naar het deurtje' }),
     h('div', { class: 'kaart tijdkaart' }, [
@@ -104,12 +99,6 @@ function speel({ root, dag, info, klaar, opnieuw }) {
       tijdTekst,
     ]),
     h('div', { class: 'scene-kaart' }, [canvas]),
-    h('div', { class: 'besturing' }, [
-      h('div', { class: 'dpad', role: 'group', 'aria-label': 'Lopen' }, [
-        h('span'), knoppen.omhoog, h('span'), knoppen.links, knoppen.omlaag, knoppen.rechts,
-      ]),
-      actieKnop,
-    ]),
   ]);
   root.replaceChildren(scherm);
 
@@ -127,15 +116,9 @@ function speel({ root, dag, info, klaar, opnieuw }) {
 
   /* ---------- invoer ---------- */
   const invoer = maakInvoer({
-    richtingen: knoppen,
-    acties: { actie: actieKnop },
     bijActie(naam) {
       if (naam === 'terug') { ga(`/deur/${dag}`); return; }
-      if (naam === 'actie') {
-        actieKnop.classList.add('ingedrukt');
-        setTimeout(() => actieKnop.classList.remove('ingedrukt'), 120);
-        onderbreek();
-      }
+      if (naam === 'actie') onderbreek();
     },
   });
 

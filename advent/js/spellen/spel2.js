@@ -23,7 +23,6 @@ const H = 744;
 const KLEUR = { groen: '#39D353', geel: '#FFC93C', blauw: '#5BC0EB' };
 const GRIJS = '#B8C3CC';      // tegel die op is (vaste kleur, geen filter)
 const GEM_KLEUR = { blauw: '#5BC0EB', groen: '#39D353', geel: '#FFC93C' };
-const GEM_TEKST = { blauw: '#0E6A98', groen: '#1F7A3A', geel: '#9A5B00' };
 const GEMS = ['blauw', 'groen', 'geel'];
 const TOP = '28,6 50,18 50,42 28,54 6,42 6,18';   // binnenste bovenvlak van een hex (56×66)
 const FONKEL = 'l3 9 9 3 -9 3 -3 9 -3 -9 -9 -3 9 -3z';
@@ -137,19 +136,7 @@ function speel({ root, dag, info, klaar, opnieuw }) {
   const tuin = () => staat.lees().tuin || leegTuin();
 
   /* ---------- DOM ---------- */
-  const gemTellers = {};
-  const pil = h('div', { class: 'teller-pil edelsteen-pil', role: 'img' }, GEMS.map((k) => {
-    gemTellers[k] = h('span', { class: 'kop', style: { color: GEM_TEKST[k] } }, '0');
-    return h('span', { class: 'edelsteen-teller' }, [gemSvg(k, 20), gemTellers[k]]);
-  }));
-  function werkTellersBij() {
-    const e = staat.lees().edelstenen;
-    for (const k of GEMS) gemTellers[k].textContent = String(e[k] || 0);
-    pil.setAttribute('aria-label', `Edelstenen: ${e.blauw || 0} blauw, ${e.groen || 0} groen, ${e.geel || 0} geel`);
-  }
-  werkTellersBij();
-  const afmelden = staat.abonneer(werkTellersBij);
-
+  // Geen edelsteenteller in spel 2: hoeveel edelstenen Pino heeft, ziet ze pas in spel 3 (besluiten.md #35).
   const svg = scene(B, H, { label: 'Tropische tuin met een zeshoekig gazon, een lotusvijver met sala en kraanvogels, bananenplanten, bamboe en een palm; Pino staat linksonder, de tuinpoort is rechtsboven' });
   svg.classList.add('tuin-scene');
   const wereld = el('g');
@@ -157,7 +144,7 @@ function speel({ root, dag, info, klaar, opnieuw }) {
   const knoppen = h('div', { class: 'tuin-knoppen' });
 
   const scherm = h('div', { class: 'scherm spel spel2' }, [
-    kopbalk({ label: datum.dagLabel(dag), titel: info.titel, terugNaar: `/deur/${dag}`, terugLabel: 'Terug naar het deurtje', rechts: pil }),
+    kopbalk({ label: datum.dagLabel(dag), titel: info.titel, terugNaar: `/deur/${dag}`, terugLabel: 'Terug naar het deurtje' }),
     h('div', { class: 'scene-kaart tuin-kaart' }, [svg, knoppen]),
   ]);
   root.replaceChildren(scherm);
@@ -336,10 +323,7 @@ function speel({ root, dag, info, klaar, opnieuw }) {
       label: `${info.titel.toUpperCase()} · KLAAR`,
       titel: 'Het pad is gelegd!',
       zin: 'De koningin wandelt met droge voeten naar de poort. Zelfs de kraanvogels maken een buiging.',
-      tegels: [
-        { label: 'TEGELS', waarde: tegels, kleur: '#1F7A3A' },
-        { label: 'EDELSTENEN', waarde: edelstenen, kleur: '#9A5B00' },
-      ],
+      tegels: [{ label: 'TEGELS', waarde: tegels, kleur: '#1F7A3A' }],
       beloning: { vaardigheid: info.vaardigheid, eersteKeer },
       opnieuw,
     });
@@ -372,7 +356,6 @@ function speel({ root, dag, info, klaar, opnieuw }) {
 
   return () => {
     gestopt = true;
-    afmelden();
     cancelAnimationFrame(rafId);
     for (const t of timers) clearTimeout(t);
     if (menu) menu.sluit();

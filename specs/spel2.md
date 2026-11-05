@@ -17,7 +17,7 @@ De koningin wil naar haar tuinpoort, maar het pad ligt er nog niet. Pino legt he
    - terugknop → `#/deur/2`;
    - label `DAG 2 · 25 NOVEMBER`;
    - titel `Tuin van de koningin` (Fredoka 20);
-   - rechts de **edelsteenpil** (`.teller-pil.edelsteen-pil`): drie keer `gem` (20 px) + getal (Fredoka 15) in `#0E6A98` / `#1F7A3A` / `#9A5B00`, met `role="img"` en `aria-label` "Edelstenen: x blauw, y groen, z geel". De pil werkt live bij via `staat.abonneer`.
+   - **rechts niets**: het artboard heeft een edelsteenteller, maar in spel 2 zie je niet hoeveel edelstenen je hebt. Dat zie je pas in spel 3 (besluit 35).
 2. **Scène**: SVG 358×744 in `.scene-kaart.tuin-kaart` (radius 22, `overflow: hidden`), breedte 100 %, hoogte automatisch. Daarboven ligt `.tuin-knoppen` met de klikdoelen.
 
 Op desktop staat het scherm 390 px breed gecentreerd, net als in spel 1.
@@ -109,7 +109,7 @@ Op desktop staat het scherm 390 px breed gecentreerd, net als in spel 1.
 - Bol met het icoon `tuin` en label `TUIN VAN DE KONINGIN · KLAAR`.
 - Titel **Het pad is gelegd!**
 - Zin: "De koningin wandelt met droge voeten naar de poort. Zelfs de kraanvogels maken een buiging."
-- Scoretegels **TEGELS** (gelegd in deze tuin, `#1F7A3A`) en **EDELSTENEN** (geoogst in deze tuin, `#9A5B00`).
+- Eén scoretegel: **TEGELS** (gelegd in deze tuin, `#1F7A3A`). Er is geen tegel EDELSTENEN (besluit 35); het aantal wordt wel bewaard in `scores[2].edelstenen`.
 - Beloningsblok "Logica +1 · Behoefte "Verjaardag" +10%" (bij herspelen: "Logica al verdiend").
 - Knoppen **Terug naar de kalender** en **Nog een keer** (lege tuin).
 - Geen sterren, geen BESTE en geen ZETTEN (besluiten 15, 16 en 31).
@@ -121,7 +121,8 @@ Weggelaten uit het ontwerp of bewust niet toegevoegd:
 - de fontein;
 - de slotzin "Elke tegel past precies bij zijn buur" (verraadt de regel);
 - sterren;
-- labels bij de voorraad.
+- labels bij de voorraad;
+- de edelsteenteller in de kopbalk en de tegel EDELSTENEN op het resultaatscherm (besluit 35).
 
 Er is geen tekst in de scène. Het menu toont alleen passende tegels, zonder uitleg waarom.
 
@@ -130,7 +131,6 @@ Er is geen tekst in de scène. Het menu toont alleen passende tegels, zonder uit
 - De scène heeft `role="img"` met een beschrijvende `aria-label`. Het decor is onderdeel van die ene afbeelding.
 - Klikdoelen zijn `<button>` met `aria-label` "Vak", "Edelsteen" of "Werker".
 - Menuopties hebben `aria-label` "Tegel geel vlinder, 2". Een grijze optie is `disabled` met `aria-disabled`.
-- De edelsteenpil heeft `role="img"` met een label.
 - Bij `prefers-reduced-motion` is er geen invalanimatie, geen knipperende fonkel en geen hupjes, en springt Pino direct naar de poort.
 
 ## Acceptatiecriteria
@@ -141,7 +141,8 @@ Er is geen tekst in de scène. Het menu toont alleen passende tegels, zonder uit
 - [x] Groepsregel: na groen-vogel → blauw-vogel → geel-vogel (1,13 · 2,13 · 3,13) toont het vak naast de gele vogel (4,12) alleen geel-vlinder en geel-boom. Node-check: een vol kleurgroepje (groen ×3) laat geen vierde groene tegel toe, en het samenknopen van twee groepen met elk een groen-vogel wordt geweigerd.
 - [x] Met 3 stuks van elk type is de poort nog te halen (node-zoeker: 17 tegels).
 - [x] Een tegel met voorraad 0 is grijs met een 0 en niet te kiezen.
-- [x] Een omringd vak krijgt een fonkel; het edelsteenmenu (blauw/groen/geel) verhoogt de pil en `staat.edelstenen`; de fonkel verdwijnt.
+- [x] Een omringd vak krijgt een fonkel; het edelsteenmenu (blauw/groen/geel) verhoogt `staat.edelstenen`; de fonkel verdwijnt.
+- [x] Nergens in spel 2 staat een edelsteenaantal: geen teller in de kopbalk, op het resultaatscherm alleen TEGELS.
 - [x] De werker verschijnt bij een tegel op (3,10); met `?test=1` is hij aanklikbaar en zet hij `werkers[2]`.
 - [x] Herladen midden in het spel: de tuin staat er nog (de tegels zijn bewaard).
 - [x] Een tegel naast de poort: Pino loopt het pad af, daarna het resultaatscherm; `tuin` is `null`, deurtje 2 `gespeeld`, Logica +1, `scores[2]` gezet.
@@ -159,4 +160,4 @@ Er is geen tekst in de scène. Het menu toont alleen passende tegels, zonder uit
 
 ## Open punten
 
-Zie `besluiten.md` 25–33. De decorvakken, de oogstregel en de resultaattegels zijn eigen keuzes (te bevestigen).
+Geen. Alle keuzes voor spel 2 zijn besloten (`besluiten.md` 25–37). De decorvakken zijn "goed voor nu" en kunnen later nog schuiven. Het briefje voor dag 2 is voorlopig een placeholder. Edelstenen komen alleen uit spel 2 (besluit 37); de prijzen in spel 3 moeten daarop aansluiten.

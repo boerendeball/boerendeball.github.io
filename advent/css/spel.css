@@ -103,8 +103,6 @@
 .resultaat-knoppen .knop-pil { min-height: 54px; font-size: 18px; }
 
 /* ---------- spel 2 · Tuin van de koningin (design/artboards/Spel2*.dc.html) ---------- */
-.edelsteen-pil { gap: 8px; padding: 6px 12px; font-size: 15px; }
-.edelsteen-teller { display: inline-flex; align-items: center; gap: 3px; }
 .spel2 .kopbalk-titel { font-size: 20px; }
 
 .tuin-kaart { background: #5FB05A; }

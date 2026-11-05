@@ -9,7 +9,7 @@ De tien spellen zijn aan elkaar gekoppeld. Wat Pino in het ene spel verdient, ge
 | Spel 1 | Spel 2 | Elke gelukte onderbreking levert een **tegel** op met de kleur + het figuur van de deken van dat kind: 3 kleuren (groen `#39D353`, geel `#FFC93C`, blauw `#5BC0EB`) × 3 figuren (vlinder, boom, vogel) = 9 tegeltypen. | In spel 1 onzichtbaar (alleen een cryptisch zinnetje op het resultaatscherm). In het taartmenu van spel 2 toont elk tegeltype een badge met het aantal. |
 | Spel 1 | Spel 2 | De tuin van spel 2 blijft bewaard (`tuin`) tot het pad af is: na één keer spel 1 zijn er bewust te weinig tegels, dus Pino moet terug naar de slaapzaal. | Grijze tegels met een 0 in het taartmenu; verder niets. |
 | Spel 2 | Spel 3 | Een leeg hexvak dat aan alle zes kanten door gelegde tegels is omringd levert een **edelsteen** op; Pino kiest de kleur (blauw, groen, geel) via een taartmenu. | In spel 2 niet te zien (alleen het keuzemenu bij het oogsten); de edelsteenteller staat pas in de kopbalk van spel 3. |
-| Spel 3 | Spel 4 | De **familie** die Pino compleet maakt (Nguyễn, Tan of Somchai) is het gezin van spel 4. Karakterkaarten kosten edelstenen (ontwerp: lammetje = groen+groen, gansje = geel, meisje = geel+blauw, biggetje = blauw+geel; nog af te stemmen). | Niet aangekondigd. |
+| Spel 3 | Spel 4 | Karakterkaarten kosten edelstenen (lammetje = groen+groen, gansje = geel, meisje = geel+blauw, biggetje = blauw+geel) en horen bij een vaste familie (meisje + gansje → Nguyễn, biggetje → Tan, lammetje → Somchai). De **familie** die als eerste compleet is, is het gezin van spel 4 (`familie`); de gekochte kaarten blijven bewaard (`karakters`). Spel 3 is pas af als alle families compleet zijn. | Niet aangekondigd. Opent Pino spel 4 zonder complete familie, dan zegt een popup met de bedroefde familie Nguyễn dat er nog geen foto's gemaakt kunnen worden. |
 | Spel 4 | Spel 5 | De familie betaalt **geld (§)** voor de drie foto's (ontwerp: 60); hoeveel hangt af van de familie (sommige ogen rijker). | Munt + bedrag in de kopbalk van spel 4-resultaat en spel 5. |
 | Spel 5 | Spel 6 | Wat Pino overhoudt na het kopen van de ketting (ontwerp: 26) is wat de zakkenroller in spel 6 probeert te stelen. | Munt + bedrag in de kopbalk van spel 6. |
 | Spel 2–6 | Spel 7 | In elk speelveld van spel 2 t/m 6 staat één **verstopte werker** (groene hoed, hark): tuin op vak (3,10) (pas zichtbaar als daar een tegel ligt), half achter de villa van familie Nguyễn, half achter de palmstam op het strand, achter de waterput op de nachtmarkt, in de menigte in de steeg. Pas aanklikbaar nadat spel 7 is ontgrendeld. | Spel 7 is een fotoalbum met vijf polaroids dat bijhoudt welke werkers gevonden zijn (loep + x/5). |
@@ -28,6 +28,7 @@ Eén sleutel (bijvoorbeeld `pino-advent`) met een JSON-object; versienummer erbi
   "tegels": { "groen-vlinder": 2, "geel-boom": 1, "blauw-vogel": 0 },
   "edelstenen": { "blauw": 2, "groen": 2, "geel": 1 },
   "tuin": { "gelegd": { "1,13": "geel-boom" }, "geoogst": [], "edelstenen": 0 },
+  "karakters": ["biggetje", "meisje"],
   "familie": "tan",
   "geld": 26,
   "werkers": { "2": true, "3": true, "4": false, "5": false, "6": false },

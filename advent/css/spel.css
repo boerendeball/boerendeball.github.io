@@ -149,3 +149,62 @@
 @media (prefers-reduced-motion: reduce) {
   .valt-in, .tuin-fonkel, .tuin-werker.hup > use { animation: none; }
 }
+
+/* ---------- edelsteenpil (ui/edelstenen.js) ---------- */
+.edelsteen-pil { gap: 8px; padding: 6px 12px; font-size: 15px; }
+.edelsteen-teller { display: inline-flex; align-items: center; gap: 3px; }
+
+/* ---------- spel 3 · Complete the family (design/artboards/Spel3.dc.html) ---------- */
+.spel3 { gap: 10px; }
+.families { display: flex; flex-direction: column; gap: 10px; }
+.familie {
+  position: relative; width: 100%; max-width: var(--scene-breedte); margin: 0 auto;
+  border-radius: 18px; overflow: hidden; box-shadow: 0 5px 0 0 var(--kaart-schaduw);
+}
+.fam-scene { display: block; width: 100%; height: auto; }
+.fam-knop-werker {
+  position: absolute; border: 0; padding: 0; margin: 0; background: transparent; border-radius: 50%; cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.fam-knop-werker:focus-visible { outline: none; box-shadow: inset 0 0 0 3px #fff; }
+
+.kaartenbak { margin-top: auto; padding: 12px; }
+.kaartenrij { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; padding-top: 6px; }
+.kaartje {
+  display: flex; flex-direction: column; align-items: center; gap: 6px; min-width: 0;
+  padding: 8px 6px; border: 0; border-radius: 16px; background: #fff; box-shadow: 0 4px 0 0 var(--kaart-schaduw);
+  font: inherit; color: inherit; cursor: pointer; -webkit-tap-highlight-color: transparent;
+  transition: transform 0.08s ease, box-shadow 0.08s ease;
+}
+.kaartje:not(.kaartje-duur):active { transform: translateY(3px); box-shadow: 0 1px 0 0 var(--kaart-schaduw); }
+.kaartje:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--teal), 0 4px 0 0 var(--kaart-schaduw); }
+.kaartje-duur { opacity: 0.45; cursor: default; }
+.kaartje-leeg { visibility: hidden; }
+.prijs { display: inline-flex; align-items: center; gap: 2px; background: var(--vlak-licht); border-radius: 999px; padding: 3px 7px; }
+
+/* animaties: geen filters of gradients op bewegende delen */
+@keyframes fam-pop { 0% { transform: scale(0); } 60% { transform: scale(1.15); } 100% { transform: scale(1); } }
+.fam-pop { transform-box: fill-box; transform-origin: 50% 100%; animation: fam-pop 0.52s cubic-bezier(0.3, 1.4, 0.6, 1) both; }
+@keyframes fam-ster { 0% { transform: translate(0, 0) scale(0.3); opacity: 0; } 25% { opacity: 1; } 100% { transform: translate(var(--dx), var(--dy)) scale(1); opacity: 0; } }
+.fam-ster { transform-box: fill-box; transform-origin: center; animation: fam-ster 0.7s ease-out both; }
+@keyframes fam-hup { 0%, 100% { transform: translateY(0); } 35% { transform: translateY(-7px); } 60% { transform: translateY(0); } 80% { transform: translateY(-3px); } }
+.fam-hup > .fam-lid { animation: fam-hup 0.6s ease-out var(--hup-vertraging, 0ms) both; }
+.fam-hup > .fam-pop { animation: fam-pop 0.52s cubic-bezier(0.3, 1.4, 0.6, 1) both, fam-hup 0.6s ease-out var(--hup-vertraging, 0ms); }
+.fam-werker.hup > use { animation: tuin-hup 0.35s ease-out 2; }
+@keyframes kaartje-weg { 0% { transform: scale(1); opacity: 1; } 30% { transform: scale(1.06) translateY(-4px); opacity: 1; } 100% { transform: scale(0.2) translateY(-30px); opacity: 0; } }
+.kaartje.kaartje-weg { animation: kaartje-weg 0.35s ease-in forwards; pointer-events: none; }
+@keyframes schud { 0%, 100% { transform: translateX(0); } 20% { transform: translateX(-5px); } 40% { transform: translateX(5px); } 60% { transform: translateX(-4px); } 80% { transform: translateX(3px); } }
+.kaartje.schud { animation: schud 0.35s ease-in-out; }
+
+@media (max-height: 760px) {
+  .families { gap: 8px; }
+}
+
+/* popup in spel 4 zonder complete familie (spellen/index.js) */
+.geen-familie-scene { width: 100%; border-radius: 18px; overflow: hidden; box-shadow: 0 5px 0 0 var(--kaart-schaduw); margin-top: 22px; }
+.geen-familie-scene .fam-scene { display: block; width: 100%; height: auto; }
+
+@media (prefers-reduced-motion: reduce) {
+  .fam-pop, .fam-ster, .fam-hup > .fam-lid, .fam-werker.hup > use, .kaartje.kaartje-weg, .kaartje.schud { animation: none; }
+  .fam-sterren { display: none; }
+}

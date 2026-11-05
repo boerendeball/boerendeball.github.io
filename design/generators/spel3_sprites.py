@@ -7,6 +7,8 @@ EXTRA3='''<svg width="0" height="0" style="position:absolute" aria-hidden="true"
   <symbol id="b-jurk" viewBox="0 0 48 72"><ellipse cx="24" cy="68" rx="14" ry="4" fill="rgba(30,58,76,0.2)"/><path d="M12 64 L17 32 h14 l5 32z" fill="currentColor"/><path d="M12 64 L17 32 h4 l-2 32z" fill="rgba(255,255,255,0.22)"/><path d="M31 32 h-4 l2 32 h7z" fill="rgba(0,0,0,0.14)"/><path d="M14 34 q-6 6 -4 16" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round"/><path d="M34 34 q6 6 4 16" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round"/><circle cx="10.5" cy="51" r="3.2" fill="#F6C9A8"/><circle cx="37.5" cy="51" r="3.2" fill="#F6C9A8"/><rect x="18" y="62" width="5" height="6" rx="2" fill="#1E3A4C"/><rect x="25" y="62" width="5" height="6" rx="2" fill="#1E3A4C"/></symbol>
   <symbol id="b-hoofd" viewBox="0 0 48 72"><circle cx="24" cy="18" r="12" fill="currentColor"/><path d="M12 18 a12 12 0 0 0 12 12 v-2 a10 10 0 0 1 -10 -10z" fill="rgba(0,0,0,0.08)"/></symbol>
   <symbol id="b-blij" viewBox="0 0 48 72"><circle cx="20" cy="20.5" r="1.7" fill="#1E3A4C"/><circle cx="28" cy="20.5" r="1.7" fill="#1E3A4C"/><circle cx="19.4" cy="19.9" r="0.6" fill="#FFFFFF"/><circle cx="27.4" cy="19.9" r="0.6" fill="#FFFFFF"/><path d="M20.5 24.5 q3.5 3 7 0" fill="none" stroke="#1E3A4C" stroke-width="1.5" stroke-linecap="round"/><circle cx="16" cy="23.5" r="2" fill="#FF9BC8" opacity="0.7"/><circle cx="32" cy="23.5" r="2" fill="#FF9BC8" opacity="0.7"/></symbol>
+  <!-- bedroefd gezicht (besluit 40): schuine wenkbrauwen, omgekeerde mond, geen blosjes -->
+  <symbol id="b-bedroefd" viewBox="0 0 48 72"><path d="M17.4 17.2 L21.6 15.6" fill="none" stroke="#1E3A4C" stroke-width="1.3" stroke-linecap="round"/><path d="M26.4 15.6 L30.6 17.2" fill="none" stroke="#1E3A4C" stroke-width="1.3" stroke-linecap="round"/><circle cx="20" cy="20.8" r="1.6" fill="#1E3A4C"/><circle cx="28" cy="20.8" r="1.6" fill="#1E3A4C"/><circle cx="19.5" cy="20.3" r="0.55" fill="#FFFFFF"/><circle cx="27.5" cy="20.3" r="0.55" fill="#FFFFFF"/><path d="M20.8 26.6 q3.2 -2.6 6.4 0" fill="none" stroke="#1E3A4C" stroke-width="1.5" stroke-linecap="round"/></symbol>
   <!-- haar op 48x72-hoofd (currentColor) -->
   <symbol id="bh-kort" viewBox="0 0 48 72"><path d="M12 17 a12 12 0 0 1 24 0 q-6 -3 -12 -1 q-6 -2 -12 1z" fill="currentColor"/></symbol>
   <symbol id="bh-lang" viewBox="0 0 48 72"><path d="M12 17 a12 12 0 0 1 24 0 q-6 -3 -12 -1 q-6 -2 -12 1z" fill="currentColor"/><path d="M12 17 v12 q3 -4 3 -12z M36 17 v12 q-3 -4 -3 -12z" fill="currentColor"/></symbol>
@@ -36,11 +38,11 @@ DEFS=DEFS1+EXTRA2+EXTRA3
 def use(id,x,y,w,h,color=None):
     c=f' color="{color}"' if color else ''
     return f'<use href="#{id}" x="{x:.1f}" y="{y:.1f}" width="{w}" height="{h}"{c}/>'
-def persoon(x,y,kleding,huid,haar,haarkleur,jurk=False,acc=(),s=1.0,kind=False):
+def persoon(x,y,kleding,huid,haar,haarkleur,jurk=False,acc=(),s=1.0,kind=False,gezicht='b-blij'):
     k=s*(0.72 if kind else 1.0)
     out=f'<g transform="translate({x} {y}) scale({k})">'
     out+=use('b-jurk' if jurk else 'b-lijf',0,0,48,72,kleding)
-    out+=use('b-hoofd',0,0,48,72,huid)+use(haar,0,0,48,72,haarkleur)+use('b-blij',0,0,48,72)
+    out+=use('b-hoofd',0,0,48,72,huid)+use(haar,0,0,48,72,haarkleur)+use(gezicht,0,0,48,72)
     for a in acc: out+=use(a,0,0,48,72)
     out+='</g>'
     return out

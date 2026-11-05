@@ -17,7 +17,8 @@ export function legeStaat() {
     tegels: {},                   // { "groen-vlinder": 2, ... }  (spel 1 → spel 2)
     edelstenen: { blauw: 0, groen: 0, geel: 0 },   // spel 2 → spel 3
     tuin: null,                   // spel 2, onaf pad: { gelegd: { "3,10": "groen-vogel" }, geoogst: ["2,11"], edelstenen: 1 }
-    familie: null,                // "nguyen" | "tan" | "somchai"  (spel 3 → spel 4)
+    karakters: [],                // spel 3: gekochte kaarten ("lam" | "gansje" | "meisje" | "biggetje"), blijven bewaard
+    familie: null,                // "nguyen" | "tan" | "somchai": de eerste complete familie (spel 3 → spel 4)
     geld: 0,                      // spel 4 → spel 5 → spel 6
     werkers: { 2: false, 3: false, 4: false, 5: false, 6: false },   // spel 7
     levels: { gehaald: [], actief: 1 },            // spel 8
@@ -36,6 +37,7 @@ function migreer(data) {
   for (const veld of ['edelstenen', 'werkers', 'levels', 'vaardigheden', 'behoeften']) {
     uit[veld] = { ...basis[veld], ...(data[veld] || {}) };
   }
+  if (!Array.isArray(uit.karakters)) uit.karakters = [];
   uit.versie = VERSIE;
   return uit;
 }
@@ -166,6 +168,19 @@ export function betaalEdelstenen(prijs) {
   }
   schrijf((st) => { for (const [kleur, n] of Object.entries(prijs)) st.edelstenen[kleur] -= n; });
   return true;
+}
+
+/** Spel 3: koop een karakterkaart; false als hij al gekocht is of de edelstenen niet genoeg zijn. */
+export function koopKarakter(id, prijs) {
+  let gelukt = false;
+  schrijf((s) => {
+    if (s.karakters.includes(id)) return;
+    for (const [kleur, n] of Object.entries(prijs)) if ((s.edelstenen[kleur] || 0) < n) return;
+    for (const [kleur, n] of Object.entries(prijs)) s.edelstenen[kleur] -= n;
+    s.karakters.push(id);
+    gelukt = true;
+  });
+  return gelukt;
 }
 
 export function zetFamilie(naam) {

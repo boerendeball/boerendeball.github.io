@@ -6,6 +6,7 @@ import { h } from '../ui/dom.js';
 import { kopbalk } from '../ui/kopbalk.js';
 import { toonResultaat } from '../ui/resultaat.js';
 import { toonTaartmenu } from '../ui/taartmenu.js';
+import { gemSvg, GEMS } from '../ui/edelstenen.js';
 import { el, use, groep, scene } from '../sprites.js';
 import * as hex from './hex.js';
 import * as staat from '../staat.js';
@@ -22,8 +23,6 @@ const B = 358;
 const H = 744;
 const KLEUR = { groen: '#39D353', geel: '#FFC93C', blauw: '#5BC0EB' };
 const GRIJS = '#B8C3CC';      // tegel die op is (vaste kleur, geen filter)
-const GEM_KLEUR = { blauw: '#5BC0EB', groen: '#39D353', geel: '#FFC93C' };
-const GEMS = ['blauw', 'groen', 'geel'];
 const TOP = '28,6 50,18 50,42 28,54 6,42 6,18';   // binnenste bovenvlak van een hex (56×66)
 const FONKEL = 'l3 9 9 3 -9 3 -3 9 -3 -9 -9 -3 9 -3z';
 
@@ -107,10 +106,6 @@ function hexTegel(cx, cy, type, s = 56, kleur = null) {
 function decorEl([id, x, y, w, hh, opt = {}]) {
   if (opt.flip) return el('g', { transform: `translate(${x + w} ${y}) scale(-1 1)` }, [use(id, 0, 0, w, hh, opt.kleur)]);
   return use(id, x, y, w, hh, opt.kleur);
-}
-
-function gemSvg(kleur, maat) {
-  return el('svg', { viewBox: '0 0 48 48', width: maat, height: maat, class: 'ic', 'aria-hidden': 'true' }, [use('gem', 2, 2, 44, 44, GEM_KLEUR[kleur])]);
 }
 
 const leegTuin = () => ({ gelegd: {}, geoogst: [], edelstenen: 0 });

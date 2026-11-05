@@ -9,6 +9,7 @@ import * as staat from '../staat.js';
 import * as datum from '../datum.js';
 import { ga } from '../router.js';
 import { dagInfo } from '../kalender.js';
+import { toonDialoog } from '../ui/overlay.js';
 
 const cache = {};
 
@@ -35,6 +36,9 @@ export async function schermSpel({ root, params }) {
   /** Schrijft de afronding weg; geeft true terug als dit de eerste afronding van deze dag was. */
   const klaar = ({ vaardigheid = info.vaardigheid, score = null } = {}) => staat.rondSpelAf(n, { vaardigheid, score });
 
+  // Spel 4 heeft het gezin uit spel 3 nodig (besluit 41).
+  if (n === 4 && !staat.lees().familie) return geenFamilie({ root, n, info });
+
   const module = await laadSpel(n);
   if (module && typeof module.start === 'function') {
     return module.start({ root, dag: n, info, klaar });
@@ -49,4 +53,25 @@ export async function schermSpel({ root, params }) {
       datum.isTest() ? h('button', { type: 'button', class: 'knop knop-groen', onclick: () => { klaar(); ga('/'); } }, 'Rond af (test)') : null,
     ]),
   ]));
+}
+
+/** Spel 4 zonder complete familie uit spel 3: popup met de bedroefde familie Nguyễn (besluit 41). */
+async function geenFamilie({ root, n, info }) {
+  const spel3 = await laadSpel(3);
+  root.replaceChildren(h('div', { class: 'scherm spel' }, [
+    kopbalk({ label: datum.dagLabel(n), titel: info.titel, terugNaar: `/deur/${n}`, terugLabel: 'Terug naar het deurtje' }),
+  ]));
+  let weg = false;
+  const d = toonDialoog({
+    label: 'Nog geen familie compleet',
+    klasse: 'dialoog-geen-familie',
+    inhoud: [
+      h('div', { class: 'geen-familie-scene' }, spel3 ? [spel3.familieScene('nguyen', [], { werker: false })] : []),
+      h('h2', { class: 'kop dialoog-titel' }, 'Nog geen familiefoto'),
+      h('p', { class: 'dialoog-tekst' }, "Nog geen enkele familie is compleet. Er kunnen nog geen foto's gemaakt worden."),
+      h('button', { type: 'button', class: 'knop-pil knop-pil-groen', onclick: () => { weg = true; d.sluit(); ga('/'); } }, 'Terug naar de kalender'),
+    ],
+    bijSluiten: () => { if (!weg) ga('/'); },
+  });
+  return () => { weg = true; d.sluit(); };
 }

@@ -10,6 +10,9 @@ Sprites nieuw: strand (`s4-zon s4-wolk s4-meeuw s4-rots s4-boot s4-pier s4-palm 
 - De familie betaalt geld (ontwerp 60; afhankelijk van familie) → `wijzigGeld`.
 - Werker half achter de palmstam.
 
+## Zonder familie (gebouwd, besluit 41)
+Is `staat.familie` leeg (nog geen familie compleet in spel 3), dan toont `#/spel/4` de kopbalk met een dialoog: de villa met de bedroefde familie Nguyễn (twee vraagteken-plekken), de titel "Nog geen familiefoto" en de tekst "Nog geen enkele familie is compleet. Er kunnen nog geen foto's gemaakt worden." Eén knop: "Terug naar de kalender". Dit zit in `spellen/index.js`, vóór het laden van `spel4.js`.
+
 ## Staat
 In: `familie`. Uit: `geld`, `rondSpelAf(4, { vaardigheid: 'charisma' })`.
 

@@ -41,11 +41,16 @@ Keuzes die niet (eenduidig) in het ontwerp staan. **Te bevestigen** = door mij g
 | 35 | 2026-11-05 | Spel 2: edelstenen onzichtbaar | In spel 2 zie je niet hoeveel edelstenen je hebt of verdiend hebt: geen teller in de kopbalk (het artboard heeft er wel een) en geen tegel EDELSTENEN op het resultaatscherm. Het aantal is pas in spel 3 te zien | besloten (Benjamin) |
 | 36 | 2026-11-05 | Spel 2: details | De starttegel is altijd groen-boom (artboard). Op een vak met fonkel kun je pas een tegel leggen nadat je de edelsteen hebt gekozen. De werker maakt bij aantikken twee hupjes, verder geen feedback. Pino loopt aan het eind 0,26 s per vak naar de poort | besloten (Benjamin) |
 | 37 | 2026-11-05 | Edelstenen: bron | Edelstenen komen alleen uit spel 2; spel 3 levert geen edelstenen op (het besteedt ze alleen). Het briefje voor dag 2 blijft voorlopig een placeholder | besloten (Benjamin) |
+| 38 | 2026-11-05 | Spel 3: kaarten en koppeling | Vier vaste kaarten, geen wisselend aanbod, ontwerpprijzen: lammetje groen+groen, gansje geel, meisje geel+blauw, biggetje blauw+geel. Vaste koppeling: meisje en gansje → Nguyễn, biggetje → Tan, lammetje → Somchai. Eén tik koopt: de kaart verdwijnt en het karakter verschijnt met sterretjes op het vraagteken. Fout koppelen bestaat niet (GEKOPPELD/FOUT vervallen). Het spel is pas af als alle drie de families compleet zijn | besloten (Benjamin) |
+| 39 | 2026-11-05 | Spel 3: geen tekst | Geen familienamen op de scènes, geen kop "Karakterkaarten", geen namen onder de kaarten | besloten (Benjamin) |
+| 40 | 2026-11-05 | Spel 3: gezichten | Familieleden kijken standaard bedroefd (nieuw symbool `b-bedroefd` in `spel3_sprites.py`); een complete familie kijkt blij (`b-blij`) | besloten (Benjamin) |
+| 41 | 2026-11-05 | Spel 3 → 4: gezin | De familie die als eerste compleet wordt, is het gezin van spel 4. Is er bij het openen van spel 4 nog geen complete familie, dan verschijnt een popup met de bedroefde familie Nguyễn, de titel "Nog geen familiefoto" en de tekst "Nog geen enkele familie is compleet. Er kunnen nog geen foto's gemaakt worden." (uitzondering op de tekstregel) met één knop terug naar de kalender | besloten (Benjamin) |
+| 42 | 2026-11-05 | Spel 3: na afronden en resultaat | De families blijven compleet (`staat.karakters` wordt niet gewist); het resultaatscherm heeft geen "Nog een keer" en geen sterren. Eén tegel EDELSTENEN OVER. Slotzin: "Drie huizen, drie families en niemand die nog iets mist. Zelfs het biggetje knort tevreden." | besloten (Benjamin) |
 
 ## Open vragen voor Benjamin (uit de ontwerpdocumenten)
 
 - Definitieve speltitels per dag.
 - "Briefje voor Pino" per dag (nu placeholder) en het laatste briefje in de finale.
 - Vaardigheidspunt voor dag 5 (nu Charisma) en dag 10 (nu geen).
-- Edelsteenprijzen in spel 3 (edelstenen komen alleen uit spel 2, besluit 37; een tuin levert er hooguit een paar op); welke familie "rijk" is en hoeveel elke familie in spel 4 betaalt.
+- Welke familie "rijk" is en hoeveel elke familie in spel 4 betaalt (de prijzen in spel 3 liggen vast, besluit 38).
 - Welke behoefte elk spel vult naast "Verjaardag vieren" (voorstel: 6 → jiujitsu, 8 → bordspellen, 2–8 → reizen, 5 → sieraden, 3/9 → lammetjes/gansjes).

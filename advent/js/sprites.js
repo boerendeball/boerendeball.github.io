@@ -97,15 +97,16 @@ export function pino(x, y, pose = 'staan', { schaal = 1, flip = false } = {}) {
 
 /**
  * Persoon 48×72: lijf of jurk → hoofd → haar → blij gezicht → accessoires.
- * kleding/huid/haarkleur zijn kleuren; haar is een bh-* symbool-id; acc een lijst acc-* id's.
+ * kleding/huid/haarkleur zijn kleuren; haar is een bh-* symbool-id; acc een lijst acc-* id's;
+ * gezicht is 'b-blij' (standaard) of 'b-bedroefd'.
  */
-export function persoon(x, y, { kleding, huid, haar = 'bh-kort', haarkleur, jurk = false, acc = [], schaal = 1, kind = false, flip = false }) {
+export function persoon(x, y, { kleding, huid, haar = 'bh-kort', haarkleur, jurk = false, acc = [], schaal = 1, kind = false, flip = false, gezicht = 'b-blij' }) {
   const k = schaal * (kind ? 0.72 : 1);
   const delen = [
     use(jurk ? 'b-jurk' : 'b-lijf', 0, 0, 48, 72, kleding),
     use('b-hoofd', 0, 0, 48, 72, huid),
     use(haar, 0, 0, 48, 72, haarkleur),
-    use('b-blij', 0, 0, 48, 72),
+    use(gezicht, 0, 0, 48, 72),
     ...acc.map((a) => use(a, 0, 0, 48, 72)),
   ];
   return groep(x, y, { schaal: k, flip }, delen);

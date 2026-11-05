@@ -7,7 +7,8 @@ Per scherm één spec: wat het precies doet, hoe het eruitziet (met verwijzing n
 | [kalender.md](kalender.md) | gebouwd, te beoordelen |
 | [events.md](events.md) — taartmenu, telefoon, vergrendeld, briefje, laadscherm, resultaatscherm, meldingen | gebouwd, te beoordelen |
 | [spel1.md](spel1.md) — Princess Presence | gebouwd, te beoordelen |
-| [spel2.md](spel2.md) … [spel10.md](spel10.md) | aanzet; uitwerken vlak voor de bouw |
+| [spel2.md](spel2.md) — Tuin van de koningin | gebouwd, te beoordelen |
+| [spel3.md](spel3.md) … [spel10.md](spel10.md) | aanzet; uitwerken vlak voor de bouw |
 | [besluiten.md](besluiten.md) — beslislog en open vragen voor Benjamin | lopend |
 
 ## Statuswaarden

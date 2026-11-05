@@ -101,3 +101,53 @@
 .beloning-hint { font-size: 13px; font-weight: 700; color: var(--paars-schaduw); font-style: italic; }
 .resultaat-knoppen { width: 100%; display: flex; flex-direction: column; gap: 10px; margin-top: 4px; }
 .resultaat-knoppen .knop-pil { min-height: 54px; font-size: 18px; }
+
+/* ---------- spel 2 · Tuin van de koningin (design/artboards/Spel2*.dc.html) ---------- */
+.edelsteen-pil { gap: 8px; padding: 6px 12px; font-size: 15px; }
+.edelsteen-teller { display: inline-flex; align-items: center; gap: 3px; }
+.spel2 .kopbalk-titel { font-size: 20px; }
+
+.tuin-kaart { background: #5FB05A; }
+.tuin-scene { display: block; width: 100%; height: auto; }
+.tuin-knoppen { position: absolute; inset: 0; pointer-events: none; }
+.tuin-knop {
+  position: absolute; pointer-events: auto; border: 0; padding: 0; margin: 0; background: transparent; cursor: pointer;
+  clip-path: polygon(50% 0, 96% 25%, 96% 75%, 50% 100%, 4% 75%, 4% 25%);
+  -webkit-tap-highlight-color: transparent;
+}
+.tuin-knop:hover, .tuin-knop:focus-visible { background: rgba(255, 255, 255, 0.18); outline: none; }
+.tuin-knop-werker { clip-path: none; border-radius: 50%; }
+.tuin-knop-werker:focus-visible { box-shadow: inset 0 0 0 3px #fff; }
+
+/* tegel valt in (geen filters of gradients op bewegende delen) */
+@keyframes tuin-valt-in { from { transform: translateY(-10px); opacity: 0.4; } to { transform: none; opacity: 1; } }
+.valt-in { animation: tuin-valt-in 0.2s ease-out; }
+@keyframes tuin-fonkel { 0%, 100% { opacity: 1; } 50% { opacity: 0.55; } }
+.tuin-fonkel { animation: tuin-fonkel 1.4s ease-in-out infinite; }
+@keyframes tuin-hup { 0%, 100% { transform: translateY(0); } 40% { transform: translateY(-6px); } }
+.tuin-werker.hup > use { animation: tuin-hup 0.35s ease-out 2; }
+
+/* taartmenu: tegels, edelstenen, annuleren en het uitgelichte vak in het midden */
+.taart-optie.taart-hex {
+  width: 68px; height: 80px; min-height: 0; padding: 0; border-radius: 0; background: transparent; box-shadow: none;
+  filter: drop-shadow(0 10px 14px rgba(30, 58, 76, 0.35));
+}
+.taart-optie.taart-hex:disabled { cursor: default; filter: drop-shadow(0 6px 10px rgba(30, 58, 76, 0.25)); }
+.taart-optie.taart-hex:focus-visible { outline: 3px solid #fff; outline-offset: 2px; border-radius: 12px; }
+.taart-hex-inhoud { position: relative; display: block; width: 68px; height: 80px; }
+.taart-hex-inhoud > svg { display: block; }
+.taart-hex .aantal {
+  position: absolute; right: -2px; top: -2px; min-width: 24px; height: 24px; border-radius: 999px; padding: 0 6px; box-sizing: border-box;
+  background: #fff; color: var(--tekst); font-weight: 800; font-size: 13px; display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 2px 0 0 var(--kaart-schaduw);
+}
+.taart-hex:disabled .aantal { color: var(--gedempt-3); }
+.taart-optie.taart-rond { width: 64px; height: 64px; min-height: 0; padding: 0; border-radius: 50%; justify-content: center; box-shadow: 0 4px 0 0 var(--kaart-schaduw), 0 8px 16px rgba(30, 58, 76, 0.25); }
+.taart-optie.taart-annuleer { width: 48px; height: 48px; min-height: 0; padding: 0; border-radius: 50%; justify-content: center; box-shadow: 0 4px 0 0 var(--kaart-schaduw), 0 8px 16px rgba(30, 58, 76, 0.25); }
+.taart-midden.taart-midden-hex { width: 72px; height: 72px; border: 0; background: rgba(255, 255, 255, 0.35); }
+.taart-midden-doel { box-shadow: 0 0 0 4px var(--teal); }
+.taart-midden-goud { box-shadow: 0 0 0 4px var(--geel); }
+
+@media (prefers-reduced-motion: reduce) {
+  .valt-in, .tuin-fonkel, .tuin-werker.hup > use { animation: none; }
+}

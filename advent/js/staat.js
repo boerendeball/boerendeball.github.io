@@ -16,6 +16,7 @@ export function legeStaat() {
     briefjesGelezen: [],
     tegels: {},                   // { "groen-vlinder": 2, ... }  (spel 1 → spel 2)
     edelstenen: { blauw: 0, groen: 0, geel: 0 },   // spel 2 → spel 3
+    tuin: null,                   // spel 2, onaf pad: { gelegd: { "3,10": "groen-vogel" }, geoogst: ["2,11"], edelstenen: 1 }
     familie: null,                // "nguyen" | "tan" | "somchai"  (spel 3 → spel 4)
     geld: 0,                      // spel 4 → spel 5 → spel 6
     werkers: { 2: false, 3: false, 4: false, 5: false, 6: false },   // spel 7
@@ -114,6 +115,43 @@ export function neemTegel(kleur, figuur) {
     if ((s.tegels[id] || 0) > 0) { s.tegels[id] -= 1; gelukt = true; }
   });
   return gelukt;
+}
+
+/* Spel 2: de tuin blijft bewaard tot het pad af is (de tegels uit spel 1 zijn bewust schaars). */
+
+function tuinVan(s) {
+  if (!s.tuin || typeof s.tuin !== 'object') s.tuin = { gelegd: {}, geoogst: [], edelstenen: 0 };
+  return s.tuin;
+}
+
+/** Legt een tegel uit de voorraad op een vak van de tuin; false als die tegel op is. */
+export function legTuinTegel(vak, type) {
+  let gelukt = false;
+  schrijf((s) => {
+    if ((s.tegels[type] || 0) <= 0) return;
+    s.tegels[type] -= 1;
+    tuinVan(s).gelegd[vak] = type;
+    gelukt = true;
+  });
+  return gelukt;
+}
+
+/** Edelsteen uit een omringd tuinvak: één keer per vak. */
+export function oogstEdelsteen(vak, kleur) {
+  let gelukt = false;
+  schrijf((s) => {
+    const tuin = tuinVan(s);
+    if (tuin.geoogst.includes(vak)) return;
+    tuin.geoogst.push(vak);
+    tuin.edelstenen = (tuin.edelstenen || 0) + 1;
+    s.edelstenen[kleur] = (s.edelstenen[kleur] || 0) + 1;
+    gelukt = true;
+  });
+  return gelukt;
+}
+
+export function wisTuin() {
+  return schrijf((s) => { s.tuin = null; });
 }
 
 export function voegEdelsteenToe(kleur, aantal = 1) {

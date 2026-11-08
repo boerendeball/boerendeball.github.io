@@ -104,14 +104,16 @@
   "s4-gevels",
   "s4-bloemkraam",
   "s4-groentekraam",
-  "s4-kratten",
   "s4-kool",
   "s4-manden",
   "s4-ton",
   "d-gansje-eet",
   "d-lam-eet",
   "sil-gans",
-  "sil-lam"
+  "sil-lam",
+  "s4-dierentafel",
+  "s4-kooi-kat",
+  "s4-kooi-eekhoorn"
  ],
  "spel5": [
   "s5-lampion",

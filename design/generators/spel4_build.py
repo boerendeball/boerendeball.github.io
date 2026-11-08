@@ -235,6 +235,7 @@ print('ok')
 # Berg (familie Nguyễn) en dagmarkt (familie Somchai) – besluit 44. Zelfde opbouw en posities als
 # advent/js/spellen/decor4.js en fotos.js: de familie staat lachend op haar fotoplekken, de zoeker op de ouders.
 # ======================================================================================
+from spel4_sprites import persoon
 from spel4_sprites import (moeder_nguyen, vader_nguyen, meisje_nguyen, moeder_somchai, vader_somchai,
                            jongetje_somchai, dier_moment)
 
@@ -279,12 +280,16 @@ def markt(zoeker=True):
     s+='<rect x="0" y="304" width="358" height="366" fill="#EADFC4"/>'
     lijnen=' '.join([f'M0 {y} H358' for y in range(336,670,38)]+[f'M{x} 304 L{x+70} 670' for x in range(-120,400,46)])
     s+=f'<path d="{lijnen}" stroke="#DCCFAE" stroke-width="2"/>'
-    s+=use('werker',258,430,16,20)+use('s4-kratten',262,374,80,84)
-    x,y=voet(302,386,'kind'); s+=jongetje_somchai(x,y,gezicht='b-lach')
     s+=use('s4-bloemkraam',22,284,130,110)
+    # dierentafel: verkoper erachter, kooien met twee katten en een vliegende eekhoorn; het jongetje staat ervoor
+    s+=persoon(269,323,'#39D353','#C98B5A','bh-kort','#2B1A0E',acc=('acc-nonla',))
+    s+=use('werker',228,402,16,20)+use('s4-dierentafel',232,378,120,70)
+    s+=use('s4-kooi-kat',240,360,34,40,'#FF8A3D')+use('s4-kooi-eekhoorn',276,360,34,40)+use('s4-kooi-kat',312,360,34,40,'#A7B2BC')
     x,y=voet(70,416,'v'); s+=moeder_somchai(x,y,gezicht='b-lach')
     x,y=voet(114,416,'v'); s+=vader_somchai(x,y,gezicht='b-lach')
-    s+=use('s4-ton',192,420,36,48)+use('s4-manden',16,470,90,60)
+    s+=use('s4-ton',192,420,36,48)
+    x,y=voet(262,470,'kind'); s+=jongetje_somchai(x,y,gezicht='b-lach')
+    s+=use('s4-manden',16,470,90,60)
     s+=use('s4-groentekraam',214,500,130,100)
     x,y=voet(168,624,'dier'); s+=dier_moment(x,y,'lam')
     s+=use('s4-kool',190,604,24,20)+use('s4-bank',24,588,84,48)
@@ -303,7 +308,7 @@ def filmstrook2(dier):
 
 BERG_LBL=('Uitzichtpunt op een berg met groene bergtoppen en wolken in de verte: houten hek langs de rand, uitstekend rotspunt, '
           'verrekijker op een paal, bankje, wegwijzer, struiken, een den en een ijsje op de grond. Familie Nguyễn staat lachend op haar fotoplekken.')
-MARKT_LBL=('Dagmarkt voor een rij gekleurde winkelhuizen: bloemenkraam, groentekraam, stapel kratten, manden met fruit, regenton en bankje, '
+MARKT_LBL=('Dagmarkt voor een rij gekleurde winkelhuizen: bloemenkraam, groentekraam, tafel met een verkoper en kooien met katten en een vliegende eekhoorn, manden met fruit, regenton en bankje, '
            'een kool op de grond. Familie Somchai staat lachend op haar fotoplekken.')
 for naam,titel,inhoud,lbl,dier in [('Spel4-Berg','Spel 4 – berg (familie Nguyễn)',berg(),BERG_LBL,'gans'),
                                    ('Spel4-Markt','Spel 4 – dagmarkt (familie Somchai)',markt(),MARKT_LBL,'lam')]:
@@ -342,7 +347,7 @@ sheet2+='''    </div>
 for lab,id,w,h,sc,bg in [('bergen','s4-bergen',358,190,0.5,'#8ED8F8'),('hek','s4-hek',200,52,0.6,''),('rotspunt','s4-rotspunt',120,64,0.8,'#8ED8F8'),('ijsje','s4-ijsje',28,20,1.6,''),
                         ('verrekijker','s4-kijker',44,72,1.0,''),('wegwijzer','s4-wegwijzer',44,70,1.0,''),('struik','s4-struik',56,36,1.0,''),('den','s4-den',54,100,0.8,''),
                         ('trapje','s4-trap',90,50,0.8,''),('winkelhuizen','s4-gevels',358,210,0.45,'#8ED8F8'),('bloemenkraam','s4-bloemkraam',130,110,0.75,''),
-                        ('groentekraam','s4-groentekraam',130,100,0.75,''),('kratten','s4-kratten',80,84,0.8,''),('kool','s4-kool',24,20,1.6,''),('manden','s4-manden',90,60,0.8,''),('regenton','s4-ton',36,48,1.0,'')]:
+                        ('groentekraam','s4-groentekraam',130,100,0.75,''),('dierentafel','s4-dierentafel',120,70,0.8,''),('kattenkooi','s4-kooi-kat',34,40,1.4,''),('eekhoornkooi','s4-kooi-eekhoorn',34,40,1.4,''),('kool','s4-kool',24,20,1.6,''),('manden','s4-manden',90,60,0.8,''),('regenton','s4-ton',36,48,1.0,'')]:
     st=f' style="background:{bg};border-radius:8px"' if bg else ''
     sheet2+=f'<div class="vak"><svg class="ic" viewBox="0 0 {w} {h}" width="{w*sc:.0f}" height="{h*sc:.0f}"{st}>{use(id,0,0,w,h)}</svg><span class="lbl">{lab}</span></div>'
 sheet2+='''    </div>

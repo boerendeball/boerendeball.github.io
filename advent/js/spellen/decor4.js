@@ -3,7 +3,7 @@
 // mee gesorteerd worden op hun voet-y, werker = de verstopte werker voor spel 7, label = beschrijving voor de scène.
 // Scène 358×670; het strand komt uit design/generators/spel4_build.py (strand()), berg en markt uit spel4_build.py (berg(), markt()).
 
-import { el, use } from '../sprites.js';
+import { el, use, persoon } from '../sprites.js';
 
 const pad = (d, attrs) => el('path', { d, ...attrs });
 const rect = (x, y, width, height, fill, extra = {}) => el('rect', { x, y, width, height, fill, ...extra });
@@ -98,7 +98,9 @@ function bergRekwisieten() {
 
 /* ---------- dagmarkt ---------- */
 
-const MARKT_WERKER = { x: 258, y: 430, b: 16, h: 20 };   // half achter de stapel kratten
+const MARKT_WERKER = { x: 228, y: 402, b: 16, h: 20 };   // half achter de dierentafel
+// De verkoper staat achter de dierentafel (decor: telt niet mee als iemand die in beeld staat).
+const VERKOPER = { kleding: '#39D353', huid: '#C98B5A', haar: 'bh-kort', haarkleur: '#2B1A0E', acc: ['acc-nonla'] };
 
 function marktAchter() {
   const tegels = [];
@@ -119,10 +121,16 @@ function marktAchter() {
 
 function marktRekwisieten() {
   return [
-    // De kratten tekenen vroeg (y 384): het jongetje staat er bovenop (voet y 386).
-    { y: 383, werker: true, knoop: werkerKnoop(MARKT_WERKER) },
-    { y: 384, knoop: use('s4-kratten', 262, 374, 80, 84) },
     { y: 392, knoop: use('s4-bloemkraam', 22, 284, 130, 110) },
+    // Dierentafel: verkoper erachter, kooien met twee katten en een vliegende eekhoorn erop; het jongetje staat ervoor.
+    { y: 396, knoop: persoon(293 - 24, 394 - 71, VERKOPER) },
+    { y: 443, werker: true, knoop: werkerKnoop(MARKT_WERKER) },
+    { y: 444, knoop: use('s4-dierentafel', 232, 378, 120, 70) },
+    { y: 444.5, knoop: el('g', {}, [
+      use('s4-kooi-kat', 240, 360, 34, 40, '#FF8A3D'),
+      use('s4-kooi-eekhoorn', 276, 360, 34, 40),
+      use('s4-kooi-kat', 312, 360, 34, 40, '#A7B2BC'),
+    ]) },
     { y: 468, knoop: use('s4-ton', 192, 420, 36, 48) },
     { y: 530, knoop: use('s4-manden', 16, 470, 90, 60) },
     { y: 596, knoop: use('s4-groentekraam', 214, 500, 130, 100) },
@@ -147,7 +155,7 @@ export const DECOR = {
   },
   markt: {
     achter: marktAchter, rekwisieten: marktRekwisieten, werker: MARKT_WERKER,
-    label: 'Een dagmarkt voor een rij gekleurde winkelhuizen, met een bloemenkraam, een groentekraam, een stapel kratten, manden met fruit, '
+    label: 'Een dagmarkt voor een rij gekleurde winkelhuizen, met een bloemenkraam, een groentekraam, een tafel met een verkoper en kooien met katten en een vliegende eekhoorn, manden met fruit, '
       + 'een regenton en een bankje; bij de groentekraam ligt een kool op de grond. De familie loopt rond; Pino heeft een fototoestel.',
   },
 };

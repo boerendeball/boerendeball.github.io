@@ -75,19 +75,17 @@ export const OMGEVINGEN = {
     pino: { rust: [300, 652], richting: -1 },
     plekken: [
       { id: 'bloemkraam', frame: { x: 26, y: 290, b: 146, h: 136 }, doelen: { moeder: [70, 416], vader: [114, 416] }, fotopunt: [150, 508], richting: -1 },
-      { id: 'kratten', frame: { x: 250, y: 318, b: 104, h: 110 }, doelen: { kind: [302, 386] }, fotopunt: [244, 488], richting: 1 },
+      { id: 'dierentafel', frame: { x: 226, y: 334, b: 128, h: 146 }, doelen: { kind: [262, 470] }, kijk: { kind: 1 }, fotopunt: [196, 560], richting: 1 },
       { id: 'kool', frame: { x: 118, y: 568, b: 112, h: 80 }, doelen: { dier: [168, 624] }, kijk: { dier: 1 }, fotopunt: [80, 652], richting: 1 },
     ],
     routes: {
       // Ouders (17 s): moeder manden / bij de kool (in het frame van het lammetje), vader midden op het plein /
-      // naast de kratten (in het frame van het jongetje). Afgestemd met controleer(): bloemenkraam 87 %, kratten 65 %, kool 82 %.
+      // rechts vóór de dierentafel (in het frame van het jongetje). Afgestemd met controleer(): bloemenkraam 82 %,
+      // dierentafel 58 %, kool 82 %. De verkoper achter de tafel is decor en telt niet mee.
       moeder: { cyclus: 17, start: 5, stops: [{ p: [60, 560], wacht: 2 }, { p: [130, 600], wacht: 1.5 }] },
-      vader: { cyclus: 17, start: 5, stops: [{ p: [200, 380], wacht: 2 }, { p: [346, 424], wacht: 2 }] },
-      // Jongetje (15 s): links van de kratten af → vóór de bloemenkraam (in het frame van de ouders) → regenton → links weer op de kratten.
-      kind: {
-        cyclus: 15, start: 4,
-        stops: [{ p: [234, 388], wacht: 0.1 }, { p: [150, 440], wacht: 1.5 }, { p: [186, 482], wacht: 1.5 }, { p: [234, 474], wacht: 0 }, { p: [234, 388], wacht: 0.2 }],
-      },
+      vader: { cyclus: 17, start: 5, stops: [{ p: [200, 380], wacht: 2.5 }, { p: [340, 490], wacht: 1 }] },
+      // Jongetje (11,5 s): vóór de bloemenkraam (in het frame van de ouders) → bij de regenton → dierentafel.
+      kind: { cyclus: 11.5, start: 4, stops: [{ p: [150, 440], wacht: 1.5 }, { p: [170, 500], wacht: 1.5 }] },
       // Lammetje (12 s): vóór de manden → linksonder → kool.
       dier: { cyclus: 12, start: 3, stops: [{ p: [100, 548], wacht: 1 }, { p: [44, 650], wacht: 1 }] },
     },

@@ -18,7 +18,9 @@ De koningin wil naar haar tuinpoort, maar het pad ligt er nog niet. Pino legt he
    - label `DAG 2 · 25 NOVEMBER`;
    - titel `Tuin van de koningin` (Fredoka 20);
    - **rechts niets**: het artboard heeft een edelsteenteller, maar in spel 2 zie je niet hoeveel edelstenen je hebt. Dat zie je pas in spel 3 (besluit 35).
-2. **Scène**: SVG 358×744 in `.scene-kaart.tuin-kaart` (radius 22, `overflow: hidden`), breedte 100 %, hoogte automatisch. Daarboven ligt `.tuin-knoppen` met de klikdoelen.
+2. **Scène**: SVG 358×744 in `.scene-kaart.tuin-kaart` (radius 22, `overflow: hidden`). Daarboven ligt `.tuin-knoppen` met de klikdoelen, in % van de kaart.
+   - Het scherm is precies één venster hoog (`100dvh`, dus zonder adres- en navigatiebalk). De scène staat in `.tuin-ruimte` (`container-type: size`) en krijgt de breedte `min(100cqw, 100cqh × 358/744)` met `aspect-ratio: 358/744`. Ze schaalt dus mee met de kleinste van de beschikbare breedte en hoogte en is altijd helemaal te zien (besluit 43). Op een laag scherm blijft er links en rechts wat achtergrond over.
+   - De scène heeft `touch-action: manipulation`, niet `none` zoals spel 1: hier is geen joystick.
 
 Op desktop staat het scherm 390 px breed gecentreerd, net als in spel 1.
 
@@ -147,6 +149,7 @@ Er is geen tekst in de scène. Het menu toont alleen passende tegels, zonder uit
 - [x] Herladen midden in het spel: de tuin staat er nog (de tegels zijn bewaard).
 - [x] Een tegel naast de poort: Pino loopt het pad af, daarna het resultaatscherm; `tuin` is `null`, deurtje 2 `gespeeld`, Logica +1, `scores[2]` gezet.
 - [x] "Nog een keer" geeft een lege tuin.
+- [x] Past zonder scrollen op elk telefoonformaat: 384×600, 384×680 (Galaxy A55 met browserbalken), 375×812 en 412×915 gemeten. De pagina is even hoog als het venster, de klikdoelen liggen op de vakken en het menu opent.
 - [x] Het kalender-taartmenu werkt nog (radiale opties zijn een uitbreiding).
 - [x] Geen consolefouten.
 - [ ] Beoordeling door Benjamin: scène, decor en gevoel.

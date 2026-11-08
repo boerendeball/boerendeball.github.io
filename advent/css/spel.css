@@ -105,7 +105,15 @@
 /* ---------- spel 2 · Tuin van de koningin (design/artboards/Spel2*.dc.html) ---------- */
 .spel2 .kopbalk-titel { font-size: 20px; }
 
-.tuin-kaart { background: #5FB05A; }
+/* Het scherm is precies zo hoog als het zichtbare venster (dvh: zonder adresbalk/navigatiebalk); de scène
+   (358×744) schaalt naar de kleinste van beschikbare breedte en hoogte, zodat er nooit gescrold hoeft te worden. */
+.spel2 { height: 100vh; height: 100dvh; min-height: 0; overflow: hidden; }
+.tuin-ruimte { flex: 1 1 auto; min-height: 0; container-type: size; display: flex; justify-content: center; align-items: flex-start; }
+.tuin-kaart {
+  background: #5FB05A; flex: none; margin: 0;
+  width: min(100cqw, calc(100cqh * 358 / 744)); max-width: none; aspect-ratio: 358 / 744;
+  touch-action: manipulation; /* geen joystick in spel 2: gewone tik, geen dubbeltik-zoom */
+}
 .tuin-scene { display: block; width: 100%; height: auto; }
 .tuin-knoppen { position: absolute; inset: 0; pointer-events: none; }
 .tuin-knop {

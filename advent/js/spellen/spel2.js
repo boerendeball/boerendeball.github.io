@@ -140,7 +140,8 @@ function speel({ root, dag, info, klaar, opnieuw }) {
 
   const scherm = h('div', { class: 'scherm spel spel2' }, [
     kopbalk({ label: datum.dagLabel(dag), titel: info.titel, terugNaar: `/deur/${dag}`, terugLabel: 'Terug naar het deurtje' }),
-    h('div', { class: 'scene-kaart tuin-kaart' }, [svg, knoppen]),
+    // De ruimte onder de kopbalk bepaalt de maat: de scène schaalt mee zodat ze altijd helemaal in beeld is.
+    h('div', { class: 'tuin-ruimte' }, [h('div', { class: 'scene-kaart tuin-kaart' }, [svg, knoppen])]),
   ]);
   root.replaceChildren(scherm);
 

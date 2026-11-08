@@ -46,6 +46,7 @@ Keuzes die niet (eenduidig) in het ontwerp staan. **Te bevestigen** = door mij g
 | 40 | 2026-11-05 | Spel 3: gezichten | Familieleden kijken standaard bedroefd (nieuw symbool `b-bedroefd` in `spel3_sprites.py`); een complete familie kijkt blij (`b-blij`) | besloten (Benjamin) |
 | 41 | 2026-11-05 | Spel 3 → 4: gezin | De familie die als eerste compleet wordt, is het gezin van spel 4. Is er bij het openen van spel 4 nog geen complete familie, dan verschijnt een popup met de bedroefde familie Nguyễn, de titel "Nog geen familiefoto" en de tekst "Nog geen enkele familie is compleet. Er kunnen nog geen foto's gemaakt worden." (uitzondering op de tekstregel) met één knop terug naar de kalender | besloten (Benjamin) |
 | 42 | 2026-11-05 | Spel 3: na afronden en resultaat | De families blijven compleet (`staat.karakters` wordt niet gewist); het resultaatscherm heeft geen "Nog een keer" en geen sterren. Eén tegel EDELSTENEN OVER. Slotzin: "Drie huizen, drie families en niemand die nog iets mist. Zelfs het biggetje knort tevreden." | besloten (Benjamin) |
+| 43 | 2026-11-08 | Spel 2: scène past altijd op het scherm | Op een Galaxy A55 was maar ±75 % te zien en kon je niet scrollen (de scène had `touch-action: none` van spel 1). Nu is het scherm één venster hoog (`100dvh`) en schaalt de scène (358×744) naar de kleinste van beschikbare breedte en hoogte, zodat er nooit gescrold hoeft te worden. Op een laag scherm wordt de scène smaller, met achtergrond ernaast | te bevestigen |
 
 ## Open vragen voor Benjamin (uit de ontwerpdocumenten)
 

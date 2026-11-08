@@ -235,7 +235,6 @@ export function start({ root, dag, info, klaar }) {
       label: `${info.titel.toUpperCase()} · KLAAR`,
       titel: 'Iedereen is weer thuis!',
       zin: 'Drie huizen, drie families en niemand die nog iets mist. Zelfs het biggetje knort tevreden.',
-      tegels: [{ label: 'EDELSTENEN OVER', waarde: over, kleur: '#9A5B00' }],
       beloning: { vaardigheid: info.vaardigheid, eersteKeer },
     });
   }

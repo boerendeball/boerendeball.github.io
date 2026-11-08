@@ -56,7 +56,7 @@ Tuning (bovenin `spel3.js`): `POP_DUUR` 520 ms, `HUP_VERTRAGING` 420 ms, `EIND_P
 
 ## Resultaatscherm
 
-Icoon `familie`, label `COMPLETE THE FAMILY · KLAAR`, titel "Iedereen is weer thuis!", zin "Drie huizen, drie families en niemand die nog iets mist. Zelfs het biggetje knort tevreden.", één tegel **EDELSTENEN OVER** (som), beloning Creativiteit +1 en "Verjaardag" +10 %. Geen sterren, geen GEKOPPELD/FOUT, geen "Nog een keer" (besluit 42).
+Icoon `familie`, label `COMPLETE THE FAMILY · KLAAR`, titel "Iedereen is weer thuis!", zin "Drie huizen, drie families en niemand die nog iets mist. Zelfs het biggetje knort tevreden.", geen scoretegels, beloning Creativiteit +1 en "Verjaardag" +10 %. Geen sterren, geen GEKOPPELD/FOUT, geen EDELSTENEN OVER, geen "Nog een keer" (besluit 42). Het aantal overgebleven edelstenen wordt wel als `score.over` bewaard.
 
 ## Geen uitleg
 
@@ -74,7 +74,7 @@ Weggelaten uit het artboard: de familienamen op de scènes, de kop "Karakterkaar
 - [ ] Zonder edelstenen zijn alle kaarten dof en schudden ze bij een tik.
 - [ ] Kopen trekt de juiste edelstenen af (pil werkt live bij), de kaart verdwijnt, het karakter verschijnt met sterretjes bij de juiste familie.
 - [ ] Een complete familie kijkt blij en hupt; de eerste complete familie komt in `staat.familie`.
-- [ ] Na de vierde kaart: resultaatscherm met EDELSTENEN OVER, Creativiteit +1, zonder "Nog een keer".
+- [ ] Na de vierde kaart: resultaatscherm zonder scoretegels, met Creativiteit +1, zonder "Nog een keer".
 - [ ] Herladen halverwege behoudt de gekochte karakters; na afronden blijft alles compleet.
 - [ ] Werker alleen aanklikbaar als deurtje 7 open is; aantikken zet `werkers[3]`.
 - [ ] Spel 4 zonder complete familie toont de popup met de bedroefde Nguyễns (zie `spel4.md`).

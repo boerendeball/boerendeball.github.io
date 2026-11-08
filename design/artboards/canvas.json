@@ -322,6 +322,27 @@
       "w": 1000,
       "h": 720,
       "title": "Spel 10 – sprite-set"
+    },
+    "Spel4-Berg.dc.html": {
+      "h": 844,
+      "title": "Spel 4 – berg (familie Nguyễn)",
+      "w": 390,
+      "x": 7950,
+      "y": 4550
+    },
+    "Spel4-Markt.dc.html": {
+      "h": 844,
+      "title": "Spel 4 – dagmarkt (familie Somchai)",
+      "w": 390,
+      "x": 8420,
+      "y": 4550
+    },
+    "Spel4-Sprites2.dc.html": {
+      "h": 620,
+      "title": "Spel 4 – sprite-set berg en markt",
+      "w": 1000,
+      "x": 4745,
+      "y": 4700
     }
   },
   "createdOnFiles": {
@@ -548,6 +569,7 @@
     "Spel2-Sprites.dc.html",
     "Spel3-Sprites.dc.html",
     "Spel4-Sprites.dc.html",
+    "Spel4-Sprites2.dc.html",
     "Spel5-Sprites.dc.html",
     "Spel6-Sprites.dc.html",
     "Spel7-Sprites.dc.html",
@@ -562,6 +584,8 @@
     "Spel3-Klaar.dc.html",
     "Spel4.dc.html",
     "Spel4-Klaar.dc.html",
+    "Spel4-Berg.dc.html",
+    "Spel4-Markt.dc.html",
     "Spel5.dc.html",
     "Spel5-Onderhandel.dc.html",
     "Spel5-Klaar.dc.html",

@@ -216,3 +216,70 @@
   .fam-pop, .fam-ster, .fam-hup > .fam-lid, .fam-werker.hup > use, .kaartje.kaartje-weg, .kaartje.schud { animation: none; }
   .fam-sterren { display: none; }
 }
+
+/* ---------- spel 4 · (Social)ize the family (design/artboards/Spel4.dc.html) ---------- */
+/* Zoals spel 2: het scherm is één venster hoog en de scène (358×670) schaalt mee, zodat er nooit gescrold hoeft te worden. */
+.spel4 { height: 100vh; height: 100dvh; min-height: 0; overflow: hidden; gap: 10px; }
+.s4-teller { color: #0E6A98; }
+.s4-ruimte { flex: 1 1 auto; min-height: 0; container-type: size; display: flex; justify-content: center; align-items: flex-start; }
+.s4-kaart {
+  background: #FDE9B6; flex: none; margin: 0;
+  width: min(100cqw, calc(100cqh * 358 / 670)); max-width: none; aspect-ratio: 358 / 670;
+  touch-action: manipulation;
+}
+.s4-scene { display: block; width: 100%; height: auto; }
+.s4-knoppen { position: absolute; inset: 0; pointer-events: none; }
+.s4-knop {
+  position: absolute; pointer-events: auto; border: 0; padding: 0; margin: 0; background: transparent; cursor: pointer;
+  border-radius: 14px; -webkit-tap-highlight-color: transparent;
+}
+.s4-knop:focus-visible { outline: 3px solid #fff; outline-offset: -2px; box-shadow: 0 0 0 5px rgba(31, 163, 220, 0.6); }
+.s4-knop-werker { border-radius: 50%; }
+
+/* filmstrook: drie vakjes, gevuld met een mini-polaroid */
+.s4-filmstrook { flex: none; display: flex; gap: 8px; width: 100%; max-width: var(--scene-breedte); margin: 0 auto; }
+.s4-vak {
+  flex: 1; height: 64px; border-radius: 12px; background: #F3F8FB; border: 3px dashed #B8C9D6; box-sizing: border-box;
+  display: flex; align-items: flex-end; justify-content: center; padding-bottom: 8px;
+}
+.s4-vak-vol { border-style: solid; border-color: #1FA3DC; background: #DDF1FB; align-items: center; padding: 0; }
+.s4-polaroid-klein {
+  width: 46px; height: 46px; background: #fff; padding: 3px 3px 7px; box-sizing: border-box; border-radius: 3px;
+  box-shadow: 0 2px 0 0 #CDE4F0; transform: rotate(-4deg);
+}
+.s4-polaroid-klein .s4-foto { display: block; width: 100%; height: 100%; background: #8ED8F8; }
+.s4-vlieger { position: fixed; z-index: 50; margin: 0; pointer-events: none; transform: none; }
+
+/* resultaat: drie polaroids schuin over elkaar (Spel4-Klaar) */
+.s4-polaroids { position: relative; width: 100%; max-width: 330px; height: 150px; margin: 0 auto; }
+.s4-polaroid {
+  position: absolute; top: 10px; width: 108px; height: 124px; background: #fff; padding: 7px 7px 20px; box-sizing: border-box;
+  border-radius: 4px; box-shadow: 2px 6px 0 0 #CDE4F0, 0 8px 18px rgba(30, 58, 76, 0.12);
+}
+.s4-polaroid .s4-foto { display: block; width: 100%; height: 100%; background: #8ED8F8; }
+.s4-polaroid-1 { left: 4%; transform: rotate(-6deg); }
+.s4-polaroid-2 { left: 50%; margin-left: -54px; top: 4px; transform: rotate(1deg); z-index: 1; }
+.s4-polaroid-3 { right: 4%; transform: rotate(7deg); z-index: 2; }
+.tegel-met-icoon { display: inline-flex; align-items: center; gap: 4px; }
+
+/* album (besluit 54): per familie een pagina met drie polaroids */
+.s4-albumpaginas { display: flex; flex-direction: column; gap: 14px; width: 100%; max-width: var(--scene-breedte); margin: 0 auto; }
+.s4-albumpagina { padding: 10px 8px 14px; }
+.s4-polaroid-leeg .s4-foto { background: #DDF1FB; }
+/* complete familie zonder foto's: cameraknop midden op de pagina (zoals de ronde camera-knop uit Spel4.png) */
+.s4-albumpagina { position: relative; }
+.s4-album-knop {
+  position: absolute; left: 50%; top: 50%; width: 76px; height: 76px; margin: -38px 0 0 -38px; z-index: 3;
+  border-radius: 50%; border: 0; padding: 0; cursor: pointer; background: #fff;
+  box-shadow: 0 0 0 5px #1E3A4C, 0 6px 0 5px #1E3A4C, 0 12px 20px rgba(30, 58, 76, 0.3);
+  display: flex; align-items: center; justify-content: center;
+  transition: transform 0.06s ease, box-shadow 0.06s ease;
+}
+.s4-album-knop:active { transform: translateY(4px); box-shadow: 0 0 0 5px #1E3A4C, 0 2px 0 5px #1E3A4C, 0 6px 12px rgba(30, 58, 76, 0.3); }
+.s4-album-knop:focus-visible { outline: 3px solid var(--teal); outline-offset: 6px; }
+@keyframes s4-knop-wip { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.06); } }
+.s4-album-knop { animation: s4-knop-wip 1.6s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { .s4-album-knop { animation: none; } }
+/* album: foto's van een familie aantikken als spel 7 open is (besluit 50) */
+.s4-album-bekijk { display: block; border: 0; padding: 0; margin: 0 auto; background: transparent; cursor: pointer; font: inherit; color: inherit; }
+.s4-album-bekijk:focus-visible { outline: 3px solid var(--teal); outline-offset: 4px; border-radius: 12px; }

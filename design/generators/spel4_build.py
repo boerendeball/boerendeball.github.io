@@ -74,7 +74,7 @@ def strand(zoeker=True):
     s+=use('s4-boog',112,300,130,130)
     s+=use('s4-bank',20,398,84,48)
     s+=use('s4-parasol',288,436,72,84)
-    s+=use('s4-handdoek',292,526,80,44)
+    s+=use('s4-handdoek',262,520,80,44)
     s+=use('s4-bal',92,466,32,32)
     # familie Tan loopt over het strand; Pino met de camera
     s+=moeder_tan(30,522)+vader_tan(78,530)+meisje_tan(124,552)+big_tan(166,572)
@@ -230,3 +230,123 @@ sheet+='''    </div>
 </div>'''+TAIL%('{"$preview":{"width":1000,"height":720}}','{}')
 open('pino/project/Spel4-Sprites.dc.html','w').write(sheet)
 print('ok')
+
+# ======================================================================================
+# Berg (familie Nguyễn) en dagmarkt (familie Somchai) – besluit 44. Zelfde opbouw en posities als
+# advent/js/spellen/decor4.js en fotos.js: de familie staat lachend op haar fotoplekken, de zoeker op de ouders.
+# ======================================================================================
+from spel4_sprites import (moeder_nguyen, vader_nguyen, meisje_nguyen, moeder_somchai, vader_somchai,
+                           jongetje_somchai, dier_moment)
+
+def voet(x,y,soort):
+    # voetpunt -> linksboven van het 48x72-frame (kind x0,72), zoals lidTekening() in spel4.js
+    if soort=='kind': return (x-24*0.72, y-71*0.72)
+    if soort=='dier': return (x-24, y-38)
+    return (x-24, y-71)
+
+def berg(zoeker=True):
+    s='<rect x="0" y="0" width="358" height="340" fill="#8ED8F8"/>'
+    s+=use('s4-zon',34,30,54,54)+use('s4-wolk',150,36,96,36)+use('s4-wolk',268,92,66,25)
+    s+=use('s4-meeuw',120,110,22,11)+use('s4-meeuw',96,124,16,8)
+    s+=use('s4-bergen',0,140,358,190)
+    s+=use('s4-rotspunt',230,268,120,64)
+    s+='<rect x="0" y="322" width="246" height="5" fill="#A7B2BC"/><rect x="334" y="322" width="24" height="5" fill="#7D8A96"/>'
+    s+='<rect x="0" y="326" width="358" height="344" fill="#8BD35A"/>'
+    s+='<rect x="0" y="326" width="246" height="5" fill="#5FB05A"/><rect x="334" y="326" width="24" height="5" fill="#5FB05A"/>'
+    s+='<g fill="#9ADB7A"><ellipse cx="70" cy="400" rx="44" ry="12"/><ellipse cx="250" cy="500" rx="54" ry="14"/><ellipse cx="120" cy="640" rx="60" ry="14"/><ellipse cx="320" cy="610" rx="40" ry="10"/></g>'
+    s+='<path d="M44 676 Q70 566 150 520 T126 372" fill="none" stroke="#F2CF8A" stroke-width="40" stroke-linecap="round"/>'
+    s+='<path d="M44 676 Q70 566 150 520 T126 372" fill="none" stroke="#FDE9B6" stroke-width="32" stroke-linecap="round"/>'
+    s+=use('s4-trap',4,628,90,50)+use('s4-ijsje',262,552,35,25)
+    # rekwisieten en familie, gesorteerd op voet-y (achter -> voor)
+    x,y=voet(290,294,'kind'); s+=meisje_nguyen(x,y,gezicht='b-lach')
+    s+=use('s4-hek',12,290,200,52)
+    x,y=voet(88,364,'v'); s+=moeder_nguyen(x,y,gezicht='b-lach')
+    x,y=voet(134,364,'v'); s+=vader_nguyen(x,y,gezicht='b-lach')
+    s+=use('s4-den',300,330,54,96)
+    s+=use('werker',206,432,16,20)+use('s4-kijker',186,388,44,72)
+    s+=use('s4-struik',290,436,56,36)+use('s4-bank',20,430,84,48)
+    x,y=voet(250,568,'dier'); s+=dier_moment(x,y,'gansje')
+    s+=use('s4-wegwijzer',36,520,44,70)+use('s4-struik',128,600,56,36)
+    s+=pino_foto(306,579,flip=True)
+    if zoeker: s+=use('s4-zoeker',44,280,136,100)
+    return s
+
+def markt(zoeker=True):
+    s='<rect x="0" y="0" width="358" height="140" fill="#8ED8F8"/>'
+    s+=use('s4-wolk',40,18,80,30)+use('s4-wolk',236,40,66,25)
+    s+=use('s4-gevels',0,86,358,210)
+    s+='<rect x="0" y="290" width="358" height="14" fill="#DDE7EE"/><rect x="0" y="300" width="358" height="4" fill="#CFD8DC"/>'
+    s+='<rect x="0" y="304" width="358" height="366" fill="#EADFC4"/>'
+    lijnen=' '.join([f'M0 {y} H358' for y in range(336,670,38)]+[f'M{x} 304 L{x+70} 670' for x in range(-120,400,46)])
+    s+=f'<path d="{lijnen}" stroke="#DCCFAE" stroke-width="2"/>'
+    s+=use('werker',258,430,16,20)+use('s4-kratten',262,374,80,84)
+    x,y=voet(302,386,'kind'); s+=jongetje_somchai(x,y,gezicht='b-lach')
+    s+=use('s4-bloemkraam',22,284,130,110)
+    x,y=voet(70,416,'v'); s+=moeder_somchai(x,y,gezicht='b-lach')
+    x,y=voet(114,416,'v'); s+=vader_somchai(x,y,gezicht='b-lach')
+    s+=use('s4-ton',192,420,36,48)+use('s4-manden',16,470,90,60)
+    s+=use('s4-groentekraam',214,500,130,100)
+    x,y=voet(168,624,'dier'); s+=dier_moment(x,y,'lam')
+    s+=use('s4-kool',190,604,24,20)+use('s4-bank',24,588,84,48)
+    s+=pino_foto(276,581,flip=True)
+    if zoeker: s+=use('s4-zoeker',26,290,146,136)
+    return s
+
+def filmstrook2(dier):
+    def vak(inner,w):
+        return f'<div class="film"><svg class="ic" viewBox="0 0 {w} 32" width="{w}" height="32" aria-hidden="true">{inner}</svg></div>'
+    grijs='#9DB4C4'
+    return f'''
+  <div style="padding: 10px 16px 18px; display: flex; gap: 8px;" role="group" aria-label="Filmstrook">
+    {vak(sil(0,0,"moeder",grijs)+sil(24,0,"vader",grijs),48)}{vak(sil(0,0,"kind",grijs),24)}{vak(sil(0,0,dier,grijs),24)}
+  </div>'''
+
+BERG_LBL=('Uitzichtpunt op een berg met groene bergtoppen en wolken in de verte: houten hek langs de rand, uitstekend rotspunt, '
+          'verrekijker op een paal, bankje, wegwijzer, struiken, een den en een ijsje op de grond. Familie Nguyễn staat lachend op haar fotoplekken.')
+MARKT_LBL=('Dagmarkt voor een rij gekleurde winkelhuizen: bloemenkraam, groentekraam, stapel kratten, manden met fruit, regenton en bankje, '
+           'een kool op de grond. Familie Somchai staat lachend op haar fotoplekken.')
+for naam,titel,inhoud,lbl,dier in [('Spel4-Berg','Spel 4 – berg (familie Nguyễn)',berg(),BERG_LBL,'gans'),
+                                   ('Spel4-Markt','Spel 4 – dagmarkt (familie Somchai)',markt(),MARKT_LBL,'lam')]:
+    h2=HEAD.format(title=titel)+DEFS
+    h2+='<div class="vloer" style="width: 390px; height: 844px; box-sizing: border-box; background-color: #BFE6FA; display: flex; flex-direction: column; overflow: hidden; position: relative;">'
+    h2+=kopbalk(0)
+    h2+=f'''
+  <div role="img" aria-label="{lbl}" style="position: relative; margin: 12px 16px 0; flex: 1; border-radius: 22px; background: #8ED8F8; box-shadow: 0 6px 0 0 #CDE4F0; overflow: hidden;">
+    <svg class="ic" viewBox="0 0 358 670" width="358" height="670" aria-hidden="true">{inhoud}</svg>
+  </div>'''
+    h2+=filmstrook2(dier)+'</div>'
+    h2+=TAIL%('{"film":{"editor":"int","default":0,"min":0,"max":99,"section":"Spelstand"},"$preview":{"width":390,"height":844}}','{ film: this.props.film ?? 0 }')
+    open(f'pino/project/{naam}.dc.html','w',encoding='utf-8').write(h2)
+
+# ---------- sprite sheet 2: berg, markt, etende dieren ----------
+sheet2=HEAD.format(title='Spel 4 – sprite-set berg en markt')+DEFS
+sheet2+='''<div class="vloer" style="width: 1000px; height: 620px; box-sizing: border-box; background-color: #BFE6FA; padding: 28px 32px; display: flex; flex-direction: column; gap: 16px;">
+  <div style="display: flex; justify-content: space-between; align-items: baseline;">
+    <h1 class="kop" style="margin: 0; font-size: 26px;">Sprite-set spel 4 · berg en dagmarkt</h1>
+    <span class="stat-label">FAMILIE NGUYỄN EN SOMCHAI UIT SPEL 3 · LACHEN OP DE FOTOPLEK · DIEREN ETEN · REKWISIETEN IN DRIEKWART</span>
+  </div>
+  <div class="kaart" style="padding: 14px 16px; display: flex; flex-direction: column; gap: 8px;">
+    <span class="stat-label">PERSONEN EN DIEREN · B-LACH · LIGGEN/ETEN · SILHOUETTEN</span>
+    <div style="display: flex; gap: 16px; align-items: flex-end; flex-wrap: wrap;">'''
+for lab,p in [('moeder Nguyễn',moeder_nguyen(0,0,gezicht='b-lach')),('vader Nguyễn',vader_nguyen(0,0,gezicht='b-lach')),('meisje',meisje_nguyen(0,20,gezicht='b-lach')),
+              ('gansje eet',dier_moment(0,32,'gansje')),('moeder Somchai',moeder_somchai(0,0,gezicht='b-lach')),('vader Somchai',vader_somchai(0,0,gezicht='b-lach')),
+              ('jongetje',jongetje_somchai(0,20,gezicht='b-lach')),('lammetje eet',dier_moment(0,32,'lam')),('biggetje ligt',dier_moment(0,32,'biggetje'))]:
+    sheet2+=f'<div class="vak"><svg class="ic" viewBox="0 -12 48 84" width="52" height="91">{p}</svg><span class="lbl">{lab}</span></div>'
+for lab,w in [('gans','gans'),('lam','lam')]:
+    sheet2+=f'<div class="vak"><svg class="ic" viewBox="0 0 24 32" width="30" height="40">{sil(0,0,w,"#0E7FB5")}</svg><span class="lbl">sil. {lab}</span></div>'
+sheet2+='''    </div>
+  </div>
+  <div class="kaart" style="padding: 14px 16px; display: flex; flex-direction: column; gap: 8px;">
+    <span class="stat-label">REKWISIETEN · BERG EN DAGMARKT, LICHT VAN LINKSBOVEN</span>
+    <div style="display: flex; gap: 18px; align-items: flex-end; flex-wrap: wrap;">'''
+for lab,id,w,h,sc,bg in [('bergen','s4-bergen',358,190,0.5,'#8ED8F8'),('hek','s4-hek',200,52,0.6,''),('rotspunt','s4-rotspunt',120,64,0.8,'#8ED8F8'),('ijsje','s4-ijsje',28,20,1.6,''),
+                        ('verrekijker','s4-kijker',44,72,1.0,''),('wegwijzer','s4-wegwijzer',44,70,1.0,''),('struik','s4-struik',56,36,1.0,''),('den','s4-den',54,100,0.8,''),
+                        ('trapje','s4-trap',90,50,0.8,''),('winkelhuizen','s4-gevels',358,210,0.45,'#8ED8F8'),('bloemenkraam','s4-bloemkraam',130,110,0.75,''),
+                        ('groentekraam','s4-groentekraam',130,100,0.75,''),('kratten','s4-kratten',80,84,0.8,''),('kool','s4-kool',24,20,1.6,''),('manden','s4-manden',90,60,0.8,''),('regenton','s4-ton',36,48,1.0,'')]:
+    st=f' style="background:{bg};border-radius:8px"' if bg else ''
+    sheet2+=f'<div class="vak"><svg class="ic" viewBox="0 0 {w} {h}" width="{w*sc:.0f}" height="{h*sc:.0f}"{st}>{use(id,0,0,w,h)}</svg><span class="lbl">{lab}</span></div>'
+sheet2+='''    </div>
+  </div>
+</div>'''+TAIL%('{"$preview":{"width":1000,"height":620}}','{}')
+open('pino/project/Spel4-Sprites2.dc.html','w',encoding='utf-8').write(sheet2)
+print('ok berg/markt')

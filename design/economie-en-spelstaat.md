@@ -10,7 +10,7 @@ De tien spellen zijn aan elkaar gekoppeld. Wat Pino in het ene spel verdient, ge
 | Spel 1 | Spel 2 | De tuin van spel 2 blijft bewaard (`tuin`) tot het pad af is: na één keer spel 1 zijn er bewust te weinig tegels, dus Pino moet terug naar de slaapzaal. | Grijze tegels met een 0 in het taartmenu; verder niets. |
 | Spel 2 | Spel 3 | Een leeg hexvak dat aan alle zes kanten door gelegde tegels is omringd levert een **edelsteen** op; Pino kiest de kleur (blauw, groen, geel) via een taartmenu. | In spel 2 niet te zien (alleen het keuzemenu bij het oogsten); de edelsteenteller staat pas in de kopbalk van spel 3. |
 | Spel 3 | Spel 4 | Karakterkaarten kosten edelstenen (lammetje = groen+groen, gansje = geel, meisje = geel+blauw, biggetje = blauw+geel) en horen bij een vaste familie (meisje + gansje → Nguyễn, biggetje → Tan, lammetje → Somchai). De **familie** die als eerste compleet is, is het gezin van spel 4 (`familie`); de gekochte kaarten blijven bewaard (`karakters`). Spel 3 is pas af als alle families compleet zijn. | Niet aangekondigd. Opent Pino spel 4 zonder complete familie, dan zegt een popup met de bedroefde familie Nguyễn dat er nog geen foto's gemaakt kunnen worden. |
-| Spel 4 | Spel 5 | De familie betaalt **geld (§)** voor de drie foto's (ontwerp: 60); hoeveel hangt af van de familie (sommige ogen rijker). | Munt + bedrag in de kopbalk van spel 4-resultaat en spel 5. |
+| Spel 4 | Spel 5 | Elke complete familie betaalt één keer **geld (§)** voor haar drie foto's: Nguyễn 100, Somchai 80, Tan 60 (besluit 48; bij spel 5 herzien). Welke families al op de foto staan, staat in `fotos`. | Munt + bedrag op het resultaatscherm van spel 4 en in spel 5. |
 | Spel 5 | Spel 6 | Wat Pino overhoudt na het kopen van de ketting (ontwerp: 26) is wat de zakkenroller in spel 6 probeert te stelen. | Munt + bedrag in de kopbalk van spel 6. |
 | Spel 2–6 | Spel 7 | In elk speelveld van spel 2 t/m 6 staat één **verstopte werker** (groene hoed, hark): tuin op vak (3,10) (pas zichtbaar als daar een tegel ligt), half achter de villa van familie Nguyễn, half achter de palmstam op het strand, achter de waterput op de nachtmarkt, in de menigte in de steeg. Pas aanklikbaar nadat spel 7 is ontgrendeld. | Spel 7 is een fotoalbum met vijf polaroids dat bijhoudt welke werkers gevonden zijn (loep + x/5). |
 | Spel 8 | Spel 8 | Vijf levels; gehaalde levels blijven gehaald. | Leveloverzicht met vinkjes en slotjes. |
@@ -30,6 +30,7 @@ Eén sleutel (bijvoorbeeld `pino-advent`) met een JSON-object; versienummer erbi
   "tuin": { "gelegd": { "1,13": "geel-boom" }, "geoogst": [], "edelstenen": 0 },
   "karakters": ["biggetje", "meisje"],
   "familie": "tan",
+  "fotos": ["tan"],
   "geld": 26,
   "werkers": { "2": true, "3": true, "4": false, "5": false, "6": false },
   "levels": { "gehaald": [1], "actief": 2 },

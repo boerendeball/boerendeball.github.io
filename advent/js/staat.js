@@ -19,6 +19,7 @@ export function legeStaat() {
     tuin: null,                   // spel 2, onaf pad: { gelegd: { "3,10": "groen-vogel" }, geoogst: ["2,11"], edelstenen: 1 }
     karakters: [],                // spel 3: gekochte kaarten ("lam" | "gansje" | "meisje" | "biggetje"), blijven bewaard
     familie: null,                // "nguyen" | "tan" | "somchai": de eerste complete familie (spel 3 → spel 4)
+    fotos: [],                    // spel 4: families die al gefotografeerd zijn ("tan" | "nguyen" | "somchai")
     geld: 0,                      // spel 4 → spel 5 → spel 6
     werkers: { 2: false, 3: false, 4: false, 5: false, 6: false },   // spel 7
     levels: { gehaald: [], actief: 1 },            // spel 8
@@ -38,6 +39,7 @@ function migreer(data) {
     uit[veld] = { ...basis[veld], ...(data[veld] || {}) };
   }
   if (!Array.isArray(uit.karakters)) uit.karakters = [];
+  if (!Array.isArray(uit.fotos)) uit.fotos = [];
   uit.versie = VERSIE;
   return uit;
 }
@@ -187,6 +189,18 @@ export function zetFamilie(naam) {
   return schrijf((s) => { s.familie = naam; });
 }
 
+/** Spel 4: de foto's van deze familie zijn gemaakt; de familie betaalt één keer. Geeft het bedrag terug (0 als al betaald). */
+export function markeerFotos(familie, bedrag) {
+  let betaald = 0;
+  schrijf((s) => {
+    if (s.fotos.includes(familie)) return;
+    s.fotos.push(familie);
+    s.geld = Math.max(0, s.geld + bedrag);
+    betaald = bedrag;
+  });
+  return betaald;
+}
+
 export function wijzigGeld(verschil) {
   return schrijf((s) => { s.geld = Math.max(0, s.geld + verschil); });
 }
@@ -230,6 +244,8 @@ export function vulTestStaat() {
     }
     s.edelstenen = { blauw: 3, groen: 3, geel: 3 };
     s.familie = s.familie || 'tan';
+    // Familie Tan echt compleet maken (spel 4 kijkt naar de gekochte kaarten).
+    if (s.familie === 'tan' && !s.karakters.includes('biggetje')) s.karakters.push('biggetje');
     s.geld = Math.max(s.geld, 60);
     s.levels = { gehaald: [1, 2], actief: 3 };
   });

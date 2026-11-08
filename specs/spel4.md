@@ -1,6 +1,6 @@
 # Spel 4 · (Social)ize the family
 
-**Status:** gebouwd, te beoordelen · Dag 4 · 27 november · vaardigheid Charisma · rendering: SVG-DOM
+**Status:** goedgekeurd (Benjamin, 2026-11-08) · Dag 4 · 27 november · vaardigheid Charisma · rendering: SVG-DOM
 Previews: `Spel4.png`, `Spel4-Klaar.png`, `Spel4-Sprites.png` (alleen het strand; berg en markt krijgen nieuwe artboards) · Generator: `spel4_build.py`, `spel4_sprites.py`
 Sprites: strand (`s4-zon s4-wolk s4-meeuw s4-rots s4-boot s4-pier s4-palm s4-kraam s4-bank s4-boog s4-parasol s4-handdoek s4-bal s4-schelp s4-zeester`), berg (`s4-bergen s4-hek s4-rotspunt s4-ijsje s4-kijker s4-wegwijzer s4-struik s4-den s4-trap`), markt (`s4-gevels s4-bloemkraam s4-groentekraam s4-dierentafel s4-kooi-kat s4-kooi-eekhoorn s4-kool s4-manden s4-ton`), camera (`s4-camera pino-foto s4-flits s4-zoeker`), fotomoment (`b-lach d-biggetje-lig d-gansje-eet d-lam-eet`), silhouetten (`sil-moeder sil-vader sil-kind sil-big sil-gans sil-lam`), `s4-film s4-munt s4-polaroid werker`
 
@@ -121,4 +121,6 @@ Nagelopen op 2026-11-08 in de browser (390×844 en 390×680, touch en Tab/Enter)
 - Nog open: PNG-previews van `Spel4-Berg`, `Spel4-Markt` en `Spel4-Sprites2` in `design/previews/` (headless Edge maakt in deze omgeving geen screenshots; de artboards zelf staan wel in `design/artboards/`).
 
 ## Open punten
-Zie `besluiten.md` 44–55 (voorstellen die nog bevestigd moeten worden: geen sluiterknop, album-tik naar de omgeving, werker in elke omgeving, markt-plekken).
+Alle besluiten voor spel 4 (44–57 in `besluiten.md`) zijn genomen. Bewust zo gelaten (Benjamin, 2026-11-08): de vader op de markt mag na de foto door het jongetje heen lopen, en de kraam op het strand mag voorlopig zo makkelijk blijven (91 % schoon).
+- Bij spel 5: is het geld uit spel 4 (Nguyễn 100, Somchai 80, Tan 60) genoeg?
+- PNG-previews van `Spel4-Berg`, `Spel4-Markt` en `Spel4-Sprites2` in `design/previews/` ontbreken nog.

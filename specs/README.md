@@ -9,7 +9,7 @@ Per scherm één spec: wat het precies doet, hoe het eruitziet (met verwijzing n
 | [spel1.md](spel1.md) — Princess Presence | gebouwd, te beoordelen |
 | [spel2.md](spel2.md) — Tuin van de koningin | gebouwd, te beoordelen |
 | [spel3.md](spel3.md) — Complete the family | gebouwd, te beoordelen |
-| [spel4.md](spel4.md) — (Social)ize the family | gebouwd, te beoordelen |
+| [spel4.md](spel4.md) — (Social)ize the family | goedgekeurd |
 | [spel5.md](spel5.md) … [spel10.md](spel10.md) | aanzet; uitwerken vlak voor de bouw |
 | [besluiten.md](besluiten.md) — beslislog en open vragen voor Benjamin | lopend |
 

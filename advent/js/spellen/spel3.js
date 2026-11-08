@@ -99,10 +99,24 @@ export function familieScene(familieId, gekocht = [], { nieuw = null, hup = fals
   return svg;
 }
 
-/** Plaatje op een karakterkaart (viewBox 0 0 48 52). */
+/**
+ * Plaatje op een karakterkaart (viewBox 0 0 48 52). Een persoon loopt in zijn 48×72-frame van de haarkruin
+ * (y 5) tot de schaduw (y 72); die 67 eenheden schalen we op 50, horizontaal gecentreerd en tegen de onderrand.
+ */
+const KAART_B = 48;
+const KAART_H = 52;
+const PERSOON_BOVEN = 5;
+const PERSOON_HOOGTE = 72 - PERSOON_BOVEN;
+
 function kaartPlaatje(id) {
   const k = fam.KARAKTERS[id];
-  const inhoud = k.soort === 'dier' ? dier(0, 8, k.dier) : persoon(-7, -6, { ...k.persoon, schaal: 1.1, gezicht: 'b-bedroefd' });
+  let inhoud;
+  if (k.soort === 'dier') inhoud = dier(0, 8, k.dier);
+  else {
+    const totaal = (KAART_H - 2) / PERSOON_HOOGTE;            // werkelijke schaal (incl. ×0,72 voor een kind)
+    const schaal = totaal / (k.persoon.kind ? 0.72 : 1);
+    inhoud = persoon(KAART_B / 2 - 24 * totaal, KAART_H - 72 * totaal, { ...k.persoon, schaal, gezicht: 'b-bedroefd' });
+  }
   return el('svg', { class: 'ic', viewBox: '0 0 48 52', width: 60, height: 65, 'aria-hidden': 'true' }, [inhoud]);
 }
 

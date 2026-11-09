@@ -426,14 +426,14 @@ function markt({ root, dag, info, klaar, opnieuw, kijken = false }) {
 
   function pauzeer() {
     bezig = true;
-    for (const k of Object.keys(invoer.richting)) invoer.richting[k] = false;
+    invoer.los();
     pinoStaat.pose = 'staan';
     lus.pauzeer();
     teken();
   }
   function hervat() {
     bezig = false;
-    for (const k of Object.keys(invoer.richting)) invoer.richting[k] = false;
+    invoer.los();
     if (!gestopt && !af) lus.hervat();
   }
 

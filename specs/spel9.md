@@ -11,7 +11,7 @@ Sprites nieuw: `s9-ooievaar s9-bundel s9-val s9-schaduw s9-laken s9-ring pino-du
 - Twee-armen-regel: wie een baby draagt gebruikt `b-lijf-los` + bundel + `s9-armen-om`.
 
 ## Staat
-In: niets. Uit: `rondSpelAf(9, { vaardigheid: 'lichaam' })`, `scores[9]`.
+In: `producten` (sportschoenen, besluit 63). Uit: `rondSpelAf(9, { vaardigheid: 'lichaam' })`, `scores[9]`.
 
 ## Uit te werken
-Valsnelheid en rondes, sleepbesturing (pointer op het laken, ook toetsenbord links/rechts), levens, einde, resultaatscherm.
+Valsnelheid en rondes, sleepbesturing (pointer op het laken, ook toetsenbord links/rechts), levens, einde, resultaatscherm. Gedrag zonder sportschoenen uit spel 5 (`producten`).

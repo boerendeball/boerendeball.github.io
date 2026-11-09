@@ -93,11 +93,25 @@ export function schermKalender({ root, telefoon = true }) {
     paneelVaardigheden(s, { vandaagVaardigheid, gespeeldTotaal, open: isDesktop() }),
   ]);
   root.append(kalender);
+  if (datum.devModus()) root.append(devKnop());
 
   // Telefoon: één keer per dag rinkelen als het deurtje van vandaag open is en nog niet gespeeld.
   if (telefoon && vandaagInfo && statussen[vandaagDag] === 'vandaag' && s.telefoonGezien !== vandaagDag) {
     toonTelefoon(vandaagDag);
   }
+}
+
+/** Alleen in devmodus: pil rechtsonder naar #/dev, met het aantal actieve opties (specs/ontwikkelaarsopties.md). */
+function devKnop() {
+  let aantal = 0;
+  try {
+    for (const k of new URLSearchParams(location.search).keys()) if (k !== 'dev') aantal++;
+  } catch { /* negeren */ }
+  return h('a', { href: '#/dev', class: 'dev-knop', 'aria-label': aantal ? `Ontwikkelaarsopties, ${aantal} aan` : 'Ontwikkelaarsopties' }, [
+    icoon('tandwiel', 22),
+    h('span', { class: 'dev-knop-tekst' }, 'Ontwikkelaarsopties'),
+    aantal ? h('span', { class: 'dev-knop-badge', 'aria-hidden': 'true' }, String(aantal)) : null,
+  ]);
 }
 
 function maakDeur(n, status) {

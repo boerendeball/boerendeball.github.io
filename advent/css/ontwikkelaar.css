@@ -1,0 +1,129 @@
+/* Ontwikkelaarsopties (#/dev) en de knop ernaartoe op de kalender. Alleen in devmodus (specs/ontwikkelaarsopties.md). */
+
+/* ---------- knop op de kalender ---------- */
+.dev-knop {
+  position: fixed;
+  right: 16px;
+  bottom: calc(16px + env(safe-area-inset-bottom));
+  z-index: 30;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 44px;
+  padding: 0 11px;
+  border-radius: 999px;
+  background: var(--kaart);
+  color: var(--teal-schaduw);
+  box-shadow: 0 4px 0 0 var(--kaart-schaduw), 0 8px 18px rgba(30, 58, 76, 0.16);
+  font-weight: 800;
+  font-size: 14px;
+}
+.dev-knop:active { transform: translateY(3px); box-shadow: 0 1px 0 0 var(--kaart-schaduw); }
+.dev-knop-tekst { display: none; }
+.dev-knop-badge {
+  min-width: 22px; height: 22px; padding: 0 6px; border-radius: 999px;
+  background: var(--teal); color: #fff; font-size: 12px; font-weight: 800;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+@media (min-width: 1000px) {
+  .dev-knop { right: 24px; bottom: 24px; padding: 0 16px 0 12px; }
+  .dev-knop-tekst { display: inline; }
+}
+
+/* ---------- pagina ---------- */
+.dev-scherm { gap: 16px; }
+.dev-raster { display: flex; flex-direction: column; gap: 16px; }
+
+@media (min-width: 1000px) {
+  .dev-scherm { max-width: 860px; }
+  .dev-raster { display: grid; grid-template-columns: 1fr 1fr; align-items: start; }
+  .dev-breed { grid-column: 1 / -1; }
+}
+
+.dev-kaart { padding: 16px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.dev-kop { margin: 0; font-size: 20px; }
+
+.dev-nu { margin: 0; font-size: 16px; }
+.dev-nu strong { font-weight: 800; }
+.dev-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.dev-rij { display: flex; align-items: center; justify-content: space-between; gap: 12px; cursor: pointer; }
+.dev-rij-tekst { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.dev-rij-label { font-weight: 800; font-size: 15px; }
+.dev-rij-uitleg { font-size: 12px; color: var(--gedempt); margin: 0; }
+.dev-blok { display: flex; flex-direction: column; gap: 6px; padding-top: 12px; border-top: 2px solid var(--vlak); }
+.dev-uit { opacity: 0.55; }
+
+/* schakelaar (checkbox met role=switch) */
+.dev-switch {
+  appearance: none; -webkit-appearance: none; flex-shrink: 0;
+  width: 52px; height: 30px; margin: 0; border-radius: 999px;
+  background: var(--vlak-rand); position: relative; cursor: pointer;
+  transition: background 0.15s ease;
+}
+.dev-switch::after {
+  content: ''; position: absolute; top: 3px; left: 3px; width: 24px; height: 24px; border-radius: 50%;
+  background: #fff; box-shadow: 0 2px 0 0 rgba(30, 58, 76, 0.18); transition: transform 0.15s ease;
+}
+.dev-switch:checked { background: var(--groen); }
+.dev-switch:checked::after { transform: translateX(22px); }
+.dev-switch:disabled { cursor: default; }
+
+/* keuzeknoppen */
+.dev-keuzes { display: flex; flex-wrap: wrap; gap: 6px; }
+.dev-keuzes-dag { display: grid; grid-template-columns: repeat(6, 1fr); }
+.dev-keuze {
+  min-height: 36px; padding: 0 12px; border: 0; border-radius: 12px;
+  background: var(--vlak-licht); color: var(--gedempt-2);
+  box-shadow: inset 0 0 0 2px var(--vlak-rand);
+  font-weight: 800; font-size: 14px;
+}
+.dev-keuze.actief { background: var(--teal); color: #fff; box-shadow: 0 3px 0 0 var(--teal-schaduw); }
+.dev-keuze:disabled { cursor: default; }
+.dev-keuze:not(:disabled):not(.actief):hover { background: var(--teal-licht); }
+
+.dev-datum-rij { display: flex; gap: 8px; align-items: center; }
+.dev-datum {
+  flex: 1; min-width: 0; height: 40px; padding: 0 10px; border-radius: 12px;
+  border: 2px solid var(--vlak-rand); background: var(--vlak-licht); font-weight: 700;
+}
+
+/* knoppen */
+.dev-knoppen { display: flex; flex-wrap: wrap; gap: 8px; }
+.knop.knop-klein { min-height: 40px; padding: 0 14px; font-size: 15px; border-radius: 12px; box-shadow: 0 4px 0 0 var(--teal-schaduw); }
+.knop.knop-klein.knop-groen { box-shadow: 0 4px 0 0 var(--groen-schaduw); }
+.knop.knop-klein.knop-rood { box-shadow: 0 4px 0 0 var(--rood-schaduw); }
+.knop.dev-knop-wit { background: var(--kaart); color: var(--teal-schaduw); box-shadow: 0 4px 0 0 var(--kaart-schaduw), inset 0 0 0 2px var(--vlak-rand); }
+.knop.knop-klein:active { transform: translateY(3px); box-shadow: 0 1px 0 0 var(--kaart-schaduw); }
+.dev-knoppen + .dev-knoppen { margin-top: 0; }
+
+.dev-melding { margin: 0; padding: 10px 12px; border-radius: 12px; font-size: 14px; font-weight: 700; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.dev-melding-groen { background: var(--groen-licht); color: var(--groen-tekst); }
+.dev-melding-geel { background: var(--geel-licht); color: var(--geel-tekst); }
+
+.dev-dl { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; margin: 0; font-size: 14px; }
+.dev-dl dt { font-weight: 800; color: var(--gedempt-2); }
+.dev-dl dd { margin: 0; color: var(--gedempt); overflow-wrap: anywhere; }
+
+.dev-link { font-weight: 800; font-size: 14px; color: var(--teal-schaduw); }
+
+/* per dag */
+.dev-dagen { display: grid; grid-template-columns: 1fr; gap: 8px; }
+@media (min-width: 1000px) { .dev-dagen { grid-template-columns: 1fr 1fr; } }
+.dev-dag { display: flex; flex-direction: column; gap: 8px; padding: 10px 12px; border-radius: 14px; background: var(--vlak-licht); }
+.dev-dag-kop { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.dev-dag-titel { font-size: 14px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dev-dag-knoppen { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.dev-dag-knoppen .dev-keuze { background: var(--kaart); color: var(--teal-schaduw); }
+.dev-vink { display: inline-flex; align-items: center; gap: 6px; margin-left: auto; font-size: 13px; font-weight: 800; color: var(--gedempt-2); cursor: pointer; }
+.dev-vink input { width: 18px; height: 18px; margin: 0; accent-color: var(--groen-schaduw); }
+
+.pil.dev-pil-dicht { background: var(--vlak); color: var(--gedempt); }
+.pil.dev-pil-open { background: var(--geel-licht); color: var(--geel-tekst); }
+.pil.dev-pil-vandaag { background: var(--teal); color: #fff; }
+.pil.dev-pil-gespeeld { background: var(--groen-licht); color: var(--groen-tekst); }
+
+.dev-url {
+  display: block; padding: 10px 12px; border-radius: 12px; background: var(--vlak-licht);
+  font-size: 13px; color: var(--gedempt-2); overflow-wrap: anywhere;
+}

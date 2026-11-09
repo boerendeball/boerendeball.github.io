@@ -10,7 +10,9 @@ Per scherm één spec: wat het precies doet, hoe het eruitziet (met verwijzing n
 | [spel2.md](spel2.md) — Tuin van de koningin | gebouwd, te beoordelen |
 | [spel3.md](spel3.md) — Complete the family | gebouwd, te beoordelen |
 | [spel4.md](spel4.md) — (Social)ize the family | goedgekeurd |
-| [spel5.md](spel5.md) … [spel10.md](spel10.md) | aanzet; uitwerken vlak voor de bouw |
+| [spel5.md](spel5.md) — Negotiate trade deal | gebouwd, te beoordelen |
+| [spel6.md](spel6.md) … [spel10.md](spel10.md) | aanzet; uitwerken vlak voor de bouw |
+| [ontwikkelaarsopties.md](ontwikkelaarsopties.md) — pagina `#/dev` met alle dev-schakelaars (alleen lokaal) | gebouwd, te beoordelen |
 | [besluiten.md](besluiten.md) — beslislog en open vragen voor Benjamin | lopend |
 
 ## Statuswaarden
@@ -55,6 +57,10 @@ Alles werkt met `npx serve .` op `http://localhost:3000/advent/`.
 | `?datum=2026-11-27` | vaste datum |
 | `?reset=1` | wist de spelstaat bij het laden |
 | `?vul=1` | vult de staat met testvoorraad (tegels, edelstenen, geld, familie, werkers, levels) om een later spel los te spelen |
+| `?familie=nguyen` | spel 4 met deze familie (`tan`, `nguyen`, `somchai`; alleen met `test=1`) |
+| `?niveau=matig` | spel 5 met dit niveau (`simpel`, `matig`, `moeilijk`; alleen met `test=1`) |
+| `?dev=1` | devmodus buiten een lokale host: de knop naar de ontwikkelaarsopties op de kalender |
+| `#/dev` | **ontwikkelaarsopties**: alle schakelaars hierboven met de hand aan/uit (alleen in devmodus, zie [ontwikkelaarsopties.md](ontwikkelaarsopties.md)) |
 | `#/test` | sprite-controlescherm en de ruwe staat |
 | `window.pinoDebug` | in testmodus: de live spelstaat van het lopende canvas-spel (console) |
 | `#/spel/n` | spel n direct (laadscherm overgeslagen) |

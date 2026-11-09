@@ -283,3 +283,135 @@
 /* album: foto's van een familie aantikken als spel 7 open is (besluit 50) */
 .s4-album-bekijk { display: block; border: 0; padding: 0; margin: 0 auto; background: transparent; cursor: pointer; font: inherit; color: inherit; }
 .s4-album-bekijk:focus-visible { outline: 3px solid var(--teal); outline-offset: 4px; border-radius: 12px; }
+
+/* ---------- spel 5 · Negotiate trade deal (design/artboards/Spel5*.dc.html) ---------- */
+/* Zoals spel 2 en 4: één venster hoog, de scène (358×582) schaalt mee; D-pad en praatknop eronder. */
+.spel5 { height: 100vh; height: 100dvh; min-height: 0; overflow: hidden; gap: 10px; }
+.s5-geld { color: var(--geel-tekst); }
+.s5-ruimte { flex: 1 1 auto; min-height: 0; container-type: size; display: flex; justify-content: center; align-items: flex-start; }
+.s5-kaart {
+  background: #556B8E; flex: none; margin: 0;
+  width: min(100cqw, calc(100cqh * 358 / 582)); max-width: none; aspect-ratio: 358 / 582;
+  touch-action: manipulation;
+}
+.s5-scene { display: block; width: 100%; height: auto; }
+.s5-knoppen { position: absolute; inset: 0; pointer-events: none; }
+.s5-knop-werker {
+  position: absolute; pointer-events: auto; border: 0; padding: 0; margin: 0; background: transparent; cursor: pointer;
+  border-radius: 50%; -webkit-tap-highlight-color: transparent;
+}
+.s5-knop-werker:focus-visible { outline: none; box-shadow: inset 0 0 0 3px #fff; }
+.s5-besturing { flex: none; margin-top: 0; padding-top: 0; }
+.s5-dpad { grid-template-rows: repeat(2, 52px); }
+.s5-praat-knop {
+  width: 128px; height: 128px; border-radius: 50%; border: 0; padding: 0; flex: none;
+  background: var(--teal); color: #fff; cursor: pointer;
+  box-shadow: 0 8px 0 0 var(--teal-schaduw), 0 14px 24px rgba(14, 127, 181, 0.35);
+  display: flex; align-items: center; justify-content: center;
+  transition: transform 0.06s ease, box-shadow 0.06s ease, opacity 0.15s ease;
+}
+.s5-praat-knop:active:not(:disabled) { transform: translateY(6px); box-shadow: 0 2px 0 0 var(--teal-schaduw), 0 6px 12px rgba(14, 127, 181, 0.3); }
+.s5-praat-knop:disabled { opacity: 0.45; cursor: default; }
+.s5-praat-knop:focus-visible { outline: 3px solid #fff; outline-offset: 4px; }
+@media (max-height: 820px) {
+  .s5-praat-knop { width: 108px; height: 108px; }
+  .s5-dpad { grid-template-rows: repeat(2, 46px); }
+}
+
+/* onderhandelscherm (Spel5-Onderhandel) */
+.dialoog.s5-onderhandel {
+  top: clamp(150px, 28vh, 236px); padding: 16px 18px 18px; gap: 14px; border-radius: 26px;
+  align-items: stretch; text-align: left;
+}
+.s5-rij { display: flex; align-items: center; gap: 12px; }
+.s5-portret { position: relative; width: 72px; height: 72px; border-radius: 50%; flex-shrink: 0; }
+.s5-portret-uitsnede { position: absolute; inset: 0; border-radius: 50%; overflow: hidden; display: flex; align-items: flex-end; justify-content: center; }
+.s5-badge { position: absolute; right: -6px; bottom: -4px; width: 26px; height: 26px; }
+.s5-vraag { flex: 1; display: flex; align-items: center; gap: 12px; background: var(--vlak-licht); border-radius: 16px 16px 16px 4px; padding: 10px 14px; }
+.s5-bedrag { display: inline-flex; align-items: center; gap: 5px; }
+.s5-vraagprijs { font-size: 28px; color: var(--geel-tekst); }
+.s5-stepper { display: flex; align-items: center; justify-content: center; gap: 12px; }
+.s5-bod-vak { gap: 6px; min-width: 110px; justify-content: center; }
+.s5-bod { font-size: 32px; color: var(--teal-donker); font-variant-numeric: tabular-nums; }
+.s5-stap {
+  width: 46px; height: 46px; border-radius: 50%; border: 0; background: var(--teal-licht); color: var(--teal-schaduw);
+  font-family: var(--font-kop); font-weight: 700; font-size: 24px; cursor: pointer; box-shadow: 0 3px 0 0 var(--kaart-schaduw);
+  touch-action: none; user-select: none; -webkit-user-select: none;
+}
+.s5-stap:disabled { opacity: 0.4; cursor: default; }
+.s5-acties { display: flex; gap: 10px; }
+.s5-weg {
+  width: 54px; min-height: 54px; border-radius: 999px; border: 0; padding: 0; cursor: pointer;
+  background: var(--vlak); box-shadow: 0 5px 0 0 var(--kaart-schaduw); display: inline-flex; align-items: center; justify-content: center;
+}
+.s5-bied {
+  flex: 1; min-height: 54px; border-radius: 999px; border: 0; cursor: pointer; padding: 0 22px;
+  background: var(--groen); color: #0E3D1C; box-shadow: 0 5px 0 0 var(--groen-schaduw);
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-size: 22px;
+  transition: transform 0.06s ease, box-shadow 0.06s ease;
+}
+.s5-bied:active:not(:disabled), .s5-weg:active:not(:disabled) { transform: translateY(4px); box-shadow: none; }
+.s5-bied:disabled, .s5-weg:disabled { opacity: 0.6; cursor: default; }
+
+/* wisselkraam: taartmenu met edelstenen en het geld in het midden */
+.taart-optie.s5-gem-optie { width: 64px; height: 64px; min-height: 0; padding: 0; border-radius: 50%; justify-content: center; box-shadow: 0 4px 0 0 var(--kaart-schaduw), 0 8px 16px rgba(30, 58, 76, 0.25); }
+.taart-optie.s5-gem-optie:disabled { opacity: 0.55; cursor: default; }
+.s5-gem-inhoud { position: relative; display: flex; }
+.s5-gem-inhoud .aantal {
+  position: absolute; right: -12px; top: -12px; min-width: 24px; height: 24px; border-radius: 999px; padding: 0 6px; box-sizing: border-box;
+  background: #fff; color: var(--tekst); font-weight: 800; font-size: 13px; display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 2px 0 0 var(--kaart-schaduw);
+}
+.taart-midden.s5-wissel-bol { width: 84px; height: 84px; background: #fff; box-shadow: 0 0 0 4px var(--paars), 0 8px 16px rgba(30, 58, 76, 0.25); }
+.s5-wissel-midden { display: flex; align-items: center; gap: 4px; font-size: 18px; color: var(--geel-tekst); }
+.s5-plus {
+  position: fixed; z-index: 70; pointer-events: none; display: inline-flex; align-items: center; gap: 4px;
+  background: #fff; border-radius: 999px; padding: 4px 10px 4px 6px; box-shadow: 0 4px 0 0 var(--kaart-schaduw);
+  font-size: 18px; color: var(--groen-tekst);
+}
+
+/* resultaat */
+.s5-handdruk { display: block; margin: -4px auto 0; }
+
+/* productenalbum (besluit 67): lampionslinger met vier prijskaartjes */
+.s5-album { gap: 14px; }
+.s5-albumkaart { position: relative; width: 100%; max-width: var(--scene-breedte); margin: 0 auto; padding: 8px 12px 22px; }
+.s5-defs { position: absolute; }
+.s5-slinger { display: block; width: 100%; height: auto; }
+.s5-kaartjes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 26px 16px; margin-top: -18px; padding: 0 4px; }
+.s5-hanger { position: relative; display: flex; flex-direction: column; align-items: center; }
+.s5-hanger-1 { transform: rotate(-3deg); }
+.s5-hanger-2 { transform: rotate(2.5deg); }
+.s5-hanger-3 { transform: rotate(2deg); }
+.s5-hanger-4 { transform: rotate(-2.5deg); }
+.s5-touwtje { width: 2px; height: 22px; background: var(--rood); }
+.s5-kaartje {
+  position: relative; width: 100%; max-width: 150px; min-height: 150px; box-sizing: border-box;
+  display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 16px 10px 12px;
+  background: #fff; border: 0; border-radius: 18px; box-shadow: 0 5px 0 0 var(--kaart-schaduw), 0 8px 16px rgba(30, 58, 76, 0.10);
+  font: inherit; color: inherit;
+}
+button.s5-kaartje { cursor: pointer; }
+button.s5-kaartje:focus-visible { outline: 3px solid var(--teal); outline-offset: 3px; }
+.s5-gaatje { position: absolute; top: 6px; left: 50%; width: 10px; height: 10px; margin-left: -5px; border-radius: 50%; background: var(--vlak); box-shadow: inset 0 0 0 2px var(--vlak-rand); }
+.s5-product { display: block; }
+.s5-silhouet { filter: url(#s5-sil); }
+.s5-kaartje-voet { display: flex; align-items: center; gap: 8px; min-height: 26px; }
+.s5-betaald { display: inline-flex; align-items: center; gap: 3px; font-size: 16px; color: var(--groen-tekst); }
+.s5-stempel {
+  position: absolute; right: -8px; top: 8px; width: 44px; height: 44px; border-radius: 50%; transform: rotate(-12deg);
+  background: var(--groen-licht); box-shadow: 0 0 0 3px var(--groen); display: flex; align-items: center; justify-content: center;
+}
+.s5-slot {
+  position: absolute; right: -10px; bottom: -10px; width: 48px; height: 48px; border-radius: 50%;
+  background: #fff; box-shadow: 0 4px 0 0 var(--kaart-schaduw); display: flex; align-items: center; justify-content: center;
+}
+.s5-markt-knop {
+  position: absolute; right: -6px; bottom: -14px; width: 60px; height: 60px; border-radius: 50%; border: 0; padding: 0; cursor: pointer;
+  background: var(--teal); box-shadow: 0 5px 0 0 var(--teal-schaduw), 0 10px 18px rgba(14, 127, 181, 0.35);
+  display: flex; align-items: center; justify-content: center;
+  animation: s4-knop-wip 1.6s ease-in-out infinite;
+}
+.s5-markt-knop:active { transform: translateY(4px); box-shadow: 0 1px 0 0 var(--teal-schaduw); animation: none; }
+.s5-markt-knop:focus-visible { outline: 3px solid var(--teal); outline-offset: 5px; }
+@media (prefers-reduced-motion: reduce) { .s5-markt-knop { animation: none; } }

@@ -15,7 +15,7 @@ Pino is de fotograaf van de familie die ze in spel 3 compleet heeft gemaakt. De 
 | Nguyễn (moeder, vader, meisje, gansje) | **Uitzichtpunt op een berg**, andere bergen op de achtergrond | bij het hekje aan de rand | op het uitstekende rotspunt | eet van het ijsje dat op de grond ligt | 100 |
 | Somchai (moeder, vader, jongetje, lammetje) | **Dagmarkt** (overdag, zon en parasols; bewust anders dan de nachtmarkt van spel 5) | voor de bloemenkraam | voor de dierentafel van de verkoper (kooien met twee katten en een vliegende eekhoorn) | eet van de kool die bij de groentekraam op de grond ligt | 80 |
 
-Rijkdom (besluit Benjamin): Nguyễn het rijkst, Somchai iets minder, Tan het minst. De bedragen zijn constanten in `fotos.js`; bij spel 5 kijkt Benjamin of het genoeg is.
+Rijkdom (besluit Benjamin): Nguyễn het rijkst, Somchai iets minder, Tan het minst. De bedragen zijn constanten in `fotos.js`; samen 240, precies de prijs van de ketting in de eerste ronde van spel 5 (besluit 64).
 
 Elke omgeving heeft naast de drie fotoplekken minstens vier **andere plekken** waar familieleden heen lopen en even blijven staan (strand: bankje, palm, zeerand, parasol, bal; berg: bankje, verrekijker op paal, wegwijzer, struiken, trapje; markt: fruitkraam, mandenkraam, waterton, parasol, bankje).
 

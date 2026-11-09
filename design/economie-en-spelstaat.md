@@ -10,8 +10,10 @@ De tien spellen zijn aan elkaar gekoppeld. Wat Pino in het ene spel verdient, ge
 | Spel 1 | Spel 2 | De tuin van spel 2 blijft bewaard (`tuin`) tot het pad af is: na één keer spel 1 zijn er bewust te weinig tegels, dus Pino moet terug naar de slaapzaal. | Grijze tegels met een 0 in het taartmenu; verder niets. |
 | Spel 2 | Spel 3 | Een leeg hexvak dat aan alle zes kanten door gelegde tegels is omringd levert een **edelsteen** op; Pino kiest de kleur (blauw, groen, geel) via een taartmenu. | In spel 2 niet te zien (alleen het keuzemenu bij het oogsten); de edelsteenteller staat pas in de kopbalk van spel 3. |
 | Spel 3 | Spel 4 | Karakterkaarten kosten edelstenen (lammetje = groen+groen, gansje = geel, meisje = geel+blauw, biggetje = blauw+geel) en horen bij een vaste familie (meisje + gansje → Nguyễn, biggetje → Tan, lammetje → Somchai). De **familie** die als eerste compleet is, is het gezin van spel 4 (`familie`); de gekochte kaarten blijven bewaard (`karakters`). Spel 3 is pas af als alle families compleet zijn. | Niet aangekondigd. Opent Pino spel 4 zonder complete familie, dan zegt een popup met de bedroefde familie Nguyễn dat er nog geen foto's gemaakt kunnen worden. |
-| Spel 4 | Spel 5 | Elke complete familie betaalt één keer **geld (§)** voor haar drie foto's: Nguyễn 100, Somchai 80, Tan 60 (besluit 48; bij spel 5 herzien). Welke families al op de foto staan, staat in `fotos`. | Munt + bedrag op het resultaatscherm van spel 4 en in spel 5. |
-| Spel 5 | Spel 6 | Wat Pino overhoudt na het kopen van de ketting (ontwerp: 26) is wat de zakkenroller in spel 6 probeert te stelen. | Munt + bedrag in de kopbalk van spel 6. |
+| Spel 4 | Spel 5 | Elke complete familie betaalt één keer **geld (§)** voor haar drie foto's: Nguyễn 100, Somchai 80, Tan 60 (besluit 48). Welke families al op de foto staan, staat in `fotos`. Samen precies 240: net genoeg voor de ketting in de eerste ronde van spel 5 (besluit 64). | Munt + bedrag op het resultaatscherm van spel 4 en in spel 5. |
+| Spel 2 | Spel 5 | Vanaf de tweede marktronde ruilt Pino bij de **wisselkraam** edelstenen in voor geld: blauw 100, groen 80, geel 60 (besluit 65). Na de ketting is dit de enige geldbron, dus voor de volgende producten moet ze terug naar spel 1 → 2. | Taartmenu met edelstenen + aantallen; de munt-teller springt op. De koers staat nergens. |
+| Spel 5 | Spel 6, 8, 9 | Spel 5 verkoopt naast de ketting drie **producten** (`producten`), één per ronde: kniebeschermers (spel 6), jungledieren-spray (spel 8), sportschoenen (spel 9). Laagste prijzen 240 / 160 / 180 / 200 (besluit 63–64). Een ronde kan pas als het spel van dat product open is; het productenalbum van spel 5 laat zien wat gekocht is, wat aan de beurt is en wat nog op slot zit (besluit 67). | Productenalbum in spel 5. Wat spel 6, 8 en 9 doen zonder product: nog uit te werken in hun spec. |
+| Spel 5 | Spel 6 | Wat Pino overhoudt na het kopen is wat de zakkenroller in spel 6 probeert te stelen. Na de ketting is dat 0 (besluit 64); de rol van geld in spel 6 is daarom een open punt van spel 6. | Munt + bedrag in de kopbalk van spel 6. |
 | Spel 2–6 | Spel 7 | In elk speelveld van spel 2 t/m 6 staat één **verstopte werker** (groene hoed, hark): tuin op vak (3,10) (pas zichtbaar als daar een tegel ligt), half achter de villa van familie Nguyễn, half achter de palmstam op het strand, achter de waterput op de nachtmarkt, in de menigte in de steeg. Pas aanklikbaar nadat spel 7 is ontgrendeld. | Spel 7 is een fotoalbum met vijf polaroids dat bijhoudt welke werkers gevonden zijn (loep + x/5). |
 | Spel 8 | Spel 8 | Vijf levels; gehaalde levels blijven gehaald. | Leveloverzicht met vinkjes en slotjes. |
 | Alle spellen | Kalender | Elk afgerond spel geeft een **vaardigheidspunt** (zie `spellen-per-dag.md`) en vult de behoefte "Verjaardag vieren" met 10 %. | Vaardigheidsbalken en behoeftenpaneel op de kalender. |
@@ -31,12 +33,14 @@ Eén sleutel (bijvoorbeeld `pino-advent`) met een JSON-object; versienummer erbi
   "karakters": ["biggetje", "meisje"],
   "familie": "tan",
   "fotos": ["tan"],
-  "geld": 26,
+  "geld": 20,
+  "producten": ["ketting", "kniebeschermers"],
+  "markt": { "cyclus": ["simpel", "moeilijk", "matig"], "stap": 2, "ronde": null },
   "werkers": { "2": true, "3": true, "4": false, "5": false, "6": false },
   "levels": { "gehaald": [1], "actief": 2 },
   "vaardigheden": { "koken": 0, "mechanica": 0, "charisma": 2, "lichaam": 3, "logica": 2, "creativiteit": 1 },
   "behoeften": { "verjaardag": 40, "gansjes": 100, "lammetjes": 100, "snoepjes": 60, "jiujitsu": 40, "bordspellen": 70, "reizen": 100, "sieraden": 100 },
-  "scores": { "1": { "onderbroken": 7 }, "5": { "betaald": 34 } }
+  "scores": { "1": { "onderbroken": 7 }, "5": { "ketting": { "betaald": 240, "laagste": 240 }, "kniebeschermers": { "betaald": 180, "laagste": 160 } } }
 }
 ```
 

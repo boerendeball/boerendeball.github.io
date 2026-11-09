@@ -15,7 +15,7 @@ Alle communicatie, teksten in de app, commit-berichten en documentatie zijn in h
 | `design/artboards/*.dc.html` + `canvas.json` | De originele artboards uit het ontwerpcanvas (zelfstandige HTML met inline SVG). Alleen referentie: de markup, kleuren, maten en teksten zijn exact; de `{{…}}`-placeholders en `<x-dc>`-wrappers horen bij de ontwerptool en niet bij de app. |
 | `design/generators/*.py` | De Python-scripts waarmee de sprite-sets en artboards zijn gegenereerd. Wil je een sprite aanpassen, pas dan het script aan en genereer opnieuw (zie `design/generators/README.md`). |
 | `specs/*.md` | **Specs per scherm**: kalender, events (taartmenu, telefoon, gans, laadscherm, resultaatscherm), spel 1–10, plus `besluiten.md` (beslislog en open vragen) en `README.md` (template, werkwijze, test-URL's en dev-schakelaars). Lees de spec van een spel vóór je het bouwt en werk de status bij. |
-| `assets/sprites/sprites.svg` | **Alle 208 sprites** van alle spellen als één SVG met `<symbol>`-elementen. `assets/sprites/spel{n}.svg` bevat alleen de symbolen die in spel n zijn geïntroduceerd (de sets stapelen: spel n gebruikt ook symbolen uit spel 1..n-1). `symbolen.json` is de index. |
+| `assets/sprites/sprites.svg` | **Alle 215 sprites** van alle spellen als één SVG met `<symbol>`-elementen. `assets/sprites/spel{n}.svg` bevat alleen de symbolen die in spel n zijn geïntroduceerd (de sets stapelen: spel n gebruikt ook symbolen uit spel 1..n-1). `symbolen.json` is de index. |
 
 ## Harde ontwerpregel: geen uitleg, hints of labels in de spellen
 
@@ -83,4 +83,4 @@ Behoeftenpaneel (inklapbaar, groen/geel/rood), vaardigheidsbalken (Koken, Mechan
 - Werk spel voor spel, in volgorde, en laat Benjamin elk spel beoordelen voor je verder gaat. Dat is de afgelopen sessies de werkwijze geweest en dat bevalt. Volg per spel de stappen in `specs/README.md` (spec lezen/aanvullen → bouwen → acceptatiecriteria nalopen → status bijwerken) en leg keuzes die niet in het ontwerp staan vast in `specs/besluiten.md`.
 - Blijf trouw aan de previews: zelfde opbouw, maten, kleuren en sprites. Kleine afwijkingen die nodig zijn voor werkende interactie zijn prima; stijlwijzigingen niet.
 - Wijzig sprites via `design/generators/*.py` en genereer `assets/sprites/*.svg` opnieuw, zodat ontwerp en app gelijk blijven.
-- Open punten die nog bij Benjamin liggen: definitieve speltitels, het "Briefje voor Pino" per dag (de finale heeft nog een placeholder), vaardigheidspunt voor dag 5 en 10, de edelsteenprijzen in spel 3.
+- Open punten die nog bij Benjamin liggen: definitieve speltitels, het "Briefje voor Pino" per dag (de finale heeft nog een placeholder), vaardigheidspunt voor dag 10, de edelsteenprijzen in spel 3.

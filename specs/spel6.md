@@ -12,7 +12,9 @@ Sprites nieuw: `z-kap z-arm z-gezicht s6-tas s6-tril s6-klem s6-reageer s6-move-
 - Band van de gi: standaard blauw (tweak).
 
 ## Staat
-In: `geld`. Uit: `geld` (gevolg bij mislukken nog te kiezen), `rondSpelAf(6, { vaardigheid: 'lichaam' })`.
+In: `geld`, `producten` (kniebeschermers, besluit 63). Uit: `geld` (gevolg bij mislukken nog te kiezen), `rondSpelAf(6, { vaardigheid: 'lichaam' })`.
 
 ## Uit te werken
 Reactievenster, wat bij te laat, regel voor de juiste move (patroon of reageren op zijn beweging), duur tot de politie er is, gevolg voor het geld, resultaatscherm.
+- Gedrag zonder kniebeschermers uit spel 5 (`producten`); hoe ze in beeld komen als Pino ze wel heeft.
+- Wat valt er te stelen: na de ketting in spel 5 is het geld 0; alleen wat over is na de kniebeschermers (of ongebruikte wisselkraam-munten) zit in de tas.

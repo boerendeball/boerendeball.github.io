@@ -34,6 +34,8 @@ const PADEN = {
   pijlRechts: '<path d="M18 10 L32 24 L18 38" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>',
   // kroon zonder zijstippen (teller in de kopbalk van spel 1)
   kroonKlein: '<path d="M8 36 L6 14 L17 24 L24 10 L31 24 L42 14 L40 36z" fill="#FFC93C"/><rect x="8" y="36" width="32" height="6" rx="2" fill="#D97A00"/><circle cx="24" cy="30" r="3" fill="#FF6FAE"/>',
+  // tandwiel (knop naar de ontwikkelaarsopties, alleen in devmodus)
+  tandwiel: '<g fill="currentColor"><rect x="20" y="3" width="8" height="10" rx="2"/><rect x="20" y="35" width="8" height="10" rx="2"/><rect x="3" y="20" width="10" height="8" rx="2"/><rect x="35" y="20" width="10" height="8" rx="2"/><rect x="20" y="3" width="8" height="10" rx="2" transform="rotate(45 24 24)"/><rect x="20" y="35" width="8" height="10" rx="2" transform="rotate(45 24 24)"/><rect x="3" y="20" width="10" height="8" rx="2" transform="rotate(45 24 24)"/><rect x="35" y="20" width="10" height="8" rx="2" transform="rotate(45 24 24)"/><circle cx="24" cy="24" r="14"/></g><circle cx="24" cy="24" r="6" fill="#FFFFFF"/>',
 };
 
 // Telefoon 64×64 (belscherm).
@@ -46,6 +48,11 @@ const SPRITE_ICONEN = {
   tijger: ['s8-stuk-tijger', 48, 60, null],
   baby: ['s9-bundel', 48, 48, '#FFD6E6'],
   klok: ['s9-klok', 48, 48, null],
+  // producten van de markt (spel 5)
+  ketting: ['s5-ketting', 48, 48, null],
+  kniebeschermers: ['s5-kniebeschermers', 48, 48, null],
+  spray: ['s5-spray', 48, 48, null],
+  schoenen: ['s5-schoenen', 48, 48, null],
 };
 
 function maakSvg(vbB, vbH, maat, attrs) {
@@ -91,10 +98,12 @@ export function icoon(naam, maat = 24, { label = null, klasse = null } = {}) {
 export const BOL_KLEUR = {
   kroon: '#FFE0EE', tuin: '#D9F5DE', familie: '#FFF1D6', camera: '#DDF1FB', munten: '#FFF1D6',
   gi: '#E3F4FC', loep: '#DDF1FB', tijger: '#D9F5DE', baby: '#FFE0EE', taart: '#FFE0EE',
+  ketting: '#FFE0EE', kniebeschermers: '#DDF1FB', spray: '#D9F5DE', schoenen: '#FFE0EE',
 };
 
 /** Ringkleur rond de grote icoonbol (Open/Laden-scherm) per icoon. */
 export const RING_KLEUR = {
   kroon: '#FF6FAE', tuin: '#39D353', familie: '#FFC93C', camera: '#1FA3DC', munten: '#FFC93C',
   gi: '#1FA3DC', loep: '#1FA3DC', tijger: '#39D353', baby: '#FF6FAE', taart: '#FF6FAE',
+  ketting: '#FF6FAE', kniebeschermers: '#1FA3DC', spray: '#39D353', schoenen: '#FF6FAE',
 };

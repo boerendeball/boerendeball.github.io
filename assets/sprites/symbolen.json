@@ -131,8 +131,15 @@
   "s5-stemming-twijfel",
   "s5-stemming-blij",
   "s5-stemming-boos",
+  "s5-stemming-verdrietig",
   "s5-praat",
-  "s5-wegloop"
+  "s5-wegloop",
+  "b-boos",
+  "b-twijfel",
+  "s5-kniebeschermers",
+  "s5-spray",
+  "s5-schoenen",
+  "s5-waar-wissel"
  ],
  "spel6": [
   "z-kap",

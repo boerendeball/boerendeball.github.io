@@ -20,7 +20,9 @@ export function legeStaat() {
     karakters: [],                // spel 3: gekochte kaarten ("lam" | "gansje" | "meisje" | "biggetje"), blijven bewaard
     familie: null,                // "nguyen" | "tan" | "somchai": de eerste complete familie (spel 3 → spel 4)
     fotos: [],                    // spel 4: families die al gefotografeerd zijn ("tan" | "nguyen" | "somchai")
-    geld: 0,                      // spel 4 → spel 5 → spel 6
+    geld: 0,                      // spel 4 → spel 5 → spel 6; vanaf ronde 2 ook uit de wisselkraam (spel 2 → 5)
+    producten: [],                // spel 5: 'ketting' | 'kniebeschermers' | 'spray' | 'schoenen' (→ spel 6, 8, 9)
+    markt: { cyclus: null, stap: 0, ronde: null },   // spel 5: niveaucyclus en de lopende ronde (besluit 58)
     werkers: { 2: false, 3: false, 4: false, 5: false, 6: false },   // spel 7
     levels: { gehaald: [], actief: 1 },            // spel 8
     vaardigheden: { koken: 0, mechanica: 0, charisma: 0, lichaam: 0, logica: 0, creativiteit: 0 },
@@ -40,6 +42,8 @@ function migreer(data) {
   }
   if (!Array.isArray(uit.karakters)) uit.karakters = [];
   if (!Array.isArray(uit.fotos)) uit.fotos = [];
+  if (!Array.isArray(uit.producten)) uit.producten = [];
+  uit.markt = { ...basis.markt, ...(data.markt && typeof data.markt === 'object' ? data.markt : {}) };
   uit.versie = VERSIE;
   return uit;
 }
@@ -205,6 +209,44 @@ export function wijzigGeld(verschil) {
   return schrijf((s) => { s.geld = Math.max(0, s.geld + verschil); });
 }
 
+/* Spel 5: de markt (specs/spel5.md). De regels zelf staan in spellen/markt.js. */
+
+/** Bewaar de lopende ronde (en de cyclus), zodat weglopen en terugkomen niets wist (besluit 58). */
+export function bewaarMarkt({ cyclus, ronde }) {
+  return schrijf((s) => {
+    if (cyclus !== undefined) s.markt.cyclus = cyclus;
+    if (ronde !== undefined) s.markt.ronde = ronde;
+  });
+}
+
+/** Wisselkraam: één edelsteen tegen een vaste koers (besluit 65). Geeft het bedrag terug (0 als de steen op is). */
+export function wisselEdelsteen(kleur, bedrag) {
+  let gekregen = 0;
+  schrijf((s) => {
+    if ((s.edelstenen[kleur] || 0) <= 0) return;
+    s.edelstenen[kleur] -= 1;
+    s.geld += bedrag;
+    gekregen = bedrag;
+  });
+  return gekregen;
+}
+
+/**
+ * Deal: het product is gekocht voor `bod`. De cyclus gaat een stap verder (na drie rondes een nieuwe cyclus)
+ * en de ronde is voorbij. De ketting vult de behoefte "sieraden" (besluit 68).
+ */
+export function koopProduct({ product, bod, laagste }) {
+  return schrijf((s) => {
+    if (!s.producten.includes(product)) s.producten.push(product);
+    s.geld = Math.max(0, s.geld - bod);
+    s.scores[5] = { ...(s.scores[5] || {}), [product]: { betaald: bod, laagste } };
+    s.markt.stap += 1;
+    if (s.markt.stap >= 3) { s.markt.cyclus = null; s.markt.stap = 0; }
+    s.markt.ronde = null;
+    if (product === 'ketting') s.behoeften.sieraden = 100;
+  });
+}
+
 export function markeerWerkerGevonden(spel) {
   return schrijf((s) => { s.werkers[spel] = true; });
 }
@@ -246,7 +288,7 @@ export function vulTestStaat() {
     s.familie = s.familie || 'tan';
     // Familie Tan echt compleet maken (spel 4 kijkt naar de gekochte kaarten).
     if (s.familie === 'tan' && !s.karakters.includes('biggetje')) s.karakters.push('biggetje');
-    s.geld = Math.max(s.geld, 60);
+    s.geld = Math.max(s.geld, 240);   // precies genoeg voor de ketting in ronde 1 van spel 5 (besluit 64)
     s.levels = { gehaald: [1, 2], actief: 3 };
   });
 }

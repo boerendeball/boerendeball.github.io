@@ -23,6 +23,18 @@ export function isTest() {
   return zoekParam('test') === '1';
 }
 
+/**
+ * Devmodus (specs/ontwikkelaarsopties.md): lokale host of privé-LAN-adres (npx serve), of ?dev=1.
+ * Alleen dan bestaan de pagina #/dev en de knop ernaartoe op de kalender.
+ */
+export function devModus() {
+  if (zoekParam('dev') === '1') return true;
+  const host = location.hostname.replace(/^\[|\]$/g, '');
+  if (host === 'localhost' || host === '127.0.0.1' || host === '::1') return true;
+  if (host.endsWith('.localhost') || host.endsWith('.test')) return true;
+  return /^(10\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.)/.test(host);
+}
+
 /** Kalenderjaar: het jaar van vandaag. */
 export function kalenderJaar(nu = echtNu()) {
   return nu.getFullYear();

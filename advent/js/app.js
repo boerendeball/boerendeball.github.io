@@ -8,6 +8,7 @@ import { schermLaden } from './ui/laadscherm.js';
 import { schermSpel } from './spellen/index.js';
 import { schermTest } from './test.js';
 import { wis, vulTestStaat } from './staat.js';
+import { devModus } from './datum.js';
 
 const app = document.getElementById('app');
 
@@ -56,6 +57,8 @@ async function start() {
   route('/laden/:n', schermLaden);
   route('/spel/:n', schermSpel);
   route('/test', schermTest);
+  // Ontwikkelaarsopties alleen in devmodus; de module laadt pas als je de pagina opent.
+  if (devModus()) route('/dev', async (ctx) => (await import('./ontwikkelaar.js')).schermOntwikkelaar(ctx));
   startRouter(app, { fallback: schermNietGevonden });
 }
 

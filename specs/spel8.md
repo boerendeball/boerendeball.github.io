@@ -11,7 +11,7 @@ Sprites nieuw: `s8-tegel s8-water s8-doelvak s8-boom s8-bamboe s8-tempel s8-rots
 - Gehaalde levels blijven gehaald (`staat.levels`).
 
 ## Staat
-In/uit: `levels`. `rondSpelAf(8, { vaardigheid: 'logica' })` bij level 5 gehaald (of eerder; te kiezen).
+In: `producten` (jungledieren-spray, besluit 63). In/uit: `levels`. `rondSpelAf(8, { vaardigheid: 'logica' })` bij level 5 gehaald (of eerder; te kiezen).
 
 ## Uit te werken
-Levelkaarten (8×8 per level), beurtregel (zet het dier na elke stap van Pino of alleen bij de zandloper?), vangregel, duwregels, resultaatscherm per level en totaal. Logica in `spellen/schaak.js` zonder DOM.
+Levelkaarten (8×8 per level), beurtregel (zet het dier na elke stap van Pino of alleen bij de zandloper?), vangregel, duwregels, resultaatscherm per level en totaal. Logica in `spellen/schaak.js` zonder DOM. Gedrag zonder jungledieren-spray uit spel 5 (`producten`).

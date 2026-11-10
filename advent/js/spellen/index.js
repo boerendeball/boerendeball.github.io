@@ -10,6 +10,7 @@ import * as datum from '../datum.js';
 import { ga } from '../router.js';
 import { dagInfo } from '../kalender.js';
 import { toonDialoog } from '../ui/overlay.js';
+import { el, use, pino } from '../sprites.js';
 
 const cache = {};
 
@@ -39,6 +40,12 @@ export async function schermSpel({ root, params }) {
   // Spel 4 heeft het gezin uit spel 3 nodig (besluit 41).
   if (n === 4 && !staat.lees().familie) return geenFamilie({ root, n, info });
 
+  // Spel 6 heeft de ketting uit spel 5 nodig: die wil de dief hebben (besluit 81). In testmodus slaat ?knie=0|1
+  // de controle over, zodat het spel los te spelen is.
+  if (n === 6 && !staat.lees().producten.includes('ketting') && !(datum.isTest() && /^[01]$/.test(zoekParam('knie') || ''))) {
+    return geenKetting({ root, n, info });
+  }
+
   const module = await laadSpel(n);
   if (module && typeof module.start === 'function') {
     return module.start({ root, dag: n, info, klaar });
@@ -53,6 +60,42 @@ export async function schermSpel({ root, params }) {
       datum.isTest() ? h('button', { type: 'button', class: 'knop knop-groen', onclick: () => { klaar(); ga('/'); } }, 'Rond af (test)') : null,
     ]),
   ]));
+}
+
+function zoekParam(naam) {
+  try { return new URLSearchParams(location.search).get(naam); } catch { return null; }
+}
+
+/** Spel 6 zonder ketting uit spel 5: popup met een rustige steeg; er valt niets te stelen (besluit 81). */
+function geenKetting({ root, n, info }) {
+  root.replaceChildren(h('div', { class: 'scherm spel' }, [
+    kopbalk({ label: datum.dagLabel(n), titel: info.titel, terugNaar: `/deur/${n}`, terugLabel: 'Terug naar het deurtje' }),
+  ]));
+  const kasseien = [];
+  for (let y = 0; y < 120; y += 28) {
+    for (let x = 0; x < 300; x += 28) kasseien.push(el('rect', { x: x + ((y / 28) % 2 ? 14 : 0) + 1, y: y + 1, width: 26, height: 26, rx: 4, fill: '#4E6384' }));
+  }
+  const lampion = (x, y, kleur) => el('g', { transform: `translate(${x} ${y})` }, [use('s5-gloed', -28, -22, 80, 80), use('s5-lampion', 0, 0, 24, 34, kleur)]);
+  const scene = el('svg', { class: 'geen-ketting-scene', viewBox: '0 0 300 120', role: 'img', 'aria-label': 'Pino staat in een rustige steeg op de nachtmarkt' }, [
+    el('rect', { x: 0, y: 0, width: 300, height: 120, fill: '#556B8E' }),
+    ...kasseien,
+    el('path', { d: 'M0 14 q75 20 150 0 t150 0', fill: 'none', stroke: '#8B4A1E', 'stroke-width': 2.5 }),
+    lampion(40, 22, '#FF5E5B'), lampion(138, 16, '#FFC93C'), lampion(236, 22, '#FF8A3D'),
+    pino(126, 40),
+  ]);
+  let weg = false;
+  const d = toonDialoog({
+    label: 'Nog niets te stelen',
+    klasse: 'dialoog-geen-familie',
+    inhoud: [
+      h('div', { class: 'geen-familie-scene' }, [scene]),
+      h('h2', { class: 'kop dialoog-titel' }, 'Een rustige avond'),
+      h('p', { class: 'dialoog-tekst' }, 'Pino draagt nog niets moois om haar hals. In de steeg kijkt niemand naar haar om.'),
+      h('button', { type: 'button', class: 'knop-pil knop-pil-groen', onclick: () => { weg = true; d.sluit(); ga('/'); } }, 'Terug naar de kalender'),
+    ],
+    bijSluiten: () => { if (!weg) ga('/'); },
+  });
+  return () => { weg = true; d.sluit(); };
 }
 
 /** Spel 4 zonder complete familie uit spel 3: popup met de bedroefde familie Nguyễn (besluit 41). */

@@ -220,6 +220,14 @@ function spelKaart() {
         gekozen: p.get('niveau'), uit: !test, bijKies: (w) => pasToe({ niveau: w }),
       }),
     ]),
+    h('div', { class: `dev-blok${test ? '' : ' dev-uit'}` }, [
+      h('span', { class: 'dev-rij-label' }, 'Spel 6 · kniebeschermers'),
+      h('span', { class: 'dev-rij-uitleg' }, uitleg || 'knie=0|1 · anders volgens de staat; met een keuze start spel 6 ook zonder ketting'),
+      keuzes({
+        opties: [[null, 'Uit de staat'], ['1', 'Met'], ['0', 'Zonder']],
+        gekozen: p.get('knie'), uit: !test, bijKies: (w) => pasToe({ knie: w }),
+      }),
+    ]),
   ]);
 }
 

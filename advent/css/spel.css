@@ -415,3 +415,82 @@ button.s5-kaartje:focus-visible { outline: 3px solid var(--teal); outline-offset
 .s5-markt-knop:active { transform: translateY(4px); box-shadow: 0 1px 0 0 var(--teal-schaduw); animation: none; }
 .s5-markt-knop:focus-visible { outline: 3px solid var(--teal); outline-offset: 5px; }
 @media (prefers-reduced-motion: reduce) { .s5-markt-knop { animation: none; } }
+
+/* ---------- spel 6 · Selfdefense (design/artboards/Spel6*.dc.html, specs/spel6.md) ---------- */
+/* Eén venster hoog. De kolom (358×690) bevat de scène (358×530), 10 px ruimte en een strook van 150 px met de
+   rode knop of de vier move-knoppen. Alles in de kolom schaalt mee, zodat de banen boven de knoppen blijven staan
+   en het notencanvas (over de hele kolom) een noot precies op zijn knop laat landen. */
+.spel6 { height: 100vh; height: 100dvh; min-height: 0; overflow: hidden; gap: 10px; }
+.s6-politie { flex: none; }
+.s6-politie.s6-weg { visibility: hidden; }
+.s6-balk > span { background: var(--teal); box-shadow: inset 0 -4px 0 0 var(--teal-schaduw); transition: none; }
+.s6-tijd { font-size: 16px; color: var(--teal-donker); min-width: 40px; text-align: right; font-variant-numeric: tabular-nums; }
+.s6-veld { flex: 1 1 auto; min-height: 0; container-type: size; display: flex; justify-content: center; align-items: flex-start; }
+.s6-kolom { position: relative; flex: none; width: min(100cqw, calc(100cqh * 358 / 690)); aspect-ratio: 358 / 690; }
+.s6-kaart { position: absolute; left: 0; top: 0; width: 100%; height: 76.8116%; margin: 0; max-width: none; background: #556B8E; touch-action: manipulation; }
+.s6-knoppen { position: absolute; inset: 0; pointer-events: none; }
+.s6-knop-werker {
+  position: absolute; pointer-events: auto; border: 0; padding: 0; margin: 0; background: transparent; cursor: pointer;
+  border-radius: 50%; -webkit-tap-highlight-color: transparent;
+}
+.s6-knop-werker:focus-visible { outline: none; box-shadow: inset 0 0 0 3px #fff; }
+.s6-onder { position: absolute; left: 0; top: 78.2609%; width: 100%; height: 21.7391%; display: flex; justify-content: center; align-items: flex-start; }
+.s6-onder [hidden] { display: none; }
+.s6-noten { position: absolute; left: 0; top: 0; width: 100%; height: 100%; pointer-events: none; z-index: 2; }
+
+/* rode reactieknop */
+.s6-reageer {
+  position: relative; flex: none; height: 88%; aspect-ratio: 1; margin-top: 1%; border-radius: 50%; border: 0; padding: 0;
+  background: var(--rood); color: #fff; cursor: pointer;
+  box-shadow: 0 8px 0 0 var(--rood-schaduw), 0 14px 24px rgba(196, 59, 56, 0.35);
+  display: flex; align-items: center; justify-content: center;
+  touch-action: none; -webkit-tap-highlight-color: transparent;
+  animation: s6-puls 0.8s ease-in-out infinite;
+}
+.s6-reageer:active { transform: translateY(6px); box-shadow: 0 2px 0 0 var(--rood-schaduw), 0 6px 12px rgba(196, 59, 56, 0.3); animation: none; }
+.s6-reageer:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+.s6-reageer > .ic { width: 46%; height: 46%; }
+.s6-reageer > .s6-ring { position: absolute; inset: 0; width: 100%; height: 100%; }
+@keyframes s6-puls { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.06); } }
+
+/* vier ronde move-knoppen, elk precies onder zijn baan */
+.s6-moves { flex: none; width: 100%; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); column-gap: 2.2346%; }
+.s6-move {
+  position: relative; aspect-ratio: 1; min-width: 0; padding: 6%; border: 0; border-radius: 50%;
+  background: #fff; cursor: pointer; font-family: inherit;
+  box-shadow: 0 5px 0 0 var(--kaart-schaduw);
+  touch-action: none; -webkit-tap-highlight-color: transparent;
+}
+.s6-move:active { transform: translateY(3px); }
+.s6-move:focus-visible { outline: 3px solid var(--teal); outline-offset: 2px; }
+.s6-move-icoon { width: 100%; height: 100%; }
+.s6-move.s6-move-raak { box-shadow: 0 0 0 4px var(--paars), 0 6px 0 0 var(--paars-schaduw); }
+.s6-move.s6-move-mis { box-shadow: 0 0 0 4px var(--rood), 0 6px 0 0 var(--rood-schaduw); }
+
+/* ontbrekende kniebeschermers: popt kort op in de knop van knee on belly (boven het notencanvas) */
+.s6-knie-mis {
+  position: absolute; inset: 8%; z-index: 3; border-radius: 50%; background: #fff; box-shadow: 0 0 0 3px var(--rood);
+  display: flex; align-items: center; justify-content: center; pointer-events: none;
+  animation: s6-knie-pop 0.9s ease-out forwards;
+}
+.s6-knie-mis > svg { width: 74%; height: 74%; }
+@keyframes s6-knie-pop { 0% { transform: scale(0.2); opacity: 0; } 18% { transform: scale(1.15); opacity: 1; } 30% { transform: scale(1); } 80% { transform: scale(1); opacity: 1; } 100% { transform: scale(1); opacity: 0; } }
+
+/* scène van een gelukte move: fadet kort in en uit, midden in de scène boven de banen */
+.s6-gelukt {
+  position: absolute; left: 50%; top: 36%; width: 52%; aspect-ratio: 1; margin: -26% 0 0 -26%;
+  border-radius: 20%; overflow: hidden; pointer-events: none;
+  box-shadow: 0 5px 0 0 rgba(30, 58, 76, 0.35);
+  animation: s6-gelukt 0.9s ease-out forwards;
+}
+.s6-gelukt > svg { width: 100%; height: 100%; }
+@keyframes s6-gelukt { 0% { transform: scale(0.6); opacity: 0; } 22% { transform: scale(1); opacity: 1; } 75% { transform: scale(1); opacity: 1; } 100% { transform: scale(1.04); opacity: 0; } }
+
+.s6-tafereel { max-width: 100%; height: auto; }
+.geen-ketting-scene { display: block; width: 100%; height: auto; }
+@media (prefers-reduced-motion: reduce) {
+  .s6-reageer { animation: none; }
+  .s6-gelukt { animation-name: s6-toon; }
+  .s6-knie-mis { animation-name: s6-toon; }
+  @keyframes s6-toon { 0% { opacity: 0; } 20%, 75% { opacity: 1; } 100% { opacity: 0; } }
+}

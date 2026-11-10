@@ -1,5 +1,7 @@
 # Bouwt Spel6.dc.html, Spel6-Controle.dc.html, Spel6-Klaar.dc.html en Spel6-Sprites.dc.html (poppenhuisstijl)
-from spel6_sprites import DEFS, use, kraam, lampion, pino, zakkenroller, pino_tas, bezoeker
+# Let op: de app wijkt sinds besluit 80–91 af van deze artboards (ketting in plaats van tas en geld, geen munt in de
+# kopbalk, vaste scènehoogte 530, noten in banen tot op vier getekende move-knoppen, titel "Osssuu"); zie specs/spel6.md.
+from spel6_sprites import DEFS, use, kraam, lampion, pino, zakkenroller, pino_ketting, pino_gi, bezoeker
 HEAD='''<!doctype html>
 <html lang="nl">
 <head>
@@ -85,7 +87,7 @@ def steeg(H, midden):
 
 # ---------- Spel6: de greep ----------
 H1=592
-midden1=zakkenroller(206,286)+pino_tas(150,268)+use('s6-tril',186,300,36,36)
+midden1=pino_ketting(150,268)+use('s6-tril',156,285,36,36)+zakkenroller(196,270)
 h=HEAD.format(title='Spel 6 – Selfdefense')+DEFS
 h+='<div class="vloer" style="width: 390px; height: 844px; box-sizing: border-box; background-color: #BFE6FA; display: flex; flex-direction: column; overflow: hidden; position: relative;">'+kopbalk()
 h+=f'''
@@ -158,7 +160,7 @@ klaar+=f'''<div class="vloer" style="width: 390px; height: 844px; box-sizing: bo
       <ellipse cx="120" cy="90" rx="100" ry="5" fill="#CDE4F0"/>
       {use('s6-politie',140,20,96,72)}
       {zakkenroller(96,14,arm=False,s=0.95)}
-      {pino_tas(28,12)}
+      {pino_gi(28,12)}
     </svg>
 
     <!-- scoretegels -->
@@ -197,7 +199,10 @@ sheet+='''<div class="vloer" style="width: 1000px; height: 600px; box-sizing: bo
   <div class="kaart" style="padding: 14px 16px; display: flex; flex-direction: column; gap: 8px;">
     <span class="stat-label">PINO MET TAS · ZAKKENROLLER (LIJF + KAP + GRIJPARM) · TRILLIJNTJES · KLEM · MARKTBEZOEKERS</span>
     <div style="display: flex; gap: 18px; align-items: flex-end; flex-wrap: wrap;">'''
-sheet+=f'<div class="vak"><svg class="ic" viewBox="0 -12 56 84" width="64" height="98">{pino_tas(0,0)}</svg><span class="lbl">Pino met tas</span></div>'
+sheet+=f'<div class="vak"><svg class="ic" viewBox="0 -12 56 84" width="64" height="98">{pino_ketting(0,0)}</svg><span class="lbl">Pino met ketting</span></div>'
+sheet+=f'<div class="vak"><svg class="ic" viewBox="0 -12 48 84" width="56" height="98">{use("pino-sip",0,0,48,72)}</svg><span class="lbl">Pino verdrietig</span></div>'
+sheet+=f'<div class="vak"><svg class="ic" viewBox="0 -12 48 84" width="56" height="98" style="background:#DDF1FB;border-radius:10px">{pino_gi(0,0)}</svg><span class="lbl">Pino in gi</span></div>'
+sheet+=f'<div class="vak"><svg class="ic" viewBox="-22 -12 70 84" width="80" height="98">{zakkenroller(0,0,blij=True,ketting=True)}</svg><span class="lbl">dief met ketting</span></div>'
 sheet+=f'<div class="vak"><svg class="ic" viewBox="-22 -12 70 84" width="80" height="98">{zakkenroller(0,0)}</svg><span class="lbl">zakkenroller grijpt</span></div>'
 sheet+=f'<div class="vak"><svg class="ic" viewBox="0 -12 48 84" width="56" height="98">{zakkenroller(0,0,arm=False)}</svg><span class="lbl">zakkenroller</span></div>'
 sheet+=f'<div class="vak"><svg class="ic" viewBox="0 0 48 48" width="44" height="44">{use("s6-tril",0,0,48,48)}</svg><span class="lbl">trilling</span></div>'

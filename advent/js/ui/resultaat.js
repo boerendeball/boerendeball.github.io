@@ -8,10 +8,11 @@ import { ga } from '../router.js';
 
 /**
  * toonResultaat({ root, icoon, label, titel, zin, inhoud, tegels: [{ label, waarde, kleur, icoon }],
- *                 beloning: { vaardigheid, eersteKeer, extra }, opnieuw })
+ *                 beloning: { vaardigheid, eersteKeer, extra }, opnieuw, confetti })
+ * confetti: false bij een mislukte poging (spel 6: "Gestolen!"); dan ook geen beloning meegeven.
  * inhoud: optioneel element onder de titel (bv. de polaroids van spel 4); tegel.icoon: element vóór de waarde.
  */
-export function toonResultaat({ root, icoon: naam, label, titel, zin = null, inhoud = null, tegels = [], beloning = null, opnieuw = null, terugNaar = '/' }) {
+export function toonResultaat({ root, icoon: naam, label, titel, zin = null, inhoud = null, tegels = [], beloning = null, opnieuw = null, terugNaar = '/', confetti = true }) {
   const kaart = h('section', { class: 'kaart resultaat-kaart', 'aria-labelledby': 'resultaat-titel' }, [
     h('div', { class: 'grote-bol resultaat-bol', style: { background: BOL_KLEUR[naam] || '#FFE0EE', boxShadow: `0 0 0 3px ${RING_KLEUR[naam] || '#FF6FAE'}, 0 8px 18px rgba(30,58,76,0.18)` } }, [icoon(naam, 84, { label: titel })]),
     h('div', { class: 'kopbalk-label' }, label),
@@ -32,7 +33,7 @@ export function toonResultaat({ root, icoon: naam, label, titel, zin = null, inh
     ]),
   ]);
   const scherm = h('div', { class: 'scherm resultaat' }, [
-    h('div', { class: 'confetti', 'aria-hidden': 'true' }),
+    confetti ? h('div', { class: 'confetti', 'aria-hidden': 'true' }) : null,
     kaart,
   ]);
   root.replaceChildren(scherm);

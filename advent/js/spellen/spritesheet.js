@@ -6,7 +6,7 @@
 // tekenSprite(ctx, 'bed-deken', x, y, { kleur: '#39D353' });   // in wereld-eenheden (CSS-px)
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
-const MARGE = 16; // wereld-px rondom elk symbool
+const MARGE = 24; // wereld-px rondom elk symbool (de grijparm z-arm van spel 6 steekt 19 px uit)
 
 const cache = new Map();   // sleutel → { bitmap, w, h, marge, schaal }
 const bezig = new Map();   // sleutel → Promise

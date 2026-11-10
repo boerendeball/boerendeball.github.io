@@ -220,4 +220,4 @@ Geen niveaunaam, geen teller voor het aantal biedingen, geen tekst bij "nee", bi
 ## Open punten
 Zie `besluiten.md`.
 - Te bevestigen: verdeling van de latere producten over de kramen, de kijkmodus voor spel 7 en maximaal 3× nee.
-- Gevolg voor spel 6: na de ketting is het geld 0, dus de zakkenroller heeft weinig te stelen (open punt in `spel6.md`).
+- Gevolg voor spel 6: geen. De dief in spel 6 wil de ketting, niet het geld (besluit 80; `spel6.md`).

@@ -1,6 +1,6 @@
 # Spel 7 · Spot the peasant
 
-**Status:** gebouwd, te beoordelen (`advent/js/spellen/spel7.js`, zoekmodus in `spellen/zoeken.js` + spel 2–6; router: query in de hash; besluiten #101–#107)
+**Status:** goedgekeurd (10 november 2026; `advent/js/spellen/spel7.js`, zoekmodus in `spellen/zoeken.js` + spel 2–6; router: query in de hash; besluiten #101–#107)
 **Dag 7 · 30 november · vaardigheid Logica · rendering: SVG-DOM**
 Previews: `Spel7.png`, `Spel7-Klaar.png`, `Spel7-Sprites.png` · Artboards: `Spel7.dc.html`, `Spel7-Klaar.dc.html` · Generator: `spel7_build2.py`, `spel7_sprites.py`
 
@@ -88,11 +88,12 @@ Geen tekst op of bij de polaroids. Het album zegt niet dat er iemand gezocht moe
 - [x] Spel 4 en 5 openen hun eigen album; de terugknop gaat naar het album van spel 7.
 - [x] Spel 6 in de zoekmodus: geen dief, ook niet na 5 s; Pino loopt.
 - [x] 5/5 → resultaatscherm `Spel7-Klaar.png` zonder tijd en miskliks; Logica +1 en deurtje 7 gespeeld.
-- [ ] Op een echte telefoon gezien (touch, joystick in spel 6).
+- [x] Beoordeeld door Benjamin (10 november 2026): uitsneden, werker, testen en speltitel goed.
 
 ## Test-URL's
 - `?test=1#/spel/7`: het album; deurtje 7 is open. Zet in `#/dev` de deurtjes 2–6 op gespeeld om polaroids aantikbaar te maken.
 - `?test=1#/spel/6?zoek=1`: spel 6 in de zoekmodus (deurtje 6 moet gespeeld zijn).
 
 ## Open punten
-- Geen. De speltitel blijft voorlopig "Spot the peasant" (open vraag speltitels).
+- Geen. De speltitel blijft "Spot the peasant" (bevestigd door Benjamin).
+- Niet gedaan: de artboards en previews van spel 7 zijn niet opnieuw gegenereerd (daar staan nog het oude werkertje en de tas in scène 6).

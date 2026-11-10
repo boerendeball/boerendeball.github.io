@@ -1,5 +1,5 @@
 # Sprite-set spel 7 – Spot the peasant (fotoalbum met polaroids van spel 2 t/m 6) – poppenhuisstijl
-from spel6_sprites import DEFS as DEFS6, use, persoon, kraam, lampion, pino, zakkenroller, pino_tas, bezoeker
+from spel6_sprites import DEFS as DEFS6, use, persoon, kraam, lampion, pino, zakkenroller, pino_ketting, bezoeker
 from spel2_sprites import hex_gras, hex_tegel, hex_doel
 from spel4_sprites import moeder_tan, vader_tan, meisje_tan, big_tan, pino_foto
 EXTRA7='''<svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -7,13 +7,12 @@ EXTRA7='''<svg width="0" height="0" style="position:absolute" aria-hidden="true"
   <!-- VERGROOTGLAS 48x48, VINK-BADGE 48x48, WERKER-STEMPEL (gevonden) en VRAAGTEKEN-WERKER (nog niet) 48x48 -->
   <symbol id="s7-loep" viewBox="0 0 48 48"><circle cx="20" cy="20" r="13" fill="#DDF1FB" stroke="#1E3A4C" stroke-width="5"/><path d="M30 30 L42 42" stroke="#1E3A4C" stroke-width="7" stroke-linecap="round"/><circle cx="16" cy="16" r="3" fill="#FFFFFF"/></symbol>
   <symbol id="s7-vink" viewBox="0 0 48 48"><circle cx="24" cy="26" r="22" fill="#1FA34A"/><circle cx="24" cy="23" r="21" fill="#39D353"/><path d="M13 24 L21 32 L36 15" fill="none" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
-  <symbol id="s7-stempel" viewBox="0 0 48 48"><circle cx="24" cy="26" r="22" fill="#C9A77A"/><circle cx="24" cy="23" r="21" fill="#FFF1D6"/><circle cx="24" cy="23" r="17" fill="none" stroke="#C43B38" stroke-width="2" stroke-dasharray="4 3"/><use href="#werker" x="14" y="10" width="20" height="25"/></symbol>
+  <symbol id="s7-stempel" viewBox="0 0 48 48"><circle cx="24" cy="26" r="22" fill="#C9A77A"/><circle cx="24" cy="23" r="21" fill="#FFF1D6"/><circle cx="24" cy="23" r="17" fill="none" stroke="#C43B38" stroke-width="2" stroke-dasharray="4 3"/><use href="#wk-staan" x="14" y="7" width="20" height="30"/></symbol>
   <symbol id="s7-vraag" viewBox="0 0 48 48"><circle cx="24" cy="26" r="22" fill="#8AA0AF"/><circle cx="24" cy="23" r="21" fill="#B8C9D6"/><g fill="#FFFFFF"><rect x="18" y="20" width="12" height="14" rx="3"/><circle cx="24" cy="14" r="6"/><path d="M14 13 h20 l-4 -5 h-12z"/></g><text x="24" y="31" text-anchor="middle" font-size="12" font-weight="700" fill="#8AA0AF" font-family="Fredoka, sans-serif">?</text></symbol>
   <!-- FOTOHOEKJES 24x24 (albumhoekjes, currentColor) -->
   <symbol id="s7-hoekje" viewBox="0 0 24 24"><path d="M0 0 h24 v24z" fill="currentColor"/></symbol>
 </defs>
 </svg>'''
-DEFS=DEFS6+EXTRA7
 
 # ---- mini-scènes 100x96 (passen in de fotorand van s4-polaroid op x8 y8) ----
 def scene2():
@@ -52,9 +51,14 @@ def scene6():
             s+=f'<rect x="{xx+off+1}" y="{yy+1}" width="14" height="14" rx="3" fill="#4E6384"/>'
     s+=lampion(14,6,'#FF5E5B',0.5)+lampion(70,8,'#FFC93C',0.5)
     s+=bezoeker(0,4,14,0.46)+bezoeker(2,30,10,0.46)+bezoeker(4,74,18,0.46)+bezoeker(1,8,56,0.5)+bezoeker(3,76,54,0.5)
-    s+=zakkenroller(52,40,s=0.52)+pino_tas(30,36,0.52)+use('s6-tril',46,48,14,14)
+    # De dief wil de ketting (besluit 80); de tas uit het oorspronkelijke ontwerp vervalt.
+    s+=zakkenroller(52,40,s=0.52)+pino_ketting(30,36,0.52)+use('s6-tril',46,48,14,14)
     return s
 SCENES={2:scene2,3:scene3,4:scene4,5:scene5,6:scene6}
+
+# In de app bouwt het album de foto's met de scenebouwers van spel 2–6 zelf (besluit 107); deze mini-scènes
+# zijn alleen voor de artboards.
+DEFS=DEFS6+EXTRA7
 
 def polaroid(nr, gevonden, x=0, y=0, rot=0):
     """Polaroid 120x140 met mini-scène; gevonden = vink + stempel, anders vervaagd + vraagteken-werker."""

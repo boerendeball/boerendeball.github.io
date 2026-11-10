@@ -35,7 +35,7 @@ Lagen van achter naar voor (posities uit `steeg()` in `spel6_build2.py`):
 | slinger | lijn `#8B4A1E` 2,5 px met zes lampions (`s5-gloed` + `s5-lampion` rood/geel/oranje) | y 28–44 (statische laag) |
 | kramen | Siti (groene luifel, stof) op 8,50 en Minh (gele luifel, lampions) op 220,50; `s5-kraam-achter` → handelaar → `s5-kraam-voor` → waar | elke frame, de handelaars kijken mee |
 | menigte | negen bezoekers (`BEZOEKERS` uit `spel6_sprites.py`), elk op een vaste rij en heen en weer tussen twee x-waarden; bezoeker 4 (oranje, bril) staat stil | achter: y 118–196, voor: y 410–446 |
-| werker | `werker` 16×20 op 309,208, half achter bezoeker 4 | zie Werker |
+| werker | `wk-lampion` 48×72 × 0,7, voeten op (317,230), half achter bezoeker 4 (besluit 108) | zie Werker |
 | Pino | `pino-staan` / `pino-loop` + `s6-ketting`, start op 155,200 en loopt de eerste 2 s vrij binnen x 56–254, y 150–212 (linkerbovenhoek van haar frame); gespiegeld als ze naar links loopt; na een diefstal `pino-sip` zonder ketting | waar ze staat als de dief komt |
 | dief | hoodie `#2F3A4A`, huid `#E8B48A`; lopend `b-lijf` + `b-hoofd` + `z-kap` + `z-gezicht`; grijpend en rennend armloos `b-lijf-los` + `z-arm` + `z-arm-hang`; met buit `z-blij` en `s5-ketting` (16 px) bij zijn hand | komt van rechts (x 372) naar Pino + (46, 2) |
 | trillijntjes | `s6-tril` 36×36 bij Pino's hals, trilt licht | alleen tijdens de greep |
@@ -96,7 +96,7 @@ Constanten staan bovenaan `spel6.js` (fase 1, animatie) en `klem.js` (fase 2); h
 - In: `producten` (ketting = voorwaarde, besluit 81; kniebeschermers = knee on belly lukt, besluit 94). `geld` speelt geen rol.
 - Uit, bij succes: `rondSpelAf(6, { vaardigheid: 'lichaam', score: { reactie, raak, totaal } })` en `vulBehoefte('jiujitsu', 100)`: de behoefte "jiujitsu" staat daarna op 100 % (besluit 100).
 - Uit, bij falen: niets. De ketting blijft in `producten` (besluit 82); het deurtje wordt niet `gespeeld`.
-- Werker: `markeerWerkerGevonden(6)`.
+- Werker: `werkerGevonden(6, { zoek })` (`spellen/zoeken.js`).
 
 ## Zonder ketting
 
@@ -109,7 +109,7 @@ Constanten staan bovenaan `spel6.js` (fase 1, animatie) en `klem.js` (fase 2); h
 
 ## Werker (spel 7)
 
-De werker staat op 309,208, half achter bezoeker 4, die daarom niet loopt. Als deurtje 7 open is, ligt er een onzichtbare knop over hem heen (`.s6-knop-werker`); tikken markeert hem gevonden en laat hem twee keer opspringen. Hij is tijdens het hele spel aanklikbaar. Een rustige kijkmodus om hem vanuit spel 7 te zoeken hoort bij de bouw van spel 7.
+De werker staat op 309,208, half achter bezoeker 4, die daarom niet loopt. Als deurtje 7 open is, ligt er een onzichtbare knop over hem heen (`.s6-knop-werker`); tikken markeert hem gevonden en laat hem twee keer opspringen. Hij is tijdens het hele spel aanklikbaar. Vanuit het album van spel 7 opent `#/spel/6?zoek=1` een rustige modus: de dief komt niet, Pino loopt vrij rond, en na de vondst gaat het spel terug naar het album (besluit 106).
 
 ## Geen uitleg
 
@@ -151,4 +151,4 @@ In testmodus (`?test=1`) staat de spelstaat op `window.pinoDebug` (`s`, `dief`, 
 
 ## Open punten
 
-Geen voor Benjamin: besluit 80–100 zijn bevestigd (10 november 2026). De werker heeft in spel 6 nog geen rustige kijkmodus; die volgt bij de bouw van spel 7.
+Geen voor Benjamin: besluit 80–100 zijn bevestigd (10 november 2026).

@@ -32,7 +32,7 @@ Elke omgeving heeft naast de drie fotoplekken minstens vier **andere plekken** w
 - Berg en markt (fase 2): decor in `spellen/decor4.js` (zelfde posities als `berg()` en `markt()` in `spel4_build.py`; artboards `Spel4-Berg`, `Spel4-Markt`, `Spel4-Sprites2`, nog zonder PNG in `previews/`). **Berg:** lucht met bergtoppen en mist, gras van het uitzichtpunt vanaf y 326 met een grindpad van het trapje (linksonder) naar het hek; hek langs de rand (12,290), rotspunt rechts (230,268) waarvan de voorkant aansluit op het gras, ijsje plat op het gras (262,552), verder den, verrekijker (werker half achter de voet), bankje, wegwijzer en twee struiken. **Markt:** lucht, rij winkelhuizen met luifels (0,86), stoep en tegelplein vanaf y 304; bloemenkraam linksboven (22,284), dierentafel rechts (232,378) met een verkoper erachter (decor, telt niet mee als iemand in beeld) en drie kooien erop: een oranje kat, een vliegende eekhoorn en een grijze kat; het jongetje staat ervoor (262,470), werker half achter de tafel, regenton, manden, groentekraam rechtsonder met een kool op de grond (190,604) en een bankje.
 - Familieleden: dezelfde uiterlijken als in spel 3 (`spellen/familie.js`), via `persoon()` / `dier()`; lopen = spiegelen in looprichting + klein op-en-neer wippen; stilstaan op een fotoplek = lachend gezicht (nieuw `b-lach`), het dier ligt/eet (nieuw `d-biggetje-lig`, `d-gansje-eet`, `d-lam-eet`).
 - Pino: `p-basis` + `pino-staan` (rust), `pino-loop` (lopen), `pino-foto` (foto maken). Rustplek per scène (strand: rechtsonder zoals in de preview).
-- **Verstopte werker** in elke omgeving (besluit 49): strand half achter de palmstam (`werker` 38,314), berg half achter de verrekijker, markt half achter de dierentafel. Pas aanklikbaar als spel 7 open is; vinden in één omgeving telt (`staat.werkers[4]`).
+- **Verstopte werker** in elke omgeving (besluit 49): strand achter de palmstam (`wk-zwaai`, voeten op 49,316 net achter de stamvoet, schaal 0,55; besluit 108), berg half achter de verrekijker, markt half achter de dierentafel. Pas aanklikbaar als spel 7 open is; vinden in één omgeving telt (`staat.werkers[4]`).
 
 ## Regels
 Alle getallen zijn constanten in `spellen/fotos.js`.
@@ -104,7 +104,7 @@ Nagelopen op 2026-11-08 in de browser (390×844 en 390×680, touch en Tab/Enter)
 - [x] "Nog een keer" alleen als er nog een complete familie zonder foto's is, en die start meteen.
 - [x] Een familie met foto's kan niet opnieuw gefotografeerd worden; wordt later een andere familie compleet, dan kan die via de cameraknop in het album.
 - [x] Elk 2-secondenmoment is in minstens de helft van de cycli schoon (controlefunctie in `fotos.js`, uitvoerbaar in de console via `window.pinoDebug`).
-- [x] Werker in elke omgeving, alleen aanklikbaar als spel 7 open is; vanuit het album (spel 7 open) een gefotografeerde familie bekijken in haar omgeving, met de werker te vinden.
+- [x] Werker in elke omgeving, alleen aanklikbaar als spel 7 open is; vanuit het album (spel 7 open) een gefotografeerde familie bekijken in haar omgeving, met de werker te vinden. Vanuit spel 7 (`#/spel/4?zoek=1`) opent altijd het album van spel 4; na de vondst gaat het spel terug naar het album van spel 7 (besluit 105).
 - [x] Scène + filmstrook passen op 390×844 en op een laag scherm zonder scrollen; werkt met touch en met Tab/Enter.
 - [x] Geen tekst in het spelscherm buiten kopbalk en tellergetallen.
 

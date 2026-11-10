@@ -27,7 +27,7 @@ Elk deurtje is een `<button class="deur" data-deur="n">`:
 - `aria-label`: "27 november, vandaag: (Social)ize the family" / "28 november, nog gesloten".
 - Tikken opent het **taartmenu** (zie events.md), ook op een dicht deurtje.
 
-Iconen per dag: kroon, tuin (hex), familie, camera, munten, gi (`s6-gi`), loep (`s7-loep`), tijger (`s8-stuk-tijger`), baby (`s9-bundel` in `#FFD6E6`), taart. Dag 1–4 komen uit het artboard; 5–10 zijn gekozen in dezelfde stijl.
+Iconen per dag: kroon, tuin (hex), familie, camera, handdruk (dag 5, besluit Benjamin 10 november: twee handen die een deal sluiten; verving de twee munten), gi (`s6-gi`), loep (`s7-loep`), tijger (`s8-stuk-tijger`), baby (`s9-bundel` in `#FFD6E6`), taart. Dag 1–4 komen uit het artboard; 5–10 zijn gekozen in dezelfde stijl.
 
 ### Vaardigheden (paneel; mobiel dicht, desktop open)
 Kop "Vaardigheden" · badge "Vandaag: +1 Charisma" (paars) zolang het deurtje van vandaag nog niet gespeeld is · pijl. Zes rijen (mobiel: label 96 px, 10 blokjes, getal; desktop: twee kolommen, label boven blokjes, geen getal): Koken, Techniek, Charisma, Conditie, Logica, Creativiteit. Blokje `vol` = teal; het eerstvolgende blokje van de vaardigheid van vandaag is `straks` (geel omrand). Voet (alleen mobiel): "Elk gespeeld spelletje levert een vaardigheidspunt op. Totaal: x van 10 punten."

@@ -11,6 +11,7 @@ import { el, use, groep, scene } from '../sprites.js';
 import * as hex from './hex.js';
 import * as staat from '../staat.js';
 import * as datum from '../datum.js';
+import { werkerGevonden, terugKnop, werkerVak } from './zoeken.js';
 
 /* ---------- tuning ---------- */
 const STAP_DUUR = 260;        // ms per vak als Pino aan het eind naar de poort loopt
@@ -108,18 +109,60 @@ function decorEl([id, x, y, w, hh, opt = {}]) {
   return use(id, x, y, w, hh, opt.kleur);
 }
 
+const WERKER_SCHAAL = 0.6;   // de werker (wk-hark) op vak (3,10)
+
 const leegTuin = () => ({ gelegd: {}, geoogst: [], edelstenen: 0 });
+
+/** Decor en vakken, gesorteerd op onderkant-y (tekenvolgorde achter → voor). tekenVak(v) tekent één vak. */
+function tuinItems(tekenVak) {
+  const items = [...DECOR, ...randDecor()].map((d) => ({ y: d[2] + d[4], maak: () => decorEl(d) }));
+  for (const v of hex.alleVakken()) {
+    const { y } = hex.middelpunt(v);
+    items.push({ y: y + 33, maak: () => tekenVak(v) });
+  }
+  return items.sort((a, b) => a.y - b.y);
+}
+
+/** Het kale vak: uitgang, gelegde tegel (of de starttegel) of gras. */
+function vakTekening(v, gelegd) {
+  const { x, y } = hex.middelpunt(v);
+  const type = hex.typeVan(gelegd, v);
+  if (v === hex.UITGANG) return hexSym('hx-uitgang', x, y);
+  if (type) return hexTegel(x, y, type);
+  return hexSym('hx-gras', x, y);
+}
+
+/**
+ * De tuin zoals hij nu in de staat staat, stil en zonder knoppen, open vakken, fonkels of werker, met Pino op
+ * de start. Voor de polaroid in het album van spel 7 (besluit 107); viewBox = de hele scène.
+ */
+export function tuinScene() {
+  const gelegd = (staat.lees().tuin || leegTuin()).gelegd;
+  const svg = el('svg', { viewBox: `0 0 ${B} ${H}`, 'aria-hidden': 'true' });
+  const wereld = el('g');
+  const start = hex.middelpunt(hex.START);
+  const pinoBasis = start.y + 33.5;
+  let pinoGezet = false;
+  const pinoG = el('g', { transform: `translate(${start.x - 24} ${start.y - 66})` }, [use('pino-staan', 0, 0, 48, 72)]);
+  for (const it of tuinItems((v) => vakTekening(v, gelegd))) {
+    if (!pinoGezet && it.y > pinoBasis) { wereld.append(pinoG); pinoGezet = true; }
+    wereld.append(it.maak());
+  }
+  if (!pinoGezet) wereld.append(pinoG);
+  svg.append(maakGrond(), wereld);
+  return svg;
+}
 
 /* ---------- spel ---------- */
 
-export function start({ root, dag, info, klaar }) {
+export function start({ root, dag, info, klaar, zoek = false }) {
   let opruim = null;
-  const ronde = () => { if (opruim) opruim(); opruim = speel({ root, dag, info, klaar, opnieuw: ronde }); };
+  const ronde = () => { if (opruim) opruim(); opruim = speel({ root, dag, info, klaar, zoek, opnieuw: ronde }); };
   ronde();
   return () => { if (opruim) opruim(); opruim = null; };
 }
 
-function speel({ root, dag, info, klaar, opnieuw }) {
+function speel({ root, dag, info, klaar, opnieuw, zoek = false }) {
   const rustig = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   let gestopt = false;
   let klaarGezet = false;
@@ -139,7 +182,7 @@ function speel({ root, dag, info, klaar, opnieuw }) {
   const knoppen = h('div', { class: 'tuin-knoppen' });
 
   const scherm = h('div', { class: 'scherm spel spel2' }, [
-    kopbalk({ label: datum.dagLabel(dag), titel: info.titel, terugNaar: `/deur/${dag}`, terugLabel: 'Terug naar het deurtje' }),
+    kopbalk({ label: datum.dagLabel(dag), titel: info.titel, terugNaar: `/deur/${dag}`, terugLabel: 'Terug naar het deurtje', ...terugKnop(zoek) }),
     // De ruimte onder de kopbalk bepaalt de maat: de scène schaalt mee zodat ze altijd helemaal in beeld is.
     h('div', { class: 'tuin-ruimte' }, [h('div', { class: 'scene-kaart tuin-kaart' }, [svg, knoppen])]),
   ]);
@@ -164,12 +207,7 @@ function speel({ root, dag, info, klaar, opnieuw }) {
     const t = tuin();
     const open = new Set(klaarGezet ? [] : hex.openVakken(t.gelegd));
     const fonkels = new Set(klaarGezet ? [] : hex.omringdeVakken(t.gelegd, t.geoogst));
-    const items = [...DECOR, ...randDecor()].map((d) => ({ y: d[2] + d[4], maak: () => decorEl(d) }));
-    for (const v of hex.alleVakken()) {
-      const { y } = hex.middelpunt(v);
-      items.push({ y: y + 33, maak: () => tekenVak(v, t, open.has(v), fonkels.has(v), v === nieuw) });
-    }
-    items.sort((a, b) => a.y - b.y);
+    const items = tuinItems((v) => tekenVak(v, t, open.has(v), fonkels.has(v), v === nieuw));
     wereld.replaceChildren();
     for (const it of items) {
       const e = it.maak();
@@ -185,16 +223,16 @@ function speel({ root, dag, info, klaar, opnieuw }) {
     const { x, y } = hex.middelpunt(v);
     const g = el('g', { class: nieuw && !rustig ? 'tuin-vak valt-in' : 'tuin-vak' });
     const type = hex.typeVan(t.gelegd, v);
-    if (v === hex.UITGANG) g.append(hexSym('hx-uitgang', x, y));
-    else if (type) g.append(hexTegel(x, y, type));
-    else g.append(hexSym('hx-gras', x, y));
+    g.append(vakTekening(v, t.gelegd));
     if (isOpen && !fonkel) {
       const r = hexRect(x, y);
       g.append(el('polygon', { points: TOP, transform: `translate(${r.x} ${r.y})`, fill: 'rgba(255,255,255,0.22)', stroke: 'rgba(255,255,255,0.9)', 'stroke-width': 1.5, 'stroke-dasharray': '4 3', 'stroke-linejoin': 'round' }));
     }
     if (fonkel) g.append(el('path', { class: 'tuin-fonkel', d: `M${x} ${y - 14} ${FONKEL}`, fill: '#FFC93C' }));
     if (v === hex.WERKER && type) {
-      g.append(el('g', { class: 'tuin-werker', transform: `translate(${x - 8} ${y - 20})` }, [use('werker', 0, 0, 16, 20)]));
+      // Harkt het gazon, met zijn voeten midden op het vak (besluit 108).
+      const w = werkerVak(x, y + 4, WERKER_SCHAAL);
+      g.append(el('g', { class: 'tuin-werker' }, [use('wk-hark', w.x, w.y, w.b, w.h)]));
     }
     return g;
   }
@@ -221,7 +259,7 @@ function speel({ root, dag, info, klaar, opnieuw }) {
       const { x, y } = hex.middelpunt(hex.WERKER);
       knoppen.append(h('button', {
         type: 'button', class: 'tuin-knop tuin-knop-werker', 'aria-label': 'Werker',
-        style: { left: pct(x - 18, B), top: pct(y - 30, H), width: pct(36, B), height: pct(36, H) },
+        style: { left: pct(x - 18, B), top: pct(y - 40, H), width: pct(36, B), height: pct(46, H) },
         onclick: vindWerker,
       }));
     }
@@ -287,7 +325,7 @@ function speel({ root, dag, info, klaar, opnieuw }) {
 
   /* ---------- werker (spel 7) ---------- */
   function vindWerker() {
-    staat.markeerWerkerGevonden(2);
+    werkerGevonden(2, { zoek });
     const w = svg.querySelector('.tuin-werker');
     if (w && !rustig) { w.classList.remove('hup'); void w.getBBox(); w.classList.add('hup'); }
   }

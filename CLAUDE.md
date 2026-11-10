@@ -15,7 +15,7 @@ Alle communicatie, teksten in de app, commit-berichten en documentatie zijn in h
 | `design/artboards/*.dc.html` + `canvas.json` | De originele artboards uit het ontwerpcanvas (zelfstandige HTML met inline SVG). Alleen referentie: de markup, kleuren, maten en teksten zijn exact; de `{{…}}`-placeholders en `<x-dc>`-wrappers horen bij de ontwerptool en niet bij de app. |
 | `design/generators/*.py` | De Python-scripts waarmee de sprite-sets en artboards zijn gegenereerd. Wil je een sprite aanpassen, pas dan het script aan en genereer opnieuw (zie `design/generators/README.md`). |
 | `specs/*.md` | **Specs per scherm**: kalender, events (taartmenu, telefoon, gans, laadscherm, resultaatscherm), spel 1–10, plus `besluiten.md` (beslislog en open vragen) en `README.md` (template, werkwijze, test-URL's en dev-schakelaars). Lees de spec van een spel vóór je het bouwt en werk de status bij. |
-| `assets/sprites/sprites.svg` | **Alle 231 sprites** van alle spellen als één SVG met `<symbol>`-elementen. `assets/sprites/spel{n}.svg` bevat alleen de symbolen die in spel n zijn geïntroduceerd (de sets stapelen: spel n gebruikt ook symbolen uit spel 1..n-1). `symbolen.json` is de index. |
+| `assets/sprites/sprites.svg` | **Alle 237 sprites** van alle spellen als één SVG met `<symbol>`-elementen. `assets/sprites/spel{n}.svg` bevat alleen de symbolen die in spel n zijn geïntroduceerd (de sets stapelen: spel n gebruikt ook symbolen uit spel 1..n-1). `symbolen.json` is de index. |
 
 ## Harde ontwerpregel: geen uitleg, hints of labels in de spellen
 

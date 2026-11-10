@@ -53,7 +53,7 @@ Op desktop staat het scherm 390 px breed gecentreerd, net als in spel 1.
 | uitgang | `hx-uitgang` | (5,0) |
 | open vak | bovenvlak `28,6 50,18 50,42 28,54 6,42 6,18`: wit 22 % + stippelrand wit 90 % (1,5 px, `4 3`) | per open vak |
 | fonkel | 4-puntige ster (pad uit het artboard), `#FFC93C`, zacht knipperend | (x, y−14) |
-| werker | `werker` 16×20 | (x−8, y−20) op vak (3,10), alleen als daar een tegel ligt |
+| werker | `wk-hark` 48×72 × 0,6 (besluit 108) | voeten op (x, y+4) van vak (3,10), alleen als daar een tegel ligt |
 | Pino | `pino-staan` / `pino-loop` (gespiegeld naar links) | (x−24, y−66) op haar vak |
 
 ## Regels
@@ -82,7 +82,7 @@ Op desktop staat het scherm 390 px breed gecentreerd, net als in spel 1.
   - Een geoogst vak blijft gras en is weer gewoon een (mogelijk) open vak. Een vak met fonkel is pas te betegelen als de edelsteen geoogst is.
 - **Werker**:
   - Zichtbaar zodra (3,10) een tegel heeft.
-  - Aanklikbaar zodra deurtje 7 open is (`datum.deurOpen(7)`, specs/spel7.md). Een tik zet `werkers[2] = true`, en de werker maakt twee hupjes.
+  - Aanklikbaar zodra deurtje 7 open is (`datum.deurOpen(7)`, specs/spel7.md). Een tik zet `werkers[2] = true`, en de werker maakt twee hupjes. Vanuit spel 7 (`#/spel/2?zoek=1`) speel je spel 2 gewoon; na de vondst gaat het spel terug naar het album van spel 7 (besluit 103).
 - **Einde**:
   - Zodra een gelegde tegel aan de uitgang grenst, verdwijnen de klikdoelen.
   - Pino loopt via het kortste pad over de gelegde tegels (`hex.pad`, BFS) naar de poort, met een klein hupje per vak.

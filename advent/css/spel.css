@@ -198,7 +198,7 @@
 @keyframes fam-hup { 0%, 100% { transform: translateY(0); } 35% { transform: translateY(-7px); } 60% { transform: translateY(0); } 80% { transform: translateY(-3px); } }
 .fam-hup > .fam-lid { animation: fam-hup 0.6s ease-out var(--hup-vertraging, 0ms) both; }
 .fam-hup > .fam-pop { animation: fam-pop 0.52s cubic-bezier(0.3, 1.4, 0.6, 1) both, fam-hup 0.6s ease-out var(--hup-vertraging, 0ms); }
-.fam-werker.hup > use { animation: tuin-hup 0.35s ease-out 2; }
+.fam-werker.hup > * { animation: tuin-hup 0.35s ease-out 2; }
 @keyframes kaartje-weg { 0% { transform: scale(1); opacity: 1; } 30% { transform: scale(1.06) translateY(-4px); opacity: 1; } 100% { transform: scale(0.2) translateY(-30px); opacity: 0; } }
 .kaartje.kaartje-weg { animation: kaartje-weg 0.35s ease-in forwards; pointer-events: none; }
 @keyframes schud { 0%, 100% { transform: translateX(0); } 20% { transform: translateX(-5px); } 40% { transform: translateX(5px); } 60% { transform: translateX(-4px); } 80% { transform: translateX(3px); } }
@@ -213,7 +213,7 @@
 .geen-familie-scene .fam-scene { display: block; width: 100%; height: auto; }
 
 @media (prefers-reduced-motion: reduce) {
-  .fam-pop, .fam-ster, .fam-hup > .fam-lid, .fam-werker.hup > use, .kaartje.kaartje-weg, .kaartje.schud { animation: none; }
+  .fam-pop, .fam-ster, .fam-hup > .fam-lid, .fam-werker.hup > *, .kaartje.kaartje-weg, .kaartje.schud { animation: none; }
   .fam-sterren { display: none; }
 }
 
@@ -493,4 +493,35 @@ button.s5-kaartje:focus-visible { outline: 3px solid var(--teal); outline-offset
   .s6-gelukt { animation-name: s6-toon; }
   .s6-knie-mis { animation-name: s6-toon; }
   @keyframes s6-toon { 0% { opacity: 0; } 20%, 75% { opacity: 1; } 100% { opacity: 0; } }
+}
+
+/* ---------- spel 7: fotoalbum (Spel7.dc.html) ---------- */
+.s7 { gap: 12px; }
+.s7-teller { color: #0E6A98; }
+.s7-van { font-size: 13px; color: var(--gedempt); }
+.s7-album {
+  width: 100%; max-width: var(--scene-breedte); margin: 0 auto; box-sizing: border-box;
+  padding: 16px 12px 10px; border-radius: 22px;
+  display: grid; grid-template-columns: repeat(2, 160px); justify-content: space-between; row-gap: 2px; align-content: start;
+  background: #C2743C;
+  background-image: radial-gradient(circle at 10px 10px, rgba(255, 201, 60, 0.35) 0 4px, transparent 4px),
+    radial-gradient(circle at 30px 30px, rgba(196, 59, 56, 0.35) 0 4px, transparent 4px);
+  background-size: 40px 40px;
+  box-shadow: inset 0 0 0 4px #8B4A1E, inset 0 0 0 8px #FFC93C, 0 6px 0 0 var(--kaart-schaduw);
+}
+.s7-foto { display: block; width: 160px; height: 194px; padding: 0; border: 0; background: none; border-radius: 12px; }
+.s7-foto-breed { grid-column: 1 / span 2; justify-self: center; }
+button.s7-foto { cursor: pointer; transition: transform 0.15s ease; }
+button.s7-foto:active { transform: scale(0.97); }
+button.s7-foto:focus-visible { outline: 3px solid #FFC93C; outline-offset: -4px; }
+.s7-voortgang {
+  width: 100%; max-width: var(--scene-breedte); margin: 0 auto; box-sizing: border-box;
+  padding: 10px 14px; display: flex; align-items: center; gap: 12px;
+}
+.s7-voortgang-bol { width: 44px; height: 44px; border-radius: 50%; background: #D9F5DE; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.s7-voortgang .balk { flex: 1; }
+.s7-rij { display: block; margin: 0 auto; max-width: 100%; height: auto; }
+@media (max-width: 370px) {
+  .s7-album { grid-template-columns: repeat(2, minmax(0, 160px)); }
+  .s7-foto, .s7-foto svg { width: 100%; height: auto; }
 }

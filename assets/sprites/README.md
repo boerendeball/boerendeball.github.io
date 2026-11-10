@@ -2,7 +2,7 @@
 
 Alle tekeningen uit het ontwerp als SVG `<symbol>`-elementen, gegenereerd uit `design/generators/spel{n}_sprites.py`.
 
-- `sprites.svg` — alle 231 symbolen van spel 1 t/m 10 in één bestand. Plaats de inhoud inline in de pagina (of laad het bestand en injecteer het in de DOM) en gebruik `<use href="#id">`. Externe `<use href="sprites.svg#id">` werkt ook voor symbolen zonder `currentColor`, maar kleurvarianten via `color="…"` zijn alleen betrouwbaar als de symbolen in hetzelfde document staan.
+- `sprites.svg` — alle 237 symbolen van spel 1 t/m 10 in één bestand. Plaats de inhoud inline in de pagina (of laad het bestand en injecteer het in de DOM) en gebruik `<use href="#id">`. Externe `<use href="sprites.svg#id">` werkt ook voor symbolen zonder `currentColor`, maar kleurvarianten via `color="…"` zijn alleen betrouwbaar als de symbolen in hetzelfde document staan.
 - `spel{n}.svg` — alleen de symbolen die in spel n zijn geïntroduceerd. Spel n gebruikt ook symbolen uit eerdere spellen (bijvoorbeeld `persoon`-onderdelen uit spel 3, `werker` en `s4-munt` uit spel 4). Wil je per pagina alleen laden wat nodig is, neem dan spel 1..n.
 - `symbolen.json` — index: per spel de lijst symbool-id's.
 

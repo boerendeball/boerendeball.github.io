@@ -113,7 +113,13 @@
   "sil-lam",
   "s4-dierentafel",
   "s4-kooi-kat",
-  "s4-kooi-eekhoorn"
+  "s4-kooi-eekhoorn",
+  "wk-staan",
+  "wk-hark",
+  "wk-kwast",
+  "wk-zwaai",
+  "wk-emmer",
+  "wk-lampion"
  ],
  "spel5": [
   "s5-lampion",

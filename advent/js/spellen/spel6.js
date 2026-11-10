@@ -15,6 +15,7 @@ import { maakCanvas, maakLaag, rondeRect } from './canvas.js';
 import { maakInvoer } from '../invoer.js';
 import * as staat from '../staat.js';
 import * as datum from '../datum.js';
+import { werkerGevonden, terugKnop, werkerVak } from './zoeken.js';
 import { ga } from '../router.js';
 import * as K from './klem.js';
 
@@ -45,7 +46,7 @@ const DIEF_NAAST = { x: 46, y: 2 };                   // daar staat de dief als 
 const KLEM = { x: -46, y: -4 };                       // s6-klem 140×90
 const BALK = { x: -51, y: 98, b: 150, h: 12 };        // worstelbalk onder het tweetal
 const POLITIE = { b: 88, y: 36 };                     // politieauto naast de klem
-const WERKER = { x: 309, y: 208, b: 16, h: 20 };      // half achter bezoeker 4 (spel 7)
+const WERKER = werkerVak(317, 230, 0.7);           // half achter bezoeker 4; draagt een lampion (wk-lampion, besluit 108)
 const DIEF_KLEUR = '#2F3A4A';
 const DIEF_HUID = '#E8B48A';
 
@@ -101,7 +102,7 @@ function persoonSprites(p) {
 
 function spriteLijst() {
   const lijst = [
-    { id: 's5-kraam-voor' }, { id: 's5-gloed' }, { id: 'werker' },
+    { id: 's5-kraam-voor' }, { id: 's5-gloed' }, { id: 'wk-lampion' },
     { id: 'b-blij' }, { id: 'b-bang' }, { id: 'b-lach' },
     { id: 'pino-staan' }, { id: 'pino-loop' }, { id: 'pino-sip' }, { id: 's6-ketting' }, { id: 's6-tril' },
     { id: 'b-lijf', kleur: DIEF_KLEUR }, { id: 'b-lijf-los', kleur: DIEF_KLEUR }, { id: 'b-hoofd', kleur: DIEF_HUID },
@@ -120,6 +121,78 @@ export async function voorbereid() {
   await voorbereidSprites(spriteLijst());
 }
 
+/* ---------- steeg tekenen (gedeeld door het spel en de polaroid in spel 7) ---------- */
+
+/** Bezoekers op hun beginplek. */
+function beginMenigte() {
+  return MENIGTE.map((m, i) => ({
+    ...m, p: { ...BEZOEKERS[m.wie], kind: !!m.kind },
+    x: m.x0 + (m.x1 - m.x0) * ((i * 0.37) % 1), richting: i % 2 ? 1 : -1, pauze: 0, fase: i * 0.7,
+  }));
+}
+
+function tekenLampion(c, x, y, kleur) {
+  tekenSprite(c, 's5-gloed', x - 28, y - 22, { w: 80, h: 80 });
+  tekenSprite(c, 's5-lampion', x, y, { w: 24, h: 34, kleur });
+}
+
+/** Kasseien, lampionslinger en lampions. */
+function tekenSteegGrond(g) {
+  g.fillStyle = '#556B8E'; g.fillRect(0, 0, B, H);
+  g.fillStyle = '#4E6384';
+  for (let y = 0; y < H; y += 28) {
+    const verschuif = (y / 28) % 2 ? 14 : 0;
+    for (let x = 0; x < B; x += 28) { rondeRect(g, x + verschuif + 1, y + 1, 26, 26, 4); g.fill(); }
+  }
+  g.strokeStyle = '#8B4A1E'; g.lineWidth = 2.5;
+  g.stroke(new Path2D('M0 28 q90 22 180 0 t178 0'));
+  for (const [x, y, kleur] of LAMPIONS) tekenLampion(g, x, y, kleur);
+}
+
+// Persoon 48×72 (kind × 0,72): lijf of jurk → hoofd → haar → gezicht → accessoires.
+function tekenPersoon(c, p, x, y, { schaal = 1, flip = false, gezicht = 'b-blij' } = {}) {
+  const k = schaal * (p.kind ? 0.72 : 1);
+  const o = { w: 48 * k, h: 72 * k, flip };
+  tekenSprite(c, p.jurk ? 'b-jurk' : 'b-lijf', x, y, { ...o, kleur: p.kleding });
+  tekenSprite(c, 'b-hoofd', x, y, { ...o, kleur: p.huid });
+  tekenSprite(c, p.haar, x, y, { ...o, kleur: p.haarkleur });
+  tekenSprite(c, gezicht, x, y, o);
+  for (const a of p.acc || []) tekenSprite(c, a, x, y, o);
+}
+
+function tekenKraam(c, k, gezicht) {
+  tekenSprite(c, 's5-kraam-achter', k.x, k.y, { kleur: k.luifel });
+  tekenPersoon(c, k.persoon, k.x + 41, k.y + 28, { gezicht });
+  tekenSprite(c, 's5-kraam-voor', k.x, k.y);
+  tekenSprite(c, `s5-waar-${k.waar}`, k.x + 14, k.y + 58, { w: 100, h: 30 });
+}
+
+function tekenLantaarnpaal(c) {
+  c.fillStyle = '#8B4A1E'; c.fillRect(338, H - 118, 4, 60);
+  tekenLampion(c, 330, H - 150, '#FF8A3D');
+}
+
+/** Maat van de steeg (scène-eenheden). */
+export const STEEG = { B, H };
+
+/**
+ * De steeg in rust, stil: kramen, bezoekers op hun beginplek, de lantaarnpaal en Pino met de ketting op haar
+ * startplek; zonder werker en dief. c is een context in scène-eenheden (B × H). Eerst voorbereid() afwachten.
+ * Voor de polaroid in het album van spel 7 (besluit 107).
+ */
+export function tekenStilleSteeg(c) {
+  tekenSteegGrond(c);
+  for (const k of KRAMEN) tekenKraam(c, k, 'b-blij');
+  const lagen = beginMenigte().map((m) => ({
+    y: m.y + 72 * m.s * (m.kind ? 0.72 : 1),
+    f: () => tekenPersoon(c, m.p, m.x, m.y, { schaal: m.s, flip: m.richting < 0 }),
+  }));
+  lagen.push({ y: H - 58, f: () => tekenLantaarnpaal(c) });
+  lagen.push({ y: PINO_START.y + 72, f: () => { tekenSprite(c, 'pino-staan', PINO_START.x, PINO_START.y); tekenSprite(c, 's6-ketting', PINO_START.x, PINO_START.y); } });
+  lagen.sort((a, b) => a.y - b.y);
+  for (const l of lagen) l.f();
+}
+
 /** Heeft Pino kniebeschermers? In testmodus overschrijft ?knie=0|1 de staat (specs/ontwikkelaarsopties.md). */
 function heeftKnie() {
   if (datum.isTest()) {
@@ -130,14 +203,14 @@ function heeftKnie() {
   return staat.lees().producten.includes('kniebeschermers');
 }
 
-export function start({ root, dag, info, klaar }) {
+export function start({ root, dag, info, klaar, zoek = false }) {
   let opruim = null;
-  const ronde = () => { if (opruim) opruim(); opruim = speel({ root, dag, info, klaar, opnieuw: ronde }); };
+  const ronde = () => { if (opruim) opruim(); opruim = speel({ root, dag, info, klaar, zoek, opnieuw: ronde }); };
   ronde();
   return () => { if (opruim) opruim(); opruim = null; };
 }
 
-function speel({ root, dag, info, klaar, opnieuw }) {
+function speel({ root, dag, info, klaar, opnieuw, zoek = false }) {
   const rustig = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const knie = heeftKnie();
   let gestopt = false;
@@ -180,7 +253,7 @@ function speel({ root, dag, info, klaar, opnieuw }) {
   const moves = h('div', { class: 's6-moves', role: 'group', 'aria-label': 'Jiujitsu-moves', hidden: true }, moveKnoppen);
 
   const scherm = h('div', { class: 'scherm spel spel6' }, [
-    kopbalk({ label: datum.dagLabel(dag), titel: info.titel, terugNaar: `/deur/${dag}`, terugLabel: 'Terug naar het deurtje' }),
+    kopbalk({ label: datum.dagLabel(dag), titel: info.titel, terugNaar: `/deur/${dag}`, terugLabel: 'Terug naar het deurtje', ...terugKnop(zoek) }),
     politieKaart,
     h('div', { class: 's6-veld' }, [h('div', { class: 's6-kolom' }, [kaart, h('div', { class: 's6-onder' }, [reageerKnop, moves]), noten.canvas])]),
   ]);
@@ -191,10 +264,7 @@ function speel({ root, dag, info, klaar, opnieuw }) {
   const s = { fase: 'rust', t: 0, klok: 0, reactie: null, werkerHup: 0, vluchtKlaar: null, af: false };
   const dief = { x: DIEF_START, y: PINO_START.y + DIEF_NAAST.y, zichtbaar: false, flip: false, grijpt: false, buit: false, loopt: false };
   const pino = { x: PINO_START.x, y: PINO_START.y, richting: 1, loopTijd: 0, pose: 'staan', ketting: true };
-  const menigte = MENIGTE.map((m, i) => ({
-    ...m, p: { ...BEZOEKERS[m.wie], kind: !!m.kind },
-    x: m.x0 + (m.x1 - m.x0) * ((i * 0.37) % 1), richting: i % 2 ? 1 : -1, pauze: 0, fase: i * 0.7,
-  }));
+  const menigte = beginMenigte();
   let klem = null;
   // Testmodus: de staat plus stap(ms) om het spel met de hand vooruit te zetten (in stappen van hooguit 50 ms).
   if (datum.isTest()) {
@@ -210,7 +280,7 @@ function speel({ root, dag, info, klaar, opnieuw }) {
   const invoer = maakInvoer({
     acties,
     bijActie(naam) {
-      if (naam === 'terug') { ga(`/deur/${dag}`); return; }
+      if (naam === 'terug') { ga(zoek ? '/spel/7' : `/deur/${dag}`); return; }
       if (naam === 'actie') reageer();
       else if (naam.startsWith('baan')) drukBaan(Number(naam.slice(4)));
     },
@@ -327,7 +397,8 @@ function speel({ root, dag, info, klaar, opnieuw }) {
         pino.loopTijd = 0;
         pino.pose = 'staan';
       }
-      if (s.t >= START_PAUZE) {
+      // In de zoekmodus van spel 7 komt de dief niet: Pino loopt vrij rond tussen de bezoekers (besluit 106).
+      if (!zoek && s.t >= START_PAUZE) {
         // De dief komt: besturing uit, Pino blijft staan waar ze is en hij loopt naar die plek.
         loopInvoer.vernietig();
         pino.pose = 'staan';
@@ -366,49 +437,16 @@ function speel({ root, dag, info, klaar, opnieuw }) {
 
   /* ---------- achtergrond (één keer) ---------- */
   const achtergrond = maakLaag(B, H);
-  function tekenAchtergrond() {
-    const g = achtergrond.ctx;
-    g.fillStyle = '#556B8E'; g.fillRect(0, 0, B, H);
-    g.fillStyle = '#4E6384';
-    for (let y = 0; y < H; y += 28) {
-      const verschuif = (y / 28) % 2 ? 14 : 0;
-      for (let x = 0; x < B; x += 28) { rondeRect(g, x + verschuif + 1, y + 1, 26, 26, 4); g.fill(); }
-    }
-    g.strokeStyle = '#8B4A1E'; g.lineWidth = 2.5;
-    g.stroke(new Path2D('M0 28 q90 22 180 0 t178 0'));
-    for (const [x, y, kleur] of LAMPIONS) tekenLampion(g, x, y, kleur);
-  }
-  function tekenLampion(c, x, y, kleur) {
-    tekenSprite(c, 's5-gloed', x - 28, y - 22, { w: 80, h: 80 });
-    tekenSprite(c, 's5-lampion', x, y, { w: 24, h: 34, kleur });
-  }
+  function tekenAchtergrond() { tekenSteegGrond(achtergrond.ctx); }
 
   /* ---------- tekenen ---------- */
   const wip = (fase) => (rustig ? 0 : -Math.abs(Math.sin((s.klok / 1000 + fase) * Math.PI * 5)) * 2);
-
-  // Persoon 48×72 (kind × 0,72): lijf of jurk → hoofd → haar → gezicht → accessoires.
-  function tekenPersoon(c, p, x, y, { schaal = 1, flip = false, gezicht = 'b-blij' } = {}) {
-    const k = schaal * (p.kind ? 0.72 : 1);
-    const o = { w: 48 * k, h: 72 * k, flip };
-    tekenSprite(c, p.jurk ? 'b-jurk' : 'b-lijf', x, y, { ...o, kleur: p.kleding });
-    tekenSprite(c, 'b-hoofd', x, y, { ...o, kleur: p.huid });
-    tekenSprite(c, p.haar, x, y, { ...o, kleur: p.haarkleur });
-    tekenSprite(c, gezicht, x, y, o);
-    for (const a of p.acc || []) tekenSprite(c, a, x, y, o);
-  }
 
   // Omstanders: blij, bang vanaf de greep (en als de dief ontsnapt), lachend als de politie er is.
   function gezichtNu() {
     if (s.fase === 'greep' || s.fase === 'vlucht') return 'b-bang';
     if (s.fase === 'politie') return 'b-lach';
     return 'b-blij';
-  }
-
-  function tekenKraam(k, gezicht) {
-    tekenSprite(ctx, 's5-kraam-achter', k.x, k.y, { kleur: k.luifel });
-    tekenPersoon(ctx, k.persoon, k.x + 41, k.y + 28, { gezicht });
-    tekenSprite(ctx, 's5-kraam-voor', k.x, k.y);
-    tekenSprite(ctx, `s5-waar-${k.waar}`, k.x + 14, k.y + 58, { w: 100, h: 30 });
   }
 
   function tekenBezoeker(m, gezicht) {
@@ -418,7 +456,7 @@ function speel({ root, dag, info, klaar, opnieuw }) {
     const flip = loopt ? m.richting < 0 : (s.fase === 'rust' || s.fase === 'nadert' ? m.richting < 0 : m.x + 24 * k > pino.x + 24);
     if (m.werker) {
       const hup = s.werkerHup > 0 && !rustig ? -Math.abs(Math.sin((s.werkerHup / 350) * Math.PI)) * 6 : 0;
-      tekenSprite(ctx, 'werker', WERKER.x, WERKER.y + hup, { w: WERKER.b, h: WERKER.h });
+      tekenSprite(ctx, 'wk-lampion', WERKER.x, WERKER.y + hup, { w: WERKER.b, h: WERKER.h });
     }
     tekenPersoon(ctx, m.p, m.x, m.y + (loopt ? wip(m.fase) : 0), { schaal: m.s, flip, gezicht });
   }
@@ -519,10 +557,10 @@ function speel({ root, dag, info, klaar, opnieuw }) {
     begin();
     achtergrond.teken(ctx);
     const gezicht = gezichtNu();
-    for (const k of KRAMEN) tekenKraam(k, gezicht);
+    for (const k of KRAMEN) tekenKraam(ctx, k, gezicht);
     // tekenvolgorde achter → voor op voet-y
     const lagen = menigte.map((m) => ({ y: m.y + 72 * m.s * (m.kind ? 0.72 : 1), f: () => tekenBezoeker(m, gezicht) }));
-    lagen.push({ y: H - 58, f: () => { ctx.fillStyle = '#8B4A1E'; ctx.fillRect(338, H - 118, 4, 60); tekenLampion(ctx, 330, H - 150, '#FF8A3D'); } });
+    lagen.push({ y: H - 58, f: () => tekenLantaarnpaal(ctx) });
     const inKlem = s.fase === 'klem' || s.fase === 'politie';
     if (inKlem) lagen.push({ y: pino.y + KLEM.y + 88, f: tekenKlem });
     else lagen.push({ y: pino.y + 72, f: tekenPino });
@@ -537,7 +575,7 @@ function speel({ root, dag, info, klaar, opnieuw }) {
 
   /* ---------- werker (spel 7) ---------- */
   function vindWerker() {
-    staat.markeerWerkerGevonden(6);
+    werkerGevonden(6, { zoek });
     s.werkerHup = 700;
   }
 

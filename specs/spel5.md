@@ -53,7 +53,7 @@ Voorbeeld:
 | 1 dec, kniebeschermers nog niet gekocht | gekocht | aan de beurt | open, wacht | dicht |
 | 2 dec, ketting, kniebeschermers en spray gekocht | gekocht | gekocht | gekocht | aan de beurt |
 
-**Spel 7** (zoals besluit 50; besloten, #67): als spel 7 open is, kun je op een **gekocht** kaartje tikken. Dat opent de markt in **kijkmodus**: Pino kan lopen, maar er is geen handel en geen wisselkraam. De werker achter de put is daar te vinden, ook als er geen ronde mogelijk is.
+**Spel 7** (zoals besluit 50; besloten, #67): als spel 7 open is, kun je op een **gekocht** kaartje tikken. Dat opent de markt in **kijkmodus**: Pino kan lopen, maar er is geen handel en geen wisselkraam. De werker achter de put is daar te vinden, ook als er geen ronde mogelijk is. Vanuit spel 7 (`#/spel/5?zoek=1`) opent het productenalbum; na de vondst gaat het spel terug naar het album van spel 7 (besluit 105).
 
 ## Regels
 

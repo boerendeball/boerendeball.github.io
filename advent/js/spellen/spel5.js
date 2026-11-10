@@ -12,6 +12,7 @@ import { icoon } from '../ui/iconen.js';
 import { gemSvg, GEMS } from '../ui/edelstenen.js';
 import * as staat from '../staat.js';
 import * as datum from '../datum.js';
+import { werkerGevonden, terugKnop, werkerVak } from './zoeken.js';
 import { el, use, groep, scene, persoon, pino } from '../sprites.js';
 import { maakLus } from './lus.js';
 import { maakInvoer } from '../invoer.js';
@@ -57,7 +58,7 @@ const ZONES = [
   { id: 'minh', x0: 220, x1: 350, y0: 466, y1: 522 },
 ];
 const ZONE_WISSEL = { id: 'wissel', x0: 128, x1: 232, y0: 556, y1: 580 };
-const WERKER = { x: 176, y: 242, b: 16, h: 20 };       // half achter de put (spel 7)
+const WERKER = werkerVak(184, 262, 0.62);           // half achter de put; haalt water (wk-emmer, besluit 108)
 
 const pct = (v, t) => `${((v / t) * 100).toFixed(3)}%`;
 const binnen = (r, x, y) => x >= r.x0 && x <= r.x1 && y >= r.y0 && y <= r.y1;
@@ -113,9 +114,73 @@ function huidigeRonde() {
   return ronde;
 }
 
+/* ---------- marktscène (gedeeld door de markt en het album van spel 7) ---------- */
+
+const PINO_START = { x: 270, y: 247 };
+
+/** Kasseien, lampionslinger en matten. */
+function marktGrond(metWissel) {
+  const grond = el('g', { class: 's5-grond' });
+  grond.append(el('rect', { x: 0, y: 0, width: B, height: H, fill: '#556B8E' }));
+  for (let yy = 0; yy < H; yy += 28) {
+    const off = (yy / 28) % 2 ? 14 : 0;
+    for (let xx = 0; xx < B; xx += 28) grond.append(el('rect', { x: xx + off + 1, y: yy + 1, width: 26, height: 26, rx: 4, fill: '#4E6384' }));
+  }
+  grond.append(el('path', { d: 'M0 28 q90 22 180 0 t178 0', fill: 'none', stroke: '#8B4A1E', 'stroke-width': 2.5 }));
+  [[18, '#FF5E5B'], [78, '#FFC93C'], [138, '#FF5E5B'], [198, '#FF8A3D'], [258, '#FF5E5B'], [318, '#FFC93C']]
+    .forEach(([x, k], i) => grond.append(lampion(x, [36, 44, 40, 36, 42, 38][i], k)));
+  grond.append(use('s5-mat', 126, 170, 96, 40));
+  if (!metWissel) grond.append(use('s5-mat', 126, 500, 96, 40));
+  return grond;
+}
+
+/**
+ * De sorteerbare dingen ({ y, knoop }; tekenvolgorde op voet-y): kramen met handelaars, put (met de werker als
+ * werker = true), krukje, lantaarnpaal en eventueel de wisselkraam. Pino zit er niet in.
+ */
+function marktDingen({ product = null, producten = [], metWissel = false, werker = true }) {
+  const dingen = [];
+  const handelaarKnoop = {};
+  for (const id of M.HANDELAARS) {
+    const i = INFO[id];
+    const hk = el('g', { class: 's5-handelaar' }, [persoon(41, 28, i.persoon)]);
+    handelaarKnoop[id] = hk;
+    const delen = [use('s5-kraam-achter', 0, 0, 130, 120, i.luifel), hk, use('s5-kraam-voor', 0, 0, 130, 120), use(`s5-waar-${i.waar}`, 14, 58, 100, 30)];
+    // Het product van de ronde ligt op alle vier de toonbanken (niet de ketting: die hangt al tussen de sieraden).
+    if (product && product.id !== 'ketting') delen.push(use(product.symbool, 94, 44, 28, 28));
+    // Latere producten liggen klein bij hun eigen kraam, zonder interactie (besluit 66).
+    for (const p of M.PRODUCTEN) {
+      if (LATER[p.id] !== id || producten.includes(p.id) || (product && product.id === p.id)) continue;
+      delen.push(use(p.symbool, 18, 53, 18, 18));
+    }
+    dingen.push({ y: i.y + 116, knoop: groep(i.x, i.y, {}, delen) });
+  }
+  const werkerKnoop = werker ? use('wk-emmer', WERKER.x, WERKER.y, WERKER.b, WERKER.h) : null;
+  dingen.push({ y: 308, knoop: el('g', {}, [werkerKnoop, use('s5-put', 143, 228, 72, 84)].filter(Boolean)) });
+  dingen.push({ y: 324, knoop: use('s5-kruk', 106, 296, 24, 28) });
+  dingen.push({ y: 400, knoop: el('g', {}, [el('rect', { x: 194, y: 330, width: 4, height: 70, fill: '#8B4A1E' }), lampion(186, 308, '#FF8A3D')]) });
+  if (metWissel) {
+    dingen.push({ y: WISSEL.y + 116 * WISSEL.s, knoop: groep(WISSEL.x, WISSEL.y, { schaal: WISSEL.s }, [
+      use('s5-kraam-achter', 0, 0, 130, 120, '#9B6BFF'), persoon(41, 28, WISSELAAR), use('s5-kraam-voor', 0, 0, 130, 120), use('s5-waar-wissel', 14, 58, 100, 30),
+    ]) });
+  }
+  return { dingen, handelaarKnoop, werkerKnoop };
+}
+
+/**
+ * De markt zoals in de kijkmodus (geen ronde, geen wisselkraam), stil en zonder werker, met Pino op haar
+ * startplek. Voor de polaroid in het album van spel 7 (besluit 107); viewBox = de hele scène.
+ */
+export function marktScene() {
+  const { dingen } = marktDingen({ producten: staat.lees().producten, werker: false });
+  dingen.push({ y: PINO_START.y, knoop: el('g', { transform: `translate(${PINO_START.x} ${PINO_START.y})` }, [pino(-24, -71, 'staan', { flip: true })]) });
+  dingen.sort((a, b) => a.y - b.y);
+  return el('svg', { viewBox: `0 0 ${B} ${H}`, 'aria-hidden': 'true' }, [marktGrond(false), ...dingen.map((d) => d.knoop)]);
+}
+
 /* ---------- markt ---------- */
 
-function markt({ root, dag, info, klaar, opnieuw, kijken = false }) {
+function markt({ root, dag, info, klaar, opnieuw, kijken = false, zoek = false }) {
   const rustig = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const s0 = staat.lees();
   let ronde = kijken ? null : huidigeRonde();
@@ -135,48 +200,13 @@ function markt({ root, dag, info, klaar, opnieuw, kijken = false }) {
   const svg = scene(B, H, { label: 'Nachtmarkt met lampions, vier kramen, een waterput en Pino' });
   svg.classList.add('s5-scene');
 
-  const grond = el('g', { class: 's5-grond' });
-  grond.append(el('rect', { x: 0, y: 0, width: B, height: H, fill: '#556B8E' }));
-  for (let yy = 0; yy < H; yy += 28) {
-    const off = (yy / 28) % 2 ? 14 : 0;
-    for (let xx = 0; xx < B; xx += 28) grond.append(el('rect', { x: xx + off + 1, y: yy + 1, width: 26, height: 26, rx: 4, fill: '#4E6384' }));
-  }
-  grond.append(el('path', { d: 'M0 28 q90 22 180 0 t178 0', fill: 'none', stroke: '#8B4A1E', 'stroke-width': 2.5 }));
-  [[18, '#FF5E5B'], [78, '#FFC93C'], [138, '#FF5E5B'], [198, '#FF8A3D'], [258, '#FF5E5B'], [318, '#FFC93C']]
-    .forEach(([x, k], i) => grond.append(lampion(x, [36, 44, 40, 36, 42, 38][i], k)));
-  grond.append(use('s5-mat', 126, 170, 96, 40));
-  if (!metWissel) grond.append(use('s5-mat', 126, 500, 96, 40));
-
+  const grond = marktGrond(metWissel);
   const laag = el('g', { class: 's5-laag' });
   svg.append(grond, laag);
 
   // Sorteerbare dingen (tekenvolgorde op voet-y): kramen, put met werker, krukje, lantaarnpaal, wisselkraam, Pino.
-  const dingen = [];
-  const handelaarKnoop = {};
-  for (const id of M.HANDELAARS) {
-    const i = INFO[id];
-    const hk = el('g', { class: 's5-handelaar' }, [persoon(41, 28, i.persoon)]);
-    handelaarKnoop[id] = hk;
-    const delen = [use('s5-kraam-achter', 0, 0, 130, 120, i.luifel), hk, use('s5-kraam-voor', 0, 0, 130, 120), use(`s5-waar-${i.waar}`, 14, 58, 100, 30)];
-    // Het product van de ronde ligt op alle vier de toonbanken (niet de ketting: die hangt al tussen de sieraden).
-    if (product && product.id !== 'ketting') delen.push(use(product.symbool, 94, 44, 28, 28));
-    // Latere producten liggen klein bij hun eigen kraam, zonder interactie (besluit 66).
-    for (const p of M.PRODUCTEN) {
-      if (LATER[p.id] !== id || s0.producten.includes(p.id) || (product && product.id === p.id)) continue;
-      delen.push(use(p.symbool, 18, 53, 18, 18));
-    }
-    dingen.push({ y: i.y + 116, knoop: groep(i.x, i.y, {}, delen) });
-  }
-  const werkerKnoop = use('werker', WERKER.x, WERKER.y, WERKER.b, WERKER.h);
-  dingen.push({ y: 308, knoop: el('g', {}, [werkerKnoop, use('s5-put', 143, 228, 72, 84)]) });
-  dingen.push({ y: 324, knoop: use('s5-kruk', 106, 296, 24, 28) });
-  dingen.push({ y: 400, knoop: el('g', {}, [el('rect', { x: 194, y: 330, width: 4, height: 70, fill: '#8B4A1E' }), lampion(186, 308, '#FF8A3D')]) });
-  if (metWissel) {
-    dingen.push({ y: WISSEL.y + 116 * WISSEL.s, knoop: groep(WISSEL.x, WISSEL.y, { schaal: WISSEL.s }, [
-      use('s5-kraam-achter', 0, 0, 130, 120, '#9B6BFF'), persoon(41, 28, WISSELAAR), use('s5-kraam-voor', 0, 0, 130, 120), use('s5-waar-wissel', 14, 58, 100, 30),
-    ]) });
-  }
-  const pinoStaat = { x: 270, y: 247, richting: -1, pose: 'staan', sleutel: '', fase: 0 };
+  const { dingen, handelaarKnoop, werkerKnoop } = marktDingen({ product, producten: s0.producten, metWissel });
+  const pinoStaat = { x: PINO_START.x, y: PINO_START.y, richting: -1, pose: 'staan', sleutel: '', fase: 0 };
   const pinoKnoop = el('g', { class: 's5-pino' });
   const pinoDing = { y: pinoStaat.y, knoop: pinoKnoop };
   dingen.push(pinoDing);
@@ -216,7 +246,7 @@ function markt({ root, dag, info, klaar, opnieuw, kijken = false }) {
   ]);
 
   const scherm = h('div', { class: 'scherm spel spel5' }, [
-    kopbalk({ label: datum.dagLabel(dag), titel: info.titel, terugNaar: `/deur/${dag}`, terugLabel: 'Terug naar het deurtje', rechts: geldPil }),
+    kopbalk({ label: datum.dagLabel(dag), titel: info.titel, terugNaar: `/deur/${dag}`, terugLabel: 'Terug naar het deurtje', ...terugKnop(zoek), rechts: geldPil }),
     h('div', { class: 's5-ruimte' }, [kaart]),
     besturing,
   ]);
@@ -596,7 +626,7 @@ function markt({ root, dag, info, klaar, opnieuw, kijken = false }) {
 
   /* ---------- werker (spel 7) ---------- */
   function vindWerker() {
-    staat.markeerWerkerGevonden(5);
+    werkerGevonden(5, { zoek });
     if (rustig) return;
     werkerKnoop.animate([{ transform: 'translateY(0)' }, { transform: 'translateY(-6px)' }, { transform: 'translateY(0)' }], { duration: 350, iterations: 2 });
   }
@@ -658,7 +688,7 @@ function handdruk(id) {
 
 /* ---------- productenalbum (besluit 67) ---------- */
 
-function album({ root, dag, info, naarMarkt, bekijk }) {
+function album({ root, dag, info, naarMarkt, bekijk, zoek = false }) {
   const s = staat.lees();
   const spel7 = datum.deurOpen(7);
   const rijen = M.albumToestand(s.producten, isOpen);
@@ -704,7 +734,7 @@ function album({ root, dag, info, naarMarkt, bekijk }) {
 
   const geldPil = h('span', { class: 'teller-pil s5-geld', role: 'img', 'aria-label': `Portemonnee: ${s.geld} munten` }, [munt(24), h('span', {}, String(s.geld))]);
   root.replaceChildren(h('div', { class: 'scherm spel s5-album' }, [
-    kopbalk({ label: datum.dagLabel(dag), titel: info.titel, terugNaar: `/deur/${dag}`, terugLabel: 'Terug naar het deurtje', rechts: geldPil }),
+    kopbalk({ label: datum.dagLabel(dag), titel: info.titel, terugNaar: `/deur/${dag}`, terugLabel: 'Terug naar het deurtje', ...terugKnop(zoek), rechts: geldPil }),
     h('section', { class: 'kaart s5-albumkaart' }, [
       // Filter voor het lichtblauwe silhouet van producten waarvan het spel nog dicht is (statisch, beweegt niet).
       el('svg', { width: 0, height: 0, class: 's5-defs', 'aria-hidden': 'true' }, [

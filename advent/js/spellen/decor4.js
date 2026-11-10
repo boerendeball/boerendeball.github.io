@@ -4,15 +4,21 @@
 // Scène 358×670; het strand komt uit design/generators/spel4_build.py (strand()), berg en markt uit spel4_build.py (berg(), markt()).
 
 import { el, use, persoon } from '../sprites.js';
+import { werkerVak } from './zoeken.js';
+
+const WERKER_SCHAAL = 0.62;   // de werker (wk-zwaai), voeten op dezelfde plek als voorheen (besluit 108)
 
 const pad = (d, attrs) => el('path', { d, ...attrs });
 const rect = (x, y, width, height, fill, extra = {}) => el('rect', { x, y, width, height, fill, ...extra });
 const stippen = (fill, lijst) => el('g', { fill }, lijst.map(([cx, cy, r]) => el('circle', { cx, cy, r })));
-const werkerKnoop = (w) => el('g', { class: 's4-werker' }, [use('werker', w.x, w.y, w.b, w.h)]);
+// De werker zwaait met een kokosdrankje naar de camera (wk-zwaai, besluit 108).
+const werkerKnoop = (w) => el('g', { class: 's4-werker' }, [use('wk-zwaai', w.x, w.y, w.b, w.h)]);
 
 /* ---------- strand ---------- */
 
-const STRAND_WERKER = { x: 38, y: 314, b: 16, h: 20 };   // half achter de palmstam
+// Achter de palmstam: voeten net achter de stamvoet (320) en iets kleiner (verder weg); de stam (x ≈ 44, 9 breed)
+// bedekt zijn linkerhelft, de zwaaiende hand steekt rechts uit.
+const STRAND_WERKER = werkerVak(49, 316, 0.55);
 
 function strandAchter() {
   return el('g', { class: 's4-achter' }, [
@@ -52,7 +58,7 @@ function strandRekwisieten() {
 
 /* ---------- uitzichtpunt op een berg ---------- */
 
-const BERG_WERKER = { x: 206, y: 432, b: 16, h: 20 };    // half achter de voet van de verrekijker
+const BERG_WERKER = werkerVak(214, 452, WERKER_SCHAAL);    // half achter de voet van de verrekijker
 
 function bergAchter() {
   return el('g', { class: 's4-achter' }, [
@@ -98,7 +104,7 @@ function bergRekwisieten() {
 
 /* ---------- dagmarkt ---------- */
 
-const MARKT_WERKER = { x: 228, y: 402, b: 16, h: 20 };   // half achter de dierentafel
+const MARKT_WERKER = werkerVak(236, 422, WERKER_SCHAAL);   // half achter de dierentafel
 // De verkoper staat achter de dierentafel (decor: telt niet mee als iemand die in beeld staat).
 const VERKOPER = { kleding: '#39D353', huid: '#C98B5A', haar: 'bh-kort', haarkleur: '#2B1A0E', acc: ['acc-nonla'] };
 

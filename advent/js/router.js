@@ -1,6 +1,7 @@
 // Hash-router: #/ (kalender), #/deur/3, #/spel/3, #/briefje/3, #/finale, #/test.
 // Een hash werkt op GitHub Pages zonder 404-trucs en overleeft herladen.
-// Een scherm-functie krijgt { root, params, pad } en mag een opruimfunctie teruggeven.
+// Een scherm-functie krijgt { root, params, pad, query } en mag een opruimfunctie teruggeven.
+// query = URLSearchParams van het deel na '?' in de hash (bv. #/spel/5?zoek=1, de zoekmodus van spel 7).
 
 const routes = [];
 let root = null;
@@ -31,6 +32,12 @@ export function terug(standaard = '/') {
   else ga(standaard, { vervang: true });
 }
 
+/** Splitst '/spel/5?zoek=1' in het pad en de query (de query hoort bij de hash, niet bij location.search). */
+function splitsQuery(pad) {
+  const i = pad.indexOf('?');
+  return i < 0 ? { pad, query: new URLSearchParams() } : { pad: pad.slice(0, i), query: new URLSearchParams(pad.slice(i + 1)) };
+}
+
 function zoek(pad) {
   const delen = pad.split('/').filter(Boolean);
   for (const r of routes) {
@@ -54,10 +61,10 @@ function toon() {
   root.replaceChildren();
   window.scrollTo(0, 0);
 
-  const pad = huidigPad();
+  const { pad, query } = splitsQuery(huidigPad());
   const gevonden = zoek(pad) || (nietGevonden && { scherm: nietGevonden, params: {} });
   if (!gevonden) return;
-  const resultaat = gevonden.scherm({ root, params: gevonden.params, pad });
+  const resultaat = gevonden.scherm({ root, params: gevonden.params, pad, query });
   if (resultaat && typeof resultaat.then === 'function') {
     resultaat.then((f) => { opruimen = f; }, (e) => console.error(e));
   } else {

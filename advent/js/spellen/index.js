@@ -1,5 +1,6 @@
 // Register van de spellen. Elk spel is een module spellen/spel{n}.js met:
-//   export function start({ root, dag, info, klaar }) → opruimfunctie
+//   export function start({ root, dag, info, klaar, zoek }) → opruimfunctie
+//   (zoek = true in de zoekmodus van spel 7, #/spel/n?zoek=1; zie spellen/zoeken.js)
 //   export async function voorbereid({ dag, info })   (optioneel; bv. sprite sheet rasteren)
 // klaar({ vaardigheid, score }) schrijft de spelstaat; het spel toont zelf zijn resultaatscherm.
 
@@ -11,6 +12,7 @@ import { ga } from '../router.js';
 import { dagInfo } from '../kalender.js';
 import { toonDialoog } from '../ui/overlay.js';
 import { el, use, pino } from '../sprites.js';
+import { zoekenMag } from './zoeken.js';
 
 const cache = {};
 
@@ -27,12 +29,17 @@ export async function laadSpel(n) {
   return cache[n];
 }
 
-export async function schermSpel({ root, params }) {
+export async function schermSpel({ root, params, query = new URLSearchParams() }) {
   const n = Number(params.n);
   if (!(n >= 1 && n <= datum.AANTAL_DAGEN)) { ga('/', { vervang: true }); return; }
   const info = dagInfo(n);
   const nu = datum.vandaag();
   if (!datum.deurOpen(n, nu)) { ga(`/deur/${n}`, { vervang: true }); return; }
+
+  // Zoekmodus van spel 7 (#/spel/n?zoek=1): alleen voor een doorgespeeld spel 2–6 terwijl deurtje 7 open is;
+  // anders terug naar het album (besluit 101).
+  const zoek = query.get('zoek') === '1';
+  if (zoek && !zoekenMag(n, nu)) { ga(datum.deurOpen(7, nu) ? '/spel/7' : '/', { vervang: true }); return; }
 
   /** Schrijft de afronding weg; geeft true terug als dit de eerste afronding van deze dag was. */
   const klaar = ({ vaardigheid = info.vaardigheid, score = null } = {}) => staat.rondSpelAf(n, { vaardigheid, score });
@@ -41,14 +48,14 @@ export async function schermSpel({ root, params }) {
   if (n === 4 && !staat.lees().familie) return geenFamilie({ root, n, info });
 
   // Spel 6 heeft de ketting uit spel 5 nodig: die wil de dief hebben (besluit 81). In testmodus slaat ?knie=0|1
-  // de controle over, zodat het spel los te spelen is.
-  if (n === 6 && !staat.lees().producten.includes('ketting') && !(datum.isTest() && /^[01]$/.test(zoekParam('knie') || ''))) {
+  // de controle over, zodat het spel los te spelen is. In de zoekmodus komt de dief niet, dus geen controle.
+  if (n === 6 && !zoek && !staat.lees().producten.includes('ketting') && !(datum.isTest() && /^[01]$/.test(zoekParam('knie') || ''))) {
     return geenKetting({ root, n, info });
   }
 
   const module = await laadSpel(n);
   if (module && typeof module.start === 'function') {
-    return module.start({ root, dag: n, info, klaar });
+    return module.start({ root, dag: n, info, klaar, zoek });
   }
 
   // Placeholder zolang het spel nog niet gebouwd is.

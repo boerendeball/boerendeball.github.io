@@ -10,6 +10,7 @@ import { el, use, persoon, dier } from '../sprites.js';
 import * as fam from './familie.js';
 import * as staat from '../staat.js';
 import * as datum from '../datum.js';
+import { werkerGevonden, terugKnop, werkerVak } from './zoeken.js';
 
 /* ---------- tuning ---------- */
 const POP_DUUR = 520;         // ms: karakter springt op zijn plek (CSS .fam-pop)
@@ -21,7 +22,7 @@ const STERREN = 6;            // sterretjes rond een nieuw karakter
 const B = 358;
 const H = 150;
 const STER = 'l2.2 6.6 6.6 2.2 -6.6 2.2 -2.2 6.6 -2.2 -6.6 -6.6 -2.2 6.6 -2.2z';
-const WERKER = { x: 192, y: 78, b: 24, h: 30 };   // half achter de villa (16×20 × 1,5)
+const WERKER = werkerVak(198, 110, 0.62);   // half achter de villa; schildert hem wit (wk-kwast, besluit 108)
 
 function persoonVan(opties, gezicht) {
   const { x, y, ...rest } = opties;
@@ -75,7 +76,11 @@ export function familieScene(familieId, gekocht = [], { nieuw = null, hup = fals
     el('rect', { x: 0, y: 104, width: B, height: 46, fill: f.grond }),
     el('rect', { x: 0, y: 104, width: B, height: 4, fill: 'rgba(0,0,0,0.08)' }),
   );
-  if (f.werker && werker) svg.append(el('g', { class: 'fam-werker' }, [use('werker', WERKER.x, WERKER.y, WERKER.b, WERKER.h)]));
+  if (f.werker && werker) svg.append(el('g', { class: 'fam-werker' }, [
+    // Gespiegeld: de kwast steekt aan de zichtbare kant uit, de verfpot staat achter de villa.
+    // (Een extra groep, zodat de hup-animatie (CSS transform) de spiegeling niet overschrijft.)
+    el('g', {}, [el('g', { transform: `translate(${WERKER.x + WERKER.b} ${WERKER.y}) scale(-1 1)` }, [use('wk-kwast', 0, 0, WERKER.b, WERKER.h)])]),
+  ]));
   svg.append(use(f.huis, 186, 4, 160, 110));
 
   // Leden en gekochte karakters, met wat de familie compleet maakt; bij hup springt de hele groep.
@@ -122,7 +127,7 @@ function kaartPlaatje(id) {
 
 /* ---------- spel ---------- */
 
-export function start({ root, dag, info, klaar }) {
+export function start({ root, dag, info, klaar, zoek = false }) {
   const rustig = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   let gestopt = false;
   let bezig = false;      // laatste kaart gekocht, wacht op het resultaatscherm
@@ -154,7 +159,7 @@ export function start({ root, dag, info, klaar }) {
   ]);
 
   const scherm = h('div', { class: 'scherm spel spel3' }, [
-    kopbalk({ label: datum.dagLabel(dag), titel: info.titel, terugNaar: `/deur/${dag}`, terugLabel: 'Terug naar het deurtje', rechts: pil.element }),
+    kopbalk({ label: datum.dagLabel(dag), titel: info.titel, terugNaar: `/deur/${dag}`, terugLabel: 'Terug naar het deurtje', ...terugKnop(zoek), rechts: pil.element }),
     h('div', { class: 'families' }, familieKaarten),
     bak,
   ]);
@@ -215,7 +220,7 @@ export function start({ root, dag, info, klaar }) {
 
   /* ---------- werker (spel 7) ---------- */
   function vindWerker() {
-    staat.markeerWerkerGevonden(3);
+    werkerGevonden(3, { zoek });
     const w = scenes.nguyen.querySelector('.fam-werker');
     if (w && !rustig) { w.classList.remove('hup'); void w.getBBox(); w.classList.add('hup'); }
   }

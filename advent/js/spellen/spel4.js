@@ -8,6 +8,7 @@ import { kopbalk } from '../ui/kopbalk.js';
 import { toonResultaat } from '../ui/resultaat.js';
 import * as staat from '../staat.js';
 import * as datum from '../datum.js';
+import { werkerGevonden, terugKnop } from './zoeken.js';
 import { el, use, groep, scene, persoon, pino } from '../sprites.js';
 import { maakLus } from './lus.js';
 import * as F from './fotos.js';
@@ -100,7 +101,8 @@ export function start(opties) {
       ? speel({ ...opties, familieId, kijken, opnieuw: () => toon(F.volgendeFamilie(staat.lees())) })
       : album({ ...opties, fotografeer: toon, bekijk: (id) => toon(id, { kijken: true }) });
   };
-  toon(kiesFamilie());
+  // In de zoekmodus van spel 7 is het album van spel 4 altijd het startpunt (besluit 105).
+  toon(opties.zoek ? null : kiesFamilie());
   return () => { if (opruim) opruim(); opruim = null; };
 }
 
@@ -127,7 +129,7 @@ const STANDAARD_ROLLEN = [['moeder', 'vader'], ['kind'], ['dier']];
  * Is spel 7 open, dan opent een tik op de foto's van een familie haar omgeving (besluit 50), zodat de werker daar
  * alsnog te vinden is.
  */
-function album({ root, dag, info, fotografeer, bekijk }) {
+function album({ root, dag, info, fotografeer, bekijk, zoek = false }) {
   const spel7 = datum.deurOpen(7);
   const s = staat.lees();
   const kan = F.teFotograferen(s);
@@ -150,7 +152,7 @@ function album({ root, dag, info, fotografeer, bekijk }) {
     ]);
   });
   root.replaceChildren(h('div', { class: 'scherm spel s4-album' }, [
-    kopbalk({ label: datum.dagLabel(dag), titel: info.titel, terugNaar: `/deur/${dag}`, terugLabel: 'Terug naar het deurtje' }),
+    kopbalk({ label: datum.dagLabel(dag), titel: info.titel, terugNaar: `/deur/${dag}`, terugLabel: 'Terug naar het deurtje', ...terugKnop(zoek) }),
     h('div', { class: 's4-albumpaginas' }, paginas),
   ]));
   queueMicrotask(() => root.querySelector('.s4-album-knop')?.focus({ preventScroll: true }));
@@ -163,7 +165,7 @@ function album({ root, dag, info, fotografeer, bekijk }) {
  * Het fotospel voor één familie. kijken: alleen bekijken vanuit het album (spel 7): de familie staat lachend op
  * haar fotoplekken, de filmstrook is vol, er valt niets te fotograferen of te verdienen; de werker is te vinden.
  */
-function speel({ root, dag, info, klaar, opnieuw, familieId, kijken = false }) {
+function speel({ root, dag, info, klaar, opnieuw, familieId, kijken = false, zoek = false }) {
   const rustig = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const omg = F.omgeving(familieId);
   const routes = F.maakRoutes(omg);
@@ -243,7 +245,7 @@ function speel({ root, dag, info, klaar, opnieuw, familieId, kijken = false }) {
 
   const kaart = h('div', { class: 'scene-kaart s4-kaart' }, [svg, knoppenLaag]);
   const scherm = h('div', { class: 'scherm spel spel4' }, [
-    kopbalk({ label: datum.dagLabel(dag), titel: info.titel, terugNaar: `/deur/${dag}`, terugLabel: 'Terug naar het deurtje', rechts: kijken ? null : teller }),
+    kopbalk({ label: datum.dagLabel(dag), titel: info.titel, terugNaar: `/deur/${dag}`, terugLabel: 'Terug naar het deurtje', ...terugKnop(zoek), rechts: kijken ? null : teller }),
     h('div', { class: 's4-ruimte' }, [kaart]),
     strook,
   ]);
@@ -421,7 +423,7 @@ function speel({ root, dag, info, klaar, opnieuw, familieId, kijken = false }) {
 
   /* ---------- werker (spel 7) ---------- */
   function vindWerker() {
-    staat.markeerWerkerGevonden(4);
+    werkerGevonden(4, { zoek });
     if (rustig) return;
     werkerKnoop.animate([{ transform: 'translateY(0)' }, { transform: 'translateY(-6px)' }, { transform: 'translateY(0)' }], { duration: 350, iterations: 2 });
   }

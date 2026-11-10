@@ -29,7 +29,7 @@ Lagen: lucht (rect 358×150) → grond (y 104, h 46) + randje `rgba(0,0,0,0.08)`
 
 - Het gekochte meisje staat bij Nguyễn als kind-persoon op (110,86), in hetzelfde uiterlijk als op de kaart (jurk `#5BC0EB`, blond lang haar). Dieren staan op de plek zelf (48×40).
 - Leden kijken met `b-bedroefd`; is de familie compleet, dan `b-blij` (besluit 40). Dieren hebben geen gezicht om te wisselen.
-- De werker (`werker`, 16×20, ×1,5 = 24×30) staat half achter de villa op (192,78), vóór het huis getekend maar achter de hoek van de voorgevel.
+- De werker (`wk-kwast`, 48×72 × 0,62, gespiegeld zodat de kwast zichtbaar is; besluit 108) staat met zijn voeten op (198,110) half achter de villa: vóór het huis getekend maar achter de hoek van de voorgevel.
 
 ## Regels
 
@@ -77,6 +77,7 @@ Weggelaten uit het artboard: de familienamen op de scènes, de kop "Karakterkaar
 - [ ] Na de vierde kaart: resultaatscherm zonder scoretegels, met Creativiteit +1, zonder "Nog een keer".
 - [ ] Herladen halverwege behoudt de gekochte karakters; na afronden blijft alles compleet.
 - [ ] Werker alleen aanklikbaar als deurtje 7 open is; aantikken zet `werkers[3]`.
+- [x] Vanuit spel 7 (`#/spel/3?zoek=1`): na de vondst terug naar het album van spel 7 (besluit 101).
 - [ ] Spel 4 zonder complete familie toont de popup met de bedroefde Nguyễns (zie `spel4.md`).
 - [ ] Toetsenbord en reduced motion werken.
 

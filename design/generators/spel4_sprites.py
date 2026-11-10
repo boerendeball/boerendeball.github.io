@@ -69,6 +69,76 @@ EXTRA4='''<svg width="0" height="0" style="position:absolute" aria-hidden="true"
   <symbol id="werker" viewBox="0 0 16 20"><rect x="5" y="9" width="6" height="8" rx="1.5" fill="#C2743C"/><rect x="5" y="16" width="2" height="4" fill="#5C2E0E"/><rect x="9" y="16" width="2" height="4" fill="#5C2E0E"/><circle cx="8" cy="6" r="3.2" fill="#E8B48A"/><path d="M3 5 h10 l-2 -3 h-6z" fill="#39D353"/><rect x="11" y="8" width="1.5" height="9" fill="#8B4A1E"/><path d="M12.5 8 l3 -2" stroke="#A7B2BC" stroke-width="1.5"/></symbol>
 </defs>
 </svg>'''
+
+# ---- DE VERSTOPTE WERKER (spel 7), 48x72 zoals de andere personages (besluit 108) ----
+# Altijd dezelfde outfit: groene hoed met leren band, groen halsdoekje, okerbruine werkjas met riem, bruine broek,
+# snor. Per spel een eigen houding met een prop. Twee armen; wat hij vasthoudt, ligt onder de hand.
+# Het oude symbool `werker` (16x20) blijft staan voor de artboards; de app gebruikt wk-*.
+_WK_HUID='#E8B48A'
+_WK_JAS='#C2743C'
+def _wk_arm(d, hx, hy):
+    return (f'<path d="{d}" fill="none" stroke="{_WK_JAS}" stroke-width="6" stroke-linecap="round"/>'
+            f'<circle cx="{hx}" cy="{hy}" r="3.2" fill="{_WK_HUID}"/>')
+_WK_HANG_L=_wk_arm('M14 34 q-6 6 -4 16',10.5,51)
+_WK_HANG_R=_wk_arm('M34 34 q6 6 4 16',37.5,51)
+_WK_LIJF=('<ellipse cx="24" cy="68" rx="14" ry="4" fill="rgba(30,58,76,0.2)"/>'
+    # benen en schoenen
+    '<rect x="16" y="56" width="7" height="12" rx="3" fill="#8B4A1E"/><rect x="25" y="56" width="7" height="12" rx="3" fill="#8B4A1E"/>'
+    '<rect x="15" y="65" width="9" height="4" rx="2" fill="#4A3426"/><rect x="24" y="65" width="9" height="4" rx="2" fill="#4A3426"/>'
+    # werkjas met riem en borstzakje
+    f'<rect x="14" y="30" width="20" height="30" rx="8" fill="{_WK_JAS}"/><rect x="14" y="30" width="6" height="30" rx="6" fill="rgba(255,255,255,0.2)"/>'
+    '<rect x="28" y="30" width="6" height="30" rx="6" fill="rgba(0,0,0,0.12)"/><rect x="14" y="48" width="20" height="3" fill="#8B4A1E"/>'
+    '<rect x="25" y="36" width="5" height="5" rx="1" fill="rgba(0,0,0,0.14)"/>'
+    # halsdoekje
+    '<path d="M18.5 29.5 h11 l-5.5 6.5z" fill="#39D353"/><path d="M24 29.5 h5.5 l-5.5 6.5z" fill="#1FA34A"/>'
+    # hoofd, gezicht en snor
+    f'<circle cx="24" cy="18" r="12" fill="{_WK_HUID}"/><path d="M12 18 a12 12 0 0 0 12 12 v-2 a10 10 0 0 1 -10 -10z" fill="rgba(0,0,0,0.08)"/>'
+    '<circle cx="20" cy="19.5" r="1.7" fill="#1E3A4C"/><circle cx="28" cy="19.5" r="1.7" fill="#1E3A4C"/>'
+    '<circle cx="19.4" cy="18.9" r="0.6" fill="#FFFFFF"/><circle cx="27.4" cy="18.9" r="0.6" fill="#FFFFFF"/>'
+    '<circle cx="16" cy="23" r="2" fill="#FF9BC8" opacity="0.7"/><circle cx="32" cy="23" r="2" fill="#FF9BC8" opacity="0.7"/>'
+    '<path d="M18.8 24.6 q2.6 -2.4 5.2 -0.7 q2.6 -1.7 5.2 0.7 q-2.6 1.5 -5.2 0.2 q-2.6 1.3 -5.2 -0.2z" fill="#4A3426"/>'
+    '<path d="M21.6 27.4 q2.4 1.5 4.8 0" fill="none" stroke="#1E3A4C" stroke-width="1.3" stroke-linecap="round"/>'
+    # groene hoed met brede rand
+    '<ellipse cx="24" cy="9" rx="16.5" ry="3.8" fill="#1FA34A"/><path d="M14.5 9 q0 -10.5 9.5 -10.5 q9.5 0 9.5 10.5z" fill="#39D353"/>'
+    '<path d="M28 -1 q5.5 2 5.5 10 h-3z" fill="#1FA34A"/><rect x="14.6" y="5" width="18.8" height="2.8" fill="#8B4A1E"/>'
+    '<path d="M17.5 4 q0.5 -3.5 3.5 -4.5" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1.6" stroke-linecap="round"/>')
+_WK_HOUDINGEN={
+    # algemeen (album, stempel): armen langs het lijf
+    'staan': _WK_HANG_L+_WK_HANG_R,
+    # spel 2, tuin: harkt het gazon (hark schuin voor het lijf, kop op de grond)
+    'hark': ('<path d="M8 66 L41 20" stroke="#8B4A1E" stroke-width="2.6" stroke-linecap="round"/>'
+             '<path d="M1.5 62.5 l13 6" stroke="#8AA0AF" stroke-width="2.6" stroke-linecap="round"/>'
+             '<path d="M2.5 63.5 l-0.8 3.6 M6 65 l-0.8 3.6 M9.5 66.6 l-0.8 3.6 M13 68.2 l-0.8 3.6" stroke="#8AA0AF" stroke-width="1.5" stroke-linecap="round"/>'
+             +_wk_arm('M14 34 q-3 9 5.6 16',19.6,50)+_wk_arm('M34 34 q2 4 -5.5 3.5',28.5,37.5)),
+    # spel 3, villa: schildert de villa wit (kwast omhoog, verfpot in de andere hand)
+    'kwast': ('<path d="M5 55 q5.5 -6 11 0" fill="none" stroke="#4F6B7E" stroke-width="1.2"/>'
+              '<rect x="4.5" y="54" width="12" height="11" rx="1.5" fill="#DDE7EE"/><rect x="12.5" y="54" width="4" height="11" rx="1" fill="#CFD8DC"/>'
+              '<ellipse cx="10.5" cy="54.5" rx="6" ry="1.5" fill="#FFFFFF"/><path d="M7 54.5 v3.5" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round"/>'
+              +_WK_HANG_L+
+              '<path d="M41 27 L42 12" stroke="#D98E55" stroke-width="2.4" stroke-linecap="round"/><rect x="39.6" y="8.5" width="5" height="3.5" fill="#8AA0AF"/>'
+              '<rect x="39.6" y="2" width="5" height="7" rx="1" fill="#FDE9B6"/><rect x="39.6" y="2" width="5" height="2.4" rx="1" fill="#FFFFFF"/>'
+              +_wk_arm('M34 34 q7 -3 7 -12',41,22)),
+    # spel 4, vakantiefoto's: zwaait naar de camera met een kokosdrankje in de hand
+    'zwaai': ('<path d="M46.5 12 q3 2.5 2.5 6.5 M45 9 q5.5 1.5 6.5 7" fill="none" stroke="rgba(30,58,76,0.35)" stroke-width="1.3" stroke-linecap="round"/>'
+              +_wk_arm('M34 34 q7 -4 9 -14',43,20)+
+              '<circle cx="19" cy="43" r="5.5" fill="#8B4A1E"/><circle cx="17.5" cy="44.5" r="3" fill="rgba(255,255,255,0.12)"/>'
+              '<ellipse cx="19" cy="39.2" rx="3.6" ry="1.4" fill="#FDE9B6"/><path d="M20 39.5 l2.6 -7 h2.2" fill="none" stroke="#FF6FAE" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>'
+              +_wk_arm('M14 34 q-5 8 3 13',17,47)),
+    # spel 5, nachtmarkt: haalt water uit de put (emmer aan de hand)
+    'emmer': (_WK_HANG_L+
+              '<path d="M33 57 q6 -9 12 0" fill="none" stroke="#4F6B7E" stroke-width="1.3"/>'
+              '<path d="M32.5 56 h13 l-1.8 11 h-9.4z" fill="#D98E55"/><path d="M40.5 56 h5 l-1.8 11 h-3.2z" fill="#C2743C"/>'
+              '<path d="M33 59.5 h12 M33.6 64 h10.8" stroke="#8B4A1E" stroke-width="1.2"/><ellipse cx="39" cy="56" rx="6.5" ry="1.4" fill="#8ED8F8"/>'
+              +_wk_arm('M34 34 q6 6 5 16',39,51)),
+    # spel 6, steeg: draagt een lampion aan een stok boven de menigte
+    'lampion': (_WK_HANG_L+
+                '<path d="M40.5 32 L43 -4" stroke="#8B4A1E" stroke-width="1.8" stroke-linecap="round"/><path d="M43 -4 q4.5 0 5 3.5" fill="none" stroke="#8B4A1E" stroke-width="1"/>'
+                '<use href="#s5-gloed" x="34" y="-9" width="34" height="34"/><use href="#s5-lampion" x="42" y="-1" width="12" height="17" color="#FF5E5B"/>'
+                +_wk_arm('M34 34 q6 -2 7 -10',41,24)),
+}
+_WK_SYMBOLEN='  <!-- VERSTOPTE WERKER 48x72 per houding (besluit 108): wk-staan, wk-hark (spel 2), wk-kwast (3), wk-zwaai (4), wk-emmer (5), wk-lampion (6) -->\n'+''.join(
+    f'  <symbol id="wk-{naam}" viewBox="0 0 48 72" overflow="visible">{_WK_LIJF}{arm}</symbol>\n' for naam,arm in _WK_HOUDINGEN.items())
+EXTRA4=EXTRA4.replace('</defs>',_WK_SYMBOLEN+'</defs>')
 DEFS=DEFS3+EXTRA4
 
 # Familie Tan zoals compleet gemaakt in spel 3 (moeder, vader, dochtertje + gekocht biggetje)

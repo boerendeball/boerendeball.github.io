@@ -1,6 +1,6 @@
 # Spel 6 · Selfdefense
 
-**Status:** gebouwd, te beoordelen (`advent/js/spellen/spel6.js`, regels in `spellen/klem.js`; gedeeld: `spellen/lus.js`, `spellen/spritesheet.js`, `spellen/canvas.js`, `invoer.js`, `ui/resultaat.js`, `css/spel.css`; popup zonder ketting in `spellen/index.js`)
+**Status:** goedgekeurd (Benjamin, 10 november 2026) (`advent/js/spellen/spel6.js`, regels in `spellen/klem.js`; gedeeld: `spellen/lus.js`, `spellen/spritesheet.js`, `spellen/canvas.js`, `invoer.js`, `ui/resultaat.js`, `css/spel.css`; popup zonder ketting in `spellen/index.js`)
 **Dag 6 · 29 november · vaardigheid Lichaam (label "Conditie")**
 Previews: `design/previews/Spel6.png`, `Spel6-Controle.png`, `Spel6-Klaar.png`, `Spel6-Sprites.png` · Artboards: `design/artboards/Spel6*.dc.html` · Generator: `design/generators/spel6_build2.py`, `spel6_sprites.py`
 Rendering: **canvas** (actiespel), sprite sheet gerasterd uit `sprites.svg`.
@@ -94,7 +94,7 @@ Constanten staan bovenaan `spel6.js` (fase 1, animatie) en `klem.js` (fase 2); h
 ## Staat
 
 - In: `producten` (ketting = voorwaarde, besluit 81; kniebeschermers = knee on belly lukt, besluit 94). `geld` speelt geen rol.
-- Uit, bij succes: `rondSpelAf(6, { vaardigheid: 'lichaam', score: { reactie, raak, totaal } })`.
+- Uit, bij succes: `rondSpelAf(6, { vaardigheid: 'lichaam', score: { reactie, raak, totaal } })` en `vulBehoefte('jiujitsu', 100)`: de behoefte "jiujitsu" staat daarna op 100 % (besluit 100).
 - Uit, bij falen: niets. De ketting blijft in `producten` (besluit 82); het deurtje wordt niet `gespeeld`.
 - Werker: `markeerWerkerGevonden(6)`.
 
@@ -125,7 +125,7 @@ Geen tekst in het spelscherm: geen "Reageer!", geen namen bij de moves, geen lab
 
 - [x] Zonder ketting (`?test=1&reset=1#/spel/6`): popup "Een rustige avond", knop terug naar de kalender.
 - [x] De eerste 2 s loopt Pino met pijltjes/WASD binnen het loopgebied; daarna beweegt ze niet meer en is het joystick-vlak weg. De dief loopt naar haar plek, en klem, balk en politieauto staan daar ook (linksboven en rechtsonder gecontroleerd; rechts komt de auto van links).
-- [ ] De joystick zelf (vasthouden op het scherm) in de eerste 2 s: zelfde code als spel 1 en 5, nog niet met een echte aanraking gezien.
+- [x] De joystick zelf (vasthouden op het scherm) in de eerste 2 s: goed bevonden door Benjamin op de telefoon (10 november).
 - [x] Fase 1: bezoekers lopen blij rond; de dief verschijnt na 2 s en loopt recht op Pino af; bij de greep kijken omstanders en handelaars bang, de trillijntjes staan bij de ketting en de rode knop verschijnt met leeglopende ring.
 - [x] Niet gedrukt binnen 2 s: de dief rent weg met de ketting, Pino kijkt verdrietig, daarna "Gestolen!" zonder tegels, beloning of confetti; `producten` blijft ongewijzigd.
 - [x] Op tijd gedrukt (ook met spatie): klem, politiekaart en move-knoppen verschijnen; de banen staan precies boven de knoppen (ook op een breder venster gecontroleerd).
@@ -134,9 +134,11 @@ Geen tekst in het spelscherm: geen "Reageer!", geen namen bij de moves, geen lab
 - [x] Balk vol: Pino laat los, de dief rent met de ketting naar rechts weg, "Gestolen!" met tegels, geen punt.
 - [x] `knie=1`: kniebeschermers zichtbaar in de klem, knee on belly lukt. `knie=0`: knee on belly mislukt altijd (balk +20), de kniebeschermers poppen op in de knop. Zonder kniebeschermers is de klem net niet te halen: 5000 patronen doorgerekend, met foutloos spel loopt de balk altijd vol, tussen 16,5 en 19,4 s; met kniebeschermers en foutloos spel nooit. In de browser: zonder los op 17,1 s, met gehaald.
 - [x] Geen zichtbare uitlegtekst of labels in het spelscherm; geen consolefouten.
-- [ ] Gevoel van de timing op een echte telefoon (raakvenster, tempo, grootte van de move-scène) en of 20 s met 28 noten goed aanvoelt: beoordeling door Benjamin.
-- [ ] Werker-knop (deurtje 7 open) en `prefers-reduced-motion`: code aanwezig, nog niet handmatig gezien.
-- [ ] "Nog een keer" en de terugknop tijdens het spel: code zoals spel 1, nog niet handmatig gezien.
+- [x] Gevoel van de timing op een echte telefoon (raakvenster, tempo, move-scène, 20 s met 28 noten): goed bevonden door Benjamin (10 november).
+- [x] Werker-knop (deurtje 7 open): tikken zet `werkers[6]` op gevonden en laat hem opspringen.
+- [ ] `prefers-reduced-motion`: code aanwezig, nog niet handmatig gezien.
+- [x] "Nog een keer" start een schone ronde (nieuwe staat, fase rust, rode knop verborgen); de terugknop tijdens het spel gaat naar `#/deur/6` en ruimt canvas, joystick-vlak en debug-haak op.
+- [x] Na een gelukte klem staat `behoeften.jiujitsu` op 100.
 
 In testmodus (`?test=1`) staat de spelstaat op `window.pinoDebug` (`s`, `dief`, `klem`, `reageer()`, `drukBaan(n)`, `stap(ms)`). Met `stap` zet je het spel met de hand vooruit, bijvoorbeeld `pinoDebug.stap(2300)` tot in de greep.
 
@@ -149,4 +151,4 @@ In testmodus (`?test=1`) staat de spelstaat op `window.pinoDebug` (`s`, `dief`, 
 
 ## Open punten
 
-Zie `besluiten.md` 80–99. Te bevestigen door Benjamin: de tuning-waarden en de lichtere straf voor een druk zonder noot (#91), de volgorde van de vier moves en de bouwkeuzes rond noten, move-scène en kniebeschermers (#96), de tekst van de popup zonder ketting (#81), de kalendertekst van dag 6, en of spel 6 de behoefte "jiujitsu" moet vullen (open vraag onderaan `besluiten.md`).
+Geen voor Benjamin: besluit 80–100 zijn bevestigd (10 november 2026). De werker heeft in spel 6 nog geen rustige kijkmodus; die volgt bij de bouw van spel 7.

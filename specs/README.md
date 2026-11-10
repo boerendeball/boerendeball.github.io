@@ -11,7 +11,7 @@ Per scherm één spec: wat het precies doet, hoe het eruitziet (met verwijzing n
 | [spel3.md](spel3.md) — Complete the family | gebouwd, te beoordelen |
 | [spel4.md](spel4.md) — (Social)ize the family | goedgekeurd |
 | [spel5.md](spel5.md) — Negotiate trade deal | gebouwd, te beoordelen |
-| [spel6.md](spel6.md) — Selfdefense | gebouwd, te beoordelen |
+| [spel6.md](spel6.md) — Selfdefense | goedgekeurd |
 | [spel7.md](spel7.md) … [spel10.md](spel10.md) | aanzet; uitwerken vlak voor de bouw |
 | [ontwikkelaarsopties.md](ontwikkelaarsopties.md) — pagina `#/dev` met alle dev-schakelaars (alleen lokaal) | gebouwd, te beoordelen |
 | [besluiten.md](besluiten.md) — beslislog en open vragen voor Benjamin | lopend |

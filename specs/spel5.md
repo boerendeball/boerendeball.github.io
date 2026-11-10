@@ -1,6 +1,6 @@
 # Spel 5 · Negotiate trade deal
 
-**Status:** gebouwd, te beoordelen (`advent/js/spellen/spel5.js`, regels in `advent/js/spellen/markt.js`; besluiten #58–#69) · Dag 5 · 28 november · vaardigheid Charisma · rendering: SVG-DOM
+**Status:** gebouwd, te beoordelen (`advent/js/spellen/spel5.js`, regels in `advent/js/spellen/markt.js`; besluiten #58–#79) · Dag 5 · 28 november · vaardigheid Charisma · rendering: SVG-DOM
 Previews: `Spel5.png`, `Spel5-Onderhandel.png`, `Spel5-Klaar.png`, `Spel5-Sprites.png` · Generator: `spel5_build2.py`, `spel5_sprites.py`
 Sprites nieuw: `s5-lampion s5-gloed s5-kraam-achter s5-kraam-voor s5-waar-sieraden s5-waar-fruit s5-waar-stof s5-waar-lampion s5-put s5-mat s5-kruk s5-ketting s5-stemming-twijfel (oranje, besluit 78) s5-stemming-blij s5-stemming-boos s5-praat s5-wegloop` `b-boos b-twijfel s5-stemming-verdrietig s5-kniebeschermers s5-spray s5-schoenen s5-waar-wissel` (wisselkraam = `s5-kraam-*` op 75 % met paarse luifel + `s5-waar-wissel`, besluit 69)
 
@@ -53,7 +53,7 @@ Voorbeeld:
 | 1 dec, kniebeschermers nog niet gekocht | gekocht | aan de beurt | open, wacht | dicht |
 | 2 dec, ketting, kniebeschermers en spray gekocht | gekocht | gekocht | gekocht | aan de beurt |
 
-**Spel 7** (zoals besluit 50, te bevestigen): als spel 7 open is, kun je op een **gekocht** kaartje tikken. Dat opent de markt in **kijkmodus**: Pino kan lopen, maar er is geen handel en geen wisselkraam. De werker achter de put is daar te vinden, ook als er geen ronde mogelijk is.
+**Spel 7** (zoals besluit 50; besloten, #67): als spel 7 open is, kun je op een **gekocht** kaartje tikken. Dat opent de markt in **kijkmodus**: Pino kan lopen, maar er is geen handel en geen wisselkraam. De werker achter de put is daar te vinden, ook als er geen ronde mogelijk is.
 
 ## Regels
 
@@ -130,7 +130,7 @@ De stepper gaat nooit hoger dan het geld. Is het geld lager dan elke G, dan lukt
   - kniebeschermers bij Siti (stofkraam);
   - spray bij Minh;
   - schoenen bij Arun;
-  - Mai houdt de sieraden. *(verdeling te bevestigen)*
+  - Mai houdt de sieraden. (besloten, #66)
 - Vanaf de eigen ronde ligt het product vooraan op de toonbank van **alle vier** de kramen. Gekochte producten verdwijnen van de kramen.
 
 ### Voorbeeldrondes
@@ -219,5 +219,6 @@ Geen niveaunaam, geen teller voor het aantal biedingen, geen tekst bij "nee", bi
 
 ## Open punten
 Zie `besluiten.md`.
-- Te bevestigen: verdeling van de latere producten over de kramen, de kijkmodus voor spel 7 en maximaal 3× nee.
+- Alle keuzes voor spel 5 zijn besloten (Benjamin, 10 november). Bij tegenstrijdigheid zijn #77 (stemming) en #79 (Matig) leidend.
+- Nog te doen: de artboards `Spel5*.dc.html` en de previews opnieuw maken met de nieuwe sprites (producten, wisselkraam, smileys, gezichten).
 - Gevolg voor spel 6: geen. De dief in spel 6 wil de ketting, niet het geld (besluit 80; `spel6.md`).

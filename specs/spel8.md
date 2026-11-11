@@ -67,7 +67,7 @@ In de jungle ligt een oud stenen schaakbord in de grond. Pino (roze pion) moet i
 
 | Level | Dier | Stuk | Beweging |
 |---|---|---|---|
-| 1 | Python | pion | Eén vak recht naar Pino's kant (rij + 1); slaat alleen schuin vooruit. |
+| 1 | Python | pion | Eén vak recht naar Pino's kant (rij + 1); slaat alleen schuin vooruit. Geen promotie: op de onderste rij blijft hij staan. |
 | 2 | Tijger | toren | Glijdt recht. |
 | 3 | Luiaard | paard | L-sprong over alles heen. |
 | 4 | Leeuw | loper | Glijdt schuin. |
@@ -156,5 +156,4 @@ Er is geen tekst in het spel, behalve de kopbalk en de resultaatschermen. De zan
 - `window.pinoDebug.oplossing()` geeft de kortste oplossing; `window.pinoDebug.speelOplossing()` speelt die na in de app.
 
 ## Open punten
-- Levels zijn door een computer gezocht; Benjamin beoordeelt of ze leuk en goed te doen zijn.
 - De preview `Spel8.png` laat nog de oude besturing zien; de artboards zijn niet opnieuw gegenereerd.

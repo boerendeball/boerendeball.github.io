@@ -21,29 +21,29 @@ DIEREN={
   gezicht={
    '':'<circle cx="20" cy="13" r="2" fill="#1E3A4C"/><circle cx="28" cy="13" r="2" fill="#1E3A4C"/><circle cx="19.4" cy="12.4" r="0.7" fill="#FFFFFF"/><circle cx="27.4" cy="12.4" r="0.7" fill="#FFFFFF"/><path d="M24 20 v4 l-3 3 M24 24 l3 3" fill="none" stroke="#FF5E5B" stroke-width="2" stroke-linecap="round"/>',
    'blij':_boog(20,13.5)+_boog(28,13.5)+'<path d="M24 20 v4.5 l-3 3 M24 24.5 l3 3" fill="none" stroke="#FF5E5B" stroke-width="2" stroke-linecap="round"/>'+_mond('M18.5 16.5 q5.5 5 11 0'),
-   'boos':'<circle cx="20" cy="13.5" r="2" fill="#1E3A4C"/><circle cx="28" cy="13.5" r="2" fill="#1E3A4C"/>'+_wenkbrauw(16.5,9.5,22,11.5)+_wenkbrauw(31.5,9.5,26,11.5)+_mond('M20.5 20 q3.5 -2.5 7 0'),
+   'boos':'<circle cx="20" cy="13.5" r="2" fill="#1E3A4C"/><circle cx="28" cy="13.5" r="2" fill="#1E3A4C"/>'+_wenkbrauw(16.5,9.5,22,11.5)+_wenkbrauw(31.5,9.5,26,11.5)+'<path d="M24 20.5 v4 l-3 3 M24 24.5 l3 3" fill="none" stroke="#FFD6E6" stroke-width="2" stroke-linecap="round"/>'+_mond('M20.5 20 q3.5 -2.5 7 0'),
   },
   na='', rood={'#39D353':'#FF5E5B','#1FA34A':'#C43B38','#1F7A3A':'#A82F2C'}),
  'tijger':dict(voet='#D97A00',
   voor='<path d="M12 44 L15 20 h18 L36 44z" fill="#FF8A3D"/><path d="M12 44 L15 20 h4 L17 44z" fill="rgba(255,255,255,0.2)"/><path d="M18 40 l1 -6 M24 40 v-7 M30 40 l-1 -6 M17 28 l1 -5 M31 28 l-1 -5" stroke="#1E3A4C" stroke-width="2.5" stroke-linecap="round"/><rect x="9" y="8" width="30" height="14" rx="2" fill="#FF8A3D"/><path d="M9 8 v-5 h6 v5 M21 8 v-5 h6 v5 M33 8 v-5 h6 v5" fill="#FF8A3D"/><rect x="9" y="19" width="30" height="3" fill="#D97A00"/>',
   gezicht={
-   '':'<circle cx="18" cy="14" r="2.2" fill="#1E3A4C"/><circle cx="30" cy="14" r="2.2" fill="#1E3A4C"/><circle cx="17.4" cy="13.4" r="0.7" fill="#FFFFFF"/><circle cx="29.4" cy="13.4" r="0.7" fill="#FFFFFF"/><path d="M21 18 h6" stroke="#1E3A4C" stroke-width="1.8" stroke-linecap="round"/>',
-   'blij':_boog(18,14.5,4.6,2.8,2)+_boog(30,14.5,4.6,2.8,2)+_mond('M19.5 16.5 q4.5 4 9 0z',1.4,'#C43B38'),
-   'boos':'<circle cx="18" cy="14.5" r="2.2" fill="#1E3A4C"/><circle cx="30" cy="14.5" r="2.2" fill="#1E3A4C"/>'+_wenkbrauw(15,10.5,21,12.5,2.2)+_wenkbrauw(33,10.5,27,12.5,2.2)+_mond('M20.5 19.5 q3.5 -2.5 7 0',1.8),
+   '':'<circle cx="18" cy="14" r="2.2" fill="#1E3A4C"/><circle cx="30" cy="14" r="2.2" fill="#1E3A4C"/><circle cx="17.4" cy="13.4" r="0.7" fill="#FFFFFF"/><circle cx="29.4" cy="13.4" r="0.7" fill="#FFFFFF"/><path d="M21 18 h6" stroke="#1E3A4C" stroke-width="1.8" stroke-linecap="round"/><path d="M12 10 l3 2 M36 10 l-3 2" stroke="#1E3A4C" stroke-width="2" stroke-linecap="round"/>',
+   'blij':_boog(18,14.5,4.6,2.8,2)+_boog(30,14.5,4.6,2.8,2)+_mond('M19.5 16.5 q4.5 4 9 0z',1.4,'#C43B38')+'<path d="M10.8 17 h2.4 M37.2 17 h-2.4" stroke="#1E3A4C" stroke-width="2" stroke-linecap="round"/>',
+   'boos':'<circle cx="18" cy="14.5" r="2.2" fill="#1E3A4C"/><circle cx="30" cy="14.5" r="2.2" fill="#1E3A4C"/>'+_wenkbrauw(15,10.5,21,12.5,2.2)+_wenkbrauw(33,10.5,27,12.5,2.2)+_mond('M20.5 19 q3.5 -2.5 7 0',1.8)+'<path d="M20.6 19.4 l1 2.2 l1 -2.2z M25.4 19.4 l1 2.2 l1 -2.2z" fill="#FFFFFF"/>',
   },
-  na='<path d="M12 10 l3 2 M36 10 l-3 2" stroke="#1E3A4C" stroke-width="2" stroke-linecap="round"/>',
+  na='',
   rood={'#FF8A3D':'#FF5E5B','#D97A00':'#C43B38'}),
  'luiaard':dict(voet='#6B5A4A',
   voor='<path d="M14 44 q-3 -12 4 -20 q4 -16 16 -18 q10 0 8 10 l-6 4 q4 6 -1 10 q-3 8 -1 14z" fill="#A08C78"/><path d="M14 44 q-3 -12 4 -20 q2 -6 6 -10 q-4 10 -2 30z" fill="rgba(255,255,255,0.18)"/><path d="M26 8 q6 -2 10 2 l-3 5 q-5 -4 -9 -1z" fill="#6B5A4A"/>',
   gezicht={
    '':'<circle cx="30" cy="11" r="1.8" fill="#1E3A4C"/><circle cx="29.5" cy="10.5" r="0.6" fill="#FFFFFF"/><path d="M34 15 q2 1.5 4 0" fill="none" stroke="#1E3A4C" stroke-width="1.5" stroke-linecap="round"/>',
    'blij':_boog(30,11.6,4,2.6,1.8,'#FFFFFF')+_mond('M33 14 q2.8 3.6 5.6 0z',1.3,'#C43B38'),
-   'boos':'<circle cx="30" cy="11.5" r="1.8" fill="#1E3A4C"/>'+_wenkbrauw(27,7.8,32.6,10.2,2)+_mond('M33.6 16.6 q2.3 -2.4 4.6 0',1.6),
+   'boos':'<circle cx="30" cy="11.8" r="2.2" fill="#FFFFFF"/><circle cx="30.5" cy="12" r="1.2" fill="#1E3A4C"/>'+_wenkbrauw(26.6,8.2,33,10.6,2.2)+_mond('M33.6 16.6 q2.3 -2.4 4.6 0',1.6),
   },
   na='<path d="M20 30 h8 M19 36 h10" stroke="#6B5A4A" stroke-width="2" stroke-linecap="round"/><path d="M22 20 q2 -3 5 -2" fill="none" stroke="#6B5A4A" stroke-width="2.5" stroke-linecap="round"/><path d="M36 4 q3 -4 6 -1" fill="none" stroke="#A08C78" stroke-width="4" stroke-linecap="round"/>',
   rood={'#A08C78':'#FF5E5B','#6B5A4A':'#A82F2C'}),
  'leeuw':dict(voet='#D97A00',
-  voor='<path d="M15 44 q-2 -14 6 -22 h6 q8 8 6 22z" fill="#FFC93C"/><path d="M15 44 q-2 -14 6 -22 h3 q-6 8 -4 22z" fill="rgba(255,255,255,0.22)"/><ellipse cx="24" cy="24" rx="12" ry="4" fill="#D97A00"/><circle cx="24" cy="12" r="12" fill="#C2743C"/><path d="M12 12 l-4 -3 M14 5 l-3 -5 M19 1 l-1 -5 M24 0 v-5 M29 1 l1 -5 M34 5 l3 -5 M36 12 l4 -3" stroke="#C2743C" stroke-width="4" stroke-linecap="round"/><circle cx="24" cy="13" r="8" fill="#FFC93C"/><path d="M16 13 a8 8 0 0 0 8 8 v-2 a6 6 0 0 1 -6 -6z" fill="rgba(0,0,0,0.08)"/>',
+  voor='<path d="M15 44 q-2 -14 6 -22 h6 q8 8 6 22z" fill="#FFC93C"/><path d="M15 44 q-2 -14 6 -22 h3 q-6 8 -4 22z" fill="rgba(255,255,255,0.22)"/><ellipse cx="24" cy="24" rx="12" ry="4" fill="#D97A00"/><path d="M12.5 14 l-4.5 -2 M13 8 l-4 -3.5 M35.5 14 l4.5 -2 M35 8 l4 -3.5" stroke="#C2743C" stroke-width="4" stroke-linecap="round"/><path d="M24 -5 C31 0 36 6 36 13 a12 12 0 0 1 -24 0 C12 6 17 0 24 -5z" fill="#C2743C"/><path d="M30.5 0.5 l-4.5 4" stroke="#8B4A1E" stroke-width="2" stroke-linecap="round"/><circle cx="24" cy="-5.5" r="2.4" fill="#FFE08A"/><circle cx="24" cy="13" r="8" fill="#FFC93C"/><path d="M16 13 a8 8 0 0 0 8 8 v-2 a6 6 0 0 1 -6 -6z" fill="rgba(0,0,0,0.08)"/>',
   gezicht={
    '':'<circle cx="21" cy="12" r="1.6" fill="#1E3A4C"/><circle cx="27" cy="12" r="1.6" fill="#1E3A4C"/><circle cx="24" cy="15.5" r="1.5" fill="#8B4A1E"/><path d="M22 18 q2 1.5 4 0" fill="none" stroke="#1E3A4C" stroke-width="1.3" stroke-linecap="round"/>',
    'blij':_boog(21,12.3,3.4,2.2,1.5)+_boog(27,12.3,3.4,2.2,1.5)+'<circle cx="24" cy="15.2" r="1.5" fill="#8B4A1E"/>'+_mond('M20.5 17 q3.5 3.8 7 0z',1.2,'#C43B38'),
@@ -69,7 +69,7 @@ def stuk_symbool(dier,stemming=''):
     if stemming=='boos':
         voet='#C43B38'; voor=_kleur(voor,d['rood']); na=_kleur(na,d['rood'])
     sid='s8-stuk-'+dier+('-'+stemming if stemming else '')
-    return f'<symbol id="{sid}" viewBox="0 0 48 60"><use href="#s8-voet" color="{voet}"/>{voor}{gezicht}{na}</symbol>'
+    return f'<symbol id="{sid}" viewBox="0 0 48 60" overflow="visible"><use href="#s8-voet" color="{voet}"/>{voor}{gezicht}{na}</symbol>'
 
 # Pino-pion: basis, verdrietig ('sip': ogen dicht omlaag, mondje omlaag, traan, scheve kroon)
 # en met spuitbus ('spuit': roze armpje, bus in de stijl van s5-spray, sproeikop naar rechts)
@@ -95,7 +95,7 @@ def pino_symbool(stemming=''):
         binnen=PINO_LIJF+PINO_SIP+f'<g transform="rotate(-14 24 4)">{PINO_KROON}</g>'
     else:
         binnen=PINO_LIJF+PINO_GEZICHT+PINO_KROON+(PINO_SPUIT if stemming=='spuit' else '')
-    return f'<symbol id="{sid}" viewBox="0 0 48 60">{binnen}</symbol>'
+    return f'<symbol id="{sid}" viewBox="0 0 48 60" overflow="visible">{binnen}</symbol>'
 def stukken_svg():
     regels=['  '+stuk_symbool(dier,st) for _,dier in STUKKEN for st in ('','blij','boos')]
     regels+=['  '+pino_symbool(st) for st in ('','sip','spuit')]

@@ -10,9 +10,10 @@ import { ga } from '../router.js';
  * toonResultaat({ root, icoon, label, titel, zin, inhoud, tegels: [{ label, waarde, kleur, icoon }],
  *                 beloning: { vaardigheid, eersteKeer, extra }, opnieuw, confetti })
  * confetti: false bij een mislukte poging (spel 6: "Gestolen!"); dan ook geen beloning meegeven.
+ * verder: { label, actie } vervangt de knop "Terug naar de kalender" (spel 8: "Volgend level").
  * inhoud: optioneel element onder de titel (bv. de polaroids van spel 4); tegel.icoon: element vóór de waarde.
  */
-export function toonResultaat({ root, icoon: naam, label, titel, zin = null, inhoud = null, tegels = [], beloning = null, opnieuw = null, terugNaar = '/', confetti = true }) {
+export function toonResultaat({ root, icoon: naam, label, titel, zin = null, inhoud = null, tegels = [], beloning = null, opnieuw = null, terugNaar = '/', confetti = true, verder = null }) {
   const kaart = h('section', { class: 'kaart resultaat-kaart', 'aria-labelledby': 'resultaat-titel' }, [
     h('div', { class: 'grote-bol resultaat-bol', style: { background: BOL_KLEUR[naam] || '#FFE0EE', boxShadow: `0 0 0 3px ${RING_KLEUR[naam] || '#FF6FAE'}, 0 8px 18px rgba(30,58,76,0.18)` } }, [icoon(naam, 84, { label: titel })]),
     h('div', { class: 'kopbalk-label' }, label),
@@ -28,7 +29,9 @@ export function toonResultaat({ root, icoon: naam, label, titel, zin = null, inh
       ]))) : null,
     beloning ? maakBeloning(beloning) : null,
     h('div', { class: 'resultaat-knoppen' }, [
-      h('button', { type: 'button', class: 'knop-pil knop-pil-groen', onclick: () => ga(terugNaar) }, 'Terug naar de kalender'),
+      verder
+        ? h('button', { type: 'button', class: 'knop-pil knop-pil-groen', onclick: verder.actie }, verder.label)
+        : h('button', { type: 'button', class: 'knop-pil knop-pil-groen', onclick: () => ga(terugNaar) }, 'Terug naar de kalender'),
       opnieuw ? h('button', { type: 'button', class: 'knop-pil knop-pil-grijs', onclick: opnieuw }, 'Nog een keer') : null,
     ]),
   ]);

@@ -525,3 +525,91 @@ button.s7-foto:focus-visible { outline: 3px solid #FFC93C; outline-offset: -4px;
   .s7-album { grid-template-columns: repeat(2, minmax(0, 160px)); }
   .s7-foto, .s7-foto svg { width: 100%; height: auto; }
 }
+
+/* ---------- spel 8: Check mate (Spel8-Levels.dc.html, Spel8.dc.html) ---------- */
+.spel8 { height: 100vh; height: 100dvh; min-height: 0; overflow: hidden; }
+.s8-teller { color: var(--tekst); }
+.s8-teller-van { font-size: 13px; color: var(--gedempt); }
+
+/* leveloverzicht: donkergroene kaart met vijf levels en Pino als zesde vak */
+.s8-levels {
+  flex: 1 1 auto; min-height: 0; border-radius: 22px; background: #2E5E1E;
+  box-shadow: inset 0 0 0 4px #1F4414, 0 6px 0 0 var(--kaart-schaduw);
+  padding: 18px 14px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; align-content: start;
+}
+.s8-level {
+  position: relative; display: flex; align-items: center; justify-content: center;
+  height: clamp(104px, 18dvh, 150px); border: 0; border-radius: 22px; background: #fff; cursor: pointer; font-family: inherit;
+  box-shadow: 0 6px 0 0 #CDE4F0, 0 12px 24px rgba(30, 58, 76, 0.10);
+}
+.s8-level:active { transform: translateY(3px); }
+.s8-level:focus-visible { outline: 3px solid var(--teal); outline-offset: 3px; }
+.s8-level-klaar { box-shadow: 0 0 0 3px #39D353, 0 6px 0 0 #1FA34A; }
+.s8-level-actief { box-shadow: 0 0 0 4px #1FA3DC, 0 7px 0 0 #0E7FB5, 0 14px 26px rgba(14, 127, 181, 0.28); }
+.s8-level-dicht { background: #E6EFF5; box-shadow: inset 0 0 0 2px #D3E1EA; cursor: default; }
+.s8-level-dicht:active { transform: none; }
+.s8-level-dicht .s8-level-stuk { opacity: 0.3; }
+.s8-level-stuk, .s8-level-pino svg { height: 78%; width: auto; }
+.s8-level-nr { position: absolute; left: 12px; top: 10px; font-family: var(--font-kop); font-weight: 700; font-size: 18px; color: #4F6B7E; }
+.s8-badge { position: absolute; right: 8px; top: 8px; width: 28px; height: 28px; }
+.s8-level-pino { display: flex; align-items: center; justify-content: center; height: clamp(104px, 18dvh, 150px); }
+.s8-speel { width: 100%; flex: none; color: #0E3D1C; }
+.s8-speel .kop { font-size: 22px; }
+
+/* bord: de scène (358×582) schaalt naar de ruimte tussen kopbalk en knoppen */
+.s8-ruimte { flex: 1 1 auto; min-height: 0; container-type: size; display: flex; justify-content: center; align-items: flex-start; }
+/* kolom met de scène en daaronder de knoppen, samen precies zo breed als de scène */
+.s8-kolom { --s8-knoppen: 106px; flex: none; display: flex; flex-direction: column; gap: 12px; width: min(100cqw, calc((100cqh - var(--s8-knoppen)) * 358 / 582)); }
+.s8-kaart { background: #4E9A3E; flex: none; margin: 0; width: 100%; max-width: none; aspect-ratio: 358 / 582; touch-action: manipulation; }
+.s8-scene { display: block; width: 100%; height: 100%; }
+.s8-knoppen { position: absolute; inset: 0; pointer-events: none; }
+.s8-vak-knop {
+  position: absolute; pointer-events: auto; border: 0; padding: 0; margin: 0; border-radius: 6px;
+  background: transparent; cursor: pointer; -webkit-tap-highlight-color: transparent;
+}
+.s8-vak-knop:hover, .s8-vak-knop:focus-visible { background: rgba(255, 255, 255, 0.22); outline: none; }
+
+/* zandloper en spray rechts onder de scène */
+.s8-besturing { flex: none; display: flex; align-items: center; justify-content: flex-end; gap: 16px; }
+.s8-rond {
+  position: relative; border: 0; border-radius: 50%; padding: 0; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; font-family: inherit;
+  -webkit-tap-highlight-color: transparent; transition: transform 0.06s ease, opacity 0.15s ease;
+}
+.s8-rond:focus-visible { outline: 3px solid var(--teal); outline-offset: 3px; }
+.s8-zandloper { width: 92px; height: 92px; background: var(--groen); color: #0E3D1C; box-shadow: 0 6px 0 0 var(--groen-schaduw); }
+.s8-zandloper > svg { width: 46px; height: 46px; }
+.s8-zandloper:active:not(:disabled) { transform: translateY(5px); box-shadow: 0 1px 0 0 var(--groen-schaduw); }
+.s8-spray { width: 64px; height: 64px; background: #fff; box-shadow: 0 5px 0 0 var(--kaart-schaduw); }
+.s8-spray-icoon { width: 40px; height: 40px; }
+.s8-spray:active:not(:disabled) { transform: translateY(4px); box-shadow: 0 1px 0 0 var(--kaart-schaduw); }
+.s8-rond:disabled { cursor: default; background: #E6EFF5; box-shadow: 0 4px 0 0 #CDE4F0; color: #9FB3C1; }
+.s8-spray:disabled .s8-spray-icoon { opacity: 0.35; }
+
+/* geen spray: popt kort op met een rood kruis (zoals .s6-knie-mis) */
+.s8-spray-mis {
+  position: absolute; inset: -6%; z-index: 3; border-radius: 50%; background: #fff; box-shadow: 0 0 0 3px var(--rood);
+  display: flex; align-items: center; justify-content: center; pointer-events: none;
+  animation: s6-knie-pop 0.9s ease-out forwards;
+}
+.s8-spray-mis > svg { width: 70%; height: 70%; }
+
+/* wolkje boven het dier en de spraynevel */
+@keyframes s8-wolk-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+.s8-wolk { animation: s8-wolk-in 0.2s ease-out; }
+@keyframes s8-nevel { 0% { opacity: 0; } 25%, 70% { opacity: 1; } 100% { opacity: 0; } }
+.s8-nevel { animation: s8-nevel 0.7s ease-out forwards; }
+
+.s8-rij { display: block; margin: 0 auto; width: 100%; max-width: 300px; height: auto; }
+.s8-tafereel { max-width: 170px; }
+
+@media (max-height: 700px) {
+  .s8-kolom { --s8-knoppen: 90px; }
+  .s8-zandloper { width: 76px; height: 76px; }
+  .s8-zandloper > svg { width: 38px; height: 38px; }
+  .s8-spray { width: 56px; height: 56px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .s8-wolk, .s8-nevel { animation: none; }
+  .s8-spray-mis { animation-name: s6-toon; }
+}

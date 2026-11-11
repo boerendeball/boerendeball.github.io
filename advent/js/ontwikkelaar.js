@@ -228,6 +228,22 @@ function spelKaart() {
         gekozen: p.get('knie'), uit: !test, bijKies: (w) => pasToe({ knie: w }),
       }),
     ]),
+    h('div', { class: `dev-blok${test ? '' : ' dev-uit'}` }, [
+      h('span', { class: 'dev-rij-label' }, 'Spel 8 · spray'),
+      h('span', { class: 'dev-rij-uitleg' }, uitleg || 'spray=0|1 · anders volgens de staat; zonder spray is level 5 niet te halen'),
+      keuzes({
+        opties: [[null, 'Uit de staat'], ['1', 'Met'], ['0', 'Zonder']],
+        gekozen: p.get('spray'), uit: !test, bijKies: (w) => pasToe({ spray: w }),
+      }),
+    ]),
+    h('div', { class: `dev-blok${test ? '' : ' dev-uit'}` }, [
+      h('span', { class: 'dev-rij-label' }, 'Spel 8 · level'),
+      h('span', { class: 'dev-rij-uitleg' }, uitleg || 'level=1–5 · start meteen op het bord van dat level'),
+      keuzes({
+        opties: [[null, 'Overzicht'], ...[1, 2, 3, 4, 5].map((n) => [String(n), String(n)])],
+        gekozen: p.get('level'), uit: !test, bijKies: (w) => pasToe({ level: w }),
+      }),
+    ]),
   ]);
 }
 

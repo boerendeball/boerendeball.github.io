@@ -43,6 +43,8 @@ De opties blijven gewoon URL-parameters (zie de tabel in `specs/README.md`); dez
    - **Spel 4 · familie** (`familie`): Automatisch / Tan / Nguyễn / Somchai.
    - **Spel 5 · niveau** (`niveau`): Automatisch / Simpel / Matig / Moeilijk.
    - **Spel 6 · kniebeschermers** (`knie`): Uit de staat / Met (`1`) / Zonder (`0`). Met een keuze start spel 6 ook zonder ketting in de staat.
+   - **Spel 8 · spray** (`spray`): Uit de staat / Met (`1`) / Zonder (`0`). Zonder spray is level 5 niet te halen.
+   - **Spel 8 · level** (`level`): Overzicht / `1`–`5`: start meteen op het bord van dat level.
    - Zonder `test=1` zijn deze knoppen uitgeschakeld (de spellen lezen ze dan niet), met de onderregel "Werkt alleen met alle deurtjes open".
 6. **Snel naar**: knoppen Kalender en Sprite-controle (`#/test`); daaronder per dag één rij: "Dag n · 24 nov · titel", een statuspil (dicht / open / vandaag / gespeeld, zoals op de kalender), knoppen **Spel** (`#/spel/n`), **Laden** (`#/laden/n`), **Deur** (`#/deur/n`) en een vinkje **gespeeld** dat `deurtjes[n]` direct op `'gespeeld'` zet of weghaalt (zonder vaardigheid, behoefte of score; daarvoor speel je het spel of gebruik je "Rond af (test)").
 7. **URL**: de volledige huidige URL in een monospace-vak met de knop "Kopieer" (`navigator.clipboard`, in `try/catch`).

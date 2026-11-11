@@ -62,10 +62,12 @@ Alles werkt met `npx serve .` op `http://localhost:3000/advent/`.
 | `?familie=nguyen` | spel 4 met deze familie (`tan`, `nguyen`, `somchai`; alleen met `test=1`) |
 | `?niveau=matig` | spel 5 met dit niveau (`simpel`, `matig`, `moeilijk`; alleen met `test=1`) |
 | `?knie=1` | spel 6 met (`1`) of zonder (`0`) kniebeschermers, en zonder de ketting-controle (alleen met `test=1`) |
+| `?spray=1` | spel 8 met (`1`) of zonder (`0`) jungledieren-spray (alleen met `test=1`) |
+| `?level=3` | spel 8 meteen op het bord van dit level (`1`–`5`; alleen met `test=1`) |
 | `?dev=1` | devmodus buiten een lokale host: de knop naar de ontwikkelaarsopties op de kalender |
 | `#/dev` | **ontwikkelaarsopties**: alle schakelaars hierboven met de hand aan/uit (alleen in devmodus, zie [ontwikkelaarsopties.md](ontwikkelaarsopties.md)) |
 | `#/test` | sprite-controlescherm en de ruwe staat |
-| `window.pinoDebug` | in testmodus: de live spelstaat van het lopende canvas-spel (console); in spel 6 ook `stap(ms)` om het spel met de hand vooruit te zetten |
+| `window.pinoDebug` | in testmodus: de live spelstaat van het lopende canvas-spel (console); in spel 6 ook `stap(ms)` om het spel met de hand vooruit te zetten; in spel 8 `oplossing()` en `speelOplossing()` |
 | `#/spel/n` | spel n direct (laadscherm overgeslagen) |
 | `#/laden/n` | laadscherm en dan spel n |
 | `#/deur/n` | het Open-scherm van deurtje n (of de gans als het dicht is) |

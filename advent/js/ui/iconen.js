@@ -47,6 +47,7 @@ const SPRITE_ICONEN = {
   gi: ['s6-gi', 48, 48, null],
   loep: ['s7-loep', 48, 48, null],
   tijger: ['s8-stuk-tijger', 48, 60, null],
+  pion: ['s8-stuk-pino', 48, 60, null],          // Pino als pion (resultaatschermen spel 8)
   baby: ['s9-bundel', 48, 48, '#FFD6E6'],
   klok: ['s9-klok', 48, 48, null],
   // producten van de markt (spel 5)
@@ -98,13 +99,13 @@ export function icoon(naam, maat = 24, { label = null, klasse = null } = {}) {
 /** Achtergrondkleur van de icoonbol per deurtje (dag 1–4 uit het ontwerp, 5–10 in dezelfde reeks). */
 export const BOL_KLEUR = {
   kroon: '#FFE0EE', tuin: '#D9F5DE', familie: '#FFF1D6', camera: '#DDF1FB', handdruk: '#FFF1D6',
-  gi: '#E3F4FC', loep: '#DDF1FB', tijger: '#D9F5DE', baby: '#FFE0EE', taart: '#FFE0EE',
+  gi: '#E3F4FC', loep: '#DDF1FB', tijger: '#D9F5DE', pion: '#D9F5DE', baby: '#FFE0EE', taart: '#FFE0EE',
   ketting: '#FFE0EE', kniebeschermers: '#DDF1FB', spray: '#D9F5DE', schoenen: '#FFE0EE',
 };
 
 /** Ringkleur rond de grote icoonbol (Open/Laden-scherm) per icoon. */
 export const RING_KLEUR = {
   kroon: '#FF6FAE', tuin: '#39D353', familie: '#FFC93C', camera: '#1FA3DC', handdruk: '#FFC93C',
-  gi: '#1FA3DC', loep: '#1FA3DC', tijger: '#39D353', baby: '#FF6FAE', taart: '#FF6FAE',
+  gi: '#1FA3DC', loep: '#1FA3DC', tijger: '#39D353', pion: '#39D353', baby: '#FF6FAE', taart: '#FF6FAE',
   ketting: '#FF6FAE', kniebeschermers: '#1FA3DC', spray: '#39D353', schoenen: '#FF6FAE',
 };

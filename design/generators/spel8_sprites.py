@@ -1,5 +1,106 @@
 # Sprite-set spel 8 – Check mate (junglebord, roofdieren als schaakstukken) – poppenhuisstijl
 from spel7_sprites import DEFS as DEFS7, use, pino
+STUKKEN=[(1,'python'),(2,'tijger'),(3,'luiaard'),(4,'leeuw'),(5,'krokodil')]
+# ---------------------------------------------------------------------------
+# SCHAAKSTUKKEN als functie van (dier, stemming). Elk stuk = voet + 'voor' (lijf/kop)
+# + gezicht + 'na' (details die over het gezicht heen liggen). De stemming wisselt
+# alleen het gezicht; 'boos' kleurt bovendien lijf en voet rood (ROOD-kaart per dier).
+# De basis (stemming '') is byte-gelijk aan de oorspronkelijke symbolen.
+# ---------------------------------------------------------------------------
+INK='#1E3A4C'
+def _boog(x,y,w=4,h=2.5,sw=1.8,kleur=INK):   # blij oog: boogje omhoog (^)
+    return f'<path d="M{x-w/2:g} {y:g} q{w/2:g} {-h:g} {w:g} 0" fill="none" stroke="{kleur}" stroke-width="{sw:g}" stroke-linecap="round"/>'
+def _wenkbrauw(x1,y1,x2,y2,sw=2,kleur=INK):
+    return f'<path d="M{x1:g} {y1:g} L{x2:g} {y2:g}" stroke="{kleur}" stroke-width="{sw:g}" stroke-linecap="round"/>'
+def _mond(d,sw=1.6,fill='none'):
+    return f'<path d="{d}" fill="{fill}" stroke="{INK}" stroke-width="{sw:g}" stroke-linecap="round" stroke-linejoin="round"/>'
+
+DIEREN={
+ 'python':dict(voet='#1FA34A',
+  voor='<path d="M14 44 q-2 -14 6 -20 h8 q8 6 6 20z" fill="#39D353"/><path d="M14 44 q-2 -14 6 -20 h3 q-6 6 -4 20z" fill="rgba(255,255,255,0.2)"/><path d="M17 36 h14 M18 30 h12" stroke="#1F7A3A" stroke-width="2" stroke-dasharray="3 3" stroke-linecap="round"/><ellipse cx="24" cy="24" rx="12" ry="4" fill="#1FA34A"/><circle cx="24" cy="14" r="10" fill="#39D353"/><path d="M14 14 a10 10 0 0 0 10 10 v-2 a8 8 0 0 1 -8 -8z" fill="rgba(0,0,0,0.1)"/>',
+  gezicht={
+   '':'<circle cx="20" cy="13" r="2" fill="#1E3A4C"/><circle cx="28" cy="13" r="2" fill="#1E3A4C"/><circle cx="19.4" cy="12.4" r="0.7" fill="#FFFFFF"/><circle cx="27.4" cy="12.4" r="0.7" fill="#FFFFFF"/><path d="M24 20 v4 l-3 3 M24 24 l3 3" fill="none" stroke="#FF5E5B" stroke-width="2" stroke-linecap="round"/>',
+   'blij':_boog(20,13.5)+_boog(28,13.5)+'<path d="M24 20 v4.5 l-3 3 M24 24.5 l3 3" fill="none" stroke="#FF5E5B" stroke-width="2" stroke-linecap="round"/>'+_mond('M18.5 16.5 q5.5 5 11 0'),
+   'boos':'<circle cx="20" cy="13.5" r="2" fill="#1E3A4C"/><circle cx="28" cy="13.5" r="2" fill="#1E3A4C"/>'+_wenkbrauw(16.5,9.5,22,11.5)+_wenkbrauw(31.5,9.5,26,11.5)+_mond('M20.5 20 q3.5 -2.5 7 0'),
+  },
+  na='', rood={'#39D353':'#FF5E5B','#1FA34A':'#C43B38','#1F7A3A':'#A82F2C'}),
+ 'tijger':dict(voet='#D97A00',
+  voor='<path d="M12 44 L15 20 h18 L36 44z" fill="#FF8A3D"/><path d="M12 44 L15 20 h4 L17 44z" fill="rgba(255,255,255,0.2)"/><path d="M18 40 l1 -6 M24 40 v-7 M30 40 l-1 -6 M17 28 l1 -5 M31 28 l-1 -5" stroke="#1E3A4C" stroke-width="2.5" stroke-linecap="round"/><rect x="9" y="8" width="30" height="14" rx="2" fill="#FF8A3D"/><path d="M9 8 v-5 h6 v5 M21 8 v-5 h6 v5 M33 8 v-5 h6 v5" fill="#FF8A3D"/><rect x="9" y="19" width="30" height="3" fill="#D97A00"/>',
+  gezicht={
+   '':'<circle cx="18" cy="14" r="2.2" fill="#1E3A4C"/><circle cx="30" cy="14" r="2.2" fill="#1E3A4C"/><circle cx="17.4" cy="13.4" r="0.7" fill="#FFFFFF"/><circle cx="29.4" cy="13.4" r="0.7" fill="#FFFFFF"/><path d="M21 18 h6" stroke="#1E3A4C" stroke-width="1.8" stroke-linecap="round"/>',
+   'blij':_boog(18,14.5,4.6,2.8,2)+_boog(30,14.5,4.6,2.8,2)+_mond('M19.5 16.5 q4.5 4 9 0z',1.4,'#C43B38'),
+   'boos':'<circle cx="18" cy="14.5" r="2.2" fill="#1E3A4C"/><circle cx="30" cy="14.5" r="2.2" fill="#1E3A4C"/>'+_wenkbrauw(15,10.5,21,12.5,2.2)+_wenkbrauw(33,10.5,27,12.5,2.2)+_mond('M20.5 19.5 q3.5 -2.5 7 0',1.8),
+  },
+  na='<path d="M12 10 l3 2 M36 10 l-3 2" stroke="#1E3A4C" stroke-width="2" stroke-linecap="round"/>',
+  rood={'#FF8A3D':'#FF5E5B','#D97A00':'#C43B38'}),
+ 'luiaard':dict(voet='#6B5A4A',
+  voor='<path d="M14 44 q-3 -12 4 -20 q4 -16 16 -18 q10 0 8 10 l-6 4 q4 6 -1 10 q-3 8 -1 14z" fill="#A08C78"/><path d="M14 44 q-3 -12 4 -20 q2 -6 6 -10 q-4 10 -2 30z" fill="rgba(255,255,255,0.18)"/><path d="M26 8 q6 -2 10 2 l-3 5 q-5 -4 -9 -1z" fill="#6B5A4A"/>',
+  gezicht={
+   '':'<circle cx="30" cy="11" r="1.8" fill="#1E3A4C"/><circle cx="29.5" cy="10.5" r="0.6" fill="#FFFFFF"/><path d="M34 15 q2 1.5 4 0" fill="none" stroke="#1E3A4C" stroke-width="1.5" stroke-linecap="round"/>',
+   'blij':_boog(30,11.6,4,2.6,1.8,'#FFFFFF')+_mond('M33 14 q2.8 3.6 5.6 0z',1.3,'#C43B38'),
+   'boos':'<circle cx="30" cy="11.5" r="1.8" fill="#1E3A4C"/>'+_wenkbrauw(27,7.8,32.6,10.2,2)+_mond('M33.6 16.6 q2.3 -2.4 4.6 0',1.6),
+  },
+  na='<path d="M20 30 h8 M19 36 h10" stroke="#6B5A4A" stroke-width="2" stroke-linecap="round"/><path d="M22 20 q2 -3 5 -2" fill="none" stroke="#6B5A4A" stroke-width="2.5" stroke-linecap="round"/><path d="M36 4 q3 -4 6 -1" fill="none" stroke="#A08C78" stroke-width="4" stroke-linecap="round"/>',
+  rood={'#A08C78':'#FF5E5B','#6B5A4A':'#A82F2C'}),
+ 'leeuw':dict(voet='#D97A00',
+  voor='<path d="M15 44 q-2 -14 6 -22 h6 q8 8 6 22z" fill="#FFC93C"/><path d="M15 44 q-2 -14 6 -22 h3 q-6 8 -4 22z" fill="rgba(255,255,255,0.22)"/><ellipse cx="24" cy="24" rx="12" ry="4" fill="#D97A00"/><circle cx="24" cy="12" r="12" fill="#C2743C"/><path d="M12 12 l-4 -3 M14 5 l-3 -5 M19 1 l-1 -5 M24 0 v-5 M29 1 l1 -5 M34 5 l3 -5 M36 12 l4 -3" stroke="#C2743C" stroke-width="4" stroke-linecap="round"/><circle cx="24" cy="13" r="8" fill="#FFC93C"/><path d="M16 13 a8 8 0 0 0 8 8 v-2 a6 6 0 0 1 -6 -6z" fill="rgba(0,0,0,0.08)"/>',
+  gezicht={
+   '':'<circle cx="21" cy="12" r="1.6" fill="#1E3A4C"/><circle cx="27" cy="12" r="1.6" fill="#1E3A4C"/><circle cx="24" cy="15.5" r="1.5" fill="#8B4A1E"/><path d="M22 18 q2 1.5 4 0" fill="none" stroke="#1E3A4C" stroke-width="1.3" stroke-linecap="round"/>',
+   'blij':_boog(21,12.3,3.4,2.2,1.5)+_boog(27,12.3,3.4,2.2,1.5)+'<circle cx="24" cy="15.2" r="1.5" fill="#8B4A1E"/>'+_mond('M20.5 17 q3.5 3.8 7 0z',1.2,'#C43B38'),
+   'boos':'<circle cx="21" cy="12.5" r="1.6" fill="#1E3A4C"/><circle cx="27" cy="12.5" r="1.6" fill="#1E3A4C"/>'+_wenkbrauw(18.5,9,22.5,10.5,1.6)+_wenkbrauw(29.5,9,25.5,10.5,1.6)+'<circle cx="24" cy="15.5" r="1.5" fill="#8B4A1E"/>'+_mond('M21.8 19.3 q2.2 -1.8 4.4 0',1.4),
+  },
+  na='', rood={'#FFC93C':'#FF5E5B','#D97A00':'#C43B38','#C2743C':'#A82F2C'}),
+ 'krokodil':dict(voet='#1F7A3A',
+  voor='<path d="M13 44 q-3 -14 6 -22 h10 q9 8 6 22z" fill="#39D353"/><path d="M13 44 q-3 -14 6 -22 h3 q-6 8 -4 22z" fill="rgba(255,255,255,0.2)"/><path d="M17 36 h14 M18 30 h12" stroke="#1F7A3A" stroke-width="2.5" stroke-linecap="round"/><ellipse cx="24" cy="23" rx="13" ry="4.5" fill="#1F7A3A"/><path d="M11 21 L13 2 L18 11 L24 -2 L30 11 L35 2 L37 21z" fill="#39D353"/><circle cx="13" cy="2" r="2.5" fill="#FFC93C"/><circle cx="24" cy="-2" r="2.5" fill="#FFC93C"/><circle cx="35" cy="2" r="2.5" fill="#FFC93C"/><path d="M11 21 h26 v-5 l-3.5 2.5 -3.5 -2.5 -3.5 2.5 -3.5 -2.5 -3.5 2.5 -3.5 -2.5 -3.5 2.5z" fill="#FFFFFF"/>',
+  gezicht={
+   '':'<circle cx="18" cy="12" r="2.4" fill="#FFC93C"/><circle cx="30" cy="12" r="2.4" fill="#FFC93C"/><path d="M18 10 v4 M30 10 v4" stroke="#1E3A4C" stroke-width="1.6"/>',
+   'blij':_boog(18,12.8,5,3,2)+_boog(30,12.8,5,3,2),
+   'boos':'<circle cx="18" cy="12.5" r="2.4" fill="#FFC93C"/><circle cx="30" cy="12.5" r="2.4" fill="#FFC93C"/><path d="M18 10.5 v4 M30 10.5 v4" stroke="#1E3A4C" stroke-width="1.6"/>'+_wenkbrauw(14.5,8,21,10.5,2.2)+_wenkbrauw(33.5,8,27,10.5,2.2),
+  },
+  na='', rood={'#39D353':'#FF5E5B','#1F7A3A':'#C43B38'}),
+}
+def _kleur(svg,kaart):
+    for a,b in kaart.items(): svg=svg.replace(f'"{a}"',f'"{b}"')
+    return svg
+def stuk_symbool(dier,stemming=''):
+    """<symbol> voor s8-stuk-{dier}[-{stemming}]; stemming '' | 'blij' | 'boos'."""
+    d=DIEREN[dier]; voet,voor,na=d['voet'],d['voor'],d['na']
+    gezicht=d['gezicht'][stemming]
+    if stemming=='boos':
+        voet='#C43B38'; voor=_kleur(voor,d['rood']); na=_kleur(na,d['rood'])
+    sid='s8-stuk-'+dier+('-'+stemming if stemming else '')
+    return f'<symbol id="{sid}" viewBox="0 0 48 60"><use href="#s8-voet" color="{voet}"/>{voor}{gezicht}{na}</symbol>'
+
+# Pino-pion: basis, verdrietig ('sip': ogen dicht omlaag, mondje omlaag, traan, scheve kroon)
+# en met spuitbus ('spuit': roze armpje, bus in de stijl van s5-spray, sproeikop naar rechts)
+PINO_LIJF='<use href="#s8-voet" color="#B23A6A"/><path d="M14 44 q-2 -14 6 -20 h8 q8 6 6 20z" fill="#FF6FAE"/><path d="M14 44 q-2 -14 6 -20 h3 q-6 6 -4 20z" fill="rgba(255,255,255,0.22)"/><ellipse cx="24" cy="24" rx="12" ry="4" fill="#B23A6A"/><circle cx="24" cy="14" r="10" fill="#F6C9A8"/><path d="M14 13 a10 10 0 0 1 20 0 q-5 -3 -10 -1 q-5 -2 -10 1z" fill="#4A3426"/><path d="M14 13 v8 q2 -2 2.5 -8z M34 13 v8 q-2 -2 -2.5 -8z" fill="#4A3426"/>'
+PINO_GEZICHT='<circle cx="20.5" cy="15.5" r="1.5" fill="#1E3A4C"/><circle cx="27.5" cy="15.5" r="1.5" fill="#1E3A4C"/><path d="M21 19 q3 2.5 6 0" fill="none" stroke="#1E3A4C" stroke-width="1.3" stroke-linecap="round"/><circle cx="17" cy="18" r="1.6" fill="#FF9BC8" opacity="0.7"/><circle cx="31" cy="18" r="1.6" fill="#FF9BC8" opacity="0.7"/>'
+PINO_KROON='<path d="M17 5 L16 -1 L20 2 L24 -3 L28 2 L32 -1 L31 5z" fill="#FFC93C"/><path d="M17 5 h14 v2.5 h-14z" fill="#D97A00"/><circle cx="24" cy="1" r="1.4" fill="#FF6FAE"/>'
+PINO_SIP=('<path d="M19 15.4 q1.5 1.7 3 0 M26 15.4 q1.5 1.7 3 0" fill="none" stroke="#1E3A4C" stroke-width="1.5" stroke-linecap="round"/>'
+          '<path d="M21 21 q3 -2.4 6 0" fill="none" stroke="#1E3A4C" stroke-width="1.3" stroke-linecap="round"/>'
+          '<circle cx="31" cy="18" r="1.6" fill="#FF9BC8" opacity="0.7"/>'
+          '<path d="M19.6 17.4 q-1.8 2.8 0 3.5 q1.8 -0.7 0 -3.5z" fill="#8ED8F8"/><path d="M19.6 17.4 q1.8 2.8 0 3.5 q0.9 -1.3 0 -3.5z" fill="#1FA3DC"/>')
+PINO_SPUIT=('<path d="M30.5 31 q4 0 7 -2.5" fill="none" stroke="#B23A6A" stroke-width="4.4" stroke-linecap="round"/>'
+            '<path d="M30.5 30 q4 0 7 -2.5" fill="none" stroke="#FF6FAE" stroke-width="3.6" stroke-linecap="round"/>'
+            '<rect x="37" y="16.5" width="5" height="3" rx="0.8" fill="#FFFFFF"/><rect x="40" y="16.5" width="2" height="3" fill="#CDE4F0"/>'
+            '<rect x="41.5" y="17.2" width="3.5" height="1.6" rx="0.6" fill="#4F6B7E"/>'
+            '<rect x="36" y="19" width="7" height="15" rx="1.6" fill="#39D353"/><rect x="41" y="19" width="2" height="15" fill="#1FA34A"/>'
+            '<rect x="36" y="23" width="7" height="6.5" fill="#FFE08A"/><rect x="41" y="23" width="2" height="6.5" fill="#F2CF8A"/>'
+            '<circle cx="38.6" cy="25.4" r="1.2" fill="#8B4A1E"/>'
+            '<circle cx="37.6" cy="28" r="2.4" fill="#F6C9A8"/><path d="M37.6 30.4 a2.4 2.4 0 0 0 2.4 -2.4 h-1.2 a1.2 1.2 0 0 1 -1.2 1.2z" fill="#E8B48A"/>')
+def pino_symbool(stemming=''):
+    """<symbol> voor s8-stuk-pino[-{stemming}]; stemming '' | 'sip' | 'spuit'."""
+    sid='s8-stuk-pino'+('-'+stemming if stemming else '')
+    if stemming=='sip':
+        binnen=PINO_LIJF+PINO_SIP+f'<g transform="rotate(-14 24 4)">{PINO_KROON}</g>'
+    else:
+        binnen=PINO_LIJF+PINO_GEZICHT+PINO_KROON+(PINO_SPUIT if stemming=='spuit' else '')
+    return f'<symbol id="{sid}" viewBox="0 0 48 60">{binnen}</symbol>'
+def stukken_svg():
+    regels=['  '+stuk_symbool(dier,st) for _,dier in STUKKEN for st in ('','blij','boos')]
+    regels+=['  '+pino_symbool(st) for st in ('','sip','spuit')]
+    return '\n'.join(regels)+'\n'
+
 EXTRA8='''<svg width="0" height="0" style="position:absolute" aria-hidden="true">
 <defs>
   <!-- BORDTEGEL 44x50 in driekwart: bovenvlak (currentColor) + voorrand -->
@@ -13,14 +114,9 @@ EXTRA8='''<svg width="0" height="0" style="position:absolute" aria-hidden="true"
   <!-- DUWBARE OBJECTEN 44x56 -->
   <symbol id="s8-rots" viewBox="0 0 44 56"><ellipse cx="22" cy="52" rx="18" ry="4" fill="rgba(30,58,76,0.25)"/><path d="M4 50 L10 28 L22 22 L32 26 L40 50z" fill="#5F6E7B"/><path d="M10 28 L22 22 L24 38 L12 44z" fill="#A7B2BC"/><path d="M4 50 L12 44 L24 38 L28 50z" fill="#7D8A96"/></symbol>
   <symbol id="s8-stam" viewBox="0 0 44 56"><ellipse cx="22" cy="52" rx="19" ry="4" fill="rgba(30,58,76,0.25)"/><rect x="3" y="30" width="36" height="18" rx="7" fill="#8B4A1E"/><rect x="3" y="30" width="36" height="7" rx="4" fill="#A85F2A"/><ellipse cx="39" cy="39" rx="5" ry="9" fill="#D98E55"/><ellipse cx="39" cy="39" rx="2.5" ry="4.5" fill="#C2743C"/><path d="M10 42 h10 M16 36 h14" stroke="#5C2E0E" stroke-width="1.5" stroke-linecap="round"/></symbol>
-  <!-- SCHAAKSTUKKEN 48x60: voet (currentColor) + dier -->
+  <!-- SCHAAKSTUKKEN 48x60: voet (currentColor) + dier (per dier ook -blij en -boos) -->
   <symbol id="s8-voet" viewBox="0 0 48 60"><ellipse cx="24" cy="56" rx="19" ry="4.5" fill="rgba(30,58,76,0.28)"/><ellipse cx="24" cy="52" rx="17" ry="5" fill="currentColor"/><ellipse cx="24" cy="52" rx="17" ry="5" fill="rgba(0,0,0,0.25)"/><rect x="7" y="46" width="34" height="6" fill="currentColor"/><rect x="7" y="46" width="34" height="6" fill="rgba(0,0,0,0.25)"/><ellipse cx="24" cy="46" rx="17" ry="5" fill="currentColor"/></symbol>
-  <symbol id="s8-stuk-python" viewBox="0 0 48 60"><use href="#s8-voet" color="#1FA34A"/><path d="M14 44 q-2 -14 6 -20 h8 q8 6 6 20z" fill="#39D353"/><path d="M14 44 q-2 -14 6 -20 h3 q-6 6 -4 20z" fill="rgba(255,255,255,0.2)"/><path d="M17 36 h14 M18 30 h12" stroke="#1F7A3A" stroke-width="2" stroke-dasharray="3 3" stroke-linecap="round"/><ellipse cx="24" cy="24" rx="12" ry="4" fill="#1FA34A"/><circle cx="24" cy="14" r="10" fill="#39D353"/><path d="M14 14 a10 10 0 0 0 10 10 v-2 a8 8 0 0 1 -8 -8z" fill="rgba(0,0,0,0.1)"/><circle cx="20" cy="13" r="2" fill="#1E3A4C"/><circle cx="28" cy="13" r="2" fill="#1E3A4C"/><circle cx="19.4" cy="12.4" r="0.7" fill="#FFFFFF"/><circle cx="27.4" cy="12.4" r="0.7" fill="#FFFFFF"/><path d="M24 20 v4 l-3 3 M24 24 l3 3" fill="none" stroke="#FF5E5B" stroke-width="2" stroke-linecap="round"/></symbol>
-  <symbol id="s8-stuk-tijger" viewBox="0 0 48 60"><use href="#s8-voet" color="#D97A00"/><path d="M12 44 L15 20 h18 L36 44z" fill="#FF8A3D"/><path d="M12 44 L15 20 h4 L17 44z" fill="rgba(255,255,255,0.2)"/><path d="M18 40 l1 -6 M24 40 v-7 M30 40 l-1 -6 M17 28 l1 -5 M31 28 l-1 -5" stroke="#1E3A4C" stroke-width="2.5" stroke-linecap="round"/><rect x="9" y="8" width="30" height="14" rx="2" fill="#FF8A3D"/><path d="M9 8 v-5 h6 v5 M21 8 v-5 h6 v5 M33 8 v-5 h6 v5" fill="#FF8A3D"/><rect x="9" y="19" width="30" height="3" fill="#D97A00"/><circle cx="18" cy="14" r="2.2" fill="#1E3A4C"/><circle cx="30" cy="14" r="2.2" fill="#1E3A4C"/><circle cx="17.4" cy="13.4" r="0.7" fill="#FFFFFF"/><circle cx="29.4" cy="13.4" r="0.7" fill="#FFFFFF"/><path d="M21 18 h6" stroke="#1E3A4C" stroke-width="1.8" stroke-linecap="round"/><path d="M12 10 l3 2 M36 10 l-3 2" stroke="#1E3A4C" stroke-width="2" stroke-linecap="round"/></symbol>
-  <symbol id="s8-stuk-luiaard" viewBox="0 0 48 60"><use href="#s8-voet" color="#6B5A4A"/><path d="M14 44 q-3 -12 4 -20 q4 -16 16 -18 q10 0 8 10 l-6 4 q4 6 -1 10 q-3 8 -1 14z" fill="#A08C78"/><path d="M14 44 q-3 -12 4 -20 q2 -6 6 -10 q-4 10 -2 30z" fill="rgba(255,255,255,0.18)"/><path d="M26 8 q6 -2 10 2 l-3 5 q-5 -4 -9 -1z" fill="#6B5A4A"/><circle cx="30" cy="11" r="1.8" fill="#1E3A4C"/><circle cx="29.5" cy="10.5" r="0.6" fill="#FFFFFF"/><path d="M34 15 q2 1.5 4 0" fill="none" stroke="#1E3A4C" stroke-width="1.5" stroke-linecap="round"/><path d="M20 30 h8 M19 36 h10" stroke="#6B5A4A" stroke-width="2" stroke-linecap="round"/><path d="M22 20 q2 -3 5 -2" fill="none" stroke="#6B5A4A" stroke-width="2.5" stroke-linecap="round"/><path d="M36 4 q3 -4 6 -1" fill="none" stroke="#A08C78" stroke-width="4" stroke-linecap="round"/></symbol>
-  <symbol id="s8-stuk-leeuw" viewBox="0 0 48 60"><use href="#s8-voet" color="#D97A00"/><path d="M15 44 q-2 -14 6 -22 h6 q8 8 6 22z" fill="#FFC93C"/><path d="M15 44 q-2 -14 6 -22 h3 q-6 8 -4 22z" fill="rgba(255,255,255,0.22)"/><ellipse cx="24" cy="24" rx="12" ry="4" fill="#D97A00"/><circle cx="24" cy="12" r="12" fill="#C2743C"/><path d="M12 12 l-4 -3 M14 5 l-3 -5 M19 1 l-1 -5 M24 0 v-5 M29 1 l1 -5 M34 5 l3 -5 M36 12 l4 -3" stroke="#C2743C" stroke-width="4" stroke-linecap="round"/><circle cx="24" cy="13" r="8" fill="#FFC93C"/><path d="M16 13 a8 8 0 0 0 8 8 v-2 a6 6 0 0 1 -6 -6z" fill="rgba(0,0,0,0.08)"/><circle cx="21" cy="12" r="1.6" fill="#1E3A4C"/><circle cx="27" cy="12" r="1.6" fill="#1E3A4C"/><circle cx="24" cy="15.5" r="1.5" fill="#8B4A1E"/><path d="M22 18 q2 1.5 4 0" fill="none" stroke="#1E3A4C" stroke-width="1.3" stroke-linecap="round"/></symbol>
-  <symbol id="s8-stuk-krokodil" viewBox="0 0 48 60"><use href="#s8-voet" color="#1F7A3A"/><path d="M13 44 q-3 -14 6 -22 h10 q9 8 6 22z" fill="#39D353"/><path d="M13 44 q-3 -14 6 -22 h3 q-6 8 -4 22z" fill="rgba(255,255,255,0.2)"/><path d="M17 36 h14 M18 30 h12" stroke="#1F7A3A" stroke-width="2.5" stroke-linecap="round"/><ellipse cx="24" cy="23" rx="13" ry="4.5" fill="#1F7A3A"/><path d="M11 21 L13 2 L18 11 L24 -2 L30 11 L35 2 L37 21z" fill="#39D353"/><circle cx="13" cy="2" r="2.5" fill="#FFC93C"/><circle cx="24" cy="-2" r="2.5" fill="#FFC93C"/><circle cx="35" cy="2" r="2.5" fill="#FFC93C"/><path d="M11 21 h26 v-5 l-3.5 2.5 -3.5 -2.5 -3.5 2.5 -3.5 -2.5 -3.5 2.5 -3.5 -2.5 -3.5 2.5z" fill="#FFFFFF"/><circle cx="18" cy="12" r="2.4" fill="#FFC93C"/><circle cx="30" cy="12" r="2.4" fill="#FFC93C"/><path d="M18 10 v4 M30 10 v4" stroke="#1E3A4C" stroke-width="1.6"/></symbol>
-  <symbol id="s8-stuk-pino" viewBox="0 0 48 60"><use href="#s8-voet" color="#B23A6A"/><path d="M14 44 q-2 -14 6 -20 h8 q8 6 6 20z" fill="#FF6FAE"/><path d="M14 44 q-2 -14 6 -20 h3 q-6 6 -4 20z" fill="rgba(255,255,255,0.22)"/><ellipse cx="24" cy="24" rx="12" ry="4" fill="#B23A6A"/><circle cx="24" cy="14" r="10" fill="#F6C9A8"/><path d="M14 13 a10 10 0 0 1 20 0 q-5 -3 -10 -1 q-5 -2 -10 1z" fill="#4A3426"/><path d="M14 13 v8 q2 -2 2.5 -8z M34 13 v8 q-2 -2 -2.5 -8z" fill="#4A3426"/><circle cx="20.5" cy="15.5" r="1.5" fill="#1E3A4C"/><circle cx="27.5" cy="15.5" r="1.5" fill="#1E3A4C"/><path d="M21 19 q3 2.5 6 0" fill="none" stroke="#1E3A4C" stroke-width="1.3" stroke-linecap="round"/><circle cx="17" cy="18" r="1.6" fill="#FF9BC8" opacity="0.7"/><circle cx="31" cy="18" r="1.6" fill="#FF9BC8" opacity="0.7"/><path d="M17 5 L16 -1 L20 2 L24 -3 L28 2 L32 -1 L31 5z" fill="#FFC93C"/><path d="M17 5 h14 v2.5 h-14z" fill="#D97A00"/><circle cx="24" cy="1" r="1.4" fill="#FF6FAE"/></symbol>
+  <!--STUKKEN: s8-stuk-{dier}[-blij|-boos], s8-stuk-pino[-sip|-spuit] worden hier ingevoegd door stukken_svg()-->
   <!-- KNOPICONEN (currentColor): wachten (zandloper), opnieuw, spelen; LEVELBADGES; VLAG-TELLER -->
   <symbol id="s8-wacht" viewBox="0 0 48 48"><path d="M12 6 h24 v6 l-10 10 10 10 v10 h-24 v-10 l10 -10 -10 -10z" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/><path d="M17 12 h14 l-7 7z M17 38 h14 l-7 -8z" fill="currentColor"/></symbol>
   <symbol id="s8-opnieuw" viewBox="0 0 48 48"><path d="M36 22 a13 13 0 1 1 -4 -9" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/><path d="M40 8 v10 h-10" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
@@ -37,8 +133,14 @@ EXTRA8='''<svg width="0" height="0" style="position:absolute" aria-hidden="true"
   <!-- BORDVAK VLAK IN DE GROND (versleten steen, currentColor) -->
   <symbol id="s8-vak" viewBox="0 0 36 36"><rect x="1" y="1" width="34" height="34" rx="3" fill="currentColor"/><path d="M4 32 q0 -2 2 -2 M30 6 q2 0 2 2" fill="none" stroke="rgba(0,0,0,0.12)" stroke-width="2" stroke-linecap="round"/></symbol>
   <symbol id="s8-vak-water" viewBox="0 0 36 36"><rect x="0" y="0" width="36" height="36" fill="#5BC0EB"/><path d="M4 12 q6 -5 12 0 t12 0 M4 25 q6 -5 12 0 t12 0" fill="none" stroke="#FFFFFF" stroke-width="2" opacity="0.75" stroke-linecap="round"/></symbol>
+  <!-- DENKWOLK 48x40 (bolletjes naar linksonder), LAMPJE 24x24 uit/aan, SPRAYNEVEL 40x24 -->
+  <symbol id="s8-wolk" viewBox="0 0 48 40"><g fill="#CDE4F0"><circle cx="13" cy="17.5" r="8"/><circle cx="23" cy="12.5" r="10"/><circle cx="35" cy="15.5" r="9"/><circle cx="26" cy="21.5" r="8"/><circle cx="11" cy="33.5" r="3.5"/><circle cx="4.5" cy="37.8" r="2"/></g><g fill="#FFFFFF"><circle cx="13" cy="15" r="8"/><circle cx="23" cy="10" r="10"/><circle cx="35" cy="13" r="9"/><circle cx="26" cy="19" r="8"/><circle cx="11" cy="31.5" r="3.5"/><circle cx="4.5" cy="36.3" r="2"/></g></symbol>
+  <symbol id="s8-lamp-uit" viewBox="0 0 24 24"><circle cx="12" cy="11" r="6" fill="#CFD8DC"/><path d="M12 5 a6 6 0 0 1 0 12 a3.5 6 0 0 0 0 -12z" fill="#A7B2BC"/><circle cx="9.8" cy="9" r="1.6" fill="#FFFFFF" opacity="0.7"/><rect x="9.5" y="16" width="5" height="2" fill="#A7B2BC"/><rect x="9" y="18" width="6" height="4" rx="1" fill="#7D8A96"/><rect x="12" y="18" width="3" height="4" fill="#5F6E7B"/><path d="M9 20 h6" stroke="#5F6E7B" stroke-width="0.8"/></symbol>
+  <symbol id="s8-lamp-aan" viewBox="0 0 24 24"><path d="M12 0.5 v2.5 M3.5 3.5 l1.8 1.8 M20.5 3.5 l-1.8 1.8 M0.5 11 h2.5 M23.5 11 h-2.5" stroke="#FFC93C" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="11" r="6" fill="#FFC93C"/><path d="M12 5 a6 6 0 0 1 0 12 a3.5 6 0 0 0 0 -12z" fill="#D97A00" opacity="0.55"/><circle cx="9.8" cy="9" r="1.8" fill="#FFE08A"/><rect x="9.5" y="16" width="5" height="2" fill="#D97A00"/><rect x="9" y="18" width="6" height="4" rx="1" fill="#7D8A96"/><rect x="12" y="18" width="3" height="4" fill="#5F6E7B"/><path d="M9 20 h6" stroke="#5F6E7B" stroke-width="0.8"/></symbol>
+  <symbol id="s8-nevel" viewBox="0 0 40 24"><g opacity="0.85"><g fill="#9ADB7A"><circle cx="10" cy="14" r="7"/><circle cx="20" cy="10" r="8"/><circle cx="30" cy="13" r="7"/><circle cx="21" cy="17" r="6"/><circle cx="36" cy="5" r="2"/><circle cx="3" cy="20" r="2"/></g><g fill="#FFFFFF" opacity="0.7"><circle cx="9" cy="12" r="4.5"/><circle cx="19" cy="8" r="5"/><circle cx="29" cy="11" r="4"/><circle cx="35.5" cy="4.5" r="1"/></g></g></symbol>
 </defs>
 </svg>'''
+_MARKER=next(r for r in EXTRA8.split(chr(10)) if '<!--STUKKEN' in r)+chr(10)
+EXTRA8=EXTRA8.replace(_MARKER,stukken_svg())
 DEFS=DEFS7+EXTRA8
-STUKKEN=[(1,'python'),(2,'tijger'),(3,'luiaard'),(4,'leeuw'),(5,'krokodil')]
 def stuk(naam,x,y,s=1.0): return f'<g transform="translate({x} {y}) scale({s})">'+use('s8-stuk-'+naam,0,0,48,60)+'</g>'

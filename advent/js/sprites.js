@@ -96,7 +96,7 @@ export function pino(x, y, pose = 'staan', { schaal = 1, flip = false } = {}) {
 }
 
 /**
- * Persoon 48×72: lijf of jurk → hoofd → haar → blij gezicht → accessoires.
+ * Persoon 48×72: lijf of jurk → handen (huidkleur) → hoofd → haar → blij gezicht → accessoires.
  * kleding/huid/haarkleur zijn kleuren; haar is een bh-* symbool-id; acc een lijst acc-* id's;
  * gezicht is 'b-blij' (standaard) of 'b-bedroefd'.
  */
@@ -104,6 +104,7 @@ export function persoon(x, y, { kleding, huid, haar = 'bh-kort', haarkleur, jurk
   const k = schaal * (kind ? 0.72 : 1);
   const delen = [
     use(jurk ? 'b-jurk' : 'b-lijf', 0, 0, 48, 72, kleding),
+    use('b-handen', 0, 0, 48, 72, huid),
     use('b-hoofd', 0, 0, 48, 72, huid),
     use(haar, 0, 0, 48, 72, haarkleur),
     use(gezicht, 0, 0, 48, 72),

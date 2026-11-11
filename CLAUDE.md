@@ -15,7 +15,7 @@ Alle communicatie, teksten in de app, commit-berichten en documentatie zijn in h
 | `design/artboards/*.dc.html` + `canvas.json` | De originele artboards uit het ontwerpcanvas (zelfstandige HTML met inline SVG). Alleen referentie: de markup, kleuren, maten en teksten zijn exact; de `{{…}}`-placeholders en `<x-dc>`-wrappers horen bij de ontwerptool en niet bij de app. |
 | `design/generators/*.py` | De Python-scripts waarmee de sprite-sets en artboards zijn gegenereerd. Wil je een sprite aanpassen, pas dan het script aan en genereer opnieuw (zie `design/generators/README.md`). |
 | `specs/*.md` | **Specs per scherm**: kalender, events (taartmenu, telefoon, gans, laadscherm, resultaatscherm), spel 1–10, plus `besluiten.md` (beslislog en open vragen) en `README.md` (template, werkwijze, test-URL's en dev-schakelaars). Lees de spec van een spel vóór je het bouwt en werk de status bij. |
-| `assets/sprites/sprites.svg` | **Alle 253 sprites** van alle spellen als één SVG met `<symbol>`-elementen. `assets/sprites/spel{n}.svg` bevat alleen de symbolen die in spel n zijn geïntroduceerd (de sets stapelen: spel n gebruikt ook symbolen uit spel 1..n-1). `symbolen.json` is de index. |
+| `assets/sprites/sprites.svg` | **Alle 265 sprites** van alle spellen als één SVG met `<symbol>`-elementen. `assets/sprites/spel{n}.svg` bevat alleen de symbolen die in spel n zijn geïntroduceerd (de sets stapelen: spel n gebruikt ook symbolen uit spel 1..n-1). `symbolen.json` is de index. |
 
 ## Harde ontwerpregel: geen uitleg, hints of labels in de spellen
 
@@ -37,7 +37,7 @@ Als een scherm in `design/previews` nog tekst bevat die hiermee in strijd is, is
 - **Het speelveld is altijd een echte scène** met decor eromheen; het spelmechanisme zit als patroon **in de grond** verwerkt (schaakbord als versleten stenen vakken in de jungle, vangstrook als gemaaide grasbanen, Frogger-stroken als stoep/weg/weiland/klinkerpad). Geen kaal raster met een rand eromheen.
 - UI (kopbalk, knoppen, tellers) staat als DOM *om* de scène heen; de scène zelf is één SVG (ontwerp: 358 px breed, 582–680 px hoog op een telefoonscherm van 390×844).
 - Sprites zijn SVG `<symbol>`s met `currentColor` voor kleurvarianten (kleding, huid, haar, luifels, ballonnen, bundeltjes). Gebruik `<use href="#id" color="#…">`. Vergeet je de kleur, dan valt `currentColor` terug op de tekstkleur (#1E3A4C) — een veelgemaakte fout.
-- Personages: `b-lijf`/`b-jurk` + `b-hoofd` + haar (`bh-*`) + `b-blij` + accessoires (`acc-*`). Pino = `p-basis` + een pose (`pino-staan`, `pino-loop`, `pino-vinger`, `pino-foto`, `pino-duw`, …); moet een arm over iets anders heen (spel 1), dan `pino-romp` + een hangende `pino-arm-links`/`-rechts` + de losse `pino-arm-vinger` die om de schouder gedraaid wordt. **Een personage heeft altijd precies twee armen**: een lijf met armen (`b-lijf`) krijgt er nooit een extra arm bij; wie iets draagt (baby, tas) gebruikt een armloos lijf (`b-lijf-los` of `p-basis`), het voorwerp volledig zichtbaar vóór de borst, en daaroverheen `s9-armen-om`.
+- Personages: `b-lijf`/`b-jurk` + `b-handen` (kleur = huid) + `b-hoofd` + haar (`bh-*`) + `b-blij` + accessoires (`acc-*`). Pino = `p-basis` + een pose (`pino-staan`, `pino-loop`, `pino-vinger`, `pino-foto`, `pino-duw`, …); moet een arm over iets anders heen (spel 1), dan `pino-romp` + een hangende `pino-arm-links`/`-rechts` + de losse `pino-arm-vinger` die om de schouder gedraaid wordt. **Een personage heeft altijd precies twee armen**: een lijf met armen (`b-lijf`) krijgt er nooit een extra arm bij; wie iets draagt (baby, tas) gebruikt een armloos lijf (`b-lijf-los` of `p-basis`), het voorwerp volledig zichtbaar vóór de borst, en daaroverheen `s9-armen-om` + `s9-handen-om` (huid).
 - Kalme spellen (2, 3, 4, 5, 7, 8): DOM + SVG. Actiespellen (1, 6, 9, 10): canvas met een sprite sheet uit dezelfde symbolen is toegestaan, maar het beeld blijft identiek aan het ontwerp.
 - Fonts: **Fredoka** (koppen, `.kop`, gewicht 700) en **Nunito** (tekst, 400/700/800), via Google Fonts.
 
@@ -59,6 +59,7 @@ Als een scherm in `design/previews` nog tekst bevat die hiermee in strijd is, is
 | Zand | `#FDE9B6` / `#F2CF8A`; zee `#1FA3DC` / `#0E7FB5`; lucht `#8ED8F8`; avondlucht `#2B4A66` |
 | Nachtmarkt-kasseien | `#556B8E` / `#4E6384`; asfalt `#4F6B7E`; stoep `#CFD8DC` / `#DDE7EE`; klinkers `#C2743C` / `#D98E55` |
 | Bordvakken (spel 8) | licht `#D9CFA8`, donker `#8AA66E`, rand `#3D7A30` |
+| Figuren (overig) | blos `#FF9BC8`; haar `#4A3426` / `#2B1A0E`; oranje `#FF8A3D`; lichtroze `#FFB8D4`; dief `#2F3A4A` |
 
 ## Technische uitgangspunten (al afgesproken)
 
@@ -68,7 +69,7 @@ Als een scherm in `design/previews` nog tekst bevat die hiermee in strijd is, is
 - Sprites: `sprites.js` laadt `assets/sprites/sprites.svg` één keer en injecteert de `<symbol>`s in het document; bouw scènes met `use()`, `pino()`, `persoon()`, `dier()` uit `sprites.js` (JS-port van de Python-helpers). `#/test` toont een sprite-controlescherm.
 - Canvas-spellen (voorbeeld: `spellen/spel1.js`): `spellen/spritesheet.js` rastert symbolen per (id, kleur, DPR) met `tekenSprite(ctx, id, x, y, { kleur, flip })`; `spellen/canvas.js` maakt het HiDPI-canvas en een statische achtergrondlaag; `spellen/lus.js` is de rAF-lus met pauze bij verborgen tab; `invoer.js` koppelt toetsenbord, D-pad (vasthouden) en de virtuele joystick uit `ui/joystick.js` (vasthouden op het scherm → ring met knop op de drukplek; `maakInvoer({ joystick: { element, vertraging, tik } })`). Een spel exporteert `voorbereid()` (sprite sheet laden, aangeroepen door het laadscherm) en `start()`. Het resultaatscherm is `ui/resultaat.js`.
 - Jekyll staat uit (`.nojekyll`); `404.html` stuurt paden onder `/advent/` terug naar de app.
-- Mobiel eerst: ontwerp is 390×844 (telefoon); er is ook een desktop-variant van de kalender (1280 breed). Alles moet werken met touch én toetsenbord (pijltjestoetsen in spel 1, 5, 8, 10).
+- Mobiel eerst: ontwerp is 390×844 (telefoon); er is ook een desktop-variant van de kalender (1280 breed). Alles moet werken met touch én toetsenbord (pijltjestoetsen in spel 1, 5, 8, 9, 10).
 - Spelstaat in `localStorage`, altijd in `try/catch` (privé-modus kan storage weigeren). Zie `design/economie-en-spelstaat.md` voor de velden.
 - Deurtjes gaan open op datum (24 nov t/m 3 dec); met `?test=1` in de URL zijn alle deurtjes open voor testen, `?dag=5` doet alsof het dag 5 is, `?datum=2026-11-27` zet een vaste datum (zie `datum.js`).
 - Toegankelijkheid zoals in het ontwerp: echte `<button>`/`<a>`, `aria-label` op icoon-knoppen, `role="img"` + `aria-label` op scènes, decoratieve SVG `aria-hidden="true"`.

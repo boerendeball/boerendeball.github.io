@@ -244,6 +244,14 @@ function spelKaart() {
         gekozen: p.get('level'), uit: !test, bijKies: (w) => pasToe({ level: w }),
       }),
     ]),
+    h('div', { class: `dev-blok${test ? '' : ' dev-uit'}` }, [
+      h('span', { class: 'dev-rij-label' }, 'Spel 9 · sportschoenen'),
+      h('span', { class: 'dev-rij-uitleg' }, uitleg || 'schoenen=0|1 · anders volgens de staat; zonder schoenen loopt Pino traag op hakken'),
+      keuzes({
+        opties: [[null, 'Uit de staat'], ['1', 'Met'], ['0', 'Zonder']],
+        gekozen: p.get('schoenen'), uit: !test, bijKies: (w) => pasToe({ schoenen: w }),
+      }),
+    ]),
   ]);
 }
 

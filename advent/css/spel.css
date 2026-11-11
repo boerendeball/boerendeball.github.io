@@ -613,3 +613,10 @@ button.s7-foto:focus-visible { outline: 3px solid #FFC93C; outline-offset: -4px;
   .s8-wolk, .s8-nevel { animation: none; }
   .s8-spray-mis { animation-name: s6-toon; }
 }
+
+/* ---------- spel 9 · Vang de baby (design/artboards/Spel9*.dc.html, specs/spel9.md) ---------- */
+/* Eén venster hoog: de scène (358×680) krimpt mee met de ruimte onder de kopbalk. */
+.spel9 { height: 100vh; height: 100dvh; min-height: 0; overflow: hidden; gap: 12px; }
+.s9-veld { flex: 1 1 auto; min-height: 0; container-type: size; display: flex; justify-content: center; align-items: flex-start; }
+.s9-kaart { flex: none; width: min(100cqw, calc((100cqh - 6px) * 358 / 680)); max-width: none; margin: 0; aspect-ratio: 358 / 680; background: #8ED8F8; }
+.s9-tafereel { max-width: 100%; height: auto; }

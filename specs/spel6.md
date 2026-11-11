@@ -37,7 +37,7 @@ Lagen van achter naar voor (posities uit `steeg()` in `spel6_build2.py`):
 | menigte | negen bezoekers (`BEZOEKERS` uit `spel6_sprites.py`), elk op een vaste rij en heen en weer tussen twee x-waarden; bezoeker 4 (oranje, bril) staat stil | achter: y 118–196, voor: y 410–446 |
 | werker | `wk-lampion` 48×72 × 0,7, voeten op (317,230), half achter bezoeker 4 (besluit 108) | zie Werker |
 | Pino | `pino-staan` / `pino-loop` + `s6-ketting`, start op 155,200 en loopt de eerste 2 s vrij binnen x 56–254, y 150–212 (linkerbovenhoek van haar frame); gespiegeld als ze naar links loopt; na een diefstal `pino-sip` zonder ketting | waar ze staat als de dief komt |
-| dief | hoodie `#2F3A4A`, huid `#E8B48A`; lopend `b-lijf` + `b-hoofd` + `z-kap` + `z-gezicht`; grijpend en rennend armloos `b-lijf-los` + `z-arm` + `z-arm-hang`; met buit `z-blij` en `s5-ketting` (16 px) bij zijn hand | komt van rechts (x 372) naar Pino + (46, 2) |
+| dief | hoodie `#2F3A4A`, huid `#E8B48A`; lopend `b-lijf` + `b-handen` + `b-hoofd` + `z-kap` + `z-gezicht`; grijpend en rennend armloos `b-lijf-los` + `z-arm` + `z-arm-hang`; met buit `z-blij` en `s5-ketting` (16 px) bij zijn hand | komt van rechts (x 372) naar Pino + (46, 2) |
 | trillijntjes | `s6-tril` 36×36 bij Pino's hals, trilt licht | alleen tijdens de greep |
 | klem | `s6-klem` 140×90 op Pino + (−46, −4) + `s6-klem-ketting`, met kniebeschermers ook `s6-klem-knie`; schudt harder naarmate de balk voller is | fase 2 |
 | worstelbalk | 150×12 op Pino + (−51, 98): `#E6EFF5`, vulling `#FF5E5B` met onderrand `#C43B38` | fase 2 |

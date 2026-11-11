@@ -183,7 +183,7 @@ fin+=f'''<div class="vloer" style="width: 390px; height: 844px; box-sizing: bord
     <!-- Pino met de baby, de gansjes en het lammetje -->
     <svg class="ic" viewBox="0 0 300 90" width="300" height="90" role="img" aria-label="Pino met de pasgeboren baby op de arm, tussen een lammetje en twee gansjes">
       <ellipse cx="150" cy="84" rx="130" ry="5" fill="#CDE4F0"/>
-      {dier(30,40,'lam')}<g transform="translate(126 8)">{use('p-basis',0,0,48,72)}{use('s9-bundel',8,30,32,32,'#FFD6E6')}{use('s9-armen-om',0,0,48,72,'#F6C9A8')}<rect x="18" y="62" width="5" height="6" rx="2" fill="#B23A6A"/><rect x="25" y="62" width="5" height="6" rx="2" fill="#B23A6A"/></g>
+      {dier(30,40,'lam')}<g transform="translate(126 8)">{use('p-basis',0,0,48,72)}{use('s9-bundel',8,30,32,32,'#FFD6E6')}{use('s9-armen-om',0,0,48,72,'#F6C9A8')}{use('s9-handen-om',0,0,48,72,'#F6C9A8')}<rect x="18" y="62" width="5" height="6" rx="2" fill="#B23A6A"/><rect x="25" y="62" width="5" height="6" rx="2" fill="#B23A6A"/></g>
       {dier(200,44,'gansje')}{dier(244,44,'gansje',0.9)}
     </svg>
 

@@ -95,7 +95,7 @@ const TOETS_BAAN = {
 };
 
 function persoonSprites(p) {
-  const lijst = [{ id: p.jurk ? 'b-jurk' : 'b-lijf', kleur: p.kleding }, { id: 'b-hoofd', kleur: p.huid }, { id: p.haar, kleur: p.haarkleur }];
+  const lijst = [{ id: p.jurk ? 'b-jurk' : 'b-lijf', kleur: p.kleding }, { id: 'b-handen', kleur: p.huid }, { id: 'b-hoofd', kleur: p.huid }, { id: p.haar, kleur: p.haarkleur }];
   for (const a of p.acc || []) lijst.push({ id: a });
   return lijst;
 }
@@ -105,7 +105,7 @@ function spriteLijst() {
     { id: 's5-kraam-voor' }, { id: 's5-gloed' }, { id: 'wk-lampion' },
     { id: 'b-blij' }, { id: 'b-bang' }, { id: 'b-lach' },
     { id: 'pino-staan' }, { id: 'pino-loop' }, { id: 'pino-sip' }, { id: 's6-ketting' }, { id: 's6-tril' },
-    { id: 'b-lijf', kleur: DIEF_KLEUR }, { id: 'b-lijf-los', kleur: DIEF_KLEUR }, { id: 'b-hoofd', kleur: DIEF_HUID },
+    { id: 'b-lijf', kleur: DIEF_KLEUR }, { id: 'b-lijf-los', kleur: DIEF_KLEUR }, { id: 'b-handen', kleur: DIEF_HUID }, { id: 'b-hoofd', kleur: DIEF_HUID },
     { id: 'z-kap' }, { id: 'z-gezicht' }, { id: 'z-blij' }, { id: 'z-arm' }, { id: 'z-arm-hang' }, { id: 's5-ketting' },
     { id: 's6-klem' }, { id: 's6-klem-ketting' }, { id: 's6-klem-knie' }, { id: 's6-politie' },
   ];
@@ -154,6 +154,7 @@ function tekenPersoon(c, p, x, y, { schaal = 1, flip = false, gezicht = 'b-blij'
   const k = schaal * (p.kind ? 0.72 : 1);
   const o = { w: 48 * k, h: 72 * k, flip };
   tekenSprite(c, p.jurk ? 'b-jurk' : 'b-lijf', x, y, { ...o, kleur: p.kleding });
+  tekenSprite(c, 'b-handen', x, y, { ...o, kleur: p.huid });
   tekenSprite(c, 'b-hoofd', x, y, { ...o, kleur: p.huid });
   tekenSprite(c, p.haar, x, y, { ...o, kleur: p.haarkleur });
   tekenSprite(c, gezicht, x, y, o);
@@ -476,6 +477,7 @@ function speel({ root, dag, info, klaar, opnieuw, zoek = false }) {
     const y = dief.y + (dief.loopt ? wip(0.3) : 0);
     const o = { flip: dief.flip };
     tekenSprite(ctx, dief.grijpt ? 'b-lijf-los' : 'b-lijf', dief.x, y, { ...o, kleur: DIEF_KLEUR });
+    if (!dief.grijpt) tekenSprite(ctx, 'b-handen', dief.x, y, { ...o, kleur: DIEF_HUID });
     tekenSprite(ctx, 'b-hoofd', dief.x, y, { ...o, kleur: DIEF_HUID });
     tekenSprite(ctx, 'z-kap', dief.x, y, o);
     tekenSprite(ctx, dief.buit ? 'z-blij' : 'z-gezicht', dief.x, y, o);
@@ -631,7 +633,7 @@ function speel({ root, dag, info, klaar, opnieuw, zoek = false }) {
 /** Het tafereel op het resultaatscherm: Pino in gi naast de boze dief en de politieauto, of de blije dief met de ketting. */
 function tafereel(gelukt) {
   const dief = (x, y, gezicht) => el('g', { transform: `translate(${x} ${y})` }, [
-    use('b-lijf', 0, 0, 48, 72, DIEF_KLEUR), use('b-hoofd', 0, 0, 48, 72, DIEF_HUID), use('z-kap', 0, 0, 48, 72), use(gezicht, 0, 0, 48, 72),
+    use('b-lijf', 0, 0, 48, 72, DIEF_KLEUR), use('b-handen', 0, 0, 48, 72, DIEF_HUID), use('b-hoofd', 0, 0, 48, 72, DIEF_HUID), use('z-kap', 0, 0, 48, 72), use(gezicht, 0, 0, 48, 72),
   ]);
   const basis = [
     el('rect', { x: 4, y: 2, width: 232, height: 92, rx: 18, fill: '#DDF1FB' }),

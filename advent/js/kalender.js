@@ -45,8 +45,9 @@ export function schermKalender({ root, telefoon = true }) {
   const morgenInfo = morgen <= 10 ? dagInfo(morgen) : null;
 
   const kalender = h('div', { class: 'kalender' }, [
-    h('div', { class: 'wolk-decor wolk-decor-1', 'aria-hidden': 'true' }),
-    h('div', { class: 'wolk-decor wolk-decor-2', 'aria-hidden': 'true' }),
+    // Drijvende wolkjes achter de kaarten (laag over de hele pagina, scrolt mee).
+    h('div', { class: 'wolken', 'aria-hidden': 'true' },
+      [1, 2, 3, 4, 5, 6, 7, 8].map((i) => h('div', { class: `wolk-decor wolk-decor-${i}` }))),
 
     // Sim-kaart
     h('section', { class: 'kaart sim-kaart', 'aria-label': 'Pino' }, [

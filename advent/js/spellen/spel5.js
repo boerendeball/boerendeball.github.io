@@ -106,10 +106,13 @@ function huidigeRonde() {
   if (!product) return null;
   const gevraagd = datum.isTest() ? new URLSearchParams(location.search).get('niveau') : null;
   let { cyclus, ronde } = s.markt;
-  if (ronde && ronde.product === product.id && (!gevraagd || ronde.niveau === gevraagd)) return ronde;
+  // P = geld + waarde van de edelstenen bij de start (besluit 139). Is dat veranderd sinds de bewaarde ronde
+  // (Pino heeft intussen spel 2 of 4 gespeeld), dan begint een nieuwe ronde op hetzelfde niveau.
+  const P = M.prijsVoor(product.id, s.geld, s.edelstenen, s.producten.includes('ketting'));
+  if (ronde && ronde.product === product.id && M.laagstePrijs(ronde) === P && (!gevraagd || ronde.niveau === gevraagd)) return ronde;
   if (!cyclus) cyclus = M.nieuweCyclus();
   const niveau = M.NIVEAUS.includes(gevraagd) ? gevraagd : cyclus[s.markt.stap] || 'simpel';
-  ronde = M.maakRonde(product.id, niveau);
+  ronde = M.maakRonde(product.id, niveau, Math.random, P);
   staat.bewaarMarkt({ cyclus, ronde });
   return ronde;
 }
@@ -269,7 +272,7 @@ function markt({ root, dag, info, klaar, opnieuw, kijken = false, zoek = false }
   let kanPraten = false;
 
   function update(dt) {
-    if (!bezig && !af) {
+    if (!bezig && !af && komst.fase !== 'heen') {
       const { dx, dy } = invoer.as();
       if (dx || dy) {
         const nx = pinoStaat.x + dx * SNELHEID * dt;
@@ -284,8 +287,10 @@ function markt({ root, dag, info, klaar, opnieuw, kijken = false, zoek = false }
       }
     }
     if (groepLeden.length) samenzweer(dt);
+    if (komst.fase && komst.fase !== 'gesprek') komstStap(dt);
+    if (stof.length) stofStap(dt);
     const nieuw = zones.find((z) => binnen(z, pinoStaat.x, pinoStaat.y)) || null;
-    const kan = !!nieuw && !weg(nieuw.id);
+    const kan = !!nieuw && !weg(nieuw.id) && komst.fase !== 'heen';
     if (nieuw !== zone || kan !== kanPraten) {
       zone = nieuw;
       kanPraten = kan;
@@ -343,6 +348,11 @@ function markt({ root, dag, info, klaar, opnieuw, kijken = false, zoek = false }
       totaal += lengte;
     }
     paden[id] = { stukken, totaal };
+    maakLos(id);
+  }
+  /** Losse knoop in de gesorteerde laag voor een handelaar die over de markt loopt. */
+  function maakLos(id) {
+    if (los[id]) return;
     const knoop = el('g', { class: 's5-handelaar-los' });
     los[id] = { knoop, ding: { y: THUIS[id].y, knoop }, sleutel: '' };
     dingen.push(los[id].ding);
@@ -382,7 +392,9 @@ function markt({ root, dag, info, klaar, opnieuw, kijken = false, zoek = false }
   }
 
   /** Teken een handelaar thuis (in zijn kraam, verschoven met dx) of los op de markt. */
-  function zet(id, { x, y, binnen = true }, wip, gezicht, flip) {
+  const plek = {};
+  function zet(id, { x, y, binnen = true }, wip, gezicht, flip, kantel = 0) {
+    plek[id] = { x, y, binnen, flip };
     const sleutel = `${gezicht}|${flip}`;
     if (binnen) {
       if (los[id] && los[id].sleutel) { los[id].knoop.replaceChildren(); los[id].sleutel = ''; }
@@ -393,19 +405,20 @@ function markt({ root, dag, info, klaar, opnieuw, kijken = false, zoek = false }
       const dx = x - THUIS[id].x;
       handelaarKnoop[id].setAttribute('transform', dx || wip ? `translate(${dx.toFixed(1)} ${wip.toFixed(2)})` : '');
     } else {
+      maakLos(id);
       if (getekend[id]) { handelaarKnoop[id].replaceChildren(); getekend[id] = ''; }
       if (los[id].sleutel !== sleutel) {
         los[id].sleutel = sleutel;
         los[id].knoop.replaceChildren(persoon(-24, -72, { ...INFO[id].persoon, gezicht, flip }));
       }
-      los[id].knoop.setAttribute('transform', `translate(${x.toFixed(1)} ${(y + wip).toFixed(2)})`);
+      los[id].knoop.setAttribute('transform', `translate(${x.toFixed(1)} ${(y + wip).toFixed(2)})${kantel ? ` rotate(${kantel})` : ''}`);
       los[id].ding.y = y;
     }
   }
 
   /** Doet deze handelaar nu mee aan het samenzweren? Dan kan Pino niet met hem praten. */
   function weg(id) {
-    return sz.t >= 0 && groepLeden.includes(id);
+    return (sz.t >= 0 && groepLeden.includes(id)) || (komst.fase !== null && komst.id === id);
   }
 
   function samenzweer(dt) {
@@ -447,9 +460,216 @@ function markt({ root, dag, info, klaar, opnieuw, kijken = false, zoek = false }
     }
   }
 
+  /* ---------- Matig: de twijfelende handelaar komt naar Pino toe (besluit 140) ---------- */
+  // Heeft hij getwijfeld en beëindigt Pino daarna een gesprek met een andere handelaar, dan stopt na 1 s de besturing,
+  // loopt hij (achter zijn toonbank langs naar buiten en dan om de put en de kramen heen) naar haar toe en opent het
+  // onderhandelscherm opnieuw. Na dat gesprek loopt hij terug naar zijn kraam.
+  const UITGANG = { mai: { x: 156, y: 154 }, arun: { x: 205, y: 154 }, siti: { x: 156, y: 444 }, minh: { x: 205, y: 444 } };
+  const MUREN = [...obstakels, { x0: 8, x1: 140, y0: 40, y1: 176 }, { x0: 218, x1: 352, y0: 40, y1: 176 }];
+  const MARGE = 6;
+  const KOMST_WACHT = 1;                                     // seconden na het gesprek
+  const komst = { id: null, fase: null, t: 0, afstand: 0 };  // fase: null | wacht | heen | gesprek | terug
+
+  // Gehaast (besluit 141): sneller lopen, voorovergebogen, hoger en sneller wippen, stofwolkjes bij de voeten,
+  // zweetdruppels bij het hoofd en een tekstwolkje "miss! miss! wait!" boven zijn hoofd. Terug loopt hij gewoon.
+  const HAAST = 135;                                  // px per seconde (gewoon: LOOP)
+  const ROEP = 'miss! miss! wait!';
+  const ROEP_B = 118;
+  const ROEP_H = 24;
+  const stofLaag = el('g', { class: 's5-stof', 'aria-hidden': 'true' });
+  grond.after(stofLaag);
+  const druppels = el('g', { class: 's5-zweet', visibility: 'hidden' }, [0, 1].map(() => el('path', { d: 'M0 -4.5 Q3.2 0 0 2 Q-3.2 0 0 -4.5z', fill: '#8ED8F8' })));
+  const roepTekst = el('text', { x: 0, y: -7.5, 'text-anchor': 'middle', 'font-family': 'Fredoka, Nunito, sans-serif', 'font-weight': 700, 'font-size': 12, fill: '#1E3A4C' }, [ROEP]);
+  const roepWolk = el('g', {}, [
+    el('rect', { x: -ROEP_B / 2, y: -ROEP_H + 2.5, width: ROEP_B, height: ROEP_H, rx: ROEP_H / 2, fill: '#CDE4F0' }),
+    el('rect', { x: -ROEP_B / 2, y: -ROEP_H, width: ROEP_B, height: ROEP_H, rx: ROEP_H / 2, fill: '#FFFFFF' }),
+    roepTekst,
+  ]);
+  const roepPunt = el('path', { d: 'M-6 -1 L6 -1 L0 8z', fill: '#FFFFFF' });
+  const roep = el('g', { class: 's5-roep', visibility: 'hidden', 'aria-hidden': 'true' }, [roepPunt, roepWolk]);
+  svg.append(druppels, roep);
+  const stof = [];
+  let stofKlok = 0;
+
+  /** Tekstwolkje en zweetdruppels bij de haastige handelaar (voet op x, y). */
+  function toonHaast(x, y, wip, kantel, links, dt) {
+    const by = y - 86 + wip;
+    const bx = Math.min(B - 4 - ROEP_B / 2, Math.max(4 + ROEP_B / 2, x));
+    roepWolk.setAttribute('transform', `translate(${bx.toFixed(1)} ${by.toFixed(1)})`);
+    const px = Math.min(bx + ROEP_B / 2 - 14, Math.max(bx - ROEP_B / 2 + 14, x));
+    roepPunt.setAttribute('transform', `translate(${px.toFixed(1)} ${by.toFixed(1)})`);
+    roep.setAttribute('visibility', 'visible');
+    if (rustig) return;
+    // Twee druppels vliegen om de beurt van zijn hoofd weg, naar achteren (tegen de looprichting in).
+    const achter = links ? 1 : -1;
+    druppels.setAttribute('transform', `translate(${x.toFixed(1)} ${(y + wip).toFixed(1)}) rotate(${kantel})`);
+    druppels.setAttribute('visibility', 'visible');
+    [...druppels.children].forEach((d, n) => {
+      const f = (komst.t * 2.2 + n * 0.5) % 1;
+      const dx = achter * (13 + f * 9) + (n ? achter * 3 : 0);
+      const dy = -66 + (n ? 6 : 0) - Math.sin(f * Math.PI) * 6 + f * 6;
+      d.setAttribute('transform', `translate(${dx.toFixed(1)} ${dy.toFixed(1)}) rotate(${achter * 35})`);
+      d.setAttribute('opacity', (1 - f).toFixed(2));
+    });
+    // Stofwolkjes bij de voeten.
+    stofKlok -= dt;
+    if (stofKlok <= 0) {
+      stofKlok = 0.1;
+      const knoop = use('s9-stof', x + achter * 10 - 10, y - 10, 20, 13);
+      stofLaag.append(knoop);
+      stof.push({ knoop, x: x + achter * 10 - 10, y: y - 10, t: 0 });
+    }
+  }
+  function verbergHaast() {
+    roep.setAttribute('visibility', 'hidden');
+    druppels.setAttribute('visibility', 'hidden');
+  }
+  /** Stofwolkjes stijgen een beetje en vervagen. */
+  function stofStap(dt) {
+    for (let n = stof.length - 1; n >= 0; n--) {
+      const w = stof[n];
+      w.t += dt;
+      if (w.t >= 0.45) { w.knoop.remove(); stof.splice(n, 1); continue; }
+      const f = w.t / 0.45;
+      w.knoop.setAttribute('transform', `translate(0 ${(-f * 6).toFixed(1)})`);
+      w.knoop.setAttribute('opacity', (0.9 * (1 - f)).toFixed(2));
+    }
+  }
+
+  const loopbaar = (x, y) => x >= 10 && x <= 348 && y >= 150 && y <= 576
+    && !MUREN.some((r) => x >= r.x0 - MARGE && x <= r.x1 + MARGE && y >= r.y0 - MARGE && y <= r.y1 + MARGE);
+  function zicht(a, b) {
+    const n = Math.max(1, Math.ceil(Math.hypot(b.x - a.x, b.y - a.y) / 3));
+    for (let i = 1; i <= n; i++) if (!loopbaar(a.x + ((b.x - a.x) * i) / n, a.y + ((b.y - a.y) * i) / n)) return false;
+    return true;
+  }
+  /** Kortste route over een raster van 6 px (breedte-eerst, 8 richtingen), daarna rechtgetrokken op zicht. */
+  function route(van, naar) {
+    const C = 6;
+    const K = Math.ceil(B / C) + 1;
+    const R = Math.ceil(H / C) + 1;
+    const sleutel = (x, y) => y * K + x;
+    const sx = Math.round(van.x / C); const sy = Math.round(van.y / C);
+    const tx = Math.round(naar.x / C); const ty = Math.round(naar.y / C);
+    const vorige = new Map([[sleutel(sx, sy), -1]]);
+    const rij = [[sx, sy]];
+    for (let i = 0; i < rij.length; i++) {
+      const [x, y] = rij[i];
+      if (x === tx && y === ty) break;
+      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [1, -1], [-1, 1], [-1, -1]]) {
+        const nx = x + dx; const ny = y + dy; const k = sleutel(nx, ny);
+        if (nx < 0 || ny < 0 || nx >= K || ny >= R || vorige.has(k) || !loopbaar(nx * C, ny * C)) continue;
+        vorige.set(k, sleutel(x, y));
+        rij.push([nx, ny]);
+      }
+    }
+    if (!vorige.has(sleutel(tx, ty))) return null;
+    const cellen = [];
+    for (let k = sleutel(tx, ty); k !== -1; k = vorige.get(k)) cellen.unshift({ x: (k % K) * C, y: Math.floor(k / K) * C });
+    const punten = [van, ...cellen.slice(1, -1), naar];
+    const recht = [punten[0]];
+    for (let i = 0; i < punten.length - 1;) {
+      let j = punten.length - 1;
+      while (j > i + 1 && !zicht(punten[i], punten[j])) j--;
+      recht.push(punten[j]);
+      i = j;
+    }
+    return recht;
+  }
+  /** Pad van zijn plek achter de toonbank, via de uitgang, naar een vrije plek naast Pino. */
+  function padNaarPino(id) {
+    const px = pinoStaat.x; const py = pinoStaat.y;
+    let beste = null;
+    for (const [dx, dy] of [[-30, 0], [30, 0], [0, 22], [0, -22], [-30, 18], [30, 18]]) {
+      const doel = { x: px + dx, y: py + dy };
+      if (!loopbaar(doel.x, doel.y)) continue;
+      const r = route(UITGANG[id], doel);
+      if (!r) continue;
+      const lengte = r.reduce((som, q, n) => (n ? som + Math.hypot(q.x - r[n - 1].x, q.y - r[n - 1].y) : 0), 0);
+      if (!beste || lengte < beste.lengte) beste = { r, lengte };
+    }
+    if (!beste) return null;
+    const punten = [THUIS[id], ...beste.r];
+    const stukken = [];
+    let totaal = 0;
+    for (let n = 1; n < punten.length; n++) {
+      const lengte = Math.hypot(punten[n].x - punten[n - 1].x, punten[n].y - punten[n - 1].y);
+      stukken.push({ van: punten[n - 1], naar: punten[n], lengte, binnen: n === 1 });
+      totaal += lengte;
+    }
+    return { stukken, totaal };
+  }
+
+  function planKomst() {
+    if (komst.fase !== null || !ronde) return;
+    Object.assign(komst, { id: ronde.korting, fase: 'wacht', t: KOMST_WACHT, afstand: 0 });
+  }
+
+  function komstStap(dt) {
+    const id = komst.id;
+    if (komst.fase === 'wacht') {
+      komst.t -= dt;
+      if (komst.t > 0) return;
+      // De besturing stopt; hij komt eraan.
+      invoer.los();
+      pinoStaat.pose = 'staan';
+      const pad = padNaarPino(id);
+      komst.t = 0;
+      if (pad) { paden[id] = pad; komst.fase = 'heen'; komst.afstand = 0; }
+      else { delete paden[id]; komst.fase = 'gesprek'; komBijPino(); }
+      return;
+    }
+    const L = paden[id].totaal;
+    const heen = komst.fase === 'heen';
+    komst.afstand = heen ? Math.min(L, komst.afstand + HAAST * dt) : Math.max(0, komst.afstand - LOOP * dt);
+    komst.t += dt;
+    const p = opPad(id, komst.afstand);
+    const gezicht = heen ? 'b-twijfel' : gezichtVan(id);
+    if (heen && komst.afstand >= L) {
+      verbergHaast();
+      zet(id, p, 0, gezicht, pinoStaat.x < p.x);
+      pinoStaat.richting = p.x < pinoStaat.x ? -1 : 1;
+      komst.fase = 'gesprek';
+      komBijPino();
+      return;
+    }
+    if (!heen && komst.afstand <= 0) {
+      zet(id, THUIS[id], 0, gezicht, false);
+      Object.assign(komst, { id: null, fase: null, t: 0, afstand: 0 });
+      return;
+    }
+    const voor = opPad(id, komst.afstand + (heen ? 1 : -1));
+    const links = voor.x < p.x;
+    if (heen) {
+      // Gehaast: sneller en hoger wippen en voorover in de looprichting.
+      const wip = rustig ? 0 : -Math.abs(Math.sin(komst.t * Math.PI * 8)) * 3.5;
+      const kantel = rustig || p.binnen ? 0 : (links ? -9 : 9);
+      zet(id, p, wip, gezicht, !p.binnen && links, kantel);
+      toonHaast(p.x, p.y, wip, kantel, links, dt);
+      return;
+    }
+    zet(id, p, p.binnen ? 0 : loopWip(komst.t), gezicht, !p.binnen && links);
+  }
+
+  /** Hij staat bij Pino: zijn vraagprijs wordt alles wat ze heeft en het onderhandelscherm opent. */
+  function komBijPino() {
+    ronde = M.komBij(ronde);
+    staat.bewaarMarkt({ ronde });
+    teken();
+    onderhandel(komst.id, {
+      naSluiten: () => {
+        if (paden[komst.id]) komst.fase = 'terug';
+        else {
+          zet(komst.id, THUIS[komst.id], 0, gezichtVan(komst.id), false);
+          Object.assign(komst, { id: null, fase: null, t: 0, afstand: 0 });
+        }
+      },
+    });
+  }
+
   /* ---------- praten ---------- */
   function praat() {
-    if (gestopt || bezig || af || !zone || weg(zone.id)) return;
+    if (gestopt || bezig || af || !zone || weg(zone.id) || komst.fase === 'heen') return;
     if (zone.id === 'wissel') openWissel();
     else onderhandel(zone.id);
   }
@@ -468,7 +688,7 @@ function markt({ root, dag, info, klaar, opnieuw, kijken = false, zoek = false }
   }
 
   /** Onderhandelscherm (Spel5-Onderhandel): portret + stemming, vraagprijs, stepper, weglopen en bieden. */
-  function onderhandel(id) {
+  function onderhandel(id, { naSluiten = null } = {}) {
     pauzeer();
     const i = INFO[id];
     let hd = ronde.handelaars[id];
@@ -483,7 +703,8 @@ function markt({ root, dag, info, klaar, opnieuw, kijken = false, zoek = false }
       badge.replaceChildren(svgIcoon(`s5-stemming-${stemming}`, 26));
       badge.setAttribute('aria-label', STEMMING_LABEL[stemming]);
       uitsnede.replaceChildren(portretSvg(id, GEZICHT[stemming]));
-      zet(id, THUIS[id], 0, GEZICHT[stemming], false);
+      const p = plek[id] || { ...THUIS[id], binnen: true, flip: false };
+      zet(id, p, 0, GEZICHT[stemming], p.flip);
     };
     zetStemming(M.stemmingVan(hd));
     const portret = h('div', { class: 's5-portret', style: { background: i.portret } }, [uitsnede, badge]);
@@ -556,6 +777,9 @@ function markt({ root, dag, info, klaar, opnieuw, kijken = false, zoek = false }
       }
       if (!rustig) portret.animate([{ transform: 'translateX(0)' }, { transform: 'translateX(-5px)' }, { transform: 'translateX(5px)' }, { transform: 'translateX(-3px)' }, { transform: 'translateX(0)' }], { duration: 350 });
       if (hd.beledigd) bod = M.maxBod(hd, geld());
+      // Matig: de handelaar die naar Pino toe kwam, gaat na een te laag bod terug naar zijn oude vraagprijs (besluit 140).
+      vraag.querySelector('.s5-vraagprijs').textContent = String(hd.v);
+      vraag.setAttribute('aria-label', `${i.naam} vraagt ${hd.v} munten`);
       toonBod();
     }
 
@@ -566,7 +790,7 @@ function markt({ root, dag, info, klaar, opnieuw, kijken = false, zoek = false }
     ];
     const d = toonDialoog({
       label: `Onderhandelen met ${i.naam}`, klasse: 's5-onderhandel', dim: 'rgba(30, 58, 76, 0.5)', inhoud: kaartInhoud,
-      bijSluiten: () => { stopMin(); stopPlus(); d.element.removeEventListener('keydown', opToets); if (!dealt) hervat(); },
+      bijSluiten: () => { stopMin(); stopPlus(); d.element.removeEventListener('keydown', opToets); if (!dealt) { if (naSluiten) naSluiten(); else if (M.moetKomen(ronde, id)) planKomst(); hervat(); } },
     });
     function opToets(ev) {
       if (ev.key === 'ArrowUp' || ev.key === 'ArrowRight') { ev.preventDefault(); stap(1); }
@@ -680,7 +904,7 @@ function markt({ root, dag, info, klaar, opnieuw, kijken = false, zoek = false }
 function handdruk(id) {
   return el('svg', { class: 'ic s5-handdruk', viewBox: '0 0 200 90', width: 220, height: 99, role: 'img', 'aria-label': `Pino en ${INFO[id].naam} sluiten de deal` }, [
     el('ellipse', { cx: 100, cy: 84, rx: 80, ry: 5, fill: '#CDE4F0' }),
-    pino(40, 6, 'vinger'),
+    pino(40, 6, 'staan'),
     persoon(104, 6, { ...INFO[id].persoon, flip: true }),
     use('s5-stemming-blij', 86, 0, 28, 28),
   ]);

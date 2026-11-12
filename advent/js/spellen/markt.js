@@ -5,7 +5,7 @@
 export const HANDELAARS = ['mai', 'arun', 'siti', 'minh'];
 export const NIVEAUS = ['simpel', 'matig', 'moeilijk'];
 
-/** De vier producten, één per ronde, met de laagst haalbare prijs P en het spel waarvoor ze nodig zijn. */
+/** De vier producten, één per ronde, met hun ondergrens p (zie prijsVoor) en het spel waarvoor ze nodig zijn. */
 export const PRODUCTEN = [
   { id: 'ketting', p: 240, spel: null, label: 'Ketting met roze steen', symbool: 's5-ketting' },
   { id: 'kniebeschermers', p: 160, spel: 6, label: 'Kniebeschermers', symbool: 's5-kniebeschermers' },
@@ -26,6 +26,19 @@ export function product(id) {
 /** Het eerstvolgende product dat nog niet gekocht is (vaste volgorde), of null als alles gekocht is. */
 export function volgendProduct(producten) {
   return PRODUCTEN.find((p) => !producten.includes(p.id)) || null;
+}
+
+/**
+ * De laagst haalbare prijs P van een ronde (besluit 139): alles wat Pino bij de start van spel 5 heeft, dus het geld
+ * plus de waarde van haar edelstenen (die tellen alleen mee als de wisselkraam er staat), afgerond omlaag op 5.
+ * Nooit lager dan de vaste ondergrens p van het product: heeft ze minder, dan lukt geen deal.
+ */
+export function prijsVoor(productId, geld = 0, edelstenen = {}, metWissel = false) {
+  const stenen = metWissel
+    ? Object.entries(KOERS).reduce((som, [kleur, waarde]) => som + Math.max(0, edelstenen[kleur] || 0) * waarde, 0)
+    : 0;
+  const budget = Math.floor((Math.max(0, geld || 0) + stenen) / STAP) * STAP;
+  return Math.max(product(productId).p, budget);
 }
 
 /* ---------- toeval ---------- */
@@ -67,7 +80,8 @@ function handelaar(v, g) {
 }
 
 /**
- * Een nieuwe ronde voor één product op één niveau (besluit 59/64). P is altijd de laagst haalbare prijs.
+ * Een nieuwe ronde voor één product op één niveau (besluit 59/64). P is altijd de laagst haalbare prijs; standaard de
+ * ondergrens van het product, in het spel uit prijsVoor (besluit 139).
  *   simpel:   goedkoopste V = P, de andere drie uit P+15…P+60 (≥ 10 uit elkaar); G = V
  *   matig:    gedeelde V uit P+40…P+50; drie handelaars geven geen korting (G = V), één wel (G = P) maar
  *             twijfelt de eerste keer (besluit 79)
@@ -75,8 +89,7 @@ function handelaar(v, g) {
  *             naast/boven/onder zich op bezoek; die drie spannen samen met K = P+20/P+25 (besluit 74).
  *             De vierde spant niet samen en zakt tot B = P.
  */
-export function maakRonde(productId, niveau, rnd = Math.random) {
-  const P = product(productId).p;
+export function maakRonde(productId, niveau, rnd = Math.random, P = product(productId).p) {
   const volgorde = schud(rnd, HANDELAARS);
   const handelaars = {};
   let k = null;
@@ -98,7 +111,7 @@ export function maakRonde(productId, niveau, rnd = Math.random) {
       for (const id of HANDELAARS) handelaars[id] = handelaar(V, samenzweerders.includes(id) ? k : P);
     }
   }
-  return { product: productId, niveau, k, gastheer, samenzweerders, korting, handelaars };
+  return { product: productId, niveau, p: P, k, gastheer, samenzweerders, korting, handelaars };
 }
 
 /**
@@ -114,9 +127,9 @@ export function spantSamen(ronde, id) {
   return id !== ronde.buitenstaander;
 }
 
-/** De laagste prijs die in deze ronde te halen was (= P van het product). */
+/** De laagste prijs die in deze ronde te halen was (P van de ronde; oudere rondes: de ondergrens van het product). */
 export function laagstePrijs(ronde) {
-  return product(ronde.product).p;
+  return ronde.p ?? product(ronde.product).p;
 }
 
 /** Hoogste bod dat Pino kan doen: de vraagprijs, maar nooit meer dan ze heeft (afgerond op 5). */
@@ -184,16 +197,51 @@ export function bied(ronde, id, bod) {
     return nee();
   }
 
-  // Matig, de handelaar die korting geeft: een bod tussen zijn grens en de vraagprijs laat hem de eerste keer
-  // twijfelen (nee, telt niet mee); daarna gaat hij akkoord (besluit 79).
-  if (ronde.niveau === 'matig' && (ronde.korting ? id === ronde.korting : h.g < h.v) && bod >= h.g && bod < h.v) {
-    if (h.getwijfeld) return { ja: true, stemming: 'blij', ronde: nieuw };
-    h.getwijfeld = true;
-    return nee(false, true);
+  // Matig, de handelaar die korting geeft (besluit 79/140). Een bod tussen zijn grens en de vraagprijs laat hem
+  // twijfelen (nee, telt niet mee), elke keer opnieuw, tot Pino eerst bij een andere handelaar is geweest: dan komt
+  // hij naar haar toe (komBij) en vraagt hij alles wat ze heeft. Biedt ze dan toch lager, dan wordt hij boos en gaat
+  // hij terug naar zijn oude vraagprijs: met hem lukt deze ronde geen deal meer.
+  if (ronde.niveau === 'matig' && (ronde.korting ? id === ronde.korting : h.g < h.v)) {
+    if (h.gekomen) {
+      if (bod >= h.v) return { ja: true, stemming: 'blij', ronde: nieuw };
+      h.twijfelt = false;
+      h.afgewezen = (h.afgewezen || 0) + 1;
+      h.nee += 1;
+      h.beledigd = true;
+      h.v = h.oudeV ?? h.v;
+      h.g = h.v;
+      return { ja: false, stemming: 'boos', ronde: nieuw };
+    }
+    if (bod >= h.g && bod < h.v) {
+      h.getwijfeld = true;
+      return nee(false, true);
+    }
   }
 
   if (bod >= h.g) return { ja: true, stemming: 'blij', ronde: nieuw };
   return nee();
+}
+
+/**
+ * Matig (besluit 140): komt de twijfelende handelaar naar Pino toe nu ze het gesprek met handelaar `id` beëindigt?
+ * Alleen als `id` iemand anders is, de handelaar met korting al getwijfeld heeft en nog niet gekomen of boos is.
+ */
+export function moetKomen(ronde, id) {
+  if (!ronde || ronde.niveau !== 'matig' || !ronde.korting || id === ronde.korting) return false;
+  const h = ronde.handelaars[ronde.korting];
+  return !!h && !!h.getwijfeld && !h.gekomen && !h.beledigd;
+}
+
+/** De twijfelende handelaar staat bij Pino: zijn vraagprijs wordt alles wat ze heeft (P van de ronde). */
+export function komBij(ronde) {
+  const id = ronde.korting;
+  const h = { ...ronde.handelaars[id] };
+  h.gekomen = true;
+  h.oudeV = h.v;
+  h.v = laagstePrijs(ronde);
+  h.twijfelt = true;
+  h.laatsteBod = null;
+  return { ...ronde, handelaars: { ...ronde.handelaars, [id]: h } };
 }
 
 /* ---------- productenalbum (besluit 67) ---------- */

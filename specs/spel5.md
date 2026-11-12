@@ -57,12 +57,12 @@ Voorbeeld:
 
 ## Regels
 
-Begrippen: **P** = de laagst haalbare prijs van het product, **V** = vraagprijs van een handelaar, **G** = de laagste prijs die hij accepteert, **b** = het bod van Pino. Alle bedragen zijn veelvouden van 5.
+Begrippen: **P** = de laagst haalbare prijs van de ronde (zie hieronder), **V** = vraagprijs van een handelaar, **G** = de laagste prijs die hij accepteert, **b** = het bod van Pino. Alle bedragen zijn veelvouden van 5.
 
 ### Producten en rondes
 - Een **ronde** is één bezoek aan de markt dat eindigt met het kopen van één product ("Deal!"). Ronde n verkoopt product n; alle vier de handelaars verkopen het product van die ronde.
 
-| Ronde | Product | Nodig voor | P | Niveau |
+| Ronde | Product | Nodig voor | ondergrens van P | Niveau |
 |---|---|---|---|---|
 | 1 | ketting met roze steen | — | 240 | Simpel (altijd) |
 | 2 | kniebeschermers | spel 6 | 160 | Matig of Moeilijk |
@@ -74,27 +74,34 @@ Begrippen: **P** = de laagst haalbare prijs van het product, **V** = vraagprijs 
 - Verlaat Pino de markt zonder te kopen, dan komt ze terug in **dezelfde ronde**: prijzen, grenzen, nee-tellers en het laatste bod per handelaar blijven bewaard. Zo kun je beledigingen niet wegpoetsen door opnieuw te beginnen, en heeft het onthouden van prijzen zin.
 - Het niveau wordt **nergens getoond**; Pino merkt het aan het gedrag van de handelaars.
 
+### De laagste prijs P (besluit 139)
+- **P = het geld plus de waarde van alle edelstenen waarmee Pino aan spel 5 begint** (koers van de wisselkraam: blauw 100, groen 80, geel 60), afgerond omlaag op 5. Wie het product voor de laagste prijs wil, moet dus al haar geld uitgeven en al haar edelstenen inruilen.
+- De edelstenen tellen alleen mee als de **wisselkraam** er staat (vanaf ronde 2). In ronde 1 is P dus het geld.
+- P is **nooit lager dan de ondergrens** van het product (240 / 160 / 180 / 200, tabel hierboven). Heeft Pino minder, dan is P de ondergrens en lukt geen deal (zie *Te weinig geld*).
+- P wordt berekend als de ronde begint en bewaard in de ronde (`ronde.p`). Inwisselen bij de wisselkraam verandert P niet (het geld gaat omhoog, de edelstenen omlaag). Heeft Pino sinds de bewaarde ronde méér verdiend (spel 2 of 4 gespeeld), dan begint bij het volgende bezoek een **nieuwe ronde op hetzelfde niveau** met de nieuwe P; stemmingen en laatste biedingen beginnen dan opnieuw.
+- `prijsVoor(product, geld, edelstenen, metWissel)` in `markt.js`.
+
 ### Prijzen per niveau
 Constanten in `markt.js`.
 
 | Niveau | Vraagprijs V | Laagste prijs G | "Laagste" op het resultaatscherm |
 |---|---|---|---|
 | **Simpel** | goedkoopste V = P; de andere drie verschillend uit P+15 … P+60, onderling ≥ 10 uit elkaar | G = V: afdingen kan niet | P |
-| **Matig** | één gedeelde V uit P+40 … P+50 | drie handelaars geven **geen korting** (G = V); één willekeurige handelaar zakt tot G = P, maar **twijfelt de eerste keer** (besluit 79) | P |
+| **Matig** | één gedeelde V uit P+40 … P+50 | drie handelaars geven **geen korting** (G = V); één willekeurige handelaar zakt tot G = P, maar **twijfelt** zolang Pino niet eerst bij een andere handelaar is geweest; dan **komt hij naar haar toe** (besluit 79/140, zie *Matig: de twijfelende handelaar komt langs*) | P |
 | **Moeilijk** | één gedeelde V uit P+40 … P+50 | **Mai** (linksboven) **óf Minh** (rechtsonder) is gastheer; Siti en Arun lopen naar hem toe. Die drie spannen samen met dezelfde grens K = P+20 of P+25. De vierde (Minh of Mai) spant niet samen en zakt tot B = P | P |
 
-- **Ronde 1 (ketting):** goedkoopste V = 240, de andere drie uit 255–300. Voor die eerste ronde is spel 4 de enige geldbron (maximaal 100 + 80 + 60 = 240). Pino kan de ketting dus alleen kopen als alle drie de families op de foto staan én ze de goedkoopste kraam vindt. Daarna heeft ze 0 munten.
+- **Ronde 1 (ketting):** voor die eerste ronde is spel 4 de enige geldbron (maximaal 100 + 80 + 60 = 240), dus P = 240: goedkoopste V = 240, de andere drie uit 255–300. Pino kan de ketting alleen kopen als alle drie de families op de foto staan én ze de goedkoopste kraam vindt. Daarna heeft ze 0 munten.
 - Welke handelaar welke prijs of grens krijgt (en wie gastheer is), wordt per ronde willekeurig bepaald.
 
 ### Te weinig geld
-De stepper gaat nooit hoger dan het geld. Is het geld lager dan elke G, dan lukt geen enkele deal. Er komt geen tekst: Pino moet zelf ontdekken dat ze terug moet (spel 3/4 in ronde 1, daarna spel 1 → 2 en de wisselkraam). De ronde blijft bewaard.
+De stepper gaat nooit hoger dan het geld. Is het geld plus de waarde van de edelstenen lager dan de ondergrens van het product, dan lukt geen enkele deal. Er komt geen tekst: Pino moet zelf ontdekken dat ze terug moet (spel 3/4 in ronde 1, daarna spel 1 → 2 en de wisselkraam). De ronde blijft bewaard.
 
 ### Bieden
-- **Stemming** (besluit 77): de badge bij het portret én het gezicht van de handelaar (in het portret en in de scène) tonen hoe hij zich voelt: **blij** (`s5-stemming-blij`, `b-blij`) zolang er niets is afgewezen, **verdrietig** (blauwe smiley `s5-stemming-verdrietig`, `b-bedroefd`) na het eerste afgewezen lagere bod, **boos** (rode smiley `s5-stemming-boos`, `b-boos`) vanaf het tweede. **Alleen in Matig** (besluit 79): de handelaar die korting geeft **twijfelt** de eerste keer dat Pino genoeg biedt (een bod van P of hoger, maar onder V): oranje smiley `s5-stemming-twijfel` en gezicht `b-twijfel` (één wenkbrauw omhoog, scheve mond). Dat is een nee die niet meetelt en hem niet verdrietiger maakt. Daarna gaat hij akkoord met elk bod van P of hoger. De stemming blijft de hele ronde, ook na weglopen en terugkomen; bij een deal wordt hij weer blij.
+- **Stemming** (besluit 77): de badge bij het portret én het gezicht van de handelaar (in het portret en in de scène) tonen hoe hij zich voelt: **blij** (`s5-stemming-blij`, `b-blij`) zolang er niets is afgewezen, **verdrietig** (blauwe smiley `s5-stemming-verdrietig`, `b-bedroefd`) na het eerste afgewezen lagere bod, **boos** (rode smiley `s5-stemming-boos`, `b-boos`) vanaf het tweede. **Alleen in Matig** (besluit 79): de handelaar die korting geeft **twijfelt** zodra Pino genoeg biedt (een bod van P of hoger, maar onder V): oranje smiley `s5-stemming-twijfel` en gezicht `b-twijfel` (één wenkbrauw omhoog, scheve mond). Dat is een nee die niet meetelt en hem niet verdrietiger maakt. Hij blijft twijfelen tot hij naar Pino toe is gekomen (besluit 140). De stemming blijft de hele ronde, ook na weglopen en terugkomen; bij een deal wordt hij weer blij.
 - Het onderhandelscherm opent met de huidige stemming (de eerste keer blij). Het bod staat op het laatste bod bij deze handelaar, of anders (de eerste keer) op de **vraagprijs V** (besluit 76), maar nooit hoger dan het geld. Pino moet dus zelf omlaag met −.
 - De stepper −/+ gaat in **stappen van 5**, en vasthouden herhaalt. Het bereik is 5 … min(V, geld): boven de vraagprijs bieden kan niet.
 - Uitkomst van een bod b bij een handelaar met grens G:
-  - **Matig, de handelaar met korting:** het eerste bod tussen P en V → twijfel (zie boven); daarna is elk bod ≥ P ja. Een bod onder P is een gewone nee.
+  - **Matig, de handelaar met korting:** een bod tussen P en V → twijfel (zie boven), elke keer, tot hij langs is gekomen. Een bod onder P is een gewone nee. Is hij langs geweest, dan is zijn vraagprijs P: een bod van P is ja, elk lager bod maakt hem boos (zie hieronder).
   - **b ≥ G → ja.** De badge wordt blij, Pino betaalt b en de ronde is klaar → resultaatscherm.
   - **b < G → nee.** De handelaar schudt kort zijn hoofd en wordt verdrietig (eerste keer) of boos (daarna) De nee-teller van die handelaar gaat +1.
 - **Beledigd:** na de derde nee blijft de badge boos en accepteert de handelaar in deze ronde alleen nog b = V (de stepper springt naar V; lager bieden geeft nee/boos). Kan Pino V niet betalen, dan is deze handelaar die ronde af. De teller zelf is onzichtbaar.
@@ -133,11 +140,22 @@ De stepper gaat nooit hoger dan het geld. Is het geld lager dan elke G, dan lukt
   - Mai houdt de sieraden. (besloten, #66)
 - Vanaf de eigen ronde ligt het product vooraan op de toonbank van **alle vier** de kramen. Gekochte producten verdwijnen van de kramen.
 
+### Matig: de twijfelende handelaar komt langs (besluit 140)
+- Heeft de handelaar met korting getwijfeld en **beëindigt Pino daarna een gesprek met een andere handelaar** (weglopen), dan stopt **na 1000 ms** de besturing (D-pad, joystick, toetsen en de tekstballon).
+- De twijfelende handelaar **loopt naar Pino toe**: achter zijn toonbank langs naar buiten en dan om de put, het krukje, de lantaarnpaal, de kramen en de wisselkraam heen (route over een raster, rechtgetrokken), met het twijfelgezicht. Zijn kraam is zolang leeg.
+- Hij ziet er **gehaast** uit (besluit 141): hij loopt sneller (135 i.p.v. 100 px/s), wipt sneller en hoger, leunt 9° voorover in de looprichting, er vliegen zweetdruppels (`#8ED8F8`) van zijn hoofd en er blijven stofwolkjes (`s9-stof`) achter bij zijn voeten. Boven zijn hoofd staat een wit **tekstwolkje "miss! miss! wait!"** (Fredoka 700, 12 px, schaduw `#CDE4F0`, met een puntje naar hem toe; binnen de scène gehouden). Het wolkje verdwijnt zodra hij bij Pino staat. Teruglopen gaat in gewoon tempo, zonder wolkje. Met *reduced motion*: geen wippen, kantelen, druppels of stof, wel het wolkje.
+- Staat hij naast haar, dan draait Pino naar hem toe en **opent het onderhandelscherm opnieuw**, met hem. Zijn **vraagprijs is nu alles wat Pino heeft**: haar geld plus de waarde van de edelstenen die ze nog niet heeft ingeruild (= P van de ronde, besluit 139). Heeft ze nog niet ingeruild, dan reikt de stepper niet tot die vraagprijs.
+- **Bod = vraagprijs → deal.** Elk **lager bod → boos** (rode smiley en gezicht): hij gaat terug naar zijn oude vraagprijs V en doet niet meer mee. Met wat Pino heeft lukt deze ronde dan geen deal meer; pas als ze meer verdient (spel 2 of 4) begint bij een volgend bezoek een nieuwe ronde (besluit 139).
+- **Weglopen** (zonder bod) kan: hij loopt terug naar zijn kraam en Pino kan meteen weer lopen. Daar staat hij met dezelfde vraagprijs (alles wat ze heeft), dus ze kan eerst inruilen en dan bij zijn kraam betalen.
+- Hij komt **één keer** per ronde, alleen na een gesprek met een andere handelaar (niet met hemzelf, niet met de wisselaar). Verlaat Pino de markt in de seconde vóór hij vertrekt, dan komt hij niet; dat gebeurt dan na een volgend gesprek met een ander.
+- Staat: `gekomen` en `oudeV` bij die handelaar in `ronde.handelaars`; `moetKomen` en `komBij` in `markt.js`.
+
 ### Voorbeeldrondes
 - **Ronde 1 · Simpel · ketting** (geld 240): Mai 270, Arun 240, Siti 295, Minh 255. Bij Mai kan de stepper niet hoger dan 240 → nee/boos (30 eronder). Bij Arun 240 → ja. Betaald 240, laagste 240, over 0.
-- **Ronde 2 · Matig · kniebeschermers** (29 nov): Pino ruilt twee groene edelstenen → 160. V = 200 bij iedereen; Mai, Arun en Siti geven geen korting (G = 200), Minh zakt tot 160. Bij Arun: 160 → nee/verdrietig; 150 → nee/boos. Bij Minh: 160 → nee/twijfel (telt niet); 160 → ja (blij). Betaald 160, laagste 160, over 0. Met 160 munten kan ze bij de andere drie niets kopen.
-- **Ronde 3 · Moeilijk · spray** (1 dec): V = 225; gastheer Mai, Siti en Arun komen bij haar langs; die drie spannen samen met K = 200. Minh doet niet mee, B = 180. Bij Mai: 185 → nee/verdrietig; 200 → ja. Bij Minh: 180 → nee/verdrietig (telt niet); 180 → ja. Of: 175 → nee/verdrietig (telt wel; 5 onder B).
-- **Ronde 4 · Simpel · schoenen** (2 dec): goedkoopste V = 200, de andere drie bv. 215, 235, 260.
+- **Ronde 2 · Matig · kniebeschermers** (29 nov): Pino begint met 0 munten en twee groene edelstenen → P = 160. Ze ruilt ze in → 160. V = 200 bij iedereen; Mai, Arun en Siti geven geen korting (G = 200), Minh zakt tot 160. Bij Arun: 160 → nee/verdrietig; 150 → nee/boos. Bij Minh: 160 → nee/twijfel (telt niet); nog eens 160 → weer twijfel. Pino loopt weg en praat met Arun; ze loopt weg. Na 1 s staat ze stil en Minh loopt naar haar toe; het scherm opent met vraagprijs 160. 160 → ja (blij). Betaald 160, laagste 160, over 0. (Had ze 155 geboden, dan was Minh boos geworden en terug naar 200 gegaan.) Met 160 munten kan ze bij de andere drie niets kopen.
+- **Ronde 3 · Moeilijk · spray** (1 dec): Pino begint met 0 munten, één groene en één blauwe edelsteen → P = 180. V = 225; gastheer Mai, Siti en Arun komen bij haar langs; die drie spannen samen met K = 200. Minh doet niet mee, B = 180. Bij Mai: 185 → nee/verdrietig; 200 → ja. Bij Minh: 180 → nee/verdrietig (telt niet); 180 → ja. Of: 175 → nee/verdrietig (telt wel; 5 onder B).
+- **Ronde 4 · Simpel · schoenen** (2 dec): Pino begint met 20 munten, één blauwe en twee gele edelstenen → P = 20 + 100 + 120 = 240 (boven de ondergrens 200). Goedkoopste V = 240, de andere drie bv. 255, 275, 300.
+- **Te weinig:** 0 munten en één gele edelsteen bij de schoenen → 60 < 200, dus P = 200 en geen enkele deal lukt.
 
 ## Besturing
 - Telefoon, zoals spel 1 (besluiten 23, 24 en 71): vasthouden op het scherm laat na 250 ms de joystick verschijnen (ring met knop op de drukplek, richting én kracht); een korte tik doet hetzelfde als de tekstballonknop.
@@ -163,7 +181,7 @@ De stepper gaat nooit hoger dan het geld. Is het geld lager dan elke G, dan lukt
       korting: null,                            // alleen Matig: de handelaar die tot P zakt
       lagerBod: false,                          // alleen Moeilijk: er is een bod onder de vraagprijs afgewezen
       samengezworen: false,                     // alleen Moeilijk: het samenzweren is al gebeurd (één keer per ronde)
-      handelaars: { mai: { v, g, nee, afgewezen, twijfelt, getwijfeld, laatsteBod, vrijeNee, beledigd }, arun: {…}, siti: {…}, minh: {…} }
+      handelaars: { mai: { v, g, nee, afgewezen, twijfelt, getwijfeld, gekomen, oudeV, laatsteBod, vrijeNee, beledigd }, arun: {…}, siti: {…}, minh: {…} }
     }
   }
   ```
@@ -180,12 +198,12 @@ De stepper gaat nooit hoger dan het geld. Is het geld lager dan elke G, dan lukt
   - `rnd` is in te voeren zodat de logica met een vaste seed te testen is.
 
 ## Resultaatscherm
-Zoals `Spel5-Klaar.png`, met het product van de ronde in de bol: "Deal!", Pino en de handelaar met blije badge, tegels **Betaald / Laagste / Over** (munt + getal) en de verdiende vaardigheid (alleen de eerste keer).
+Zoals `Spel5-Klaar.png`, met het product van de ronde in de bol: "Deal!", Pino en de handelaar met blije badge (Pino blij met beide handen langs haar zij: `pino-staan`, niet de uitgestoken arm van `pino-vinger`; Benjamin, 12 november), tegels **Betaald / Laagste / Over** (munt + getal) en de verdiende vaardigheid (alleen de eerste keer).
 - Knoppen: "Terug naar de kalender", en "Nog een keer" alleen als de volgende ronde al kan (het volgende product is "aan de beurt"). Die knop start dan direct de markt.
 - Geen zin die verraadt of het de laagste prijs was, en geen niveau-aanduiding.
 
 ## Geen uitleg
-Geen niveaunaam, geen teller voor het aantal biedingen, geen tekst bij "nee", bij het samenspannen of bij de wisselkraam (geen koers). In het album geen productnamen en geen datums: alleen productsymbool, stempel, slot en munt + bedrag; geen deurtje-icoon of andere aanwijzing voor welk spel een product is. Alleen de badge (blij/twijfel/boos), de hoofdschud-animatie, de wolkjes en de munt-teller vertellen iets.
+Uitzondering (besluit 141): het tekstwolkje "miss! miss! wait!" van de handelaar die in Matig naar Pino toe rent; dat is wat hij roept, geen uitleg. Verder: geen niveaunaam, geen teller voor het aantal biedingen, geen tekst bij "nee", bij het samenspannen of bij de wisselkraam (geen koers). In het album geen productnamen en geen datums: alleen productsymbool, stempel, slot en munt + bedrag; geen deurtje-icoon of andere aanwijzing voor welk spel een product is. Alleen de badge (blij/twijfel/boos), de hoofdschud-animatie, de wolkjes en de munt-teller vertellen iets.
 
 ## Toegankelijkheid
 - Kaartjes in het album zijn `role="img"` met `aria-label` (bv. "Kniebeschermers, gekocht, 160 munten" of "Spray, op slot"); de marktknop is een `<button>`.
@@ -200,9 +218,9 @@ Geen niveaunaam, geen teller voor het aantal biedingen, geen tekst bij "nee", bi
 - [x] De eerste ronde is Simpel; rondes 2 en 3 zijn samen precies {Matig, Moeilijk}; ronde 4 is weer Simpel.
 - [x] Ronde 1: met 240 munten kan alleen de kraam met V = 240; met minder kan geen enkele kraam.
 - [x] Simpel: vier verschillende vraagprijzen; elk bod onder V wordt geweigerd; bieden op V lukt.
-- [x] Matig: alle vier dezelfde V; drie handelaars weigeren alles onder V; de vierde twijfelt bij het eerste bod ≥ P (telt niet mee) en gaat daarna akkoord met elk bod ≥ P.
+- [x] Matig: alle vier dezelfde V; drie handelaars weigeren alles onder V; de vierde twijfelt bij elk bod tussen P en V (telt niet mee). Na een gesprek met een andere handelaar stopt na 1 s de besturing, loopt hij naar Pino toe en opent het scherm met vraagprijs P; P → deal, lager → boos en terug naar V (geen deal meer); weglopen → hij loopt terug en Pino kan weer lopen. Hij komt maar één keer.
 - [x] Moeilijk: de drie samenzweerders (gastheer Mai of Minh, plus Siti en Arun) accepteren K en weigeren K − 5; de vierde weigert een bod tussen B en K de eerste keer en accepteert hetzelfde bod direct daarna; een bod onder B blijft nee.
-- [x] Stemming: blij bij het eerste openen, verdrietig (blauw) na het eerste afgewezen bod, boos (rood) daarna, in Matig twijfel (oranje) bij het eerste genoeg-bod aan de handelaar met korting, blij bij een deal; het gezicht in het portret en in de scène hoort er steeds bij.
+- [x] Stemming: blij bij het eerste openen, verdrietig (blauw) na het eerste afgewezen bod, boos (rood) daarna, in Matig twijfel (oranje) bij een genoeg-bod aan de handelaar met korting (ook tijdens het aanlopen), blij bij een deal; het gezicht in het portret en in de scène hoort er steeds bij.
 - [x] Na drie keer nee accepteert een handelaar alleen nog V; de "vrije" nee van wie niet samenspant telt niet mee.
 - [x] Alleen in Moeilijk lopen Siti en Arun naar de kraam van de gastheer (Mai of Minh) en praten ze daar met z'n drieën boos; de vierde blijft staan. Zolang dat duurt, kan Pino met geen van de drie praten. Het gebeurt één keer per ronde, pas na het eerste afgewezen bod onder de vraagprijs.
 - [x] Weglopen en terugkomen (ook via de kalender) houdt prijzen, grenzen en nee-tellers vast.

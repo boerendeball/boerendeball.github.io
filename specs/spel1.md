@@ -45,7 +45,7 @@ Pino wordt **per rij gesorteerd**: ze wordt getekend ná alle bedden waarvan de 
 
 ### Bedden (64×84), kolommen x = 24, 147, 270; rijen y = 86, 222, 358
 
-Opbouw per bed (volgorde!): `bed-onder` (0,0) → `k-hoofd` (16,14 32×32, huidkleur) → haar (16,14 32×32, haarkleur) → gezicht `g-slaap`/`g-gaap`/`g-verrast` (16,14) → `bed-deken` (0,0, dekenkleur) → motief 3× (`m-{motief}` op 10,50 14×14; 40,54 14×14; 25,60 12×12).
+Opbouw per bed (volgorde!): `bed-onder` (0,0) → `k-hoofd` (16,14 32×32, huidkleur) → haar (16,14 32×32, haarkleur) → gezicht `g-slaap`/`g-wakker`/`g-gaap`/`g-verrast`/`g-boos` (16,14) → `bed-deken` (0,0, dekenkleur) → motief 3× (`m-{motief}` op 10,50 14×14; 40,54 14×14; 25,60 12×12).
 
 Vaste bezetting uit het artboard (deken · motief · huid · haar):
 
@@ -60,6 +60,8 @@ Dekenkleuren: groen `#39D353`, geel `#FFC93C`, blauw `#5BC0EB`. Dit zijn precies
 ### Decoraties bij een bed
 
 - **Slapend**: "z z z" rechts van het kussen: tekst Nunito 800 `#8AA0AF`, op (x+50, y+22) 11 px, (x+57, y+14) 9 px, (x+63, y+7) 7 px. Zachtjes op en neer (±2 px, 1,6 s) mag; geen filters.
+- **Wakker**: gezicht `g-wakker` (ogen open met lichtje, klein mondje, blos), geen z's en geen oplichting; de fase vóór het gapen (besluit 142).
+- **Boos** (na een onderbreking, besluit 143): gezicht `g-boos` met schuine wenkbrauwen, mondhoeken omlaag en rode blos; geen z's.
 - **Gapend**: gezicht `g-gaap`, verder niets. **Geen ring of balk** die de resterende gaaptijd toont (besluit Benjamin, 3 november 2026): Pino ziet aan het gezicht dat er gegaapt wordt en schat zelf in hoeveel tijd ze heeft.
 - **Gapend én Pino naast het bed** (`naastBed`): alleen het **kind** (hoofd, haar, gezicht) licht subtiel op met een witte tint van 22 % over alleen de dekkende pixels, zoals een hover op een knop; bed en deken veranderen niet. Technisch: kind op een tussenlaag (`maakLaag`, 32×32 plus 16 px rand, gelijk aan de sprite-uitloop), `source-atop`-vulling, dan op het hoofdcanvas tussen `bed-onder` en `bed-deken` (besluit 17). Zodra Pino buiten reik stapt of de gaap stopt, verdwijnt de tint direct; geen animatie.
 - **Verrast** (na onderbreking): gezicht `g-verrast` 1,2 s; de **deken** (met motieven) wordt op het moment van de onderbreking donkerder (tint `#1E3A4C` op 30 %) en loopt in 0,4 s lineair terug naar de eigen kleur (`dekenTot`, besluit 18), via dezelfde tussenlaag-techniek als de bereik-tint. **Geen +1-ballon** (artboard heeft die wel; weggelaten, besluit 20): het verraste gezicht en de dekenflits zijn de enige feedback.
@@ -72,7 +74,11 @@ Constanten staan bovenaan `spel1.js` en zijn tuning-waarden:
 |---|---|---|
 | `DUUR` | 60 s | speelduur; de tijdbalk loopt van vol naar leeg |
 | `START_PAUZE` | 1,5 s | geen gapen in de eerste seconden |
+| `WAKKER_DUUR` | 1,2 s | een kind ligt wakker (ogen open) voordat het gaapt of weer inslaapt (besluit 142) |
+| `GAAP_KANS` | 0,7 | kans dat een wakker kind gaat gapen; anders slaapt het weer in |
 | `GAAP_DUUR` | 3,5 s | zo lang blijft een kind gapen; daarna telt het als gemist |
+| `VERRAST_DUUR` | 0,6 s | verrast gezicht na een onderbreking |
+| `BOOS_DUUR` | 0,9 s | daarna even boos (`g-boos`), dan meteen weer slapen (besluit 143) |
 | `INTERVAL_START` / `INTERVAL_EIND` | 4,0 s → 2,2 s | tijd tussen nieuwe gapen, lineair over de speelduur |
 | `MAX_TEGELIJK` | 2 (eerste 30 s), daarna 3 | gelijktijdig gapende kinderen |
 | `RUST` | 6 s | een kind gaapt niet twee keer binnen deze tijd |
@@ -84,9 +90,10 @@ Constanten staan bovenaan `spel1.js` en zijn tuning-waarden:
 | `POSE_DUUR` | 0,45 s | zo lang staat Pino met de arm uitgestoken (geen lopen) |
 
 - **Start**: Pino staat op (92, 232) (links van het middelste bed), kijkt naar rechts. De tijd begint te lopen bij de eerste invoer óf na 2 s, wat eerder is.
-- **Gaap spawnen**: kies willekeurig een slapend kind dat niet in `RUST` zit en niet al gaapt; als er `MAX_TEGELIJK` gapen zijn, wacht.
+- **Wakker worden** (besluit 142): op elk interval wordt willekeurig een slapend kind dat niet in `RUST` zit wakker (`g-wakker`: ogen open, mondje dicht, geen z's). Als er al `MAX_TEGELIJK` kinderen wakker of gapend zijn, wacht het. Na `WAKKER_DUUR` gaat het met kans `GAAP_KANS` gapen (`g-gaap`), anders valt het weer in slaap (`RUST` start). Een wakker kind is nog niet te onderbreken en licht niet op.
 - **Onderbreken**: bij de actieknop zoekt het spel het dichtstbijzijnde gapende bed waar Pino **naast** staat (`naastBed`: voetpunt links of rechts van het bed binnen `REIK`, en op bedhoogte; boven of onder het bed telt niet, besluit 21). Gevonden → score +1 (onzichtbaar), kind `verrast`, dekenflits, token toegevoegd, Pino 0,45 s gekeerd naar het bed met de **arm aan de kant van het kind** uitgestoken: `pino-romp` + de hangende andere arm op Pino's eigen laag, en `pino-arm-vinger` om de schouder gedraaid naar de mond van het kind, als laatste getekend zodat hij over bed en kind heen ligt. Niet gevonden → dezelfde pose 0,3 s met de arm aan de kijkkant recht vooruit, zonder straf. Zo ontdekt Pino de afstand en de juiste kant zelf.
 - **Gemist**: een gaap die afloopt → `gemist` +1, kind valt weer in slaap; geen zichtbare straf; het kind sluit gewoon weer de ogen.
+- **Na een onderbreking**: verrast gezicht (`VERRAST_DUUR`), dan even boos (`BOOS_DUUR`, besluit 143) en dan meteen weer slapen, zonder wakker-fase; het kind wordt pas na `RUST` opnieuw wakker.
 - **Einde**: bij 0:00 bevriest de scène 0,8 s en opent het resultaatscherm. De terugknop tijdens het spel gaat terug zonder op te slaan (bevestiging is niet nodig: niets gaat verloren behalve deze poging).
 - **Slotzin**: bij minder dan 6 onderbroken "Er werd flink gegaapt vanavond. Morgen beter!", anders "Niemand durfde te gapen in het bijzijn van prinses Pino. Nou ja, bijna niemand." Geen sterren (besluit 16).
 - **Pauze**: `visibilitychange` (tab weg) pauzeert de lus; terugkomen hervat zonder sprong.
@@ -125,6 +132,8 @@ Weggelaten uit het artboard: het woord "TIJD" bij de balk. Niet aanwezig: de kro
 - [x] Alle dekenkleuren en motieven kloppen; `currentColor` valt nergens terug op `#1E3A4C`.
 - [x] Pino loopt met pijltjes (gecontroleerd), botst op bedden (stopt op x = 114 naast het middelste bed), blijft binnen de vloer, en wordt per bedrij voor/achter getekend.
 - [x] Gapen verschijnen volgens de constanten, zonder aflopende ring; afgelopen gaap telt als gemist.
+- [x] Kind wordt eerst wakker (`g-wakker`), gaapt dan wel of niet, en slaapt weer (besluit 142; in de preview gezien: wakker → slaap, wakker → gaap).
+- [x] Na een onderbreking: verrast → boos (`g-boos`) → slaap, zonder wakker-fase (besluit 143; in de preview gezien: 0,6 s verrast, 0,9 s boos, dan slaap).
 - [ ] Onderbreken naast het bed (links of rechts): verrast gezicht, dekenflits, arm aan de kant van het kind over het bed heen naar de mond; boven/onder het bed of te ver weg: alleen de pose met de arm recht vooruit. (Nog te controleren in de browser na deze wijziging.)
 - [x] Tijdbalk en `m:ss` lopen gelijk; op 0:00 volgt het resultaatscherm met het juiste getal.
 - [x] Na afronden: deurtje 1 `gespeeld`, `vaardigheden.lichaam` +1 en `behoeften.verjaardag` +10 (alleen eerste keer), `tegels` per onderbreking één tegel met de juiste sleutel (`geel-vogel` gezien), `scores[1]` bijgewerkt.

@@ -15,11 +15,13 @@ import { ga } from '../router.js';
 
 /* ---------- tuning (specs/spel1.md) ---------- */
 const DUUR = 60;              // s speelduur
-const START_PAUZE = 1.5;      // s geen gapen aan het begin
+const START_PAUZE = 1.5;      // s niemand wordt wakker aan het begin
+const WAKKER_DUUR = 1.2;      // s een kind ligt wakker (ogen open) voordat het gaapt of weer inslaapt (besluiten.md #142)
+const GAAP_KANS = 0.7;        // kans dat een wakker kind gaat gapen; anders valt het weer in slaap
 const GAAP_DUUR = 3.5;        // s zo lang gaapt een kind
-const INTERVAL_START = 4.0;   // s tussen gapen aan het begin
-const INTERVAL_EIND = 2.2;    // s tussen gapen aan het eind
-const RUST = 6;               // s een kind gaapt niet twee keer binnen deze tijd
+const INTERVAL_START = 4.0;   // s tussen kinderen die wakker worden, aan het begin
+const INTERVAL_EIND = 2.2;    // s tussen kinderen die wakker worden, aan het eind
+const RUST = 6;               // s een kind wordt niet twee keer wakker binnen deze tijd
 const REIK = 28;              // px naast het bed (links of rechts) waarbinnen Pino's voetpunt moet staan
 const ZIJ_BOVEN = 30;         // px vanaf de bovenkant van het bed: hoger staat Pino erachter, niet ernaast
 const ZIJ_ONDER = 12;         // px onder het voeteneind waar "ernaast" nog telt
@@ -35,7 +37,8 @@ const DEKEN_ALPHA = 0.3;
 const SNELHEID = 130;         // px/s
 const POSE_DUUR = 0.45;       // s vinger uitgestoken na een treffer
 const POSE_MIS = 0.3;         // s vinger uitgestoken zonder treffer
-const VERRAST_DUUR = 1.2;     // s verrast gezicht
+const VERRAST_DUUR = 0.6;     // s verrast gezicht na een onderbreking (#142)
+const BOOS_DUUR = 0.9;        // s daarna even boos, dan meteen weer slapen (#143)
 const BEVRIES = 0.8;          // s stilstand voor het resultaatscherm
 const JOYSTICK_VERTRAGING = 250;  // ms vasthouden voordat de joystick verschijnt (besluiten.md #23)
 
@@ -57,7 +60,7 @@ const GRENS = { xMin: 0, xMax: B - 48, yMin: 130 - 72, yMax: H - 72 };
 function spriteLijst() {
   const lijst = [{ id: 'bed-onder' }, { id: 'raam' }, { id: 'kleedje' }, { id: 'nachtlamp' },
     { id: 'pino-staan' }, { id: 'pino-loop' }, { id: 'pino-romp' }, { id: 'pino-arm-links' }, { id: 'pino-arm-rechts' }, { id: 'pino-arm-vinger' },
-    { id: 'g-slaap' }, { id: 'g-gaap' }, { id: 'g-verrast' },
+    { id: 'g-slaap' }, { id: 'g-wakker' }, { id: 'g-gaap' }, { id: 'g-verrast' }, { id: 'g-boos' },
     { id: 'm-vlinder' }, { id: 'm-boom' }, { id: 'm-vogel' }];
   for (const k of Object.values(KLEUR)) lijst.push({ id: 'bed-deken', kleur: k });
   for (const rij of BEZETTING) {
@@ -106,7 +109,8 @@ function speel({ root, dag, info, klaar, opnieuw }) {
   /* ---------- spelstaat ---------- */
   const bedden = [];
   BEZETTING.forEach((rij, r) => rij.forEach(([deken, motief, huid, haar, haarkleur], c) => {
-    bedden.push({ x: KOLOM[c], y: RIJ[r], deken, motief, huid, haar, haarkleur, status: 'slaap', gaapTot: 0, verrastTot: 0, rustTot: 0, dekenTot: 0 });
+    // status: slaap → wakker → (gaap →) slaap; onderbroken: gaap → verrast → boos → slaap (besluiten.md #142, #143)
+    bedden.push({ x: KOLOM[c], y: RIJ[r], deken, motief, huid, haar, haarkleur, status: 'slaap', wakkerTot: 0, gaapTot: 0, verrastTot: 0, boosTot: 0, rustTot: 0, dekenTot: 0 });
   }));
   const pino = { x: PINO_START.x, y: PINO_START.y, richting: 1, pose: 'staan', poseTot: 0, loopTijd: 0, beweegt: false, arm: null };
   const s = {
@@ -145,15 +149,16 @@ function speel({ root, dag, info, klaar, opnieuw }) {
     return INTERVAL_START + (INTERVAL_EIND - INTERVAL_START) * f;
   }
 
-  function spawnGaap() {
-    const actief = bedden.filter((b) => b.status === 'gaap').length;
+  // Een slapend kind wordt wakker; of het daarna gaat gapen, beslist GAAP_KANS na WAKKER_DUUR.
+  function wordtWakker() {
+    const actief = bedden.filter((b) => b.status === 'wakker' || b.status === 'gaap').length;
     const max = s.verstreken < DUUR / 2 ? 2 : 3;
     if (actief >= max) return;
     const kandidaten = bedden.filter((b) => b.status === 'slaap' && b.rustTot <= 0);
     if (!kandidaten.length) return;
     const b = kandidaten[Math.floor(Math.random() * kandidaten.length)];
-    b.status = 'gaap';
-    b.gaapTot = GAAP_DUUR;
+    b.status = 'wakker';
+    b.wakkerTot = WAKKER_DUUR;
   }
 
   // Pino staat naast het bed: voetpunt links of rechts van het bed (binnen REIK) én op bedhoogte. Boven of
@@ -253,18 +258,27 @@ function speel({ root, dag, info, klaar, opnieuw }) {
     for (const b of bedden) {
       if (b.rustTot > 0) b.rustTot -= dt;
       if (b.dekenTot > 0) b.dekenTot -= dt;
-      if (b.status === 'gaap') {
+      if (b.status === 'wakker') {
+        b.wakkerTot -= dt;
+        if (b.wakkerTot <= 0) {
+          if (Math.random() < GAAP_KANS) { b.status = 'gaap'; b.gaapTot = GAAP_DUUR; }
+          else { b.status = 'slaap'; b.rustTot = RUST; }
+        }
+      } else if (b.status === 'gaap') {
         b.gaapTot -= dt;
         if (b.gaapTot <= 0) { b.status = 'slaap'; b.rustTot = RUST; s.gemist += 1; }
       } else if (b.status === 'verrast') {
         b.verrastTot -= dt;
-        if (b.verrastTot <= 0) b.status = 'slaap';
+        if (b.verrastTot <= 0) { b.status = 'boos'; b.boosTot = BOOS_DUUR; }
+      } else if (b.status === 'boos') {
+        b.boosTot -= dt;
+        if (b.boosTot <= 0) b.status = 'slaap'; // onderbroken: na boos direct weer slapen, niet eerst wakker
       }
     }
     if (s.gestart) {
       s.gaapTimer -= dt;
       if (s.verstreken >= START_PAUZE && s.gaapTimer <= 0) {
-        spawnGaap();
+        wordtWakker();
         s.gaapTimer = interval(s.verstreken) * (0.8 + 0.4 * Math.random());
       }
     }
@@ -279,7 +293,7 @@ function speel({ root, dag, info, klaar, opnieuw }) {
     if (s.gestart && s.tijd <= 0) {
       s.klaar = true;
       s.bevries = BEVRIES;
-      for (const b of bedden) if (b.status === 'gaap') { b.status = 'slaap'; }
+      for (const b of bedden) if (b.status === 'gaap' || b.status === 'wakker') { b.status = 'slaap'; }
     }
   }
 

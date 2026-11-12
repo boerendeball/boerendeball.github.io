@@ -146,6 +146,10 @@ Keuzes die niet (eenduidig) in het ontwerp staan. **Te bevestigen** = door mij g
 | 140 | 2026-11-12 | Spel 5: Matig, twijfelende handelaar komt langs | De handelaar met korting twijfelt bij elk bod tussen P en V, tot Pino eerst bij een andere handelaar is geweest. Beëindigt ze een gesprek met een niet-twijfelende handelaar, dan stopt na 1000 ms de besturing, loopt hij naar haar toe en opent het onderhandelscherm opnieuw. Zijn vraagprijs is dan alles wat ze heeft (geld + niet ingeruilde edelstenen = P). Biedt ze lager, dan wordt hij boos en gaat hij terug naar zijn oude vraagprijs: deze ronde lukt dan geen deal meer (bewust). Weglopen: hij loopt terug, met dezelfde vraagprijs. Eén keer per ronde. Vervangt "daarna akkoord" uit #79 | besloten (Benjamin) |
 | 141 | 2026-11-12 | Spel 5: twijfelende handelaar rent gehaast | De handelaar die in Matig naar Pino toe loopt (#140) ziet er gehaast uit: sneller lopen (135 px/s, bijgesteld van 170), sneller en hoger wippen, 9° voorover, zweetdruppels en stofwolkjes. Boven zijn hoofd een tekstwolkje "miss! miss! wait!". Bewuste uitzondering op "geen tekst in spellen": het is wat hij roept, geen uitleg of hint | besloten (Benjamin) |
 
+| 142 | 2026-11-12 | Spel 1: kind wordt eerst wakker | Een kind gaat niet meer vanuit zijn slaap direct gapen. Volgorde: **slaap → wakker** (ogen open, nieuw gezicht `g-wakker`, `WAKKER_DUUR` 1,2 s) **→ met kans `GAAP_KANS` (70 %) gapen, anders weer slapen → slaap**. Onderbreekt Pino een gapend kind, dan is het kort verrast (`VERRAST_DUUR` 0,8 s) en valt het **meteen** weer in slaap, zonder wakker-fase. Een wakker kind telt mee voor het maximum aantal tegelijk (2, later 3) en is nog niet te onderbreken; alleen een gapend kind licht op | besloten (Benjamin) |
+
+| 143 | 2026-11-12 | Spel 1: boos na onderbreking | Na een onderbreking is het kind eerst kort verrast (`VERRAST_DUUR` 0,6 s), dan even **boos** (nieuw gezicht `g-boos`: schuine wenkbrauwen, mondhoeken omlaag, rode blos; `BOOS_DUUR` 0,9 s) en valt daarna direct weer in slaap | besloten (Benjamin) |
+
 ## Open vragen voor Benjamin (uit de ontwerpdocumenten)
 
 - Definitieve speltitels per dag.

@@ -150,6 +150,18 @@ Keuzes die niet (eenduidig) in het ontwerp staan. **Te bevestigen** = door mij g
 
 | 143 | 2026-11-12 | Spel 1: boos na onderbreking | Na een onderbreking is het kind eerst kort verrast (`VERRAST_DUUR` 0,6 s), dan even **boos** (nieuw gezicht `g-boos`: schuine wenkbrauwen, mondhoeken omlaag, rode blos; `BOOS_DUUR` 0,9 s) en valt daarna direct weer in slaap | besloten (Benjamin) |
 
+| 144 | 2026-11-12 | Spel 10: botsen = voorbij | In beide fasen en met alles (gans, schaap, auto, tegenligger, slome auto, politie). Resultaatscherm "Oeps…" met een verdrietige Pino; geen beloning, het deurtje blijft ongespeeld | besloten (Benjamin); de titel "Oeps…" en het gansje in het tafereel zijn een keuze van Claude |
+| 145 | 2026-11-12 | Spel 10: geen weeën-teller | Hart + klok + getal verdwijnt uit de kopbalk en uit de data. Het doel is aankomen bij de bevallende vrouw. Wijkt af van de previews | besloten (Benjamin) |
+| 146 | 2026-11-12 | Spel 10: afstandsbalk in fase 2 | Boven de scène een balk zoals de politiekaart van spel 6 die toont hoe ver het nog is; vol = aangekomen. Begin met 20 s rijden op volle snelheid. In fase 1 onzichtbaar | besloten (Benjamin); iconen autootje links en huisje rechts zijn een keuze van Claude |
+| 147 | 2026-11-12 | Spel 10: snelheden en stappen | Ganzen en schapen bewegen langzaam (22 en 16 px/s), auto's snel (130 en 160 px/s). Pino beweegt per stap: één tik = één rij of kolom | besloten (Benjamin); de getallen zijn af te stellen |
+| 148 | 2026-11-12 | Spel 10: geen tussenscherm | Bereikt Pino het ziekenhuisautootje, dan gaat het spel direct door in de auto | besloten (Benjamin) |
+| 149 | 2026-11-12 | Spel 10: geen koppeling | Voor nu hangt spel 10 niet af van iets uit eerdere spellen | besloten (Benjamin) |
+| 150 | 2026-11-12 | Spel 10: baanwissel per tik | Twee rijstroken; één tik op een stuurknop = één strook opzij | besloten (Benjamin) |
+| 151 | 2026-11-12 | Spel 10: opnieuw vanaf fase 1 | "Nog een keer" begint altijd weer te voet, ook na een botsing in de auto | besloten (Benjamin) |
+| 152 | 2026-11-12 | Spel 10: aankomst | Balk vol → korte aankomst (de auto stopt bij een huis met de bevallende vrouw achter het raam, sterretjes en hartjes) → meteen de verjaardagsfinale, zonder resultaatscherm | besloten (Benjamin); het huisje met `s9-moeder` achter het raam is een keuze van Claude |
+| 153 | 2026-11-12 | Spel 10: rem, situaties en bermen | Rem ingedrukt = 90 in plaats van 260 px/s. Vier situaties komen een voor een (tegenligger, inhalen, politie van achter, overstekende ganzen), altijd met een uitweg. Wie de rem 2,5 s aaneen vasthoudt, krijgt politie achter zich. In fase 1 zijn de bermen tussen de stroken veilige rijen. Geen joystick | te bevestigen (keuze van Claude) |
+| 154 | 2026-11-12 | Spel 10: testschakelaar | `?fase=2` (meteen in de auto) en `?fase=finale` (meteen de finale, schrijft geen staat), met `test=1`; ook in `#/dev`. `pinoDebug.stap(ms)`, `actie()`, `s.onkwetsbaar` | besloten (Claude, zoals spel 6, 8 en 9) |
+
 ## Open vragen voor Benjamin (uit de ontwerpdocumenten)
 
 - Definitieve speltitels per dag.

@@ -23,7 +23,7 @@ Pino moet de regels en de verbanden tussen de spellen **zelf ontdekken**. Daarom
 
 - In een spelscherm staan alleen de **spelstand** en de **knoppen**. Geen uitlegtekst, geen opdrachtkaartjes ("Foto 1 van 3", "Zoek de werker"), geen hints, geen labels bij tellers.
 - Knoppen zijn **icoon-only** waar dat kan (pijlen, tekstballon, zandloper, stuurwiel, rempedaal, hand). Geen "Praat", "Wachten", "Reageer!", "Vooruit".
-- Tellers zijn altijd **icoon + getal**: munt + 60 (geen "§60"), loep + 2/5, hart + klok + 2 (geen "2 min"), filmrol + 10, voetstappen + 4.
+- Tellers zijn altijd **icoon + getal**: munt + 60 (geen "§60"), loep + 2/5, filmrol + 10, voetstappen + 4.
 - Resultaatschermen tonen titel, scoretegels en de verdiende vaardigheid, maar geen uitlegzin die de oplossing verraadt.
 - Uitzondering: de verjaardagsfinale (einde spel 10) heeft tekst (felicitatie, behoefte-labels, het laatste briefje) — dat is geen spel meer. Ook de kalender zelf (deurtjes, briefjes, behoeften, vaardigheden) mag tekst hebben. En in spel 5 roept de handelaar die naar Pino toe rent "miss! miss! wait!" in een tekstwolkje (besluit 141): wat een personage roept, geen uitleg.
 - Verborgen mechanieken blijven verborgen: de tegels die spel 1 oplevert zijn in spel 1 onzichtbaar; de verstopte werker (spel 7) is in spel 2–6 pas aanklikbaar nadat spel 7 is ontgrendeld; de familie die in spel 3 compleet wordt gemaakt, is zonder aankondiging het gezin van spel 4.

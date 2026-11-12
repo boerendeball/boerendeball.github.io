@@ -14,7 +14,8 @@ Per scherm één spec: wat het precies doet, hoe het eruitziet (met verwijzing n
 | [spel6.md](spel6.md) — Selfdefense | goedgekeurd |
 | [spel7.md](spel7.md) — Spot the peasant | goedgekeurd |
 | [spel9.md](spel9.md) — Vang de baby | gebouwd, te beoordelen |
-| [spel8.md](spel8.md), [spel10.md](spel10.md) | zie de spec zelf |
+| [spel10.md](spel10.md) — Bereik de bevalling + finale | gebouwd, te beoordelen |
+| [spel8.md](spel8.md) | zie de spec zelf |
 | [ontwikkelaarsopties.md](ontwikkelaarsopties.md) — pagina `#/dev` met alle dev-schakelaars (alleen lokaal) | gebouwd, te beoordelen |
 | [besluiten.md](besluiten.md) — beslislog en open vragen voor Benjamin | lopend |
 
@@ -65,11 +66,12 @@ Alles werkt met `npx serve .` op `http://localhost:3000/advent/`.
 | `?knie=1` | spel 6 met (`1`) of zonder (`0`) kniebeschermers, en zonder de ketting-controle (alleen met `test=1`) |
 | `?spray=1` | spel 8 met (`1`) of zonder (`0`) jungledieren-spray (alleen met `test=1`) |
 | `?schoenen=1` | spel 9 met (`1`) of zonder (`0`) sportschoenen (alleen met `test=1`) |
+| `?fase=2` | spel 10 meteen in de auto (`2`) of meteen de finale (`finale`; alleen met `test=1`) |
 | `?level=3` | spel 8 meteen op het bord van dit level (`1`–`5`; alleen met `test=1`) |
 | `?dev=1` | devmodus buiten een lokale host: de knop naar de ontwikkelaarsopties op de kalender |
 | `#/dev` | **ontwikkelaarsopties**: alle schakelaars hierboven met de hand aan/uit (alleen in devmodus, zie [ontwikkelaarsopties.md](ontwikkelaarsopties.md)) |
 | `#/test` | sprite-controlescherm en de ruwe staat |
-| `window.pinoDebug` | in testmodus: de live spelstaat van het lopende canvas-spel (console); in spel 6 ook `stap(ms)` om het spel met de hand vooruit te zetten; in spel 8 `oplossing()` en `speelOplossing()`; in spel 9 `stap(ms)` en `s.altijdRaak` |
+| `window.pinoDebug` | in testmodus: de live spelstaat van het lopende canvas-spel (console); in spel 6 ook `stap(ms)` om het spel met de hand vooruit te zetten; in spel 8 `oplossing()` en `speelOplossing()`; in spel 9 `stap(ms)` en `s.altijdRaak`; in spel 10 `stap(ms)`, `actie(naam)` en `s.onkwetsbaar` |
 | `#/spel/n` | spel n direct (laadscherm overgeslagen) |
 | `#/laden/n` | laadscherm en dan spel n |
 | `#/deur/n` | het Open-scherm van deurtje n (of de gans als het dicht is) |

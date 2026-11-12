@@ -252,6 +252,14 @@ function spelKaart() {
         gekozen: p.get('schoenen'), uit: !test, bijKies: (w) => pasToe({ schoenen: w }),
       }),
     ]),
+    h('div', { class: `dev-blok${test ? '' : ' dev-uit'}` }, [
+      h('span', { class: 'dev-rij-label' }, 'Spel 10 · fase'),
+      h('span', { class: 'dev-rij-uitleg' }, uitleg || 'fase=2|finale · start meteen in de auto of in de finale (de finale schrijft dan geen staat)'),
+      keuzes({
+        opties: [[null, 'Te voet'], ['2', 'In de auto'], ['finale', 'Finale']],
+        gekozen: p.get('fase'), uit: !test, bijKies: (w) => pasToe({ fase: w }),
+      }),
+    ]),
   ]);
 }
 

@@ -12,7 +12,7 @@ De Sims-momenten rondom de spellen. Alles behalve het resultaatscherm is gebouwd
 | Laadscherm | "Open deurtje" of "Speel nu" | `ui/laadscherm.js`, route `#/laden/n` → `#/spel/n` | gebouwd |
 | Resultaatscherm | einde van een spel | `ui/resultaat.js` | gebouwd (spel 1) |
 | Melding (toast) | bovenaan dialogen; los via `toonMelding` | `ui/overlay.js` | gebouwd |
-| Finale | einde spel 10 | `spellen/spel10.js` | te bouwen (spec in spel10.md) |
+| Finale | einde spel 10 | `spellen/spel10.js` | gebouwd, te beoordelen (spec in spel10.md) |
 
 ## Taartmenu (`Taartmenu.png`)
 
@@ -67,7 +67,7 @@ invoer.as() → { dx, dy }   // toetsenbord/D-pad als die actief zijn, anders de
 - **Loslaten** (`pointerup`, `pointercancel`, verlies van capture, venster verliest focus): joystick weg, vector (0, 0).
 - **Tik**: loslaten binnen 250 ms en 10 px, vóór de joystick verschijnt → `bijActie(tik)` (spel 1: onderbreken, besluiten.md #24).
 - Het vlak krijgt `touch-action: none` zodat de pagina niet scrolt of zoomt tijdens het spelen; muis: alleen de linkerknop; een tweede vinger wordt genegeerd.
-- Hergebruik: spel 5 (lopen over de markt), spel 8 (stap voor stap: lees `as()` en zet een stap als de kracht boven een drempel komt en weer loslaat), spel 10 fase 1 en 2.
+- Hergebruik: spel 5 (lopen over de markt), spel 8 (stap voor stap: lees `as()` en zet een stap als de kracht boven een drempel komt en weer loslaat), Spel 10 gebruikt de joystick niet (drie vaste knoppen, besluit 153).
 
 ## Melding (toast)
 

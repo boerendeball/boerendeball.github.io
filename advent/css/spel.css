@@ -620,3 +620,67 @@ button.s7-foto:focus-visible { outline: 3px solid #FFC93C; outline-offset: -4px;
 .s9-veld { flex: 1 1 auto; min-height: 0; container-type: size; display: flex; justify-content: center; align-items: flex-start; }
 .s9-kaart { flex: none; width: min(100cqw, calc((100cqh - 6px) * 358 / 680)); max-width: none; margin: 0; aspect-ratio: 358 / 680; background: #8ED8F8; }
 .s9-tafereel { max-width: 100%; height: auto; }
+
+/* ---------- Spel 10 · Bereik de bevalling (specs/spel10.md) ---------- */
+.spel10 { height: 100vh; height: 100dvh; min-height: 0; overflow: hidden; gap: 10px; }
+.s10-afstand { flex: none; padding: 8px 14px; }
+.s10-afstand.s10-weg { visibility: hidden; }
+.s10-balk > span { background: var(--teal); box-shadow: inset 0 -4px 0 0 var(--teal-schaduw); transition: none; }
+.s10-veld { flex: 1 1 auto; min-height: 0; container-type: size; display: flex; justify-content: center; align-items: flex-start; }
+.s10-kaart { flex: none; width: min(100cqw, calc((100cqh - 6px) * 358 / 640)); max-width: none; margin: 0; aspect-ratio: 358 / 640; background: #2B4A66; }
+.s10-knoppen { flex: none; display: grid; grid-template-columns: 1fr 1.4fr 1fr; gap: 10px; padding-bottom: 6px; }
+.s10-knoppen[hidden] { display: none; }
+.s10-knop {
+  min-height: 72px; border: 0; border-radius: 20px; background: #fff; color: var(--teal-schaduw);
+  box-shadow: 0 6px 0 0 var(--kaart-schaduw); display: flex; align-items: center; justify-content: center;
+  cursor: pointer; touch-action: none; user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent;
+  transition: transform 0.06s ease, box-shadow 0.06s ease;
+}
+.s10-knop:active { transform: translateY(4px); box-shadow: 0 2px 0 0 var(--kaart-schaduw); }
+.s10-knop-teal { background: var(--teal); color: #fff; box-shadow: 0 6px 0 0 var(--teal-schaduw); }
+.s10-knop-teal:active { box-shadow: 0 2px 0 0 var(--teal-schaduw); }
+.s10-knop-rood { background: var(--rood); color: #fff; box-shadow: 0 6px 0 0 var(--rood-schaduw); }
+.s10-knop-rood:active { box-shadow: 0 2px 0 0 var(--rood-schaduw); }
+@media (max-height: 740px) { .s10-knop { min-height: 58px; } }
+.s10-tafereel { max-width: 100%; height: auto; }
+
+/* Finale: geen spel meer, dus met tekst (Spel10-Finale). */
+body.s10-feest { background-color: #FFE0EE; }
+.s10-finale { position: relative; overflow: hidden; align-items: center; justify-content: center; padding: 20px; }
+.s10-confetti {
+  position: absolute; left: 24px; top: 40px; width: 10px; height: 10px; border-radius: 3px; background: #FF6FAE;
+  box-shadow: 70px 30px 0 0 #FFC93C, 140px -10px 0 0 #39D353, 220px 24px 0 0 #9B6BFF, 290px 4px 0 0 #1FA3DC, 330px 50px 0 0 #FF6FAE,
+    100px 90px 0 0 #1FA3DC, 250px 80px 0 0 #FFC93C, 40px 700px 0 0 #9B6BFF, 320px 720px 0 0 #39D353, 180px 760px 0 0 #FF6FAE;
+}
+.s10-slinger { position: absolute; left: 0; top: 0; width: 100%; height: 78px; }
+.s10-ballon { position: absolute; animation: s10-zweef 2.4s ease-in-out infinite; }
+@keyframes s10-zweef { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+.s10-feest-kaart {
+  position: relative; width: 100%; margin-top: 40px; padding: 0 22px 22px; border-radius: 26px;
+  display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center;
+}
+.s10-taart-bol {
+  width: 140px; height: 140px; margin-top: -60px; border-radius: 50%; background: #FFF1D6; border: 6px solid #fff;
+  box-shadow: 0 0 0 3px var(--roze), 0 8px 18px rgba(30, 58, 76, 0.18); box-sizing: border-box; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+.s10-feest-label { font-size: 12px; font-weight: 800; color: var(--roze-schaduw); letter-spacing: 1px; }
+.s10-feest-titel { margin: 0; font-size: 34px; }
+.s10-feest-tafereel { max-width: 100%; height: auto; }
+.s10-noden {
+  width: 100%; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px 10px; align-items: end;
+  background: var(--vlak-licht); border-radius: 16px; padding: 12px 14px; box-sizing: border-box;
+}
+.s10-nood { display: flex; flex-direction: column; gap: 3px; }
+.s10-nood-label { font-size: 11px; font-weight: 800; color: #35505F; }
+.s10-nood-balk { display: block; height: 10px; border-radius: 999px; background: var(--vlak); overflow: hidden; }
+.s10-nood-balk > span { display: block; height: 100%; width: 100%; border-radius: 999px; background: var(--groen); box-shadow: inset 0 -3px 0 0 var(--groen-schaduw); }
+.s10-briefje {
+  width: 100%; display: flex; align-items: flex-start; gap: 12px; background: #FFE0EE; border-radius: 16px;
+  padding: 12px 14px; box-sizing: border-box; text-align: left;
+}
+.s10-briefje-tekst { display: flex; flex-direction: column; gap: 2px; }
+.s10-briefje-label { font-size: 12px; font-weight: 800; color: var(--roze-schaduw); letter-spacing: 0.5px; }
+.s10-briefje p { margin: 0; font-size: 15px; line-height: 1.4; color: #35505F; white-space: pre-line; }
+.s10-feest-knop { background: var(--roze); color: #fff; box-shadow: 0 5px 0 0 var(--roze-schaduw); }
+@media (prefers-reduced-motion: reduce) { .s10-ballon { animation: none; } }

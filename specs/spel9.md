@@ -82,5 +82,4 @@ Canvas met `role="img"` en `aria-label`; de teller is `role="status"` met "n bab
 - Console in testmodus: `pinoDebug.stap(ms)` zet het spel vooruit; `pinoDebug.s.altijdRaak = true` laat elke baby vangen (om het gehaald-scherm te zien).
 
 ## Open punten
-- Titel van het niet-gehaald-scherm ("Oeps…" is een voorstel, besluit 132).
-- Afstelling: loopsnelheden, afstand van de landingsplek, vangmarge (besluit 134); beoordelen op een echte telefoon.
+- Geen: de titel "Oeps…" (besluit 132), de snelheid zonder schoenen (besluit 128) en de afstelling van landingsplek en vangmarge (besluit 134) zijn bevestigd (Benjamin, 14 november 2026).

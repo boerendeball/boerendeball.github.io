@@ -429,11 +429,10 @@ function bord({ root, dag, info, klaar, nr, naarOverzicht, opnieuw, volgende, ge
       return;
     }
     // Level 5: het spel is af (besluit: pas na level 5 afronden).
-    const eersteKeer = klaar({ vaardigheid: info.vaardigheid, score: { levels: gehaald, gevangen: gevangenTeller.waarde() } });
-    if (eersteKeer) staat.vulBehoefte('bordspellen', 100);
+    const eersteKeer = klaar({ score: { levels: gehaald, gevangen: gevangenTeller.waarde() } });
     toonResultaat({
       root, icoon: 'pion', label: `${info.titel.toUpperCase()} · KLAAR`, titel: 'Schaakmat!',
-      inhoud: stukkenRij(true), tegels, beloning: { vaardigheid: info.vaardigheid, eersteKeer }, opnieuw: naarOverzicht,
+      inhoud: stukkenRij(true), tegels, beloning: { ...info.beloning, eersteKeer }, opnieuw: naarOverzicht,
     });
   }
 

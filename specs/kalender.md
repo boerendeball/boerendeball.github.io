@@ -30,7 +30,7 @@ Elk deurtje is een `<button class="deur" data-deur="n">`:
 Iconen per dag: kroon, tuin (hex), familie, camera, handdruk (dag 5, besluit Benjamin 10 november: twee handen die een deal sluiten; verving de twee munten), gi (`s6-gi`), loep (`s7-loep`), tijger (`s8-stuk-tijger`), baby (`s9-bundel` in `#FFD6E6`), taart. Dag 1–4 komen uit het artboard; 5–10 zijn gekozen in dezelfde stijl.
 
 ### Vaardigheden (paneel; mobiel dicht, desktop open)
-Kop "Vaardigheden" · badge "Vandaag: +1 Charisma" (paars) zolang het deurtje van vandaag nog niet gespeeld is · pijl. Zes rijen (mobiel: label 96 px, 10 blokjes, getal; desktop: twee kolommen, label boven blokjes, geen getal): Koken, Techniek, Charisma, Conditie, Logica, Creativiteit. Blokje `vol` = teal; het eerstvolgende blokje van de vaardigheid van vandaag is `straks` (geel omrand). Voet (alleen mobiel): "Elk gespeeld spelletje levert een vaardigheidspunt op. Totaal: x van 10 punten."
+Kop "Vaardigheden" · badge "Vandaag: +5 vaardigheid" (paars, de som van de beloning van vandaag) zolang het deurtje van vandaag nog niet gespeeld is · pijl. Zes rijen (mobiel: label 96 px, 10 blokjes, getal; desktop: twee kolommen, label boven blokjes, geen getal): Koken, Techniek, Charisma, Conditie, Logica, Creativiteit. Blokje `vol` = teal; per vaardigheid van vandaag zijn de eerstvolgende blokjes (zoveel als die dag oplevert) `straks` (geel omrand). Voet (alleen mobiel): "Elk gespeeld spelletje levert vaardigheidspunten op. Totaal: x van 60 punten." (x = som van alle vaardigheden; besluit 164)
 
 ## Staat en datum
 
@@ -54,4 +54,4 @@ Kop "Vaardigheden" · badge "Vandaag: +1 Charisma" (paars) zolang het deurtje va
 
 ## Open punten
 
-Behoefte-koppeling per spel (welke behoefte vult welk spel, naast "Verjaardag vieren" +10 %), beginwaarden van de behoeften, labels Techniek/Conditie, teksten van de chips op de Sim-kaart.
+Behoefte-koppeling en beginwaarden: besloten in besluit 164. Nog open: labels Techniek/Conditie, teksten van de chips op de Sim-kaart.

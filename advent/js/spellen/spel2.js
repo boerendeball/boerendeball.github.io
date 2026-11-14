@@ -349,7 +349,7 @@ function speel({ root, dag, info, klaar, opnieuw, zoek = false }) {
     if (gestopt) return;
     const tegels = Object.keys(t.gelegd).length;
     const edelstenen = t.edelstenen || 0;
-    const eersteKeer = klaar({ vaardigheid: info.vaardigheid, score: { tegels, edelstenen } });
+    const eersteKeer = klaar({ score: { tegels, edelstenen } });
     staat.wisTuin();
     toonResultaat({
       root,
@@ -358,7 +358,7 @@ function speel({ root, dag, info, klaar, opnieuw, zoek = false }) {
       titel: 'Het pad is gelegd!',
       zin: 'De koningin wandelt met droge voeten naar de poort. Zelfs de kraanvogels maken een buiging.',
       tegels: [{ label: 'TEGELS', waarde: tegels, kleur: '#1F7A3A' }],
-      beloning: { vaardigheid: info.vaardigheid, eersteKeer },
+      beloning: { ...info.beloning, eersteKeer },
       opnieuw,
     });
   }

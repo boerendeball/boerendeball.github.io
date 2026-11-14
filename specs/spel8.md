@@ -1,7 +1,7 @@
 # Spel 8 · Check mate
 
 **Status:** gebouwd, te beoordelen (`advent/js/spellen/spel8.js`, regels en oplosser in `spellen/schaak.js`, levels in `spellen/schaak-levels.js`; controle `design/generators/spel8_levels_check.mjs`; besluiten #110–#124)
-**Dag 8 · 1 december · vaardigheid Logica · behoefte Bordspellen · rendering: SVG-DOM**
+**Dag 8 · 1 december · Logica +3 · Techniek +1 · Creativiteit +1 · Bordspellen +40 % (besluit 164) · rendering: SVG-DOM**
 Previews: `Spel8-Levels.png`, `Spel8.png`, `Spel8-Klaar.png`, `Spel8-Sprites.png` · Generator: `spel8_build*.py`, `spel8_sprites.py`
 Sprites nieuw: `s8-tegel s8-water s8-doelvak s8-boom s8-bamboe s8-tempel s8-rots s8-stam s8-voet s8-stuk-python s8-stuk-tijger s8-stuk-luiaard s8-stuk-leeuw s8-stuk-krokodil s8-stuk-pino s8-wacht s8-opnieuw s8-speel s8-slot s8-vlag s8-stap s8-varen s8-gras s8-bloem s8-grootboom s8-liaan s8-vak s8-vak-water` · bij besluit spel 8 (stemmingen, spray, nadenken): `s8-stuk-{python,tijger,luiaard,leeuw,krokodil}-blij` `s8-stuk-{…}-boos` `s8-stuk-pino-sip s8-stuk-pino-spuit s8-wolk s8-lamp-uit s8-lamp-aan s8-nevel`
 
@@ -103,8 +103,8 @@ Glijders stoppen vóór elk obstakel en elke stam.
 - In: `producten` (spray, besluit 63).
 - In/uit: `levels` (`markeerLevelGehaald(n)`; gehaalde levels blijven gehaald).
 - Bij **level 5 gehaald**:
-  - `rondSpelAf(8, { vaardigheid: 'logica', score: { levels, gevangen } })`;
-  - bij de eerste keer ook `vulBehoefte('bordspellen', 100)` (besluit #120).
+  - `rondSpelAf(8, { score: { levels, gevangen } })`;
+  - de beloning van dag 8 (`kalender.json`) brengt de behoefte "bordspellen" bij de eerste keer op 100 % (besluit #120 en #164).
 - Het aantal keer gevangen telt per sessie (niet bewaard).
 
 ## Resultaatschermen (via `ui/resultaat.js`)
@@ -116,7 +116,7 @@ Glijders stoppen vóór elk obstakel en elke stam.
 - **Level 5 gehaald** (zoals `Spel8-Klaar.png`, zonder ZETTEN):
   - titel "Schaakmat!", label "CHECK MATE · KLAAR";
   - stukkenrij met de tempel, tegels LEVELS en GEVANGEN;
-  - beloning Logica +1;
+  - beloning Logica +3 · Techniek +1 · Creativiteit +1 (besluit 164);
   - knoppen "Terug naar de kalender" en "Nog een keer" (naar het leveloverzicht).
 - **Gevangen**:
   - op het bord wordt Pino verdrietig (`s8-stuk-pino-sip`) en het dier blij (`-blij`); na 1,2 s volgt het resultaatscherm;

@@ -1,7 +1,7 @@
 # Spel 7 · Spot the peasant
 
 **Status:** goedgekeurd (10 november 2026; `advent/js/spellen/spel7.js`, zoekmodus in `spellen/zoeken.js` + spel 2–6; router: query in de hash; besluiten #101–#107)
-**Dag 7 · 30 november · vaardigheid Logica · rendering: SVG-DOM**
+**Dag 7 · 30 november · Creativiteit +3 · Logica +2 (besluit 164) · rendering: SVG-DOM**
 Previews: `Spel7.png`, `Spel7-Klaar.png`, `Spel7-Sprites.png` · Artboards: `Spel7.dc.html`, `Spel7-Klaar.dc.html` · Generator: `spel7_build2.py`, `spel7_sprites.py`
 
 ## Doel en gevoel
@@ -63,14 +63,14 @@ Het resultaatscherm toont de vijf werkers elk met zijn eigen prop. Het kader vol
 
 ## Staat
 - **In:** `werkers` (`{2..6: bool}`) en `deurtjes[2..6]` (doorgespeeld).
-- **Uit:** `werkers[n]` (via `staat.markeerWerkerGevonden`). Bij 5/5 en deurtje 7 nog niet `gespeeld`: `rondSpelAf(7, { vaardigheid: 'logica' })` (klaar).
+- **Uit:** `werkers[n]` (via `staat.markeerWerkerGevonden`). Bij 5/5 en deurtje 7 nog niet `gespeeld`: `rondSpelAf(7)` (klaar).
 
 ## Resultaatscherm
 `toonResultaat` met:
 - icoon loep, label "SPOT THE PEASANT · KLAAR", titel "Gevonden!";
 - inhoud: de vijf werkers op een rij, elk met de prop uit zijn spel, met Pino (`pino-vinger`, gespiegeld) ernaast;
 - één tegel "GEVONDEN 5/5";
-- beloning Logica +1.
+- beloning Creativiteit +3 · Logica +2 (besluit 164).
 
 Er zijn geen tijd en geen miskliks (#104) en er is geen "Nog een keer". Opent Pino daarna spel 7 opnieuw, dan ziet ze het album met vijf vinkjes.
 

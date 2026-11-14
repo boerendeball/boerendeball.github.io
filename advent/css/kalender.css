@@ -190,7 +190,8 @@ html:has(.wolken) { overflow-x: hidden; } /* 100vw telt de schuifbalk mee */
   .nood-label { font-size: 14px; }
   .balk { height: 16px; }
   .vaard-lijst { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 20px; }
-  .vaard { display: flex; flex-direction: column; gap: 5px; }
+  /* stretch: anders erft de kolom align-items: center van mobiel en krimpt de blokjesbalk tot 0 px breed */
+  .vaard { display: flex; flex-direction: column; align-items: stretch; gap: 5px; }
   .vaard-balk > span { height: 12px; border-radius: 3px; }
   .vaard-balk > span.vol { box-shadow: inset 0 -3px 0 0 var(--teal-schaduw); }
   .vaard-nr { display: none; }

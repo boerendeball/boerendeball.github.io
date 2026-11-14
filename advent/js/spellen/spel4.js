@@ -435,7 +435,7 @@ function speel({ root, dag, info, klaar, opnieuw, familieId, kijken = false, zoe
     if (gestopt) return;
     lus.stop();
     const bedrag = staat.markeerFotos(familieId, F.BETALING[familieId] || 0);
-    const eersteKeer = klaar({ vaardigheid: info.vaardigheid, score: { opnames, miskliks } });
+    const eersteKeer = klaar({ score: { opnames, miskliks } });
     const volgende = F.volgendeFamilie(staat.lees());
     toonResultaat({
       root,
@@ -444,7 +444,7 @@ function speel({ root, dag, info, klaar, opnieuw, familieId, kijken = false, zoe
       titel: 'Drie plaatjes voor het album!',
       inhoud: polaroids(),
       tegels: [{ label: 'VERDIEND', waarde: bedrag, kleur: '#9A5B00', icoon: svgIcoon('s4-munt', 48, 48, 22, 22) }],
-      beloning: { vaardigheid: info.vaardigheid, eersteKeer },
+      beloning: { ...info.beloning, eersteKeer },
       opnieuw: volgende ? opnieuw : null,
     });
   }

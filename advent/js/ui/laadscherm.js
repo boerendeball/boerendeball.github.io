@@ -62,7 +62,9 @@ export function schermLaden({ root, params }) {
     ]),
     h('div', { class: 'kaart-plat laden-tip' }, [
       h('div', { class: 'laden-tip-bol' }, [icoon('lamp', 24)]),
-      h('div', { html: '<strong>Tip:</strong> elk gespeeld spelletje vult een behoefte aan. Op 3 december staat alles op groen.' }),
+      // Eigen tip per dag uit kalender.json (besluit 165), anders de algemene tip. Het laadscherm is geen spelscherm,
+      // dus hier mag een hint staan; in het spel zelf niet.
+      h('div', {}, [h('strong', {}, 'Tip:'), ` ${info.tip || 'elk gespeeld spelletje vult een behoefte aan. Op 3 december staat alles op groen.'}`]),
     ]),
   ]));
 

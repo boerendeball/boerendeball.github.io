@@ -232,7 +232,7 @@ export function start({ root, dag, info, klaar, zoek = false }) {
     if (gestopt) return;
     const s = staat.lees();
     const over = GEMS.reduce((som, k) => som + (s.edelstenen[k] || 0), 0);
-    const eersteKeer = klaar({ vaardigheid: info.vaardigheid, score: { over } });
+    const eersteKeer = klaar({ score: { over } });
     pil.opruim();
     toonResultaat({
       root,
@@ -240,7 +240,7 @@ export function start({ root, dag, info, klaar, zoek = false }) {
       label: `${info.titel.toUpperCase()} · KLAAR`,
       titel: 'Iedereen is weer thuis!',
       zin: 'Drie huizen, drie families en niemand die nog iets mist. Zelfs het biggetje knort tevreden.',
-      beloning: { vaardigheid: info.vaardigheid, eersteKeer },
+      beloning: { ...info.beloning, eersteKeer },
     });
   }
 

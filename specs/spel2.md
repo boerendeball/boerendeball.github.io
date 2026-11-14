@@ -1,7 +1,7 @@
 # Spel 2 · Tuin van de koningin
 
 **Status:** gebouwd, te beoordelen (`advent/js/spellen/spel2.js`, logica in `advent/js/spellen/hex.js`; gedeeld: `ui/taartmenu.js`, `ui/resultaat.js`, `css/spel.css`)
-**Dag 2 · 25 november · vaardigheid Logica**
+**Dag 2 · 25 november · Logica +2 · Techniek +2 · Koken +2 · Creativiteit +1 (besluit 164)**
 Previews: `design/previews/Spel2.png`, `Spel2-Menu.png`, `Spel2-Edelsteen.png`, `Spel2-Klaar.png`, `Spel2-Sprites.png` · Artboards: `design/artboards/Spel2*.dc.html` · Generator: `design/generators/spel2_build2.py`, `spel2_sprites.py`
 Rendering: **SVG-DOM** (kalm spel). Sprites: `hx-gras hx-tegel hx-doel hx-uitgang m-kraan vijver banaan gem` + `m-vlinder m-boom m-vogel pino-*` (spel 1) + `werker s4-palm` (spel 4) + `s8-boom s8-liaan s8-tempel s8-bamboe s8-varen s8-gras s8-bloem` (spel 8). Er zijn geen nieuwe sprites. `hx-fontein` staat nog in de set, maar wordt niet gebruikt.
 
@@ -86,7 +86,7 @@ Op desktop staat het scherm 390 px breed gecentreerd, net als in spel 1.
 - **Einde**:
   - Zodra een gelegde tegel aan de uitgang grenst, verdwijnen de klikdoelen.
   - Pino loopt via het kortste pad over de gelegde tegels (`hex.pad`, BFS) naar de poort, met een klein hupje per vak.
-  - Daarna `rondSpelAf(2, { vaardigheid: 'logica', score: { tegels, edelstenen } })`, `wisTuin()` en het resultaatscherm.
+  - Daarna `rondSpelAf(2, { score: { tegels, edelstenen } })`, `wisTuin()` en het resultaatscherm.
 - **Vastlopen**: er is geen melding, timer of hint. Het menu toont dan grijze tegels met een 0. De tuin blijft bewaard, dus na een rondje spel 1 kan Pino verder.
 
 ## Besturing
@@ -112,7 +112,7 @@ Op desktop staat het scherm 390 px breed gecentreerd, net als in spel 1.
 - Titel **Het pad is gelegd!**
 - Zin: "De koningin wandelt met droge voeten naar de poort. Zelfs de kraanvogels maken een buiging."
 - Eén scoretegel: **TEGELS** (gelegd in deze tuin, `#1F7A3A`). Er is geen tegel EDELSTENEN (besluit 35); het aantal wordt wel bewaard in `scores[2].edelstenen`.
-- Beloningsblok "Logica +1 · Behoefte "Verjaardag" +10%" (bij herspelen: "Logica al verdiend").
+- Beloningsblok met de vaardigheden en behoeften van dag 2 (besluit 164; bij herspelen: "Al verdiend").
 - Knoppen **Terug naar de kalender** en **Nog een keer** (lege tuin).
 - Geen sterren, geen BESTE en geen ZETTEN (besluiten 15, 16 en 31).
 
@@ -127,6 +127,8 @@ Weggelaten uit het ontwerp of bewust niet toegevoegd:
 - de edelsteenteller in de kopbalk en de tegel EDELSTENEN op het resultaatscherm (besluit 35).
 
 Er is geen tekst in de scène. Het menu toont alleen passende tegels, zonder uitleg waarom.
+
+De enige hint staat buiten het spel, op de tipkaart van het laadscherm (besluit 165): "Tip: leg je tegels in een kringetje helemaal rond, dan glinstert er iets kostbaars in het gras." Die zegt dat er iets te vinden is, maar niet wat het is of waar het voor dient.
 
 ## Toegankelijkheid
 

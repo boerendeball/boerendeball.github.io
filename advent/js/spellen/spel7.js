@@ -99,7 +99,7 @@ export function start({ root, dag, info, klaar }) {
 
   // Alle vijf gevonden en nog niet afgerond: afronden en het resultaatscherm tonen.
   if (gevonden === 5 && s.deurtjes[dag] !== 'gespeeld') {
-    const eersteKeer = klaar({ vaardigheid: info.vaardigheid });
+    const eersteKeer = klaar();
     toonKlaar({ root, info, eersteKeer });
     return () => {};
   }
@@ -149,6 +149,6 @@ function toonKlaar({ root, info, eersteKeer }) {
     titel: 'Gevonden!',
     inhoud: rij,
     tegels: [{ label: 'GEVONDEN', waarde: '5/5', kleur: '#1F7A3A' }],
-    beloning: { vaardigheid: info.vaardigheid, eersteKeer },
+    beloning: { ...info.beloning, eersteKeer },
   });
 }

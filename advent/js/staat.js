@@ -3,11 +3,17 @@
 // verder op een staat in het geheugen; de app blijft dan speelbaar binnen één sessie.
 
 const SLEUTEL = 'pino-advent';
-const VERSIE = 1;
+const VERSIE = 2;
+
+// Beginwaarden van de behoeften (besluit 164). Met de beloningen per dag uit data/kalender.json komt na
+// alle tien spellen elke behoefte precies op 100 en elke vaardigheid op 10.
+export const START_BEHOEFTEN = { verjaardag: 0, gansjes: 30, lammetjes: 30, snoepjes: 20, jiujitsu: 45, bordspellen: 20, reizen: 10, sieraden: 15 };
+const START_VAARDIGHEDEN = { koken: 0, mechanica: 0, charisma: 0, lichaam: 0, logica: 0, creativiteit: 0 };
 
 const abonnees = new Set();
 let huidige = null;
 let storageWerkt = true;
+let beloningen = null;            // { [dag]: { vaardigheden, behoeften } }, gezet door app.js na het laden van kalender.json
 
 export function legeStaat() {
   return {
@@ -25,8 +31,8 @@ export function legeStaat() {
     markt: { cyclus: null, stap: 0, ronde: null },   // spel 5: niveaucyclus en de lopende ronde (besluit 58)
     werkers: { 2: false, 3: false, 4: false, 5: false, 6: false },   // spel 7
     levels: { gehaald: [], actief: 1 },            // spel 8
-    vaardigheden: { koken: 0, mechanica: 0, charisma: 0, lichaam: 0, logica: 0, creativiteit: 0 },
-    behoeften: { verjaardag: 0, gansjes: 100, lammetjes: 100, snoepjes: 100, jiujitsu: 45, bordspellen: 20, reizen: 10, sieraden: 15 },
+    vaardigheden: { ...START_VAARDIGHEDEN },
+    behoeften: { ...START_BEHOEFTEN },
     scores: {},                   // per spel een klein object, bv. { "1": { onderbroken: 7 } }
     telefoonGezien: 0,            // laatste dag waarop de telefoon-notificatie is getoond
   };
@@ -44,8 +50,45 @@ function migreer(data) {
   if (!Array.isArray(uit.fotos)) uit.fotos = [];
   if (!Array.isArray(uit.producten)) uit.producten = [];
   uit.markt = { ...basis.markt, ...(data.markt && typeof data.markt === 'object' ? data.markt : {}) };
+  // Versie 1 gaf +1 vaardigheid per spel en begon met gansjes/lammetjes/snoepjes op 100: opnieuw berekenen
+  // uit de gespeelde deurtjes zodra de beloningstabel er is (besluit 164).
+  if (!(data.versie >= 2)) uit._herbereken = true;
   uit.versie = VERSIE;
   return uit;
+}
+
+/** Tel een beloning op bij de staat: vaardigheden max 10, behoeften max 100. */
+function telOp(s, beloning) {
+  if (!beloning) return;
+  for (const [naam, n] of Object.entries(beloning.vaardigheden || {})) {
+    if (naam in s.vaardigheden) s.vaardigheden[naam] = Math.min(10, s.vaardigheden[naam] + n);
+  }
+  for (const [naam, n] of Object.entries(beloning.behoeften || {})) {
+    if (naam in s.behoeften) s.behoeften[naam] = Math.max(0, Math.min(100, s.behoeften[naam] + n));
+  }
+}
+
+/** Vaardigheden en behoeften = beginwaarden + de beloningen van alle gespeelde deurtjes. */
+function herbereken(s) {
+  s.vaardigheden = { ...START_VAARDIGHEDEN };
+  s.behoeften = { ...START_BEHOEFTEN };
+  for (const [dag, status] of Object.entries(s.deurtjes)) {
+    if (status === 'gespeeld') telOp(s, beloningen[dag]);
+  }
+}
+
+function herberekenIndienNodig() {
+  if (!huidige || !huidige._herbereken || !beloningen) return;
+  herbereken(huidige);
+  delete huidige._herbereken;
+  bewaar();
+}
+
+/** De beloning per dag uit data/kalender.json (app.js roept dit aan na het laden). */
+export function zetBeloningen(dagen) {
+  beloningen = {};
+  for (const d of dagen) beloningen[d.dag] = d.beloning || null;
+  herberekenIndienNodig();
 }
 
 function laad() {
@@ -69,7 +112,7 @@ function bewaar() {
 
 /** Huidige staat (gedeeld object; wijzig via schrijf()). */
 export function lees() {
-  if (!huidige) huidige = laad();
+  if (!huidige) { huidige = laad(); herberekenIndienNodig(); }
   return huidige;
 }
 
@@ -233,7 +276,8 @@ export function wisselEdelsteen(kleur, bedrag) {
 
 /**
  * Deal: het product is gekocht voor `bod`. De cyclus gaat een stap verder (na drie rondes een nieuwe cyclus)
- * en de ronde is voorbij. De ketting vult de behoefte "sieraden" (besluit 68).
+ * en de ronde is voorbij. De behoefte "sieraden" vult zich via de beloning van spel 5: de eerste afronding
+ * daarvan is altijd de ketting (besluit 68 en 164).
  */
 export function koopProduct({ product, bod, laagste }) {
   return schrijf((s) => {
@@ -243,7 +287,6 @@ export function koopProduct({ product, bod, laagste }) {
     s.markt.stap += 1;
     if (s.markt.stap >= 3) { s.markt.cyclus = null; s.markt.stap = 0; }
     s.markt.ronde = null;
-    if (product === 'ketting') s.behoeften.sieraden = 100;
   });
 }
 
@@ -259,20 +302,15 @@ export function markeerLevelGehaald(level) {
 }
 
 /**
- * Elk afgerond spel: +1 vaardigheid (max 10) en +10 % "Verjaardag vieren", alleen bij de eerste afronding
- * van die dag (besluiten.md #9). Score wordt altijd bijgewerkt. Geeft terug of dit de eerste keer was.
+ * Elk afgerond spel: de beloning van die dag (vaardigheden en behoeften, uit data/kalender.json), alleen bij
+ * de eerste afronding (besluit 9 en 164). Score wordt altijd bijgewerkt. Geeft terug of dit de eerste keer was.
  */
-export function rondSpelAf(dag, { vaardigheid = null, score = null } = {}) {
+export function rondSpelAf(dag, { beloning = beloningen?.[dag] ?? null, score = null } = {}) {
   let eersteKeer = false;
   schrijf((s) => {
     eersteKeer = s.deurtjes[dag] !== 'gespeeld';
     s.deurtjes[dag] = 'gespeeld';
-    if (eersteKeer) {
-      if (vaardigheid && vaardigheid in s.vaardigheden) {
-        s.vaardigheden[vaardigheid] = Math.min(10, s.vaardigheden[vaardigheid] + 1);
-      }
-      s.behoeften.verjaardag = Math.min(100, s.behoeften.verjaardag + 10);
-    }
+    if (eersteKeer) telOp(s, beloning);
     if (score) s.scores[dag] = { ...(s.scores[dag] || {}), ...score };
   });
   return eersteKeer;

@@ -2,7 +2,7 @@
 //   export function start({ root, dag, info, klaar, zoek }) → opruimfunctie
 //   (zoek = true in de zoekmodus van spel 7, #/spel/n?zoek=1; zie spellen/zoeken.js)
 //   export async function voorbereid({ dag, info })   (optioneel; bv. sprite sheet rasteren)
-// klaar({ vaardigheid, score }) schrijft de spelstaat; het spel toont zelf zijn resultaatscherm.
+// klaar({ score }) schrijft de spelstaat (met info.beloning); het spel toont zelf zijn resultaatscherm.
 
 import { h } from '../ui/dom.js';
 import { kopbalk } from '../ui/kopbalk.js';
@@ -42,7 +42,7 @@ export async function schermSpel({ root, params, query = new URLSearchParams() }
   if (zoek && !zoekenMag(n, nu)) { ga(datum.deurOpen(7, nu) ? '/spel/7' : '/', { vervang: true }); return; }
 
   /** Schrijft de afronding weg; geeft true terug als dit de eerste afronding van deze dag was. */
-  const klaar = ({ vaardigheid = info.vaardigheid, score = null } = {}) => staat.rondSpelAf(n, { vaardigheid, score });
+  const klaar = ({ score = null } = {}) => staat.rondSpelAf(n, { beloning: info.beloning, score });
 
   // Spel 4 heeft het gezin uit spel 3 nodig (besluit 41).
   if (n === 4 && !staat.lees().familie) return geenFamilie({ root, n, info });

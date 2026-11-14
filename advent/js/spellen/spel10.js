@@ -532,7 +532,7 @@ function speel({ root, dag, info, klaar, opnieuw }) {
     s.af = true;
     ruimOp();
     if (s.gelukt) {
-      klaar({ vaardigheid: info.vaardigheid });
+      klaar();
       // in de finale staan alle behoeften op groen
       staat.schrijf((st) => { for (const naam of Object.keys(st.behoeften)) st.behoeften[naam] = 100; });
       finaleWeg = toonFinale({ root, info });

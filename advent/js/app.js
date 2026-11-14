@@ -7,7 +7,7 @@ import { zetKalenderData, schermKalender, schermDeur } from './kalender.js';
 import { schermLaden } from './ui/laadscherm.js';
 import { schermSpel } from './spellen/index.js';
 import { schermTest } from './test.js';
-import { wis, vulTestStaat } from './staat.js';
+import { wis, vulTestStaat, zetBeloningen } from './staat.js';
 import { devModus } from './datum.js';
 
 const app = document.getElementById('app');
@@ -39,6 +39,7 @@ async function start() {
   try {
     const [, data] = await Promise.all([laadSprites(), laadKalenderData()]);
     zetKalenderData(data);
+    zetBeloningen(data.dagen);
   } catch (e) {
     console.error(e);
     app.append(h('div', { class: 'scherm' }, [

@@ -401,7 +401,7 @@ function speel({ root, dag, info, klaar, opnieuw }) {
     if (gestopt) return;
     lus.stop();
     invoer.vernietig();
-    const eersteKeer = klaar({ vaardigheid: info.vaardigheid, score: { onderbroken: s.score } });
+    const eersteKeer = klaar({ score: { onderbroken: s.score } });
     toonResultaat({
       root,
       icoon: info.icoon,
@@ -409,7 +409,7 @@ function speel({ root, dag, info, klaar, opnieuw }) {
       titel: 'De hofhouding is onder de indruk!',
       zin: s.score < 6 ? 'Er werd flink gegaapt vanavond. Morgen beter!' : 'Niemand durfde te gapen in het bijzijn van prinses Pino. Nou ja, bijna niemand.',
       tegels: [{ label: 'ONDERBROKEN', waarde: s.score, kleur: '#1F7A3A' }],
-      beloning: { vaardigheid: info.vaardigheid, eersteKeer, extra: s.score > 0 ? 'Er rammelt iets in je jurkzak…' : null },
+      beloning: { ...info.beloning, eersteKeer, extra: s.score > 0 ? 'Er rammelt iets in je jurkzak…' : null },
       opnieuw,
     });
   }

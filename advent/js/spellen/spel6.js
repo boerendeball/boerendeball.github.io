@@ -594,11 +594,10 @@ function speel({ root, dag, info, klaar, opnieuw, zoek = false }) {
     if (s.reactie !== null) tegels.push({ label: 'REACTIE', waarde: `${(s.reactie / 1000).toFixed(1).replace('.', ',')}s`, kleur: '#1F7A3A' });
     if (klem) tegels.push({ label: 'MOVES', waarde: `${klem.raak}/${totaal}`, kleur: '#0E6A98' });
     if (gelukt) {
-      const eersteKeer = klaar({ vaardigheid: info.vaardigheid, score: { reactie: Math.round(s.reactie), raak: klem.raak, totaal } });
-      staat.vulBehoefte('jiujitsu', 100);   // de behoefte "jiujitsu" gaat naar 100 % (besluit 100)
+      const eersteKeer = klaar({ score: { reactie: Math.round(s.reactie), raak: klem.raak, totaal } });
       toonResultaat({
         root, icoon: info.icoon, label: `${info.titel.toUpperCase()} · KLAAR`, titel: 'Osssuu',
-        inhoud: tafereel(true), tegels, beloning: { vaardigheid: info.vaardigheid, eersteKeer }, opnieuw,
+        inhoud: tafereel(true), tegels, beloning: { ...info.beloning, eersteKeer }, opnieuw,
       });
     } else {
       // Mislukt: geen vaardigheidspunt, de ketting blijft in de staat (besluit 82–83).

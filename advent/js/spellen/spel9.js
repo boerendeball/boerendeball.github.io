@@ -471,10 +471,10 @@ function speel({ root, dag, info, klaar, opnieuw }) {
     lus.stop();
     invoer.vernietig();
     if (s.gelukt) {
-      const eersteKeer = klaar({ vaardigheid: info.vaardigheid, score: { gevangen: s.gevangen } });
+      const eersteKeer = klaar({ score: { gevangen: s.gevangen } });
       toonResultaat({
         root, icoon: info.icoon, label: `${info.titel.toUpperCase()} · KLAAR`, titel: 'Allemaal veilig geland!',
-        inhoud: tafereel(true, schoenen), beloning: { vaardigheid: info.vaardigheid, eersteKeer }, opnieuw,
+        inhoud: tafereel(true, schoenen), beloning: { ...info.beloning, eersteKeer }, opnieuw,
       });
     } else {
       // Niet gehaald: geen vaardigheidspunt en het deurtje blijft ongespeeld (zoals spel 6).

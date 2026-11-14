@@ -1,6 +1,6 @@
 # Spel 9 · Vang de baby
 
-**Status:** gebouwd, te beoordelen · Dag 9 · 2 december · vaardigheid Lichaam · rendering: canvas
+**Status:** gebouwd, te beoordelen · Dag 9 · 2 december · Conditie +2 · Koken +2 · Charisma +1 (besluit 164) · rendering: canvas
 Previews: `Spel9.png`, `Spel9-Klaar.png`, `Spel9-Sprites.png` · Artboards: `Spel9*.dc.html` · Generator: `spel9_build2.py`, `spel9_sprites.py`
 Code: `advent/js/spellen/spel9.js` (canvas, DOM, resultaat) en `advent/js/spellen/vang.js` (regels en afstelwaarden zonder DOM)
 
@@ -51,7 +51,7 @@ Zoals spel 1 (besluit 125): vasthouden op het scherm → joystick (250 ms), of p
 
 ## Staat
 - In: `producten` bevat `'schoenen'` of niet (besluit 63).
-- Uit, gehaald: `rondSpelAf(9, { vaardigheid: 'lichaam', score: { gevangen } })` → `scores[9].gevangen`, eerste keer Lichaam +1 en Verjaardag +10 %.
+- Uit, gehaald: `rondSpelAf(9, { score: { gevangen } })` → `scores[9].gevangen`, eerste keer de beloning van dag 9 (besluit 164).
 - Uit, niet gehaald: niets; het deurtje wordt niet `gespeeld`.
 
 ## Resultaatscherm (besluit 132)

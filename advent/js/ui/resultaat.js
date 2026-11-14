@@ -4,11 +4,13 @@
 import { h } from './dom.js';
 import { icoon, BOL_KLEUR, RING_KLEUR } from './iconen.js';
 import { VAARDIGHEID_LABELS } from './vaardigheden.js';
+import { BEHOEFTE_LABELS } from './behoeften.js';
 import { ga } from '../router.js';
 
 /**
  * toonResultaat({ root, icoon, label, titel, zin, inhoud, tegels: [{ label, waarde, kleur, icoon }],
- *                 beloning: { vaardigheid, eersteKeer, extra }, opnieuw, confetti })
+ *                 beloning: { vaardigheden, behoeften, eersteKeer, extra }, opnieuw, confetti })
+ * beloning: meestal { ...info.beloning, eersteKeer } (vaardigheden/behoeften uit data/kalender.json).
  * confetti: false bij een mislukte poging (spel 6: "Gestolen!"); dan ook geen beloning meegeven.
  * verder: { label, actie } vervangt de knop "Terug naar de kalender" (spel 8: "Volgend level").
  * inhoud: optioneel element onder de titel (bv. de polaroids van spel 4); tegel.icoon: element vóór de waarde.
@@ -44,17 +46,24 @@ export function toonResultaat({ root, icoon: naam, label, titel, zin = null, inh
   return scherm;
 }
 
-function maakBeloning({ vaardigheid = null, eersteKeer = true, extra = null }) {
-  const naam = vaardigheid ? VAARDIGHEID_LABELS[vaardigheid] : null;
-  let regel;
-  if (!naam) regel = [h('span', {}, 'Behoefte "Verjaardag" +10%')];
-  else if (eersteKeer) regel = [`${naam} +1 `, h('span', { class: 'beloning-extra' }, '· Behoefte "Verjaardag" +10%')];
-  else regel = [`${naam} al verdiend`];
+// "Verjaardag vieren" is te lang voor de regel; de rest volgt BEHOEFTE_LABELS.
+const BEHOEFTE_KORT = { ...BEHOEFTE_LABELS, verjaardag: 'Verjaardag' };
+
+/** Beloningsblok: de verdiende vaardigheden en behoeften van deze dag (besluit 164); bij herspelen "Al verdiend". */
+function maakBeloning({ vaardigheden = {}, behoeften = {}, eersteKeer = true, extra = null }) {
+  // Elk item breekt niet midden in ("Koken +2" blijft bij elkaar); tussen de items mag de regel wel breken.
+  const lijst = (items) => items.flatMap((tekst, i) => [i ? ' · ' : null, h('span', { style: { whiteSpace: 'nowrap' } }, tekst)]);
+  const vaardItems = Object.entries(vaardigheden).map(([k, n]) => `${VAARDIGHEID_LABELS[k] || k} +${n}`);
+  const noodItems = Object.entries(behoeften).map(([k, n]) => `${BEHOEFTE_KORT[k] || k} +${n}%`);
+  const vaard = vaardItems.length ? lijst(vaardItems) : null;
+  const noden = noodItems.length ? lijst(noodItems) : null;
   return h('div', { class: 'beloning' }, [
     h('div', { class: 'beloning-bol' }, [icoon('vaardigheid', 28)]),
     h('div', { class: 'beloning-tekst' }, [
-      h('div', { class: 'beloning-label' }, 'VAARDIGHEID VERDIEND'),
-      h('div', { class: 'beloning-regel' }, regel),
+      h('div', { class: 'beloning-label' }, 'VAARDIGHEDEN VERDIEND'),
+      ...(eersteKeer
+        ? [vaard ? h('div', { class: 'beloning-regel' }, vaard) : null, noden ? h('div', { class: 'beloning-extra' }, noden) : null]
+        : [h('div', { class: 'beloning-regel' }, 'Al verdiend')]),
       extra ? h('div', { class: 'beloning-hint' }, extra) : null,
     ]),
   ]);

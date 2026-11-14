@@ -42,7 +42,7 @@ Kopbalk: terug (46 px rond) · "DAG 4 VAN 10" · **Vrijdag 27 november**. Spelka
 
 ## Laadscherm (`Laden.png`)
 
-Kaart met bol (icoon van het spel), `DAG 4 · 27 NOVEMBER`, titel, "wordt geladen", dikke groene balk (22 px) met percentage, huidige laadtekst (Fredoka 21 teal) en de laatste drie afgevinkte regels; tipkaart eronder. Teksten uit `data/laadteksten.json`, geschud; stap 650 ms, minimaal 4 stappen; ondertussen `laadSpel(n)` en `voorbereid()` van het spel (sprite sheet). Daarna `#/spel/n` met `vervang: true`, zodat terug vanuit het spel op de kalender uitkomt.
+Kaart met bol (icoon van het spel), `DAG 4 · 27 NOVEMBER`, titel, "wordt geladen", dikke groene balk (22 px) met percentage, huidige laadtekst (Fredoka 21 teal) en de laatste drie afgevinkte regels; tipkaart eronder (de `tip` van die dag uit `kalender.json`, anders de algemene tip over de behoeften; besluit 165). Teksten uit `data/laadteksten.json`, geschud; stap 650 ms, minimaal 4 stappen; ondertussen `laadSpel(n)` en `voorbereid()` van het spel (sprite sheet). Daarna `#/spel/n` met `vervang: true`, zodat terug vanuit het spel op de kalender uitkomt.
 
 ## Resultaatscherm (`Spel{n}-Klaar.png`, gebouwd)
 

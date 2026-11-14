@@ -1,7 +1,7 @@
 # Spel 3 · Complete the family
 
 **Status:** gebouwd, te beoordelen (`advent/js/spellen/spel3.js`, gegevens en regels in `advent/js/spellen/familie.js`; gedeeld: `ui/edelstenen.js`, `ui/resultaat.js`, `css/spel.css`)
-**Dag 3 · 26 november · vaardigheid Creativiteit**
+**Dag 3 · 26 november · Creativiteit +3 · Logica +2 · Charisma +1 (besluit 164)**
 Previews: `design/previews/Spel3.png`, `Spel3-Klaar.png`, `Spel3-Sprites.png` · Artboards: `design/artboards/Spel3*.dc.html` · Generator: `design/generators/spel3_build2.py`, `spel3_sprites.py`
 Rendering: **SVG-DOM** (kalm spel). Sprites: `b-lijf b-jurk b-hoofd b-blij b-bedroefd bh-* acc-* d-lam d-gansje d-biggetje huis-villa huis-paal huis-shop plek` + `gem` (spel 2) + `werker` (spel 4). Nieuw voor dit spel: `b-bedroefd` (besluit 40).
 
@@ -52,7 +52,7 @@ Tuning (bovenin `spel3.js`): `POP_DUUR` 520 ms, `HUP_VERTRAGING` 420 ms, `EIND_P
 ## Staat
 
 - In: `edelstenen`, `karakters`, `familie`.
-- Uit: `karakters` (`staat.koopKarakter`), `edelstenen`, `familie` (`staat.zetFamilie`, alleen bij de eerste complete familie), `werkers[3]`, en bij afronden `rondSpelAf(3, { vaardigheid: 'creativiteit', score: { over } })`.
+- Uit: `karakters` (`staat.koopKarakter`), `edelstenen`, `familie` (`staat.zetFamilie`, alleen bij de eerste complete familie), `werkers[3]`, en bij afronden `rondSpelAf(3, { score: { over } })`.
 
 ## Resultaatscherm
 

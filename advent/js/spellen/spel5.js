@@ -861,7 +861,7 @@ function markt({ root, dag, info, klaar, opnieuw, kijken = false, zoek = false }
     lus.stop();
     const laagste = M.laagstePrijs(ronde);
     staat.koopProduct({ product: product.id, bod, laagste });
-    const eersteKeer = klaar({ vaardigheid: info.vaardigheid });
+    const eersteKeer = klaar();
     const s = staat.lees();
     const volgende = M.beschikbaarProduct(s.producten, isOpen);
     toonResultaat({
@@ -875,7 +875,7 @@ function markt({ root, dag, info, klaar, opnieuw, kijken = false, zoek = false }
         { label: 'LAAGSTE', waarde: laagste, kleur: '#0E6A98', icoon: munt(20) },
         { label: 'OVER', waarde: s.geld, kleur: '#9A5B00', icoon: munt(20) },
       ],
-      beloning: { vaardigheid: info.vaardigheid, eersteKeer },
+      beloning: { ...info.beloning, eersteKeer },
       opnieuw: volgende ? opnieuw : null,
     });
   }

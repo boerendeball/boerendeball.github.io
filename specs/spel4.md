@@ -1,6 +1,6 @@
 # Spel 4 · (Social)ize the family
 
-**Status:** goedgekeurd (Benjamin, 2026-11-08) · Dag 4 · 27 november · vaardigheid Charisma · rendering: SVG-DOM
+**Status:** goedgekeurd (Benjamin, 2026-11-08) · Dag 4 · 27 november · Charisma +2 · Creativiteit +2 · Techniek +2 · Koken +2 (besluit 164) · rendering: SVG-DOM
 Previews: `Spel4.png`, `Spel4-Klaar.png`, `Spel4-Sprites.png` (alleen het strand; berg en markt krijgen nieuwe artboards) · Generator: `spel4_build.py`, `spel4_sprites.py`
 Sprites: strand (`s4-zon s4-wolk s4-meeuw s4-rots s4-boot s4-pier s4-palm s4-kraam s4-bank s4-boog s4-parasol s4-handdoek s4-bal s4-schelp s4-zeester`), berg (`s4-bergen s4-hek s4-rotspunt s4-ijsje s4-kijker s4-wegwijzer s4-struik s4-den s4-trap`), markt (`s4-gevels s4-bloemkraam s4-groentekraam s4-dierentafel s4-kooi-kat s4-kooi-eekhoorn s4-kool s4-manden s4-ton`), camera (`s4-camera pino-foto s4-flits s4-zoeker`), fotomoment (`b-lach d-biggetje-lig d-gansje-eet d-lam-eet`), silhouetten (`sil-moeder sil-vader sil-kind sil-big sil-gans sil-lam`), `s4-film s4-munt s4-polaroid werker`
 
@@ -71,14 +71,14 @@ Alle getallen zijn constanten in `spellen/fotos.js`.
 - Uit:
   - nieuw veld `fotos: []` met de familie-id's die al gefotografeerd zijn (migratie: lege lijst); `markeerFotos(familie)` in `staat.js`;
   - `wijzigGeld(+bedrag)` één keer per familie;
-  - `rondSpelAf(4, { vaardigheid: 'charisma', score: { miskliks, opnames } })` bij elke afgeronde familie (Charisma +1 en Verjaardag +10 % alleen de eerste keer, zoals bij alle spellen).
+  - `rondSpelAf(4, { score: { miskliks, opnames } })` bij elke afgeronde familie (de beloning van dag 4 alleen de eerste keer, zoals bij alle spellen).
 - `?vul=1` zorgt dat familie Tan echt compleet is (`karakters` bevat `biggetje`). Nieuwe dev-schakelaar `?familie=nguyen|tan|somchai` forceert een familie in spel 4 (alleen in testmodus).
 
 ## Resultaatscherm (preview `Spel4-Klaar.png`)
 - Bol met Pino en de camera, label "(SOCIAL)IZE THE FAMILY · KLAAR", titel "Drie plaatjes voor het album!", geen uitlegzin.
 - Drie polaroids (scheef, overlappend) met de drie gemaakte foto's: het decor uitgesneden op de framerechthoek met alleen de gefotografeerde familieleden lachend op hun plek (opgebouwd uit de gegevens met `foto(familie, plek)`, dezelfde foto's als in het album; de werker staat er niet op). Daarvoor krijgt `ui/resultaat.js` een vrij inhoudsvak.
 - Eén tegel: VERDIEND munt + bedrag van deze familie (FOTO'S en MISKLIKS vervallen, besluit 51). Het aantal opnames en miskliks wordt wel bewaard in `scores[4]`.
-- Beloning: "Charisma +1 · Behoefte "Verjaardag" +10%" de eerste keer, daarna "Charisma al verdiend".
+- Beloning: de vaardigheden en behoeften van dag 4 (besluit 164) de eerste keer, daarna "Al verdiend".
 - Knoppen: "Terug naar de kalender" en **"Nog een keer"**, alleen als er nog een complete familie zonder foto's is; die start direct de volgende familie.
 
 ## Geen uitleg

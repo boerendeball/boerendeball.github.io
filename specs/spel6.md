@@ -1,7 +1,7 @@
 # Spel 6 · Selfdefense
 
 **Status:** goedgekeurd (Benjamin, 10 november 2026) (`advent/js/spellen/spel6.js`, regels in `spellen/klem.js`; gedeeld: `spellen/lus.js`, `spellen/spritesheet.js`, `spellen/canvas.js`, `invoer.js`, `ui/resultaat.js`, `css/spel.css`; popup zonder ketting in `spellen/index.js`)
-**Dag 6 · 29 november · vaardigheid Lichaam (label "Conditie")**
+**Dag 6 · 29 november · Conditie +3 · Techniek +2 (besluit 164)**
 Previews: `design/previews/Spel6.png`, `Spel6-Controle.png`, `Spel6-Klaar.png`, `Spel6-Sprites.png` · Artboards: `design/artboards/Spel6*.dc.html` · Generator: `design/generators/spel6_build2.py`, `spel6_sprites.py`
 Rendering: **canvas** (actiespel), sprite sheet gerasterd uit `sprites.svg`.
 
@@ -94,7 +94,7 @@ Constanten staan bovenaan `spel6.js` (fase 1, animatie) en `klem.js` (fase 2); h
 ## Staat
 
 - In: `producten` (ketting = voorwaarde, besluit 81; kniebeschermers = knee on belly lukt, besluit 94). `geld` speelt geen rol.
-- Uit, bij succes: `rondSpelAf(6, { vaardigheid: 'lichaam', score: { reactie, raak, totaal } })` en `vulBehoefte('jiujitsu', 100)`: de behoefte "jiujitsu" staat daarna op 100 % (besluit 100).
+- Uit, bij succes: `rondSpelAf(6, { score: { reactie, raak, totaal } })`: de beloning van dag 6 (`kalender.json`) brengt de behoefte "jiujitsu" op 100 % (besluit 100 en 164).
 - Uit, bij falen: niets. De ketting blijft in `producten` (besluit 82); het deurtje wordt niet `gespeeld`.
 - Werker: `werkerGevonden(6, { zoek })` (`spellen/zoeken.js`).
 

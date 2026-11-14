@@ -1,7 +1,7 @@
 # Spel 1 · Princess Presence
 
 **Status:** gebouwd, te beoordelen (`advent/js/spellen/spel1.js`; gedeeld: `spellen/lus.js`, `spellen/spritesheet.js`, `spellen/canvas.js`, `invoer.js`, `ui/resultaat.js`, `css/spel.css`)
-**Dag 1 · 24 november · vaardigheid Lichaam (label "Conditie")**
+**Dag 1 · 24 november · Conditie +3 · Charisma +2 (besluit 164)**
 Previews: `design/previews/Spel1.png`, `Spel1-Klaar.png`, `Spel1-Sprites.png` · Artboards: `design/artboards/Spel1*.dc.html` · Generator: `design/generators/spel1_build.py`, `spel1_sprites.py`
 Rendering: **canvas** (actiespel), sprite sheet gerasterd uit `sprites.svg` (set spel1).
 
@@ -109,7 +109,7 @@ Constanten staan bovenaan `spel1.js` en zijn tuning-waarden:
 
 - In: niets (spel 1 is het begin van de keten).
 - Uit, per gelukte onderbreking: `voegTegelToe(kleur, figuur)` met kleur ∈ groen/geel/blauw en figuur ∈ vlinder/boom/vogel (sleutel `groen-vlinder` enz.).
-- Uit, bij einde: `rondSpelAf(1, { vaardigheid: 'lichaam', score: { onderbroken } })`. Er wordt geen highscore bijgehouden (besluit 15). Vaardigheid en behoefte tellen alleen bij de **eerste** afronding (zie besluiten.md); tegels tellen bij **elke** speelbeurt.
+- Uit, bij einde: `rondSpelAf(1, { score: { onderbroken } })`. Er wordt geen highscore bijgehouden (besluit 15). Vaardigheid en behoefte tellen alleen bij de **eerste** afronding (zie besluiten.md); tegels tellen bij **elke** speelbeurt.
 
 ## Resultaatscherm (`Spel1-Klaar`, via gedeeld `ui/resultaat.js`)
 

@@ -1,6 +1,6 @@
 # Spel 10 · Bereik de bevalling + finale
 
-**Status:** gebouwd, te beoordelen · Dag 10 · 3 december · vaardigheid nog te kiezen · rendering: canvas (fase 1 en 2), DOM (finale)
+**Status:** gebouwd, te beoordelen · Dag 10 · 3 december · Techniek +3 · Conditie +2 · Koken +2 (besluit 164) · rendering: canvas (fase 1 en 2), DOM (finale)
 Previews: `Spel10.png`, `Spel10-Auto.png`, `Spel10-Finale.png`, `Spel10-Sprites.png` · Artboards: `Spel10*.dc.html` · Generator: `spel10_build2.py`, `spel10_sprites.py`
 Code: `advent/js/spellen/spel10.js` (canvas, DOM, resultaat, finale) en `advent/js/spellen/bevalling.js` (regels en afstelwaarden zonder DOM)
 Sprites nieuw: `s10-maan s10-ster s10-gloed s10-pand s10-auto s10-ambu s10-stoep s10-stoeprand s10-auto-top s10-ambu-top s10-politie-top s10-paaltje s10-tas s10-taart s10-ballon s10-slinger s10-lam-graas s10-gans s10-gans-boos`
@@ -80,7 +80,7 @@ Alle getallen staan als constanten in `bevalling.js`.
 ## Staat
 
 - In: niets (geen koppeling met eerdere spellen, besluit 149).
-- Uit bij aankomst: `rondSpelAf(10, { vaardigheid: null })` en alle behoeften op 100. Bij een botsing wordt niets geschreven; het deurtje blijft ongespeeld.
+- Uit bij aankomst: `rondSpelAf(10)` (beloning van dag 10, besluit 164) en als vangnet alle behoeften op 100. Bij een botsing wordt niets geschreven; het deurtje blijft ongespeeld.
 
 ## Resultaatscherm
 
@@ -131,6 +131,6 @@ Canvas met `role="img"` en een `aria-label` per fase; de afstandskaart is een `p
 
 ## Open punten
 
-- Vaardigheidspunt voor dag 10 en de tekst van het laatste briefje (Benjamin, zie `besluiten.md`).
+- De tekst van het laatste briefje (Benjamin, zie `besluiten.md`).
 - Afstelling na het spelen op een telefoon: snelheden en het aantal situaties in 30 s. De werking van de rem, de politie, de boze gans, de schapen en de stad van 25 stappen zijn bevestigd (besluiten 153, 156, 157, 159 en 163; Benjamin, 14 november 2026).
 - De bevallende vrouw is een figuurtje achter het raam van het huisje aan het einde van de weg (bestaande sprites, nu groter). Een eigen sprite voor de aankomst kan via `spel10_sprites.py`.

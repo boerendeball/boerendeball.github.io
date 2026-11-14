@@ -33,12 +33,11 @@ export function schermKalender({ root, telefoon = true }) {
   const statussen = {};
   for (let n = 1; n <= datum.AANTAL_DAGEN; n++) statussen[n] = datum.deurStatus(n, s, nu);
   const deurtjesOpen = Object.values(statussen).filter((st) => st !== 'dicht').length;
-  const gespeeldTotaal = Object.values(statussen).filter((st) => st === 'gespeeld').length;
   const dagen = datum.dagenTotVerjaardag(nu);
 
-  // Vandaag te verdienen vaardigheid (alleen als het deurtje van vandaag nog niet gespeeld is).
+  // Vandaag te verdienen vaardigheden (alleen als het deurtje van vandaag nog niet gespeeld is).
   const vandaagInfo = vandaagDag >= 1 && vandaagDag <= 10 ? dagInfo(vandaagDag) : null;
-  const vandaagVaardigheid = vandaagInfo && statussen[vandaagDag] === 'vandaag' ? vandaagInfo.vaardigheid : null;
+  const vandaagVaardigheden = vandaagInfo && statussen[vandaagDag] === 'vandaag' ? vandaagInfo.beloning?.vaardigheden || null : null;
 
   // Gedachtenwolkje: het icoon van morgen (voor de start: dag 1).
   const morgen = vandaagDag === 0 ? 1 : vandaagDag + 1;
@@ -91,7 +90,7 @@ export function schermKalender({ root, telefoon = true }) {
       ]),
     ]),
 
-    paneelVaardigheden(s, { vandaagVaardigheid, gespeeldTotaal, open: isDesktop() }),
+    paneelVaardigheden(s, { vandaagVaardigheden, open: isDesktop() }),
   ]);
   root.append(kalender);
   if (datum.devModus()) root.append(devKnop());

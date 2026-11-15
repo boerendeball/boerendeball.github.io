@@ -1,168 +1,179 @@
 # Spel 2 · Tuin van de koningin
 
-**Status:** gebouwd, te beoordelen (`advent/js/spellen/spel2.js`, logica in `advent/js/spellen/hex.js`; gedeeld: `ui/taartmenu.js`, `ui/resultaat.js`, `css/spel.css`)
+**Status:** gebouwd, te beoordelen (herontwerp 15 november 2026, besluiten #166–#175; `advent/js/spellen/spel2.js`, logica in `advent/js/spellen/hex.js`; gedeeld: `ui/taartmenu.js`, `ui/edelstenen.js`, `ui/resultaat.js`, `spellen/zoeken.js`, `css/spel.css`)
 **Dag 2 · 25 november · Logica +2 · Techniek +2 · Koken +2 · Creativiteit +1 (besluit 164)**
-Previews: `design/previews/Spel2.png`, `Spel2-Menu.png`, `Spel2-Edelsteen.png`, `Spel2-Klaar.png`, `Spel2-Sprites.png` · Artboards: `design/artboards/Spel2*.dc.html` · Generator: `design/generators/spel2_build2.py`, `spel2_sprites.py`
-Rendering: **SVG-DOM** (kalm spel). Sprites: `hx-gras hx-tegel hx-doel hx-uitgang m-kraan vijver banaan gem` + `m-vlinder m-boom m-vogel pino-*` (spel 1) + `werker s4-palm` (spel 4) + `s8-boom s8-liaan s8-tempel s8-bamboe s8-varen s8-gras s8-bloem` (spel 8). Er zijn geen nieuwe sprites. `hx-fontein` staat nog in de set, maar wordt niet gebruikt.
+Previews (verouderd, zie hieronder): `design/previews/Spel2*.png` · Generator: `design/generators/spel2_sprites.py`
+Rendering: **SVG-DOM** (kalm spel) met een camera.
 
-> **De scène wijkt bewust af van de previews** (besluit 26): het gazon ligt zonder kader in een tuin vol decor. De markup, kleuren en maten van de hexen, tegels, menu's en kopbalk komen wél uit het artboard. Bij twijfel geldt deze spec.
+Sprites:
+- **nieuw** (#166): `hx-midden`, `hx-kano`, `s2-boeddha`, `s2-waterval`, `s2-taxibord`;
+- hergebruikt: `hx-gras hx-tegel hx-doel gem banaan` (spel 2), `m-vlinder m-boom m-vogel pino-*` (spel 1), `s4-palm wk-hark` (spel 4), `s8-tempel s8-boom s8-bamboe s8-varen s8-gras s8-bloem` (spel 8), `s10-auto` (spel 10, geel als taxi);
+- niet meer gebruikt, wel in de set: `hx-uitgang`, `hx-fontein`, `vijver`, `m-kraan`.
+
+> **Herontwerp (besluit 166).** Het gazon van 6×14 met een tuinpoort is vervangen door een jungletocht over minispeelveldjes, geïnspireerd op de opbouw van een bordspel met kleine veldjes: elk veldje heeft 6 tegelplekken rond een midden. De previews en artboards van spel 2 tonen nog het oude ontwerp; deze spec is leidend. De hexen, tegels, taartmenu's en kopbalk zijn wél dezelfde als in het artboard.
 
 ## Doel en gevoel
 
-De koningin wil naar haar tuinpoort, maar het pad ligt er nog niet. Pino legt het tegel voor tegel, met de tegels die ze in spel 1 (ongemerkt) verdiende. Welke tegel waar mag, ontdekt ze zelf: het menu laat alleen tegels zien die passen. Na één keer spel 1 heeft ze te weinig tegels. Dan moet ze terug naar de slaapzaal om meer te verdienen (de economie). Wie slim legt en vakken insluit, vindt edelstenen voor spel 3. Rustig, puzzelig, zonder tijdsdruk.
+Pino komt per kano aan in de jungletuin van de koningin. Op elk minispeelveld legt ze tegels rond het midden: eerst een kano, daarna een tempel, een boeddhabeeld of een waterval.
 
-## Scherm (390×844, van boven naar beneden)
+Na drie tegels kan ze een tegel in een open plek in de jungle leggen. Daar groeit dan een nieuw veld omheen, en Pino en de camera gaan erheen. Het zevende veld ligt aan een weg. Legt ze daar een tegel naast de weg, dan komt er een taxi die haar ophaalt.
+
+Welke tegel waar past, ontdekt ze zelf: het menu toont alleen passende tegels. De tegels komen uit spel 1 en zijn schaars. Wie de ring rond een midden helemaal vol legt, ziet het midden glinsteren: daar ligt een edelsteen voor spel 3. Rustig, puzzelig, zonder tijdsdruk.
+
+## Scherm
 
 1. **Kopbalk** (`ui/kopbalk.js`):
-   - terugknop → `#/deur/2`;
+   - terugknop → `#/deur/2` (in de zoekmodus van spel 7: terug naar het album);
    - label `DAG 2 · 25 NOVEMBER`;
-   - titel `Tuin van de koningin` (Fredoka 20);
-   - **rechts niets**: het artboard heeft een edelsteenteller, maar in spel 2 zie je niet hoeveel edelstenen je hebt. Dat zie je pas in spel 3 (besluit 35).
-2. **Scène**: SVG 358×744 in `.scene-kaart.tuin-kaart` (radius 22, `overflow: hidden`). Daarboven ligt `.tuin-knoppen` met de klikdoelen, in % van de kaart.
-   - Het scherm is precies één venster hoog (`100dvh`, dus zonder adres- en navigatiebalk). De scène staat in `.tuin-ruimte` (`container-type: size`) en krijgt de breedte `min(100cqw, 100cqh × 358/744)` met `aspect-ratio: 358/744`. Ze schaalt dus mee met de kleinste van de beschikbare breedte en hoogte en is altijd helemaal te zien (besluit 43). Op een laag scherm blijft er links en rechts wat achtergrond over.
-   - De scène heeft `touch-action: manipulation`, niet `none` zoals spel 1: hier is geen joystick.
+   - titel `Tuin van de koningin`;
+   - **rechts niets**: geen edelsteenteller in spel 2 (#35).
+2. **Scène**: één SVG die de hele ruimte onder de kopbalk vult (`.tuin-ruimte` → `.tuin-kaart` → `.tuin-scene`).
+   - Het scherm is één venster hoog (`100dvh`). Er hoeft nooit gescrold te worden (#43, #173).
+   - De **camera** bepaalt de `viewBox`: 310 wereldeenheden breed (±5,6 hexbreedtes), en even hoog als de kaart in verhouding.
+   - Op een telefoon is een hex zo ±64 px breed (A55, 384×680). Het huidige veld staat in het midden van het beeld.
+   - De maat wordt bij elke render opnieuw gemeten, en ook bij `ResizeObserver` en `resize`.
+   - Klikdoelen zijn `<button>`s op pixelposities die uit de camera berekend zijn.
 
-Op desktop staat het scherm 390 px breed gecentreerd, net als in spel 1.
+## Wereld en tekenen (`hex.js`)
 
-## Scène (viewBox 0 0 358 744)
-
-- **Raster**: 6 kolommen × 14 rijen, "odd-r" (oneven rijen een halve hex naar rechts). Het middelpunt van vak (c, r) is `x = 28 + 55c (+27,5 als r oneven)`, `y = 76 + 48r`.
-  - Die formule komt uit `spel2_build2.py`, met `oy` 76 in plaats van 40, zodat er bovenin ruimte is voor bomen en het paviljoen.
+- **Raster**: onbegrensd, spitse bovenkant, axiale coördinaten `"q,r"`.
+  - Middelpunt: `x = 55·(q + r/2)`, `y = 48·r`.
   - Een hex is 56×66 en wordt getekend op `(x−28, y−33)`.
-- **Vaste vakken**:
-  - start (0,13): een `groen-boom`-tegel met Pino;
-  - uitgang (5,0): `hx-uitgang`;
-  - werkervak (3,10).
-- **Decorvakken** (geen bord): `0,0 1,0 0,1` (vijver), `5,5 4,6 5,6 5,7` (bananenperk), `0,8 0,9` (bamboe), `5,11 5,12` (palm), `4,13 5,13` (bloemenperk). Zie `DECOR` in `hex.js`.
-- **Tekenvolgorde**: de grond eerst. Daarna worden decor en vakken samen gesorteerd op onderkant-y, van achter naar voor. Pino komt direct na het vak waarop ze staat.
+  - Tekenvolgorde: alles in beeld (+ marge) gesorteerd op onderkant-y, van achter naar voor. Pino komt direct na haar vak.
+- **Veld**: een bloem van 7 vakken (midden + 6 ringplekken) met `{ c, soort, geoogst }`. Het startveld ligt op `0,0`.
+- **Middens**, in volgorde:
 
-| Laag / element | Sprite | Positie, maat |
-|---|---|---|
-| grond | rect `#5FB05A` + vlekken `#4E9A3E` / `#8BD35A` | volledig vlak |
-| bomen achter bovenste rij | `s8-boom` (×3), `s8-liaan` (×2) | y ≈ −16…−4 |
-| paviljoen van de koningin | `s8-tempel` | 276,−4 · 54×68, achter de uitgang |
-| lotusvijver met sala | `vijver` | −4,40 · 120×100 |
-| kraanvogels | `m-kraan` (één gespiegeld) | 6,102 en 84,108 |
-| bananenperk | `banaan` ×3, `s8-varen` ×2, `s8-bloem` ×3 | rond 230–360, 262–440 |
-| bamboe | `s8-bamboe` ×2 | −2,400 en 26,448 |
-| palm | `s4-palm` + `s8-varen` | 274,540 · 84×136 |
-| bloemenperk | `s8-varen` ×2, `s8-bloem` ×4 | rechtsonder, y 684–728 |
-| randgaten | `s8-gras` (+ `s8-bloem` links) | links naast oneven rijen, rechts naast even rijen |
-| grasvak | `hx-gras` | per vak |
-| tegel | `hx-tegel` met `color` = kleur + motief (port van `hex_tegel()`): vlinder 3× 15 px op (28,13),(16,33),(40,33); boom/vogel 30 px | groen `#39D353`, geel `#FFC93C`, blauw `#5BC0EB` |
-| uitgang | `hx-uitgang` | (5,0) |
-| open vak | bovenvlak `28,6 50,18 50,42 28,54 6,42 6,18`: wit 22 % + stippelrand wit 90 % (1,5 px, `4 3`) | per open vak |
-| fonkel | 4-puntige ster (pad uit het artboard), `#FFC93C`, zacht knipperend | (x, y−14) |
-| werker | `wk-hark` 48×72 × 0,6 (besluit 108) | voeten op (x, y+4) van vak (3,10), alleen als daar een tegel ligt |
-| Pino | `pino-staan` / `pino-loop` (gespiegeld naar links) | (x−24, y−66) op haar vak |
+  | veld | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
+  |---|---|---|---|---|---|---|---|
+  | midden | kano | tempel | boeddha | waterval | tempel | boeddha | waterval |
+
+  - Kano: `hx-kano` (water, lotusblad, houten kano), Pino staat erin.
+  - De andere: `hx-midden` (stenen platform) + `s8-tempel` / `s2-boeddha` / `s2-waterval`.
+- **Ringplek**: `hx-gras`, of een gelegde tegel (de `hexTegel()`-port: vlinder 3× 15 px, boom/vogel 30 px; groen `#39D353`, geel `#FFC93C`, blauw `#5BC0EB`).
+- **Open plek in de jungle** (een mogelijke brug): een plukje gras zonder tegelrand, ellips `#5FB05A` + `#8BD35A` + `s8-gras`. Zo blijft het veld zelf herkenbaar.
+- **Jungle**: grond `#4E9A3E` met vlekken `#2E7D1E`/`#5FB05A`.
+  - Per vak een vaste plant via een hash: `s8-boom`, `s8-bamboe`, `banaan`, `s8-varen` of `s4-palm`, soms met `s8-bloem`.
+  - Binnen afstand 2 van een veld of naast de weg staan alleen varens, zodat de vakken zichtbaar blijven.
+- **Weg** (alleen bij veld 7): een doorlopende band in de grondlaag: stoep `#CFD8DC`/`#DDE7EE`, asfalt `#4F6B7E` en een gele streepjeslijn. De band loopt van −14 tot +16 rond het midden van de wegrij, zodat de tegels in de rijen erboven (voorkant tot −16) en eronder (bovenvlak vanaf +19) hem niet raken (#176).
+- **Oplichting** van aantikbare plekken: wit 22 % + een witte stippelrand op het bovenvlak. Hover (muis) en toetsenbordfocus maken die oplichting in de scène feller (`.tuin-hover`: wit 50 %, doorgetrokken rand). De knoppen zelf tekenen niets: ze liggen boven de hele scène en zouden anders over Pino heen vallen (#176).
+- **Taxi en Pino op diepte**: de taxi wordt gesorteerd als een ding in de wegrij. Ligt de weg achter het veld, dan staat Pino ervóór en stapt ze aan de voorkant in. Ligt de weg ervoor, dan stopt de taxi met zijn lage achterkant onder Pino, zodat dak en dakbord haar niet bedekken, en hupt ze achter de taxi in (#176).
+- **Glinster**: 4 gele sterretjes rond het midden die zacht knipperen.
 
 ## Regels
 
 | Constante | Waarde | Betekenis |
 |---|---|---|
-| `START` / `START_TYPE` | `0,13` / `groen-boom` | starttegel |
-| `UITGANG` | `5,0` | tuinpoort |
-| `WERKER` | `3,10` | vak van de verstopte werker |
-| `STAP_DUUR` | 260 ms | Pino per vak naar de poort |
-| `EIND_PAUZE` | 450 ms | stilstand bij de poort |
-| `MENU_STRAAL` / `GEM_STRAAL` | 104 / 96 px | taartmenu's (artboard) |
+| `AANTAL_VELDEN` | 7 | kano + 6 nieuwe velden (#167) |
+| `TEGELS_VOOR_BRUG` | 3 | tegels op het huidige veld voor een brug; de bruggetegel telt mee (#168) |
+| `WERKER_VELD` / `WEG_VELD` | 2 / 6 (index) | werker bij veld 3, weg bij veld 7 |
+| `CAMERA_BREEDTE` | 310 | wereldeenheden in beeld |
+| `CAMERA_DUUR` / `HUP_DUUR` / `GROEI_STAP` | 700 / 300 / 60 ms | camera, hup per hex, groei per vak |
+| `MENU_STRAAL` / `MENU_STRAAL_GROOT` / `GEM_STRAAL` | 104 / 116 / 96 px | taartmenu's |
 
-- **Passen**: twee tegels passen als ze **precies één** eigenschap delen: kleur óf figuur, niet allebei en niet geen. Naast blauw-vogel passen dus groen-vogel, geel-vogel, blauw-vlinder en blauw-boom.
-- **Groepen**: aangrenzende tegels met dezelfde kleur vormen samen een kleurgroep, aangrenzende tegels met hetzelfde figuur een figuurgroep. De groep loopt door zolang de tegels elkaar raken. In een groep mag elk tegeltype maar **één keer** voorkomen, dus hooguit drie tegels per groep. Voorbeeld: groen-vogel → blauw-vogel → geel-vogel; aan die gele vogel mag geen groen-vogel (en ook geen blauw-vogel) meer. Dat geldt ook als een nieuwe tegel twee groepen aan elkaar knoopt waarin hetzelfde type zit (`hex.groepenUniek`).
-- **Kandidaten voor een vak**: de tegeltypen die passen bij **alle** aangrenzende tegels en geen dubbel type in een groep maken. De start telt mee; gras en uitgang niet. Dat zijn er maximaal 4. Raakt een nieuw vak twee of meer tegels, dan is het de doorsnede (soms 1, soms 0).
-- **Open vak**: een grasvak (geen decor, start of uitgang) naast de start of een gelegde tegel, met minstens één kandidaat. De voorraad doet hier niet mee. Alleen open vakken zijn aantikbaar en lichten subtiel op.
-- **Leggen**:
-  - Tik op een open vak. Het taartmenu toont de kandidaten in vaste volgorde (groen, geel, blauw × vlinder, boom, vogel), elk met een badge met de voorraad.
-  - Een tegel met voorraad 0 is grijs (`#B8C3CC`) en niet te kiezen.
-  - Kiezen haalt één tegel uit de voorraad en legt hem (`staat.legTuinTegel`, valt 0,2 s in).
+- **Passen** (ongewijzigd, #30): twee tegels passen als ze **precies één** eigenschap delen (kleur óf figuur).
+- **Groepen** (ongewijzigd, #34): aangrenzende tegels met dezelfde kleur, of met hetzelfde figuur, vormen een groep. In een groep komt elk type maar één keer voor. Groepen lopen ook over velden heen.
+- **Kandidaten**: de types die bij **alle** aangrenzende tegels passen en geen dubbel type in een groep maken. Het midden van een veld is geen tegel. Naast een lege plek past dus elk type: de eerste tegel op het startveld mag alles zijn, en het menu toont dan 9 kleinere tegels op een grotere ring (#172).
+- **Leggen op het huidige veld**: elke vrije ringplek met een kandidaat is open. Verlaten velden zijn dicht (#169).
+- **Brug**:
+  - Kan pas als er ≥ 3 tegels op het huidige veld liggen, en niet vanaf veld 7.
+  - Een brugplek ligt op afstand 2 van het huidige midden, grenst aan een gelegde tegel van dat veld, heeft een kandidaat en ruimte voor een nieuw veld.
+  - Het nieuwe midden is een buur van de brug op afstand 3 van het huidige midden, zonder overlap met andere velden, de werker of de weg. Bij voorkeur ligt het in rechte lijn naar buiten (`nieuwMidden`).
+  - De brug wordt een ringplek van het nieuwe veld en telt als 1 van de 3 tegels daar.
 - **Edelsteen**:
-  - Een grasvak waarvan alle zes buren bezet zijn (start, tegel of uitgang; een rand- of decorbuur telt niet als bezet) en dat nog niet geoogst is, krijgt een fonkel.
-  - Tik erop: een taartmenu met blauw/groen/geel, en de gekozen edelsteen erbij (`staat.oogstEdelsteen`). Eén keer per vak.
-  - Wegtikken laat de fonkel staan.
-  - Een geoogst vak blijft gras en is weer gewoon een (mogelijk) open vak. Een vak met fonkel is pas te betegelen als de edelsteen geoogst is.
-- **Werker**:
-  - Zichtbaar zodra (3,10) een tegel heeft.
-  - Aanklikbaar zodra deurtje 7 open is (`datum.deurOpen(7)`, specs/spel7.md). Een tik zet `werkers[2] = true`, en de werker maakt twee hupjes. Vanuit spel 7 (`#/spel/2?zoek=1`) speel je spel 2 gewoon; na de vondst gaat het spel terug naar het album van spel 7 (besluit 103).
-- **Einde**:
-  - Zodra een gelegde tegel aan de uitgang grenst, verdwijnen de klikdoelen.
-  - Pino loopt via het kortste pad over de gelegde tegels (`hex.pad`, BFS) naar de poort, met een klein hupje per vak.
-  - Daarna `rondSpelAf(2, { score: { tegels, edelstenen } })`, `wisTuin()` en het resultaatscherm.
-- **Vastlopen**: er is geen melding, timer of hint. Het menu toont dan grijze tegels met een 0. De tuin blijft bewaard, dus na een rondje spel 1 kan Pino verder.
+  - Liggen alle 6 ringplekken vol en is de edelsteen nog niet gekozen, dan glinstert het midden.
+  - Een tik: sterretjes vliegen uit het midden, daarna het taartmenu blauw/groen/geel (het midden van het menu is het middenobject met een gouden ring).
+  - Daarna `staat.oogstEdelsteen(veld, kleur)`, één keer per veld. Wegtikken laat de glinster staan.
+  - Wie verder gaat voordat de ring vol is, laat die edelsteen liggen.
+- **Werker** (#170):
+  - Zodra veld 3 ontstaat, staat hij (`wk-hark` ×0,6) te harken op een open plek op afstand 2 van dat veld, zo ver mogelijk van de brug. Die plek wordt nooit een brug.
+  - Aanklikbaar zodra deurtje 7 open is, via `werkerGevonden(2, { zoek })`, met hupjes. In de zoekmodus vanuit spel 7 speel je het gewone spel (#103).
+- **Weg en einde** (#171):
+  - Bij veld 7 komt de weg op een horizontale rij 2 rijen boven of onder het midden. Dat wordt de kant waar Pino niet vandaan kwam en waar geen ander veld ligt.
+  - De 2 ringplekken in de rij ertussen zijn **wegplekken**. Een tegel daar beëindigt het spel:
+    1. Pino hupt naar die tegel.
+    2. Een gele taxi (`s10-auto` ×1,5 + `s2-taxibord`) rijdt van links aan en stopt bij haar.
+    3. Pino hupt naar het portier en verdwijnt achter de taxi.
+    4. De taxi rijdt rechts het beeld uit.
+    5. `rondSpelAf(2, { score: { tegels, edelstenen, velden } })`, `wisTuin()`, resultaatscherm.
+- **Effect van een nieuw veld**:
+  1. De bruggetegel valt in.
+  2. De jungleplanten op het nieuwe veld krimpen weg (0,3 s).
+  3. De 6 andere vakken komen één voor één omhoog (60 ms na elkaar).
+  4. Een kring sterretjes rond het nieuwe midden.
+  5. Pino hupt erheen.
+  6. De camera schuift.
+- **Vastlopen**: er is geen melding of hint. Het menu toont grijze tegels met een 0. De tuin blijft bewaard.
+- **Animaties**: via rAF, met een timer als vangnet (`duur + 400 ms`). Zo blijft het spel niet hangen als de browser de frames stillegt.
+- Bij `prefers-reduced-motion` springt alles direct: geen groei, geen hupjes, geen knipperen of rijden.
 
 ## Besturing
 
-- Touch en muis: tik op een open vak, een fonkel of de werker. Het zijn echte `<button>`s met een hex-`clip-path` over de scène.
-- Toetsenbord: Tab naar een vak en Enter/spatie opent het menu. In het menu wisselen de pijltjes tussen de bruikbare opties; Escape of Annuleren sluit het.
+- Touch en muis: tik op een oplichtende plek, een glinsterend midden of de werker. Het zijn echte `<button>`s met een hex-`clip-path`; het midden en de werker hebben een ronde knop.
+- Toetsenbord: Tab naar een plek en Enter/spatie opent het menu. In het menu wisselen de pijltjes tussen de bruikbare opties; Escape of Annuleren sluit het.
 
 ## Staat
 
 - In: `tegels` (spel 1), `edelstenen`, `tuin`, `werkers`.
+- `tuin = { velden: [{ c, soort, geoogst }], huidig, gelegd: { "q,r": "kleur-figuur" }, pino: "q,r", weg: { rij, kant, plekken } | null, werker: "q,r" | null, edelstenen }`. De tuin wordt bewaard tot het spel af is (#28) en daarna `null`.
 - Uit:
-  - `tegels` −1 per gelegde tegel;
-  - `edelstenen[kleur]` +1 per oogst;
-  - `tuin = { gelegd: { "c,r": "kleur-figuur" }, geoogst: ["c,r"], edelstenen: n }` zolang het pad niet af is, en `null` na afronden;
+  - `tegels` −1 per tegel (`legTuinTegel`, `legTuinBrug`);
+  - `edelstenen[kleur]` +1 (`oogstEdelsteen`);
   - `werkers[2]`;
-  - `rondSpelAf(2, …)` met `scores[2] = { tegels, edelstenen }`.
-- Vaardigheid en "Verjaardag +10 %" alleen bij de eerste afronding (besluit 9).
-- `?vul=1` geeft 3 stuks van elk tegeltype (27). Daarmee is de poort te halen, maar niet met elke volgorde (dat is de puzzel).
+  - `scores[2] = { tegels, edelstenen, velden }`.
+- **Migratie** (#174): een tuin uit het oude 6×14-ontwerp (zonder `velden`) wordt bij het laden gewist; de tegels die erin lagen gaan terug in de voorraad.
+- **Hoeveel tegels**: minstens 20 voor de hele tocht (3 + 6 bruggen + 5×2 + 1). `?vul=1` geeft er 27; een rondje spel 1 levert er ±6–12 op.
 
 ## Resultaatscherm
 
 - Bol met het icoon `tuin` en label `TUIN VAN DE KONINGIN · KLAAR`.
-- Titel **Het pad is gelegd!**
-- Zin: "De koningin wandelt met droge voeten naar de poort. Zelfs de kraanvogels maken een buiging."
-- Eén scoretegel: **TEGELS** (gelegd in deze tuin, `#1F7A3A`). Er is geen tegel EDELSTENEN (besluit 35); het aantal wordt wel bewaard in `scores[2].edelstenen`.
-- Beloningsblok met de vaardigheden en behoeften van dag 2 (besluit 164; bij herspelen: "Al verdiend").
-- Knoppen **Terug naar de kalender** en **Nog een keer** (lege tuin).
-- Geen sterren, geen BESTE en geen ZETTEN (besluiten 15, 16 en 31).
+- Titel **Van kano tot taxi!**
+- Zin: "Tempels, boeddha's en watervallen: Pino heeft de hele tuin van de koningin doorkruist." (#175)
+- Eén scoretegel **TEGELS**; geen EDELSTENEN (#35), geen sterren of highscore.
+- Beloningsblok van dag 2 (#164).
+- Knoppen **Terug naar de kalender** en **Nog een keer** (een nieuwe tocht vanaf de kano).
 
 ## Geen uitleg
 
-Weggelaten uit het ontwerp of bewust niet toegevoegd:
-
-- de fontein;
-- de slotzin "Elke tegel past precies bij zijn buur" (verraadt de regel);
-- sterren;
-- labels bij de voorraad;
-- de edelsteenteller in de kopbalk en de tegel EDELSTENEN op het resultaatscherm (besluit 35).
-
-Er is geen tekst in de scène. Het menu toont alleen passende tegels, zonder uitleg waarom.
-
-De enige hint staat buiten het spel, op de tipkaart van het laadscherm (besluit 165): "Tip: leg je tegels in een kringetje helemaal rond, dan glinstert er iets kostbaars in het gras." Die zegt dat er iets te vinden is, maar niet wat het is of waar het voor dient.
+- Geen tekst in de scène: de taxi heeft een geblokt dakbord zonder het woord "TAXI".
+- Geen teller voor edelstenen.
+- Het menu toont alleen passende tegels, zonder uitleg waarom.
+- De enige hint staat op de tipkaart van het laadscherm (#165): "Tip: leg je tegels in een kringetje helemaal rond, dan glinstert er iets kostbaars in het gras." Die klopt nog: een volle ring laat het midden glinsteren.
 
 ## Toegankelijkheid
 
-- De scène heeft `role="img"` met een beschrijvende `aria-label`. Het decor is onderdeel van die ene afbeelding.
-- Klikdoelen zijn `<button>` met `aria-label` "Vak", "Edelsteen" of "Werker".
-- Menuopties hebben `aria-label` "Tegel geel vlinder, 2". Een grijze optie is `disabled` met `aria-disabled`.
-- Bij `prefers-reduced-motion` is er geen invalanimatie, geen knipperende fonkel en geen hupjes, en springt Pino direct naar de poort.
+- De scène heeft `role="img"` met een beschrijving.
+- Knoppen met `aria-label`: "Vak", "Open plek", "Kano", "Tempel", "Beeld", "Waterval", "Werker".
+- Menuopties: "Tegel geel vlinder, 2"; een grijze optie is `disabled`.
 
 ## Acceptatiecriteria
 
-- [x] Leeg bord: alleen de vakken naast de start lichten op (0,12 · 1,12 · 1,13).
-- [x] Menu naast de start (groen-boom): groen-vlinder, groen-vogel, geel-boom, blauw-boom, met aantallen.
-- [x] Een vak dat twee tegels raakt, toont alleen de doorsnede (node-check: start groen-boom + blauw-boom → alleen geel-boom). Een vak naast één geel-boom toont geel-vlinder, geel-vogel, groen-boom en blauw-boom.
-- [x] Groepsregel: na groen-vogel → blauw-vogel → geel-vogel (1,13 · 2,13 · 3,13) toont het vak naast de gele vogel (4,12) alleen geel-vlinder en geel-boom. Node-check: een vol kleurgroepje (groen ×3) laat geen vierde groene tegel toe, en het samenknopen van twee groepen met elk een groen-vogel wordt geweigerd.
-- [x] Met 3 stuks van elk type is de poort nog te halen (node-zoeker: 17 tegels).
-- [x] Een tegel met voorraad 0 is grijs met een 0 en niet te kiezen.
-- [x] Een omringd vak krijgt een fonkel; het edelsteenmenu (blauw/groen/geel) verhoogt `staat.edelstenen`; de fonkel verdwijnt.
-- [x] Nergens in spel 2 staat een edelsteenaantal: geen teller in de kopbalk, op het resultaatscherm alleen TEGELS.
-- [x] De werker verschijnt bij een tegel op (3,10); met `?test=1` is hij aanklikbaar en zet hij `werkers[2]`.
-- [x] Herladen midden in het spel: de tuin staat er nog (de tegels zijn bewaard).
-- [x] Een tegel naast de poort: Pino loopt het pad af, daarna het resultaatscherm; `tuin` is `null`, deurtje 2 `gespeeld`, Logica +1, `scores[2]` gezet.
-- [x] "Nog een keer" geeft een lege tuin.
-- [x] Past zonder scrollen op elk telefoonformaat: 384×600, 384×680 (Galaxy A55 met browserbalken), 375×812 en 412×915 gemeten. De pagina is even hoog als het venster, de klikdoelen liggen op de vakken en het menu opent.
-- [x] Het kalender-taartmenu werkt nog (radiale opties zijn een uitbreiding).
+- [x] Bij de start zie je het kanoveld met jungle en Pino in de kano. De 6 ringplekken lichten op, en de eerste tegel mag elk van de 9 types zijn (menu met 9 kleine tegels, geen overlap).
+- [x] Na 2 tegels zijn er nog geen open plekken in de jungle; na 3 wel, alleen naast gelegde tegels (gezien: 5 plekken).
+- [x] Een brug: het nieuwe veld groeit, er komen sterretjes, Pino hupt erheen en de camera schuift naar het nieuwe midden. Het oude veld is niet meer aan te tikken. De brug telt als 1 tegel op het nieuwe veld.
+- [x] Een volle ring (veld 2): het midden glinstert; een tik geeft sterretjes en het edelsteenmenu; groen → `edelstenen.groen` +1, `velden[1].geoogst`; de glinster is weg.
+- [x] Veld 3: de werker harkt op een open plek; met `?test=1` is hij aanklikbaar en zet hij `werkers[2]`.
+- [x] Herladen midden in het spel: dezelfde velden, tegels, jungle, camera en Pino-positie.
+- [x] Veld 7 (waterval) heeft een weg met 2 wegplekken. Een tegel daar: taxi, Pino stapt in, de taxi rijdt weg, resultaat "Van kano tot taxi!" met TEGELS 23. Daarna `tuin` null, deurtje 2 gespeeld, `scores[2]` gezet.
+- [x] Een oude tuin (6×14) in localStorage wordt gewist en de tegels gaan terug in de voorraad.
+- [x] De polaroid van spel 2 in spel 7 toont het kanoveld met Pino.
+- [x] Het scherm is even hoog als het venster (384×680, 375×812, desktop), en de klikdoelen liggen op de hexen (afwijking 0 px na een resize-event).
+- [x] Node-check (`hex.js`): buren en afstand, brugplekken na 3 tegels, nieuw midden zonder overlap, werker- en wegplek, een tocht met 27 tegels in 20 stappen.
+- [x] Hover op het vak boven Pino licht het vak in de scène op, onder Pino; de knop zelf heeft geen achtergrond (#176).
+- [x] De weg raakt geen tegel van de rij erboven of eronder (gezien met de weg onder veld 7).
+- [x] Taxi en Pino (#176):
+  - weg achter het veld: de taxi wordt de hele tijd achter Pino getekend;
+  - weg ervoor: de taxi staat vóór haar, maar alleen met de lage achterkant onder haar voeten (de omkaders overlappen 7 px);
+  - daarna stapt ze in en verdwijnt ze.
 - [x] Geen consolefouten.
-- [ ] Beoordeling door Benjamin: scène, decor en gevoel.
+- [ ] Beoordeling door Benjamin: sfeer, schaal, effecten, taxi.
 
 ## Test-URL's
 
-- `?test=1&reset=1&vul=1#/spel/2`: lege tuin met 3 stuks van elke tegel en 3 van elke edelsteen.
-- `?test=1&reset=1#/spel/1`, daarna `#/spel/2`: echte schaarste na één rondje spel 1.
-- `?test=1#/spel/2`: verder met de bewaarde tuin.
-- `window.pinoDebug` (testmodus): `{ spel: 2, hex, tuin(), render() }`.
+- `?test=1&reset=1&vul=1#/spel/2`: nieuwe tocht met 3 stuks van elke tegel.
+- `?test=1#/spel/2`: verder met de bewaarde tocht.
+- `window.pinoDebug` (testmodus): `{ spel: 2, hex, tuin(), render(), cam }`.
 
 ## Open punten
 
-Geen. Alle keuzes voor spel 2 zijn besloten (`besluiten.md` 25–37). De decorvakken zijn "goed voor nu" en kunnen later nog schuiven. Het briefje voor dag 2 is voorlopig een placeholder. Edelstenen komen alleen uit spel 2 (besluit 37); de prijzen in spel 3 moeten daarop aansluiten.
+- De sfeer, de schaal (camerabreedte 310) en de volgorde van de middens zijn eigen keuzes (#171, #173), te bevestigen.
+- De previews en artboards van spel 2 zijn nog van het oude ontwerp.

@@ -1,6 +1,8 @@
-// Spel 2 · Tuin van de koningin — zie specs/spel2.md.
-// Kalm spel (SVG-DOM): leg met de tegels uit spel 1 een pad van Pino naar de tuinpoort.
-// Tegels passen als ze precies één eigenschap delen; het menu toont alleen passende tegels.
+// Spel 2 · Tuin van de koningin — zie specs/spel2.md (herontwerp, besluit 166).
+// Kalm spel (SVG-DOM): een jungletocht over minispeelveldjes. Pino begint in een kano, legt tegels rond het
+// midden van een veld en daarna een brug in de jungle, waarna er een nieuw veld groeit. Het zevende veld ligt
+// aan een weg; een tegel naast de weg laat een taxi komen. Tegels passen als ze precies één eigenschap delen;
+// het menu toont alleen passende tegels. Een volle ring laat het midden glinsteren: daar ligt een edelsteen.
 
 import { h } from '../ui/dom.js';
 import { kopbalk } from '../ui/kopbalk.js';
@@ -14,67 +16,35 @@ import * as datum from '../datum.js';
 import { werkerGevonden, terugKnop, werkerVak } from './zoeken.js';
 
 /* ---------- tuning ---------- */
-const STAP_DUUR = 260;        // ms per vak als Pino aan het eind naar de poort loopt
-const EIND_PAUZE = 450;       // ms stilstand bij de poort voor het resultaatscherm
+const CAMERA_BREEDTE = 310;   // wereldeenheden in beeld (≈ 5,6 hexbreedtes: één veld met jungle eromheen)
+const CAMERA_DUUR = 700;      // ms camera naar een nieuw veld
+const HUP_DUUR = 300;         // ms per hex dat Pino hupt
+const GROEI_STAP = 60;        // ms tussen de vakken van een groeiend veld
 const MENU_STRAAL = 104;      // px middelpunt → tegeloptie (artboard Spel2-Menu)
+const MENU_STRAAL_GROOT = 116; // px bij meer dan 4 opties (kleinere tegels, besluit 172)
 const GEM_STRAAL = 96;        // px middelpunt → edelsteenoptie (artboard Spel2-Edelsteen)
+const TAXI_SCHAAL = 1.5;      // s10-auto (72×40) op wereldschaal
+const EIND_PAUZE = 400;       // ms stilstand voor het resultaatscherm
+const WEG_BOVEN = -14;        // bovenrand van de weg t.o.v. het midden van de wegrij (wereldeenheden)
+const WEG_ONDER = 16;         // onderrand; de tegels in de rijen ernaast beginnen bij +19 en eindigen bij −16
+const TAXI_WIELEN = 8;        // de wielen van de taxi staan op wegY + 8 (midden van het asfalt)
 
-/* ---------- scène ---------- */
-const B = 358;
-const H = 744;
+/* ---------- kleuren en vormen ---------- */
 const KLEUR = { groen: '#39D353', geel: '#FFC93C', blauw: '#5BC0EB' };
 const GRIJS = '#B8C3CC';      // tegel die op is (vaste kleur, geen filter)
+const TAXI_GEEL = '#FFC93C';
 const TOP = '28,6 50,18 50,42 28,54 6,42 6,18';   // binnenste bovenvlak van een hex (56×66)
 const FONKEL = 'l3 9 9 3 -9 3 -3 9 -3 -9 -9 -3 9 -3z';
-
-// Decor: [symbool, x, y, b, h, { kleur, flip }]. Wordt samen met de vakken op onderkant-y gesorteerd.
-const DECOR = [
-  // bomen en lianen achter de bovenste rij
-  ['s8-boom', 112, -6, 44, 56],
-  ['s8-boom', 166, -12, 44, 56, { flip: true }],
-  ['s8-boom', 222, -4, 44, 56],
-  ['s8-liaan', 96, -14, 120, 40],
-  ['s8-liaan', 178, -16, 120, 40, { flip: true }],
-  // paviljoen van de koningin achter de poort
-  ['s8-tempel', 276, -4, 54, 68],
-  // lotusvijver met sala en kraanvogels (linksboven)
-  ['vijver', -4, 40, 120, 100],
-  ['m-kraan', 6, 102, 24, 32],
-  ['m-kraan', 84, 108, 22, 30, { flip: true }],
-  // bananenperk rechts
-  ['banaan', 280, 262, 72, 64],
-  ['s8-varen', 228, 316, 48, 40],
-  ['banaan', 250, 322, 72, 64, { flip: true }],
-  ['s8-bloem', 236, 360, 16, 20],
-  ['s8-bloem', 262, 372, 16, 20],
-  ['banaan', 296, 360, 64, 58],
-  ['s8-bloem', 290, 412, 16, 20],
-  ['s8-varen', 312, 404, 44, 36, { flip: true }],
-  // bamboe links
-  ['s8-bamboe', -2, 400, 56, 70],
-  ['s8-bamboe', 26, 448, 52, 66],
-  // palm rechtsonder
-  ['s4-palm', 274, 540, 84, 136],
-  ['s8-varen', 300, 640, 48, 40],
-  // bloemenperk rechtsonder
-  ['s8-varen', 240, 684, 48, 40],
-  ['s8-bloem', 262, 702, 16, 20],
-  ['s8-bloem', 292, 694, 16, 20],
-  ['s8-bloem', 318, 708, 16, 20],
-  ['s8-bloem', 340, 690, 16, 20],
-  ['s8-varen', 306, 708, 48, 40, { flip: true }],
-];
-
-/** Polletjes gras en bloemen in de randgaten (links naast oneven rijen, rechts naast even rijen). */
-function randDecor() {
-  const uit = [];
-  for (let r = 0; r < hex.ROWS; r += 1) {
-    const y = hex.OY + r * hex.DY;
-    if (r % 2) { if (hex.opBord(hex.vak(0, r))) uit.push(['s8-gras', 2, y - 4, 24, 16], ['s8-bloem', 6, y + 10, 12, 15]); }
-    else if (hex.opBord(hex.vak(5, r))) uit.push(['s8-gras', 332, y - 2, 24, 16]);
-  }
-  return uit;
-}
+const MIDDEN_OBJECT = {
+  tempel: ['s8-tempel', 44, 56],
+  boeddha: ['s2-boeddha', 44, 56],
+  waterval: ['s2-waterval', 48, 56],
+};
+const MIDDEN_LABEL = { kano: 'Kano', tempel: 'Tempel', boeddha: 'Beeld', waterval: 'Waterval' };
+// Plantmaten op wereldschaal: [breedte, hoogte]; hoge planten alleen ver van de velden.
+const PLANT_MAAT = { 's8-boom': [53, 67], 's8-bamboe': [50, 64], banaan: [64, 57], 's4-palm': [60, 98], 's8-varen': [44, 37] };
+const HOOG = new Set(['s8-boom', 's8-bamboe', 's4-palm', 'banaan']);
+const WERKER_SCHAAL = 0.6;
 
 /* ---------- tekenhulpjes (JS-port van spel2_sprites.py) ---------- */
 
@@ -104,52 +74,156 @@ function hexTegel(cx, cy, type, s = 56, kleur = null) {
   return g;
 }
 
-function decorEl([id, x, y, w, hh, opt = {}]) {
-  if (opt.flip) return el('g', { transform: `translate(${x + w} ${y}) scale(-1 1)` }, [use(id, 0, 0, w, hh, opt.kleur)]);
-  return use(id, x, y, w, hh, opt.kleur);
+/** Het midden van een veld: stenen platform met tempel, beeld of waterval, of water met de kano. */
+function middenTekening(soort, cx, cy) {
+  const g = el('g');
+  if (soort === 'kano') { g.append(hexSym('hx-kano', cx, cy)); return g; }
+  g.append(hexSym('hx-midden', cx, cy));
+  const [id, b, hg] = MIDDEN_OBJECT[soort];
+  g.append(use(id, cx - b / 2, cy + 8 - hg, b, hg));
+  return g;
 }
 
-const WERKER_SCHAAL = 0.6;   // de werker (wk-hark) op vak (3,10)
+function plantTekening(v, p, { laag = false } = {}) {
+  const plant = hex.junglePlant(v);
+  const id = laag && HOOG.has(plant.id) ? 's8-varen' : plant.id;
+  const [b, hg] = PLANT_MAAT[id];
+  const x = p.x - b / 2 + plant.dx;
+  const y = p.y + 16 - hg + plant.dy;
+  const g = el('g', { class: 'tuin-plant' });
+  g.append(plant.flip ? el('g', { transform: `translate(${x + b} ${y}) scale(-1 1)` }, [use(id, 0, 0, b, hg)]) : use(id, x, y, b, hg));
+  if (plant.bloem) g.append(use('s8-bloem', p.x + (plant.dx > 0 ? -18 : 10), p.y + 2, 12, 15));
+  return g;
+}
 
-const leegTuin = () => ({ gelegd: {}, geoogst: [], edelstenen: 0 });
+function sterPad(x, y, schaal = 1) {
+  return el('path', { d: `M${x} ${y - 9 * schaal} ${FONKEL}`, fill: '#FFC93C', transform: schaal === 1 ? null : `translate(${x * (1 - schaal)} ${y * (1 - schaal)}) scale(${schaal})` });
+}
 
-/** Decor en vakken, gesorteerd op onderkant-y (tekenvolgorde achter → voor). tekenVak(v) tekent één vak. */
-function tuinItems(tekenVak) {
-  const items = [...DECOR, ...randDecor()].map((d) => ({ y: d[2] + d[4], maak: () => decorEl(d) }));
-  for (const v of hex.alleVakken()) {
-    const { y } = hex.middelpunt(v);
-    items.push({ y: y + 33, maak: () => tekenVak(v) });
+/* ---------- de wereld tekenen (gedeeld door het spel en de polaroid van spel 7) ---------- */
+
+/**
+ * Bouwt alle tekenbare items voor een rechthoek in wereldcoördinaten, gesorteerd op onderkant-y.
+ * opts: { open: Set, brug: Set, glinster: Set(veldindex), nieuw: vak, groei: Map(vak → volgorde), weg: Set(vakken die verdwijnen) }
+ */
+function wereldItems(t, rect, opts = {}) {
+  const items = [];
+  const veldVakken = hex.veldVakken(t);
+  const graspl = opts.gras || new Set();
+  for (const v of hex.vakkenIn(rect)) {
+    const p = hex.pixel(v);
+    const basis = p.y + 33;
+    if (hex.isWeg(t, v)) continue;                         // de weg ligt in de grondlaag
+    const vi = veldVakken.has(v) ? hex.veldVan(t, v) : -1;
+    if (vi >= 0) {
+      const veld = t.velden[vi];
+      const groei = opts.groei && opts.groei.has(v) ? opts.groei.get(v) : null;
+      const klasse = ['tuin-vak', groei !== null ? 'groeit' : '', v === opts.nieuw ? 'valt-in' : ''].filter(Boolean).join(' ');
+      const g = el('g', { class: klasse, style: groei !== null ? `animation-delay:${groei * GROEI_STAP}ms` : null, 'data-vak': v });
+      if (v === veld.c) {
+        g.append(middenTekening(veld.soort, p.x, p.y));
+        if (opts.glinster && opts.glinster.has(vi)) {
+          for (const [dx, dy, s, d] of [[-20, -30, 0.8, 0], [18, -40, 1, 0.5], [22, -12, 0.7, 0.9], [-16, -6, 0.6, 0.3]]) {
+            const ster = sterPad(p.x + dx, p.y + dy, s);
+            ster.setAttribute('class', 'tuin-glinster');
+            ster.setAttribute('style', `animation-delay:${d}s`);
+            g.append(ster);
+          }
+        }
+      } else if (t.gelegd[v]) {
+        g.append(hexTegel(p.x, p.y, t.gelegd[v]));
+      } else {
+        g.append(hexSym('hx-gras', p.x, p.y));
+      }
+      if (opts.open && opts.open.has(v)) g.append(oplichting(p));
+      items.push({ y: basis, el: g });
+    } else if (t.gelegd[v]) {
+      // een tegel buiten een veld komt niet voor (een brug wordt meteen deel van het nieuwe veld)
+      items.push({ y: basis, el: hexTegel(p.x, p.y, t.gelegd[v]) });
+    } else if (graspl.has(v) || v === t.werker) {
+      // open plek in de jungle: een plukje gras zonder tegelrand, zodat het veld zelf herkenbaar blijft
+      const g = el('g', { class: 'tuin-vak', 'data-vak': v }, [
+        el('ellipse', { cx: p.x, cy: p.y + 2, rx: 25, ry: 17, fill: '#5FB05A' }),
+        el('ellipse', { cx: p.x - 2, cy: p.y, rx: 20, ry: 12, fill: '#8BD35A' }),
+        use('s8-gras', p.x - 18 + hex.hash(v, 13) * 8, p.y - 8, 14, 9),
+        use('s8-gras', p.x + 4 + hex.hash(v, 14) * 8, p.y + 4, 12, 8),
+      ]);
+      if (opts.open && opts.open.has(v)) g.append(oplichting(p));
+      if (v === t.werker && opts.werker !== false) {
+        const w = werkerVak(p.x, p.y + 4, WERKER_SCHAAL);
+        g.append(el('g', { class: 'tuin-werker' }, [use('wk-hark', w.x, w.y, w.b, w.h)]));
+      }
+      items.push({ y: basis, el: g });
+    } else {
+      // jungle: dichtbij een veld alleen lage planten, zodat de vakken zichtbaar blijven
+      const dichtbij = t.velden.some((veld) => hex.afstand(veld.c, v) <= 2) || (t.weg && Math.abs(hex.ontleed(v)[1] - t.weg.rij) <= 1);
+      const plant = plantTekening(v, p, { laag: dichtbij });
+      if (opts.verdwijnt && opts.verdwijnt.has(v)) plant.classList.add('verdwijnt');
+      items.push({ y: p.y + 16, el: plant });
+    }
+  }
+  // planten die verdwijnen omdat er een veld groeit, worden er nog even overheen getekend
+  if (opts.verdwijnt) {
+    for (const v of opts.verdwijnt) {
+      const p = hex.pixel(v);
+      const plant = plantTekening(v, p, { laag: true });
+      plant.classList.add('verdwijnt');
+      items.push({ y: p.y + 34, el: plant });
+    }
   }
   return items.sort((a, b) => a.y - b.y);
 }
 
-/** Het kale vak: uitgang, gelegde tegel (of de starttegel) of gras. */
-function vakTekening(v, gelegd) {
-  const { x, y } = hex.middelpunt(v);
-  const type = hex.typeVan(gelegd, v);
-  if (v === hex.UITGANG) return hexSym('hx-uitgang', x, y);
-  if (type) return hexTegel(x, y, type);
-  return hexSym('hx-gras', x, y);
+function oplichting(p) {
+  const r = hexRect(p.x, p.y);
+  // De hover/focus-markering zit ook hier (klasse .tuin-hover op het vak), in de scène en dus onder Pino; de
+  // knoppen zelf liggen boven de hele scène en mogen niets tekenen, anders komt de markering over Pino (#176).
+  return el('polygon', { class: 'tuin-open', points: TOP, transform: `translate(${r.x} ${r.y})`, fill: 'rgba(255,255,255,0.22)', stroke: 'rgba(255,255,255,0.9)', 'stroke-width': 1.5, 'stroke-dasharray': '4 3', 'stroke-linejoin': 'round' });
 }
 
+/** Grondlaag: junglebodem met donkere vlekken, en de weg als die er is. */
+function grondLaag(t, rect) {
+  const g = el('g', { 'aria-hidden': 'true' });
+  g.append(el('rect', { x: rect.x - 200, y: rect.y - 200, width: rect.b + 400, height: rect.h + 400, fill: '#4E9A3E' }));
+  for (const v of hex.vakkenIn(rect)) {
+    if (hex.hash(v, 7) > 0.45) continue;
+    const p = hex.pixel(v);
+    g.append(el('ellipse', { cx: p.x + (hex.hash(v, 8) - 0.5) * 40, cy: p.y + (hex.hash(v, 9) - 0.5) * 30, rx: 18 + hex.hash(v, 10) * 16, ry: 8 + hex.hash(v, 11) * 6, fill: hex.hash(v, 12) < 0.5 ? '#2E7D1E' : '#5FB05A' }));
+  }
+  if (t.weg) {
+    const y = hex.DY * t.weg.rij;
+    const x0 = rect.x - 400;
+    const b = rect.b + 800;
+    // De weg blijft binnen WEG_BOVEN..WEG_ONDER rond het midden van de rij: de tegels in de rijen erboven en
+    // eronder (bovenvlak vanaf +19, voorkant tot −16) raken hem zo nooit (besluit 176).
+    g.append(el('rect', { x: x0, y: y + WEG_BOVEN, width: b, height: 4, fill: '#CFD8DC' }));
+    g.append(el('rect', { x: x0, y: y + WEG_BOVEN + 4, width: b, height: WEG_ONDER - WEG_BOVEN - 8, fill: '#4F6B7E' }));
+    g.append(el('rect', { x: x0, y: y + WEG_ONDER - 4, width: b, height: 4, fill: '#DDE7EE' }));
+    g.append(el('line', { x1: x0, y1: y + 1, x2: x0 + b, y2: y + 1, stroke: '#FFC93C', 'stroke-width': 2.5, 'stroke-dasharray': '14 10' }));
+  }
+  return g;
+}
+
+const pinoTekening = (p, { pose = 'staan', flip = false, kano = false } = {}) =>
+  el('g', { transform: `translate(${(p.x - 24).toFixed(1)} ${(p.y - (kano ? 60 : 66)).toFixed(1)})` }, [groep(0, 0, { flip }, [use(`pino-${pose}`, 0, 0, 48, 72)])]);
+
 /**
- * De tuin zoals hij nu in de staat staat, stil en zonder knoppen, open vakken, fonkels of werker, met Pino op
- * de start. Voor de polaroid in het album van spel 7 (besluit 107); viewBox = de hele scène.
+ * De tuin zoals hij nu in de staat staat, stil en zonder knoppen, open plekken, glinster of werker, met Pino op
+ * haar plek. Voor de polaroid in het album van spel 7 (besluit 107): rond het startveld met de kano.
  */
 export function tuinScene() {
-  const gelegd = (staat.lees().tuin || leegTuin()).gelegd;
-  const svg = el('svg', { viewBox: `0 0 ${B} ${H}`, 'aria-hidden': 'true' });
+  const t = staat.lees().tuin && Array.isArray(staat.lees().tuin.velden) ? staat.lees().tuin : hex.nieuweTuin();
+  const rect = { x: -180, y: -190, b: 360, h: 360 };
+  const svg = el('svg', { viewBox: `${rect.x} ${rect.y} ${rect.b} ${rect.h}`, 'aria-hidden': 'true' });
   const wereld = el('g');
-  const start = hex.middelpunt(hex.START);
-  const pinoBasis = start.y + 33.5;
-  let pinoGezet = false;
-  const pinoG = el('g', { transform: `translate(${start.x - 24} ${start.y - 66})` }, [use('pino-staan', 0, 0, 48, 72)]);
-  for (const it of tuinItems((v) => vakTekening(v, gelegd))) {
-    if (!pinoGezet && it.y > pinoBasis) { wereld.append(pinoG); pinoGezet = true; }
-    wereld.append(it.maak());
+  const pp = hex.pixel(t.pino);
+  let gezet = false;
+  for (const it of wereldItems(t, rect, { gras: new Set(), werker: false })) {
+    if (!gezet && it.y > pp.y + 33.5) { wereld.append(pinoTekening(pp, { kano: t.pino === t.velden[0].c })); gezet = true; }
+    wereld.append(it.el);
   }
-  if (!pinoGezet) wereld.append(pinoG);
-  svg.append(maakGrond(), wereld);
+  if (!gezet) wereld.append(pinoTekening(pp));
+  svg.append(grondLaag(t, rect), wereld);
   return svg;
 }
 
@@ -165,136 +239,181 @@ export function start({ root, dag, info, klaar, zoek = false }) {
 function speel({ root, dag, info, klaar, opnieuw, zoek = false }) {
   const rustig = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   let gestopt = false;
+  let bezig = false;          // animatie loopt: geen invoer
   let klaarGezet = false;
   let menu = null;
-  let rafId = 0;
+  const rafs = new Set();
   const timers = new Set();
   const wacht = (ms) => new Promise((ok) => { const t = setTimeout(() => { timers.delete(t); ok(); }, ms); timers.add(t); });
+  const frame = (fn) => { const id = requestAnimationFrame((nu) => { rafs.delete(id); fn(nu); }); rafs.add(id); };
+  // Animatie via rAF. Een browser kan rAF stilleggen (tab op de achtergrond, verborgen paneel); daarom maakt een
+  // timer de animatie alsnog af als de frames uitblijven, zodat het spel nooit halverwege blijft hangen.
+  const anim = (duur, stap) => new Promise((ok) => {
+    if (rustig || duur <= 0) { stap(1); ok(); return; }
+    const t0 = performance.now();
+    let af = false;
+    const klaarMet = () => { if (af) return; af = true; clearTimeout(vangnet); timers.delete(vangnet); if (!gestopt) stap(1); ok(); };
+    const vangnet = setTimeout(klaarMet, duur + 400);
+    timers.add(vangnet);
+    const tik = (nu) => {
+      if (af) return;
+      if (gestopt) { klaarMet(); return; }
+      const f = Math.min(1, (nu - t0) / duur);
+      stap(f);
+      if (f < 1) frame(tik); else klaarMet();
+    };
+    frame(tik);
+  });
+  const glad = (f) => (f < 0.5 ? 2 * f * f : 1 - ((-2 * f + 2) ** 2) / 2);
 
-  const tuin = () => staat.lees().tuin || leegTuin();
+  staat.beginTuin(hex.nieuweTuin());
+  const tuin = () => staat.lees().tuin;
 
   /* ---------- DOM ---------- */
-  // Geen edelsteenteller in spel 2: hoeveel edelstenen Pino heeft, ziet ze pas in spel 3 (besluiten.md #35).
-  const svg = scene(B, H, { label: 'Tropische tuin met een zeshoekig gazon, een lotusvijver met sala en kraanvogels, bananenplanten, bamboe en een palm; Pino staat linksonder, de tuinpoort is rechtsboven' });
+  // Geen edelsteenteller in spel 2: hoeveel edelstenen Pino heeft, ziet ze pas in spel 3 (besluit 35).
+  const svg = scene(10, 10, { label: 'Jungle met een minispeelveld van zeshoekige tegelplekken rond een midden; Pino staat op het veld' });
+  svg.removeAttribute('width'); svg.removeAttribute('height');
   svg.classList.add('tuin-scene');
+  const grond = el('g');
   const wereld = el('g');
-  svg.append(maakGrond(), wereld);
+  const effecten = el('g', { 'aria-hidden': 'true' });
+  svg.append(grond, wereld, effecten);
   const knoppen = h('div', { class: 'tuin-knoppen' });
+  const kaart = h('div', { class: 'scene-kaart tuin-kaart' }, [svg, knoppen]);
 
   const scherm = h('div', { class: 'scherm spel spel2' }, [
     kopbalk({ label: datum.dagLabel(dag), titel: info.titel, terugNaar: `/deur/${dag}`, terugLabel: 'Terug naar het deurtje', ...terugKnop(zoek) }),
-    // De ruimte onder de kopbalk bepaalt de maat: de scène schaalt mee zodat ze altijd helemaal in beeld is.
-    h('div', { class: 'tuin-ruimte' }, [h('div', { class: 'scene-kaart tuin-kaart' }, [svg, knoppen])]),
+    // De ruimte onder de kopbalk bepaalt de maat; de camera past de viewBox aan die maat aan (besluit 173).
+    h('div', { class: 'tuin-ruimte' }, [kaart]),
   ]);
   root.replaceChildren(scherm);
 
+  /* ---------- camera ---------- */
+  const cam = { x: 0, y: 0 };   // wereldpunt in het midden van het beeld
+  const maat = { b: 1, h: 1 };  // px van de kaart
+  const camRect = (c = cam) => {
+    const b = CAMERA_BREEDTE;
+    const hg = b * (maat.h / maat.b);
+    return { x: c.x - b / 2, y: c.y - hg / 2, b, h: hg };
+  };
+  function zetViewBox() {
+    const r = camRect();
+    svg.setAttribute('viewBox', `${r.x.toFixed(2)} ${r.y.toFixed(2)} ${r.b.toFixed(2)} ${r.h.toFixed(2)}`);
+  }
+  const camDoel = () => {
+    const p = hex.pixel(hex.huidigVeld(tuin()).c);
+    return { x: p.x, y: p.y + 6 };
+  };
+  /** Wereld → px binnen de kaart. */
+  function naarPx(wx, wy) {
+    const r = camRect();
+    return { x: ((wx - r.x) / r.b) * maat.b, y: ((wy - r.y) / r.h) * maat.h };
+  }
+
   /* ---------- Pino ---------- */
   const pinoG = el('g', { class: 'tuin-pino' });
-  const pinoPos = { ...hex.middelpunt(hex.START), basis: 0, flip: false, pose: 'staan' };
+  const pino = { ...hex.pixel(tuin().pino), pose: 'staan', flip: false, kano: tuin().pino === tuin().velden[0].c, zichtbaar: true };
   function tekenPino() {
-    pinoG.setAttribute('transform', `translate(${(pinoPos.x - 24).toFixed(1)} ${(pinoPos.y - 66).toFixed(1)})`);
-    pinoG.replaceChildren(groep(0, 0, { flip: pinoPos.flip }, [use(`pino-${pinoPos.pose}`, 0, 0, 48, 72)]));
+    pinoG.replaceChildren(pino.zichtbaar ? pinoTekening(pino, pino) : el('g'));
   }
   // Pino komt direct na het vak waar ze op staat (en vóór de rij eronder).
   function plaatsPino(basis) {
-    pinoPos.basis = basis;
     const na = [...wereld.children].find((c) => c !== pinoG && Number(c.dataset.y) > basis);
     wereld.insertBefore(pinoG, na || null);
   }
 
   /* ---------- tekenen ---------- */
-  function render(nieuw = null) {
+  let laatsteRect = null;
+  function render({ nieuw = null, groei = null, verdwijnt = null, rect = null } = {}) {
+    if (meet()) zetViewBox();   // maat altijd vers: knoppen en viewBox horen bij dezelfde kaartmaat
     const t = tuin();
-    const open = new Set(klaarGezet ? [] : hex.openVakken(t.gelegd));
-    const fonkels = new Set(klaarGezet ? [] : hex.omringdeVakken(t.gelegd, t.geoogst));
-    const items = tuinItems((v) => tekenVak(v, t, open.has(v), fonkels.has(v), v === nieuw));
+    const vrij = !klaarGezet && !bezig;
+    const open = new Set(vrij ? [...hex.openRingplekken(t), ...hex.brugplekken(t)] : []);
+    const glinster = new Set(!klaarGezet && hex.glinstert(t) ? [t.huidig] : []);
+    const gras = new Set(hex.grasplekken(t));
+    laatsteRect = rect || camRect();
+    const ruim = { x: laatsteRect.x - 60, y: laatsteRect.y - 80, b: laatsteRect.b + 120, h: laatsteRect.h + 160 };
+    grond.replaceChildren(grondLaag(t, ruim));
     wereld.replaceChildren();
-    for (const it of items) {
-      const e = it.maak();
-      e.dataset.y = String(it.y);
-      wereld.append(e);
+    for (const it of wereldItems(t, ruim, { open, glinster, gras, nieuw, groei, verdwijnt })) {
+      it.el.dataset.y = String(it.y);
+      wereld.append(it.el);
     }
     tekenPino();
-    plaatsPino(hex.middelpunt(hex.START).y + 33.5);
-    maakKnoppen(t, open, fonkels);
-  }
-
-  function tekenVak(v, t, isOpen, fonkel, nieuw) {
-    const { x, y } = hex.middelpunt(v);
-    const g = el('g', { class: nieuw && !rustig ? 'tuin-vak valt-in' : 'tuin-vak' });
-    const type = hex.typeVan(t.gelegd, v);
-    g.append(vakTekening(v, t.gelegd));
-    if (isOpen && !fonkel) {
-      const r = hexRect(x, y);
-      g.append(el('polygon', { points: TOP, transform: `translate(${r.x} ${r.y})`, fill: 'rgba(255,255,255,0.22)', stroke: 'rgba(255,255,255,0.9)', 'stroke-width': 1.5, 'stroke-dasharray': '4 3', 'stroke-linejoin': 'round' }));
-    }
-    if (fonkel) g.append(el('path', { class: 'tuin-fonkel', d: `M${x} ${y - 14} ${FONKEL}`, fill: '#FFC93C' }));
-    if (v === hex.WERKER && type) {
-      // Harkt het gazon, met zijn voeten midden op het vak (besluit 108).
-      const w = werkerVak(x, y + 4, WERKER_SCHAAL);
-      g.append(el('g', { class: 'tuin-werker' }, [use('wk-hark', w.x, w.y, w.b, w.h)]));
-    }
-    return g;
+    plaatsPino(pino.y + 33.5);
+    maakKnoppen(t, open, glinster);
   }
 
   /* ---------- klikdoelen: echte knoppen over de scène ---------- */
-  const pct = (v, totaal) => `${((v / totaal) * 100).toFixed(3)}%`;
-
-  function vakKnop(v, klasse, label, actie) {
-    const { x, y } = hex.middelpunt(v);
+  function hexKnop(v, klasse, label, actie) {
+    const p = hex.pixel(v);
+    const a = naarPx(p.x - 28, p.y - 31);
+    const b = naarPx(p.x + 28, p.y + 25);
+    const markeer = (aan) => () => wereld.querySelector(`[data-vak="${v}"]`)?.classList.toggle('tuin-hover', aan);
     return h('button', {
       type: 'button', class: `tuin-knop ${klasse}`, 'aria-label': label, 'data-vak': v,
-      style: { left: pct(x - 28, B), top: pct(y - 31, H), width: pct(56, B), height: pct(56, H) },
+      style: { left: `${a.x}px`, top: `${a.y}px`, width: `${b.x - a.x}px`, height: `${b.y - a.y}px` },
       onclick: (ev) => actie(v, ev.currentTarget),
+      onpointerenter: (ev) => { if (ev.pointerType === 'mouse') markeer(true)(); },
+      onpointerleave: markeer(false),
+      onfocus: (ev) => { if (ev.currentTarget.matches(':focus-visible')) markeer(true)(); },
+      onblur: markeer(false),
     });
   }
 
-  function maakKnoppen(t, open, fonkels) {
+  function maakKnoppen(t, open, glinster) {
     knoppen.replaceChildren();
-    if (klaarGezet) return;
-    for (const v of fonkels) knoppen.append(vakKnop(v, 'tuin-knop-fonkel', 'Edelsteen', kiesEdelsteen));
-    for (const v of open) if (!fonkels.has(v)) knoppen.append(vakKnop(v, 'tuin-knop-vak', 'Vak', kiesTegel));
+    if (klaarGezet || bezig) return;
+    const veld = hex.huidigVeld(t);
+    if (glinster.has(t.huidig)) knoppen.append(hexKnop(veld.c, 'tuin-knop-midden', MIDDEN_LABEL[veld.soort], kiesEdelsteen));
+    for (const v of open) knoppen.append(hexKnop(v, 'tuin-knop-vak', hex.veldVan(t, v) >= 0 ? 'Vak' : 'Open plek', kiesTegel));
     // De verstopte werker is pas aanklikbaar als spel 7 open is (specs/spel7.md).
-    if (t.gelegd[hex.WERKER] && datum.deurOpen(7)) {
-      const { x, y } = hex.middelpunt(hex.WERKER);
+    if (t.werker && datum.deurOpen(7)) {
+      const p = hex.pixel(t.werker);
+      const a = naarPx(p.x - 18, p.y - 44);
+      const b = naarPx(p.x + 18, p.y + 6);
       knoppen.append(h('button', {
         type: 'button', class: 'tuin-knop tuin-knop-werker', 'aria-label': 'Werker',
-        style: { left: pct(x - 18, B), top: pct(y - 40, H), width: pct(36, B), height: pct(46, H) },
+        style: { left: `${a.x}px`, top: `${a.y}px`, width: `${b.x - a.x}px`, height: `${b.y - a.y}px` },
         onclick: vindWerker,
       }));
     }
   }
 
   function middenHex(inhoud, klasse) {
-    const schaal = svg.getBoundingClientRect().width / B;
-    const s = el('svg', { viewBox: '0 0 56 66', width: 56 * schaal, height: 66 * schaal, 'aria-hidden': 'true' }, inhoud);
+    const schaal = maat.b / CAMERA_BREEDTE;
+    const s = el('svg', { viewBox: '0 -16 56 82', width: 56 * schaal, height: 82 * schaal, 'aria-hidden': 'true', overflow: 'visible' }, inhoud);
     return { element: s, klasse: `taart-midden-hex ${klasse}` };
   }
 
-  /* ---------- tegel kiezen ---------- */
+  /* ---------- tegel kiezen (ringplek of brug) ---------- */
   function kiesTegel(v, knop) {
-    if (menu || klaarGezet) return;
+    if (menu || klaarGezet || bezig) return;
     const s = staat.lees();
     const typen = hex.kandidaten(tuin().gelegd, v);
     const n = typen.length;
+    // Naast een lege plek (de eerste tegel op het startveld) passen alle 9 types: dan kleinere tegels op een
+    // grotere ring, zodat de opties niet over elkaar vallen.
+    const klein = n > 4;
+    const [tb, th] = klein ? [52, 62] : [68, 80];
     const opties = typen.map((type, i) => {
       const aantal = s.tegels[type] || 0;
       const [k, f] = hex.splits(type);
       return {
         hoek: 90 + ((i + 1) * 360) / (n + 1),
-        klasse: 'taart-hex',
+        klasse: klein ? 'taart-hex taart-hex-klein' : 'taart-hex',
         label: `Tegel ${k} ${f}, ${aantal}`,
         uitgeschakeld: aantal <= 0,
         inhoud: h('span', { class: 'taart-hex-inhoud' }, [
-          el('svg', { viewBox: '0 0 68 80', width: 68, height: 80, 'aria-hidden': 'true' }, [hexTegel(34, 38, type, 62, aantal > 0 ? null : GRIJS)]),
+          el('svg', { viewBox: '0 0 68 80', width: tb, height: th, 'aria-hidden': 'true' }, [hexTegel(34, 38, type, 62, aantal > 0 ? null : GRIJS)]),
           h('span', { class: 'aantal', 'aria-hidden': 'true' }, String(aantal)),
         ]),
-        actie: () => legTegel(v, type),
+        actie: () => (hex.veldVan(tuin(), v) >= 0 ? legTegel(v, type) : legBrug(v, type)),
       };
     });
     opties.push({ hoek: 90, klasse: 'taart-annuleer', label: 'Annuleren', inhoud: el('svg', { viewBox: '0 0 48 48', width: 20, height: 20, 'aria-hidden': 'true' }, [el('path', { d: 'M12 12 L36 36 M36 12 L12 36', stroke: '#4F6B7E', 'stroke-width': 6, 'stroke-linecap': 'round' })]) });
     menu = toonTaartmenu({
-      anker: knop.getBoundingClientRect(), kloon: false, straal: MENU_STRAAL, label: 'Kies een tegel', dim: 'rgba(30, 58, 76, 0.42)',
+      anker: knop.getBoundingClientRect(), kloon: false, straal: klein ? MENU_STRAAL_GROOT : MENU_STRAAL, label: 'Kies een tegel', dim: 'rgba(30, 58, 76, 0.42)',
       midden: middenHex([use('hx-doel', 0, 0, 56, 66)], 'taart-midden-doel'),
       opties, bijSluiten: () => { menu = null; },
     });
@@ -303,21 +422,105 @@ function speel({ root, dag, info, klaar, opnieuw, zoek = false }) {
   function legTegel(v, type) {
     if (klaarGezet || gestopt) return;
     if (!staat.legTuinTegel(v, type)) return;
-    render(v);
-    if (hex.bereiktUitgang(tuin().gelegd)) einde();
+    if (hex.isWegplek(tuin(), v)) { einde(v); return; }
+    render({ nieuw: v });
+  }
+
+  /* ---------- brug: een nieuw veld groeit in de jungle ---------- */
+  async function legBrug(v, type) {
+    if (klaarGezet || gestopt) return;
+    const oud = tuin();
+    const nieuw = hex.metBrug(oud, v, type);
+    if (!nieuw || !staat.legTuinBrug(nieuw, type)) return;
+    bezig = true;
+    const c = hex.huidigVeld(nieuw).c;
+    const vakken = hex.bloem(c);
+    const groei = new Map(vakken.filter((x) => x !== v).map((x, i) => [x, i]));
+    const verdwijnt = new Set(vakken.filter((x) => x !== v && !hex.grasplekken(oud).includes(x)));
+    render({ nieuw: v, groei: rustig ? null : groei, verdwijnt: rustig ? null : verdwijnt, rect: verenigd(camRect(), camRect(camDoel())) });
+    if (!rustig) {
+      await wacht(GROEI_STAP * vakken.length + 250);
+      const pc = hex.pixel(c);
+      sterretjes(pc.x, pc.y - 10, 10, 34);
+      await wacht(250);
+    }
+    await hup(hex.pixel(v), { kano: false });
+    await camNaar(camDoel());
+    bezig = false;
+    render();
+  }
+
+  function verenigd(a, b) {
+    const x = Math.min(a.x, b.x); const y = Math.min(a.y, b.y);
+    return { x, y, b: Math.max(a.x + a.b, b.x + b.b) - x, h: Math.max(a.y + a.h, b.y + b.h) - y };
+  }
+
+  /**
+   * Pino hupt in een rechte lijn naar een punt, met een boogje per hex. Standaard tijdens het huppen boven alles;
+   * met { opDiepte: true } wordt ze elk frame op haar diepte gezet (bij de taxi, die op de weg staat).
+   */
+  async function hup(doel, { kano = false, opDiepte = false } = {}) {
+    const van = { x: pino.x, y: pino.y };
+    const afst = Math.hypot(doel.x - van.x, doel.y - van.y);
+    const hops = Math.max(1, Math.round(afst / hex.DX));
+    if (doel.x !== van.x) pino.flip = doel.x < van.x;
+    pino.kano = false;
+    if (!opDiepte) wereld.append(pinoG);
+    await anim(hops * HUP_DUUR, (f) => {
+      const fh = (f * hops) % 1;
+      const grondY = van.y + (doel.y - van.y) * f;
+      pino.x = van.x + (doel.x - van.x) * f;
+      pino.y = grondY - Math.sin(fh * Math.PI) * 12;
+      pino.pose = fh < 0.5 && f < 1 ? 'loop' : 'staan';
+      tekenPino();
+      if (opDiepte) plaatsPino(grondY + 33.5);
+    });
+    Object.assign(pino, { x: doel.x, y: doel.y, pose: 'staan', kano });
+    tekenPino();
+    plaatsPino(pino.y + 33.5);
+  }
+
+  async function camNaar(doel) {
+    const van = { ...cam };
+    knoppen.replaceChildren();
+    await anim(CAMERA_DUUR, (f) => {
+      const g = glad(f);
+      cam.x = van.x + (doel.x - van.x) * g;
+      cam.y = van.y + (doel.y - van.y) * g;
+      zetViewBox();
+    });
+  }
+
+  /** Sterretjes die vanuit een punt naar buiten vliegen en vervagen. */
+  function sterretjes(x, y, n = 8, afst = 26) {
+    if (rustig) return;
+    for (let i = 0; i < n; i += 1) {
+      const hoek = (i / n) * Math.PI * 2 + Math.random() * 0.4;
+      const s = el('g', { class: 'tuin-ster-uit', style: `--dx:${(Math.cos(hoek) * afst).toFixed(1)}px;--dy:${(Math.sin(hoek) * afst * 0.8).toFixed(1)}px` }, [sterPad(x, y, 0.5 + Math.random() * 0.5)]);
+      effecten.append(s);
+      const tm = setTimeout(() => { timers.delete(tm); s.remove(); }, 800);
+      timers.add(tm);
+    }
   }
 
   /* ---------- edelsteen kiezen ---------- */
-  function kiesEdelsteen(v, knop) {
-    if (menu || klaarGezet) return;
-    const { x, y } = hexRect(28, 33);
+  async function kiesEdelsteen(v, knop) {
+    if (menu || klaarGezet || bezig) return;
+    const t = tuin();
+    const vi = t.huidig;
+    const veld = t.velden[vi];
+    const p = hex.pixel(veld.c);
+    sterretjes(p.x, p.y - 20, 12, 40);
+    if (!rustig) { bezig = true; knoppen.replaceChildren(); await wacht(450); bezig = false; render(); }
+    if (gestopt) return;
+    const anker = knoppen.querySelector('.tuin-knop-midden')?.getBoundingClientRect() || knop.getBoundingClientRect();
     menu = toonTaartmenu({
-      anker: knop.getBoundingClientRect(), kloon: false, straal: GEM_STRAAL, label: 'Kies een edelsteen', dim: 'rgba(30, 58, 76, 0.42)',
-      midden: middenHex([use('hx-gras', x, y, 56, 66), el('path', { d: `M28 19 ${FONKEL}`, fill: '#FFC93C' })], 'taart-midden-goud'),
+      anker, kloon: false, straal: GEM_STRAAL, label: 'Kies een edelsteen', dim: 'rgba(30, 58, 76, 0.42)',
+      midden: middenHex([middenTekening(veld.soort, 28, 33)], 'taart-midden-goud'),
       opties: GEMS.map((k, i) => ({
         hoek: [-150, -90, -30][i], klasse: 'taart-rond', label: `Kies ${k}e edelsteen`,
         inhoud: gemSvg(k, 44),
-        actie: () => { if (staat.oogstEdelsteen(v, k)) render(); },
+        actie: () => { if (staat.oogstEdelsteen(vi, k)) { sterretjes(p.x, p.y - 20, 8, 30); render(); } },
       })),
       bijSluiten: () => { menu = null; },
     });
@@ -330,79 +533,91 @@ function speel({ root, dag, info, klaar, opnieuw, zoek = false }) {
     if (w && !rustig) { w.classList.remove('hup'); void w.getBBox(); w.classList.add('hup'); }
   }
 
-  /* ---------- einde: Pino loopt over het pad naar de poort ---------- */
-  async function einde() {
+  /* ---------- einde: de taxi komt Pino ophalen ---------- */
+  async function einde(v) {
     klaarGezet = true;
+    bezig = true;
     const t = tuin();
-    const route = hex.pad(t.gelegd);
-    render();
-    if (!rustig) {
-      for (let i = 1; i < route.length && !gestopt; i += 1) await stap(route[i - 1], route[i], i);
-    } else {
-      Object.assign(pinoPos, hex.middelpunt(hex.UITGANG));
-      plaatsPino(pinoPos.y + 33.5);
-      tekenPino();
-    }
-    pinoPos.pose = 'staan';
+    render({ nieuw: v });
+    await wacht(rustig ? 0 : 250);
+    await hup(hex.pixel(v));
+    const wegY = hex.DY * t.weg.rij;
+    const tb = 72 * TAXI_SCHAAL; const th = 40 * TAXI_SCHAAL;
+    // Ligt de weg vóór het veld, dan stopt de taxi met zijn lage achterkant onder Pino, zodat het dak en het
+    // dakbord niet over haar heen vallen; ligt de weg erachter, dan staat ze er toch vóór.
+    const stopX = t.weg.kant > 0 ? pino.x - 16 : pino.x - tb / 2;
+    const r = camRect();
+    const taxi = el('g', { class: 'tuin-taxi' }, [
+      use('s10-auto', 0, 0, tb, th, TAXI_GEEL),
+      use('s2-taxibord', 32 * TAXI_SCHAAL, 0, 14 * TAXI_SCHAAL, 7 * TAXI_SCHAAL),
+    ]);
+    const zetTaxi = (x) => taxi.setAttribute('transform', `translate(${x.toFixed(1)} ${(wegY + TAXI_WIELEN - th * (38.5 / 40)).toFixed(1)})`);
+    const vanX = r.x - tb - 20;
+    zetTaxi(rustig ? stopX : vanX);
+    // De taxi staat op de weg en wordt op diepte gesorteerd zoals een vak in de wegrij (besluit 176): ligt de weg
+    // achter het veld, dan staat Pino ervóór; ligt hij ervoor, dan rijdt de taxi vóór haar langs.
+    taxi.dataset.y = String(wegY + 33.4);
+    wereld.insertBefore(taxi, [...wereld.children].find((c) => c !== pinoG && Number(c.dataset.y) > wegY + 33.4) || null);
+    plaatsPino(pino.y + 33.5);
+    await anim(1300, (f) => zetTaxi(vanX + (stopX - vanX) * (1 - (1 - f) ** 3)));
+    await wacht(rustig ? 0 : 200);
+    // Pino stapt in: hup naar het portier aan haar kant van de taxi (weg erachter: vóór de taxi; weg ervoor:
+    // achter de taxi langs) en weg.
+    const deurY = t.weg.kant < 0 ? wegY + 16 : wegY - 18;
+    await hup({ x: pino.x, y: deurY }, { opDiepte: true });
+    pino.zichtbaar = false;
     tekenPino();
+    sterretjes(pino.x, deurY - 30, 6, 18);
+    await wacht(rustig ? 0 : 350);
+    const totX = r.x + r.b + 40;
+    await anim(1100, (f) => zetTaxi(stopX + (totX - stopX) * f * f));
     await wacht(EIND_PAUZE);
     if (gestopt) return;
     const tegels = Object.keys(t.gelegd).length;
     const edelstenen = t.edelstenen || 0;
-    const eersteKeer = klaar({ score: { tegels, edelstenen } });
+    const eersteKeer = klaar({ score: { tegels, edelstenen, velden: t.velden.length } });
     staat.wisTuin();
     toonResultaat({
       root,
       icoon: info.icoon,
       label: `${info.titel.toUpperCase()} · KLAAR`,
-      titel: 'Het pad is gelegd!',
-      zin: 'De koningin wandelt met droge voeten naar de poort. Zelfs de kraanvogels maken een buiging.',
+      titel: 'Van kano tot taxi!',
+      zin: "Tempels, boeddha's en watervallen: Pino heeft de hele tuin van de koningin doorkruist.",
       tegels: [{ label: 'TEGELS', waarde: tegels, kleur: '#1F7A3A' }],
       beloning: { ...info.beloning, eersteKeer },
       opnieuw,
     });
   }
 
-  function stap(van, naar, i) {
-    const a = hex.middelpunt(van);
-    const b = hex.middelpunt(naar);
-    if (b.x !== a.x) pinoPos.flip = b.x < a.x;
-    plaatsPino(Math.max(a.y, b.y) + 33.5);
-    return new Promise((ok) => {
-      const t0 = performance.now();
-      const frame = (nu) => {
-        if (gestopt) { ok(); return; }
-        const f = Math.min(1, (nu - t0) / STAP_DUUR);
-        pinoPos.x = a.x + (b.x - a.x) * f;
-        pinoPos.y = a.y + (b.y - a.y) * f - Math.sin(f * Math.PI) * 6;
-        pinoPos.pose = (i + (f > 0.5 ? 1 : 0)) % 2 ? 'loop' : 'staan';
-        tekenPino();
-        if (f < 1) rafId = requestAnimationFrame(frame);
-        else ok();
-      };
-      rafId = requestAnimationFrame(frame);
-    });
+  /* ---------- maat en start ---------- */
+  function meet() {
+    const r = kaart.getBoundingClientRect();
+    if (r.width < 10 || r.height < 10) return false;
+    maat.b = r.width; maat.h = r.height;
+    return true;
   }
+  const opMaat = () => {
+    if (gestopt || !meet()) return;
+    zetViewBox();
+    if (!bezig && !menu) render();
+  };
+  const ro = new ResizeObserver(opMaat);
+  ro.observe(kaart);
+  window.addEventListener('resize', opMaat);
 
-  /* ---------- start ---------- */
+  Object.assign(cam, camDoel());
+  meet();
+  zetViewBox();
   render();
-  if (datum.isTest()) window.pinoDebug = { spel: 2, hex, tuin, render };
+  if (datum.isTest()) window.pinoDebug = { spel: 2, hex, tuin, render, cam };
 
   return () => {
     gestopt = true;
-    cancelAnimationFrame(rafId);
+    ro.disconnect();
+    window.removeEventListener('resize', opMaat);
+    for (const id of rafs) cancelAnimationFrame(id);
     for (const t of timers) clearTimeout(t);
     if (menu) menu.sluit();
     if (window.pinoDebug && window.pinoDebug.spel === 2) delete window.pinoDebug;
   };
-}
-
-/** Grond: jungle-gras met wat donkere en lichte vlekken, zodat het gazon in de tuin ligt en niet in een kader. */
-function maakGrond() {
-  const g = el('g', { 'aria-hidden': 'true' });
-  g.append(el('rect', { x: 0, y: 0, width: B, height: H, fill: '#5FB05A' }));
-  const vlekken = [[30, 260, 40, 18, '#4E9A3E'], [330, 200, 36, 16, '#4E9A3E'], [20, 620, 34, 14, '#4E9A3E'], [190, 736, 120, 14, '#4E9A3E'],
-    [180, 20, 150, 26, '#4E9A3E'], [335, 480, 30, 60, '#4E9A3E'], [12, 360, 24, 50, '#8BD35A'], [348, 300, 18, 40, '#8BD35A']];
-  for (const [cx, cy, rx, ry, fill] of vlekken) g.append(el('ellipse', { cx, cy, rx, ry, fill }));
-  return g;
 }

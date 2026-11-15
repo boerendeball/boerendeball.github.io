@@ -24,7 +24,7 @@ const SPELLEN = [2, 3, 4, 5, 6];
 // De foto in de polaroid is 100×96 (op 8,8). Uitsnede (viewBox) van de echte scène per spel, in scène-eenheden.
 const FOTO = { x: 8, y: 8, b: 100, h: 96 };
 const UITSNEDE = {
-  2: [0, 500, 240, 230],    // linksonder in de tuin: Pino op de start, de eerste tegels en de bamboe
+  2: [-120, -125, 240, 230], // het startveld in de jungle: Pino in de kano, met de tegels eromheen (besluit 166)
   3: [4, 0, 156, 150],      // familie Nguyễn met meisje en gansje
   5: [0, 44, 250, 240],     // kraam van Mai, put en krukje
   6: [62, 100, 230, 221],   // Pino met de ketting tussen de bezoekers

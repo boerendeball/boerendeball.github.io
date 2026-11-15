@@ -18,7 +18,7 @@ Elke polaroid is een SVG 160×194 (viewBox −12 −12 144 164): `s4-polaroid` 1
 
 | Spel | Bouwer | Inhoud | Uitsnede |
 |---|---|---|---|
-| 2 | `tuinScene()` (spel2.js) | de tuin zoals hij nu in de staat staat (na afronding: alleen de starttegel), Pino op de start | 0 500 240 230 |
+| 2 | `tuinScene()` (spel2.js) | het kanoveld in de jungle zoals het nu in de staat staat (na afronding: leeg), met Pino (besluit 166) | −120 −125 240 230 |
 | 3 | `familieScene('nguyen', karakters, { werker: false })` | familie Nguyễn met de gekochte karakters | 4 0 156 150 |
 | 4 | `foto(familie, plek)` (spel4.js) | de eerste foto van de eerst gefotografeerde familie (of de familie uit spel 3) | het frame van die fotoplek |
 | 5 | `marktScene()` (spel5.js) | de markt zoals in de kijkmodus, Pino op haar startplek | 0 44 250 240 |
@@ -37,7 +37,7 @@ Een personage in de poppenhuisstijl (48×72, zoals de andere personen) met altij
 
 | Symbool | Spel | Wat hij doet | Schaal | Voeten op |
 |---|---|---|---|---|
-| `wk-hark` | 2, tuin | harkt het gazon | 0,6 | vak (3,10) |
+| `wk-hark` | 2, tuin | harkt een open plek in de jungle | 0,6 | naast veld 3 (besluit 170) |
 | `wk-kwast` | 3, villa | schildert de villa wit (gespiegeld, verfpot achter de villa) | 0,62 | (198,110) |
 | `wk-zwaai` | 4, foto's | zwaait met een kokosdrankje naar de camera | 0,62 (strand 0,55) | strand (49,316), net achter de stamvoet; berg (214,452); markt (236,422) |
 | `wk-emmer` | 5, nachtmarkt | haalt water uit de put | 0,62 | (184,262) |
@@ -55,7 +55,7 @@ Het resultaatscherm toont de vijf werkers elk met zijn eigen prop. Het kader vol
   - in de zoekmodus volgt na de hupjes (700 ms + 250 ms) `ga('/spel/7', { vervang: true })`, tenzij Pino intussen al weg is.
 - De terugknop in de kopbalk (en Escape in spel 6) wijst in de zoekmodus naar het album.
 - Per spel:
-  - **Spel 2:** het gewone spel. De werker verschijnt pas als er een tegel op (3,10) ligt; zijn de tegels op, dan haalt Pino ze uit spel 1 (#103).
+  - **Spel 2:** het gewone spel. De werker verschijnt pas als veld 3 ontstaat (#170); zijn de tegels op, dan haalt Pino ze uit spel 1 (#103).
   - **Spel 3:** het gewone spel; de werker staat half achter de villa van Nguyễn.
   - **Spel 4:** start altijd in het album van spel 4. Pino kiest een familie en zoekt in de bekijkmodus (#50, #105).
   - **Spel 5:** start in het productenalbum. Een gekocht kaartje opent de markt in kijkmodus (#67, #105).

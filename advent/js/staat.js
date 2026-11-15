@@ -22,7 +22,7 @@ export function legeStaat() {
     briefjesGelezen: [],
     tegels: {},                   // { "groen-vlinder": 2, ... }  (spel 1 → spel 2)
     edelstenen: { blauw: 0, groen: 0, geel: 0 },   // spel 2 → spel 3
-    tuin: null,                   // spel 2, onaf pad: { gelegd: { "3,10": "groen-vogel" }, geoogst: ["2,11"], edelstenen: 1 }
+    tuin: null,                   // spel 2, onaffe tocht: { velden, huidig, gelegd, pino, weg, werker, edelstenen } (spellen/hex.js)
     karakters: [],                // spel 3: gekochte kaarten ("lam" | "gansje" | "meisje" | "biggetje"), blijven bewaard
     familie: null,                // "nguyen" | "tan" | "somchai": de eerste complete familie (spel 3 → spel 4)
     fotos: [],                    // spel 4: families die al gefotografeerd zijn ("tan" | "nguyen" | "somchai")
@@ -50,6 +50,13 @@ function migreer(data) {
   if (!Array.isArray(uit.fotos)) uit.fotos = [];
   if (!Array.isArray(uit.producten)) uit.producten = [];
   uit.markt = { ...basis.markt, ...(data.markt && typeof data.markt === 'object' ? data.markt : {}) };
+  // Spel 2 is herontworpen (besluit 166): een tuin uit het oude 6×14-raster kan niet verder. Wis hem en geef de
+  // tegels die erin lagen terug aan de voorraad, zodat er niemand tegels kwijtraakt.
+  if (uit.tuin && typeof uit.tuin === 'object' && !Array.isArray(uit.tuin.velden)) {
+    uit.tegels = { ...(uit.tegels || {}) };
+    for (const type of Object.values(uit.tuin.gelegd || {})) uit.tegels[type] = (uit.tegels[type] || 0) + 1;
+    uit.tuin = null;
+  }
   // Versie 1 gaf +1 vaardigheid per spel en begon met gansjes/lammetjes/snoepjes op 100: opnieuw berekenen
   // uit de gespeelde deurtjes zodra de beloningstabel er is (besluit 164).
   if (!(data.versie >= 2)) uit._herbereken = true;
@@ -168,33 +175,46 @@ export function neemTegel(kleur, figuur) {
   return gelukt;
 }
 
-/* Spel 2: de tuin blijft bewaard tot het pad af is (de tegels uit spel 1 zijn bewust schaars). */
+/* Spel 2: de tuin (jungletocht) blijft bewaard tot het spel af is; de tegels uit spel 1 zijn bewust schaars.
+   De vorm van de tuin en de regels staan in spellen/hex.js; hier alleen het bewaren en de voorraad. */
 
-function tuinVan(s) {
-  if (!s.tuin || typeof s.tuin !== 'object') s.tuin = { gelegd: {}, geoogst: [], edelstenen: 0 };
-  return s.tuin;
+/** Zet een nieuwe tuin als er nog geen (geldige) is. */
+export function beginTuin(nieuw) {
+  return schrijf((s) => { if (!s.tuin || !Array.isArray(s.tuin.velden)) s.tuin = nieuw; });
 }
 
-/** Legt een tegel uit de voorraad op een vak van de tuin; false als die tegel op is. */
+/** Legt een tegel uit de voorraad op een ringplek van de tuin; false als die tegel op is. */
 export function legTuinTegel(vak, type) {
   let gelukt = false;
   schrijf((s) => {
-    if ((s.tegels[type] || 0) <= 0) return;
+    if (!s.tuin || (s.tegels[type] || 0) <= 0) return;
     s.tegels[type] -= 1;
-    tuinVan(s).gelegd[vak] = type;
+    s.tuin.gelegd[vak] = type;
     gelukt = true;
   });
   return gelukt;
 }
 
-/** Edelsteen uit een omringd tuinvak: één keer per vak. */
-export function oogstEdelsteen(vak, kleur) {
+/** Legt een brug in de jungle: één tegel uit de voorraad en de tuin wordt de (al berekende) nieuwe tuin. */
+export function legTuinBrug(nieuweTuin, type) {
   let gelukt = false;
   schrijf((s) => {
-    const tuin = tuinVan(s);
-    if (tuin.geoogst.includes(vak)) return;
-    tuin.geoogst.push(vak);
-    tuin.edelstenen = (tuin.edelstenen || 0) + 1;
+    if (!nieuweTuin || (s.tegels[type] || 0) <= 0) return;
+    s.tegels[type] -= 1;
+    s.tuin = nieuweTuin;
+    gelukt = true;
+  });
+  return gelukt;
+}
+
+/** Edelsteen uit een veld waarvan de ring vol ligt: één keer per veld. */
+export function oogstEdelsteen(veldIndex, kleur) {
+  let gelukt = false;
+  schrijf((s) => {
+    const veld = s.tuin && s.tuin.velden[veldIndex];
+    if (!veld || veld.geoogst) return;
+    veld.geoogst = true;
+    s.tuin.edelstenen = (s.tuin.edelstenen || 0) + 1;
     s.edelstenen[kleur] = (s.edelstenen[kleur] || 0) + 1;
     gelukt = true;
   });

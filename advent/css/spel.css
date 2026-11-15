@@ -105,23 +105,26 @@
 /* ---------- spel 2 · Tuin van de koningin (design/artboards/Spel2*.dc.html) ---------- */
 .spel2 .kopbalk-titel { font-size: 20px; }
 
-/* Het scherm is precies zo hoog als het zichtbare venster (dvh: zonder adresbalk/navigatiebalk); de scène
-   (358×744) schaalt naar de kleinste van beschikbare breedte en hoogte, zodat er nooit gescrold hoeft te worden. */
+/* Het scherm is precies zo hoog als het zichtbare venster (dvh: zonder adresbalk/navigatiebalk); de scène vult
+   de ruimte onder de kopbalk en de camera past de viewBox aan die maat aan, zodat er nooit gescrold hoeft te
+   worden (besluit 173, vervangt de aspect-ratio-aanpak van besluit 43). */
 .spel2 { height: 100vh; height: 100dvh; min-height: 0; overflow: hidden; }
-.tuin-ruimte { flex: 1 1 auto; min-height: 0; container-type: size; display: flex; justify-content: center; align-items: flex-start; }
+.tuin-ruimte { flex: 1 1 auto; min-height: 0; display: flex; }
 .tuin-kaart {
-  background: #5FB05A; flex: none; margin: 0;
-  width: min(100cqw, calc(100cqh * 358 / 744)); max-width: none; aspect-ratio: 358 / 744;
+  background: #4E9A3E; flex: 1 1 auto; margin: 0; width: 100%; max-width: none; height: 100%;
   touch-action: manipulation; /* geen joystick in spel 2: gewone tik, geen dubbeltik-zoom */
 }
-.tuin-scene { display: block; width: 100%; height: auto; }
+.tuin-scene { display: block; width: 100%; height: 100%; }
 .tuin-knoppen { position: absolute; inset: 0; pointer-events: none; }
 .tuin-knop {
   position: absolute; pointer-events: auto; border: 0; padding: 0; margin: 0; background: transparent; cursor: pointer;
   clip-path: polygon(50% 0, 96% 25%, 96% 75%, 50% 100%, 4% 75%, 4% 25%);
   -webkit-tap-highlight-color: transparent;
 }
-.tuin-knop:hover, .tuin-knop:focus-visible { background: rgba(255, 255, 255, 0.18); outline: none; }
+/* De knoppen liggen boven de hele scène (ook boven Pino) en tekenen dus zelf niets; hover en focus lichten het
+   vak in de scène op (.tuin-hover), onder Pino (besluit 176). */
+.tuin-knop:hover, .tuin-knop:focus-visible { background: transparent; outline: none; }
+.tuin-hover .tuin-open { fill: rgba(255, 255, 255, 0.5); stroke-dasharray: none; stroke-width: 2.5; }
 .tuin-knop-werker { clip-path: none; border-radius: 50%; }
 .tuin-knop-werker:focus-visible { box-shadow: inset 0 0 0 3px #fff; }
 
@@ -132,6 +135,18 @@
 .tuin-fonkel { animation: tuin-fonkel 1.4s ease-in-out infinite; }
 @keyframes tuin-hup { 0%, 100% { transform: translateY(0); } 40% { transform: translateY(-6px); } }
 .tuin-werker.hup > use { animation: tuin-hup 0.35s ease-out 2; }
+.tuin-knop-midden { clip-path: none; border-radius: 50%; }
+
+/* een nieuw veld groeit: de vakken komen één voor één omhoog, de jungleplanten krimpen weg */
+@keyframes tuin-groeit { from { transform: translateY(16px); opacity: 0; } 60% { opacity: 1; } to { transform: none; opacity: 1; } }
+.groeit { animation: tuin-groeit 0.35s ease-out both; }
+@keyframes tuin-verdwijnt { to { transform: scale(0.2); opacity: 0; } }
+.verdwijnt { transform-box: fill-box; transform-origin: 50% 100%; animation: tuin-verdwijnt 0.3s ease-in forwards; }
+/* glinster rond een midden met een volle ring, en sterretjes die wegvliegen */
+@keyframes tuin-glinster { 0%, 100% { opacity: 0.25; } 50% { opacity: 1; } }
+.tuin-glinster { animation: tuin-glinster 1.1s ease-in-out infinite; }
+@keyframes tuin-ster-uit { from { transform: translate(0, 0); opacity: 1; } to { transform: translate(var(--dx), var(--dy)); opacity: 0; } }
+.tuin-ster-uit { animation: tuin-ster-uit 0.7s ease-out forwards; }
 
 /* taartmenu: tegels, edelstenen, annuleren en het uitgelichte vak in het midden */
 .taart-optie.taart-hex {
@@ -141,6 +156,7 @@
 .taart-optie.taart-hex:disabled { cursor: default; filter: drop-shadow(0 6px 10px rgba(30, 58, 76, 0.25)); }
 .taart-optie.taart-hex:focus-visible { outline: 3px solid #fff; outline-offset: 2px; border-radius: 12px; }
 .taart-hex-inhoud { position: relative; display: block; width: 68px; height: 80px; }
+.taart-optie.taart-hex-klein, .taart-hex-klein .taart-hex-inhoud { width: 52px; height: 62px; }
 .taart-hex-inhoud > svg { display: block; }
 .taart-hex .aantal {
   position: absolute; right: -2px; top: -2px; min-width: 24px; height: 24px; border-radius: 999px; padding: 0 6px; box-sizing: border-box;
@@ -155,7 +171,8 @@
 .taart-midden-goud { box-shadow: 0 0 0 4px var(--geel); }
 
 @media (prefers-reduced-motion: reduce) {
-  .valt-in, .tuin-fonkel, .tuin-werker.hup > use { animation: none; }
+  .valt-in, .tuin-fonkel, .tuin-werker.hup > use, .groeit, .verdwijnt, .tuin-ster-uit { animation: none; }
+  .tuin-glinster { animation: none; opacity: 1; }
 }
 
 /* ---------- edelsteenpil (ui/edelstenen.js) ---------- */

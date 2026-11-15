@@ -74,6 +74,10 @@ Welke tegel waar past, ontdekt ze zelf: het menu toont alleen passende tegels. D
 - **Groepen** (ongewijzigd, #34): aangrenzende tegels met dezelfde kleur, of met hetzelfde figuur, vormen een groep. In een groep komt elk type maar één keer voor. Groepen lopen ook over velden heen.
 - **Kandidaten**: de types die bij **alle** aangrenzende tegels passen en geen dubbel type in een groep maken. Het midden van een veld is geen tegel. Naast een lege plek past dus elk type: de eerste tegel op het startveld mag alles zijn, en het menu toont dan 9 kleinere tegels op een grotere ring (#172).
 - **Leggen op het huidige veld**: elke vrije ringplek met een kandidaat is open. Verlaten velden zijn dicht (#169).
+- **Pino loopt mee** (#177):
+  - Na elke gelegde tegel hupt Pino in een rechte lijn naar die tegel (300 ms per hex). Bij een brug doet ze dat al.
+  - Zolang ze onderweg is, zijn er geen klikdoelen. Pas als ze staat, kan de speler de volgende tegel leggen.
+  - Haar plek wordt bewaard (`tuin.pino`). De kano blijft leeg achter.
 - **Brug**:
   - Kan pas als er ≥ 3 tegels op het huidige veld liggen, en niet vanaf veld 7.
   - Een brugplek ligt op afstand 2 van het huidige midden, grenst aan een gelegde tegel van dat veld, heeft een kandidaat en ruimte voor een nieuw veld.
@@ -158,6 +162,7 @@ Welke tegel waar past, ontdekt ze zelf: het menu toont alleen passende tegels. D
 - [x] De polaroid van spel 2 in spel 7 toont het kanoveld met Pino.
 - [x] Het scherm is even hoog als het venster (384×680, 375×812, desktop), en de klikdoelen liggen op de hexen (afwijking 0 px na een resize-event).
 - [x] Node-check (`hex.js`): buren en afstand, brugplekken na 3 tegels, nieuw midden zonder overlap, werker- en wegplek, een tocht met 27 tegels in 20 stappen.
+- [x] Na een tegel op het kanoveld (0,1) zijn er tijdens het huppen 0 klikdoelen. Daarna staat Pino op (0,1) (`tuin.pino`) en zijn er weer 5 klikdoelen. Na herladen staat ze er nog, en de kano ligt leeg (#177).
 - [x] Hover op het vak boven Pino licht het vak in de scène op, onder Pino; de knop zelf heeft geen achtergrond (#176).
 - [x] De weg raakt geen tegel van de rij erboven of eronder (gezien met de weg onder veld 7).
 - [x] Taxi en Pino (#176):

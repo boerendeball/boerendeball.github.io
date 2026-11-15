@@ -183,13 +183,14 @@ export function beginTuin(nieuw) {
   return schrijf((s) => { if (!s.tuin || !Array.isArray(s.tuin.velden)) s.tuin = nieuw; });
 }
 
-/** Legt een tegel uit de voorraad op een ringplek van de tuin; false als die tegel op is. */
+/** Legt een tegel uit de voorraad op een ringplek van de tuin; Pino gaat erop staan. False als die tegel op is. */
 export function legTuinTegel(vak, type) {
   let gelukt = false;
   schrijf((s) => {
     if (!s.tuin || (s.tegels[type] || 0) <= 0) return;
     s.tegels[type] -= 1;
     s.tuin.gelegd[vak] = type;
+    s.tuin.pino = vak;
     gelukt = true;
   });
   return gelukt;

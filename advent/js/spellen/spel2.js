@@ -419,11 +419,16 @@ function speel({ root, dag, info, klaar, opnieuw, zoek = false }) {
     });
   }
 
-  function legTegel(v, type) {
-    if (klaarGezet || gestopt) return;
+  /** Een tegel op een ringplek: Pino hupt erheen, en pas daarna kan de speler verder (besluit 177). */
+  async function legTegel(v, type) {
+    if (klaarGezet || gestopt || bezig) return;
     if (!staat.legTuinTegel(v, type)) return;
     if (hex.isWegplek(tuin(), v)) { einde(v); return; }
-    render({ nieuw: v });
+    bezig = true;
+    render({ nieuw: v });   // zonder knoppen zolang Pino onderweg is
+    await hup(hex.pixel(v));
+    bezig = false;
+    if (!gestopt) render();
   }
 
   /* ---------- brug: een nieuw veld groeit in de jungle ---------- */

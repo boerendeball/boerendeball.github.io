@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Deurtjes-iconen: voorstellen</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@700&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+  body { margin: 0; padding: 20px 16px 48px; background: #BFE6FA; color: #1E3A4C; font: 400 15px/1.4 Nunito, sans-serif; }
+  h1 { font: 700 28px Fredoka, sans-serif; margin: 0 0 4px; }
+  .intro { margin: 0 0 18px; color: #35505F; max-width: 900px; }
+  .spel { background: #fff; border-radius: 22px; box-shadow: 0 6px 0 0 #CDE4F0; padding: 16px; margin: 0 auto 18px; max-width: 1180px; }
+  .spel h2 { font: 700 20px Fredoka, sans-serif; margin: 0 0 10px; }
+  .spel h2 small { font: 800 12px Nunito, sans-serif; color: #0E7FB5; letter-spacing: 0.06em; text-transform: uppercase; margin-right: 8px; }
+  .rij { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  @media (max-width: 860px) { .rij { grid-template-columns: repeat(2, 1fr); } }
+  .optie { min-width: 0; border-radius: 16px; padding: 12px; background: #F4FAFD; display: flex; flex-direction: column; gap: 8px; }
+  .optie.huidig { background: #FFF6E0; }
+  .kop { display: flex; align-items: baseline; gap: 8px; }
+  .code { font: 700 20px Fredoka, sans-serif; color: #0E7FB5; }
+  .huidig .code { color: #9A5B00; font-size: 15px; }
+  .naam { font-weight: 800; }
+  .maten { display: flex; align-items: center; gap: 12px; min-height: 112px; }
+  .bol { border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .bol.deur { width: 58px; height: 58px; box-shadow: inset 0 -4px 0 0 rgba(0,0,0,0.08); }
+  .bol.wolk { width: 38px; height: 38px; background: #E3F4FC; }
+  .bol.groot { width: 92px; height: 92px; border: 5px solid #fff; }
+  .uitleg { margin: 0; font-size: 13.5px; color: #35505F; }
+  .legenda { font-size: 12px; color: #4F6B7E; margin: 0; }
+</style>
+</head>
+<body>
+<h1>Deurtjes-iconen: huidig en drie voorstellen per spel</h1>
+<p class="intro">Elk icoon staat in de drie maten waarin de kalender het toont: groot (Open- en laadscherm, met ring), op het deurtje (58 px bol) en in het gedachtenwolkje (38 px). Geel vak = het icoon dat nu in de app zit. Kies per spel A, B, C of "oud houden".</p>
+<div id="lijst"></div>
+<script type="module">
+import { VOORSTELLEN } from './voorstellen.js';
+import { icoon, BOL_KLEUR, RING_KLEUR } from '../../advent/js/ui/iconen.js';
+import { laadSprites } from '../../advent/js/sprites.js';
+
+const data = await (await fetch('../../advent/data/kalender.json')).json();
+await laadSprites();
+const NS = 'http://www.w3.org/2000/svg';
+const h = (tag, attrs = {}, kinderen = []) => {
+  const e = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) { if (k === 'style') Object.assign(e.style, v); else if (k === 'text') e.textContent = v; else e.setAttribute(k, v); }
+  e.append(...kinderen);
+  return e;
+};
+const svgVan = (inhoud, maat) => {
+  const s = document.createElementNS(NS, 'svg');
+  s.setAttribute('viewBox', '0 0 48 48'); s.setAttribute('width', maat); s.setAttribute('height', maat);
+  s.innerHTML = inhoud;
+  return s;
+};
+function maten(maak, bol, ring) {
+  return h('div', { class: 'maten' }, [
+    h('div', { class: 'bol groot', style: { background: bol, boxShadow: `0 0 0 3px ${ring}, 0 6px 14px rgba(30,58,76,0.18)` } }, [maak(64)]),
+    h('div', { class: 'bol deur', style: { background: bol } }, [maak(40)]),
+    h('div', { class: 'bol wolk' }, [maak(30)]),
+  ]);
+}
+const lijst = document.getElementById('lijst');
+for (const v of VOORSTELLEN) {
+  const info = data.dagen.find((d) => d.dag === v.dag);
+  const rij = h('div', { class: 'rij' }, [
+    h('div', { class: 'optie huidig' }, [
+      h('div', { class: 'kop' }, [h('span', { class: 'code', text: 'Huidig' }), h('span', { class: 'naam', text: v.huidig })]),
+      maten((m) => icoon(v.huidig, m), BOL_KLEUR[v.huidig], RING_KLEUR[v.huidig]),
+      h('p', { class: 'uitleg', text: v.oordeel }),
+    ]),
+    ...v.varianten.map((o) => h('div', { class: 'optie' }, [
+      h('div', { class: 'kop' }, [h('span', { class: 'code', text: o.id }), h('span', { class: 'naam', text: o.naam })]),
+      maten((m) => svgVan(o.svg, m), o.bol, o.ring),
+      h('p', { class: 'uitleg', text: o.uitleg }),
+    ])),
+  ]);
+  lijst.append(h('section', { class: 'spel' }, [
+    h('h2', {}, [h('small', { text: `Dag ${v.dag}` }), info.titel]),
+    rij,
+  ]));
+}
+</script>
+</body>
+</html>

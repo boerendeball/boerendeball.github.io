@@ -40,12 +40,14 @@ Lagen van achter naar voor:
 | wijzende arm | `pino-arm-vinger` (40×10, schouder op 4,5) | schouder op (x+31, y+36) of (x+17, y+36) | **boven alles**: over bed en kind heen; gedraaid naar de mond van het kind (x+32, y+38) en in de lengte gerekt (max. 1,6×) zodat de vinger de mond haalt |
 | bereik-tint | witte tint 22 % over het kind (hoofd, haar, gezicht) | op het kind | alleen gapend én Pino naast het bed |
 | dekenflits | donkere tint over deken en motieven, 30 % → 0 in 0,4 s | op de deken | direct na een geslaagde onderbreking |
+| schrikhup | het kind (hoofd, haar, gezicht) 4 px op en neer in 0,25 s | op het kind | direct na een geslaagde onderbreking (besluit 183) |
+| hoofdschudden | het kind 3× ±1,5 px heen en weer, uitdovend | op het kind | tijdens de boze fase (besluit 183) |
 
 Pino wordt **per rij gesorteerd**: ze wordt getekend ná alle bedden waarvan de onderkant (bed-y + 84) kleiner is dan haar voeten-y, en vóór de rest. Zo loopt ze zichtbaar tussen de rijen door (3/4-aanzicht).
 
 ### Bedden (64×84), kolommen x = 24, 147, 270; rijen y = 86, 222, 358
 
-Opbouw per bed (volgorde!): `bed-onder` (0,0) → `k-hoofd` (16,14 32×32, huidkleur) → haar (16,14 32×32, haarkleur) → gezicht `g-slaap`/`g-wakker`/`g-gaap`/`g-verrast`/`g-boos` (16,14) → `bed-deken` (0,0, dekenkleur) → motief 3× (`m-{motief}` op 10,50 14×14; 40,54 14×14; 25,60 12×12).
+Opbouw per bed (volgorde!): `bed-onder` (0,0) → `k-hoofd` (16,14 32×32, huidkleur) → haar (16,14 32×32, haarkleur) → gezicht `g-slaap`/`g-wakker`/`g-gaap-begin`/`g-gaap`/`g-verrast`/`g-boos` (16,14) → `bed-deken` (0,0, dekenkleur) → motief 3× (`m-{motief}` op 10,50 14×14; 40,54 14×14; 25,60 12×12).
 
 Vaste bezetting uit het artboard (deken · motief · huid · haar):
 
@@ -57,14 +59,16 @@ Vaste bezetting uit het artboard (deken · motief · huid · haar):
 
 Dekenkleuren: groen `#39D353`, geel `#FFC93C`, blauw `#5BC0EB`. Dit zijn precies de negen tegeltypen van spel 2 (elke combinatie komt één keer voor).
 
+Kind-sprites (alle 32×32, `k-hoofd` en haar via `currentColor`): het hoofd is een cirkel r 11 op (16,16) met een schaduwtint rechts; de kin rust op de dekenrand. Elk haartype heeft één glanstint linksboven (wit 18 %, besluit 180); de bob heeft zijflappen tot y 23. Gezichten: `g-slaap` dichte boogjes + glimlach; `g-wakker` open ogen met lichtje + mondje; `g-gaap-begin` slaperige ogen + kleine ronde mond (eerste 0,25 s van een gaap, besluit 182); `g-gaap` slaperige ogen (dunne hangende oogleden, halve pupil eronder) + wijd open mond met tong (besluit 179, 181); `g-verrast` opgetrokken wenkbrauwen + grote ogen + ronde mond; `g-boos` schuine wenkbrauwen onder de haarlijn + frons + rode blos (besluit 181). Alle lijnen `#1E3A4C`, blos `#FF9BC8` 60–70 % (boos `#FF5E5B` 55 %), mond `#B23A6A`, tong `#FF6FAE`.
+
 ### Decoraties bij een bed
 
 - **Slapend**: "z z z" rechts van het kussen: tekst Nunito 800 `#8AA0AF`, op (x+50, y+22) 11 px, (x+57, y+14) 9 px, (x+63, y+7) 7 px. Zachtjes op en neer (±2 px, 1,6 s) mag; geen filters.
-- **Wakker**: gezicht `g-wakker` (ogen open met lichtje, klein mondje, blos), geen z's en geen oplichting; de fase vóór het gapen (besluit 142).
-- **Boos** (na een onderbreking, besluit 143): gezicht `g-boos` met schuine wenkbrauwen, mondhoeken omlaag en rode blos; geen z's.
-- **Gapend**: gezicht `g-gaap`, verder niets. **Geen ring of balk** die de resterende gaaptijd toont (besluit Benjamin, 3 november 2026): Pino ziet aan het gezicht dat er gegaapt wordt en schat zelf in hoeveel tijd ze heeft.
+- **Wakker**: gezicht `g-wakker` (ogen open met lichtje, klein mondje, blos), geen z's en geen oplichting; de fase vóór het gapen (besluit 142). Bij het wakker worden een **wakkerworden-effect** (besluit 178): het hoofd hupt 3 px op en drie korte streepjes (`#1E3A4C`, 1,6 px) waaieren vanaf de kruin (x+32, y+20) naar buiten en vervagen in 0,5 s; ze vallen over het hoofdeinde van het bed (besluit 184).
+- **Boos** (na een onderbreking, besluit 143): gezicht `g-boos` met schuine wenkbrauwen, mondhoeken omlaag en rode blos; geen z's. Het hoofd schudt drie keer ±1,5 px heen en weer en dooft uit (besluit 183).
+- **Gapend**: de eerste 0,25 s gezicht `g-gaap-begin` (mond half open, besluit 182), daarna `g-gaap` (slaperig: hangende oogleden met half zichtbare pupillen, wijd open mond, besluiten 179 en 181), verder niets. **Geen ring of balk** die de resterende gaaptijd toont (besluit Benjamin, 3 november 2026): Pino ziet aan het gezicht dat er gegaapt wordt en schat zelf in hoeveel tijd ze heeft.
 - **Gapend én Pino naast het bed** (`naastBed`): alleen het **kind** (hoofd, haar, gezicht) licht subtiel op met een witte tint van 22 % over alleen de dekkende pixels, zoals een hover op een knop; bed en deken veranderen niet. Technisch: kind op een tussenlaag (`maakLaag`, 32×32 plus 16 px rand, gelijk aan de sprite-uitloop), `source-atop`-vulling, dan op het hoofdcanvas tussen `bed-onder` en `bed-deken` (besluit 17). Zodra Pino buiten reik stapt of de gaap stopt, verdwijnt de tint direct; geen animatie.
-- **Verrast** (na onderbreking): gezicht `g-verrast` 1,2 s; de **deken** (met motieven) wordt op het moment van de onderbreking donkerder (tint `#1E3A4C` op 30 %) en loopt in 0,4 s lineair terug naar de eigen kleur (`dekenTot`, besluit 18), via dezelfde tussenlaag-techniek als de bereik-tint. **Geen +1-ballon** (artboard heeft die wel; weggelaten, besluit 20): het verraste gezicht en de dekenflits zijn de enige feedback.
+- **Verrast** (na onderbreking): gezicht `g-verrast` (`VERRAST_DUUR`); het hoofd hupt 4 px op en neer in 0,25 s (schrikhup, besluit 183); de **deken** (met motieven) wordt op het moment van de onderbreking donkerder (tint `#1E3A4C` op 30 %) en loopt in 0,4 s lineair terug naar de eigen kleur (`dekenTot`, besluit 18), via dezelfde tussenlaag-techniek als de bereik-tint. **Geen +1-ballon** (artboard heeft die wel; weggelaten, besluit 20): het verraste gezicht en de dekenflits zijn de enige feedback.
 
 ## Regels
 
@@ -79,6 +83,10 @@ Constanten staan bovenaan `spel1.js` en zijn tuning-waarden:
 | `GAAP_DUUR` | 3,5 s | zo lang blijft een kind gapen; daarna telt het als gemist |
 | `VERRAST_DUUR` | 0,6 s | verrast gezicht na een onderbreking |
 | `BOOS_DUUR` | 0,9 s | daarna even boos (`g-boos`), dan meteen weer slapen (besluit 143) |
+| `WEK_DUUR` / `WEK_HUP` | 0,5 s / 3 px | wakkerworden-effect: hoofdhupje en drie vervagende streepjes vanaf de kruin (besluiten 178, 184) |
+| `GAAP_BEGIN` | 0,25 s | zo lang toont een gaap eerst `g-gaap-begin` (mond half open, besluit 182) |
+| `SCHRIK_DUUR` / `SCHRIK_HUP` | 0,25 s / 4 px | schrikhup direct na een onderbreking (besluit 183) |
+| `BOOS_SCHUD` | 1,5 px | uitslag van het hoofdschudden in de boze fase, 3× binnen `BOOS_DUUR` (besluit 183) |
 | `INTERVAL_START` / `INTERVAL_EIND` | 4,0 s → 2,2 s | tijd tussen nieuwe gapen, lineair over de speelduur |
 | `MAX_TEGELIJK` | 2 (eerste 30 s), daarna 3 | gelijktijdig gapende kinderen |
 | `RUST` | 6 s | een kind gaapt niet twee keer binnen deze tijd |
@@ -134,6 +142,9 @@ Weggelaten uit het artboard: het woord "TIJD" bij de balk. Niet aanwezig: de kro
 - [x] Gapen verschijnen volgens de constanten, zonder aflopende ring; afgelopen gaap telt als gemist.
 - [x] Kind wordt eerst wakker (`g-wakker`), gaapt dan wel of niet, en slaapt weer (besluit 142; in de preview gezien: wakker → slaap, wakker → gaap).
 - [x] Na een onderbreking: verrast → boos (`g-boos`) → slaap, zonder wakker-fase (besluit 143; in de preview gezien: 0,6 s verrast, 0,9 s boos, dan slaap).
+- [x] Bij het wakker worden hupt het hoofd op en vervagen drie streepjes vanaf de kruin in 0,5 s (besluiten 178, 184; in de preview gezien).
+- [x] Elke status (slaap, wakker, gaap-begin, gaap, verrast, boos) is op 32 px bij DPR 2 in één oogopslag te onderscheiden, ook met donker haar; elk haartype heeft een glanstint en de bob omlijst het gezicht (besluiten 180–181; gecontroleerd met een gerasterd overzicht van 6 haren × 6 gezichten op DPR 2 en op groot formaat).
+- [x] Een gaap begint 0,25 s met de mond half open; een onderbreking geeft een schrikhup, de boze fase een hoofdschudden (besluiten 182, 183; in de preview gezien: gaap → verrast (schrikhup + dekenflits) → boos → slaap).
 - [ ] Onderbreken naast het bed (links of rechts): verrast gezicht, dekenflits, arm aan de kant van het kind over het bed heen naar de mond; boven/onder het bed of te ver weg: alleen de pose met de arm recht vooruit. (Nog te controleren in de browser na deze wijziging.)
 - [x] Tijdbalk en `m:ss` lopen gelijk; op 0:00 volgt het resultaatscherm met het juiste getal.
 - [x] Na afronden: deurtje 1 `gespeeld`, `vaardigheden.lichaam` +1 en `behoeften.verjaardag` +10 (alleen eerste keer), `tegels` per onderbreking één tegel met de juiste sleutel (`geel-vogel` gezien), `scores[1]` bijgewerkt.

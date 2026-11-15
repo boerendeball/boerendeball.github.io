@@ -39,6 +39,12 @@ const POSE_DUUR = 0.45;       // s vinger uitgestoken na een treffer
 const POSE_MIS = 0.3;         // s vinger uitgestoken zonder treffer
 const VERRAST_DUUR = 0.6;     // s verrast gezicht na een onderbreking (#142)
 const BOOS_DUUR = 0.9;        // s daarna even boos, dan meteen weer slapen (#143)
+const WEK_DUUR = 0.5;         // s wakkerworden-effect: hoofd hupt op en drie streepjes boven het hoofd vervagen (#178)
+const WEK_HUP = 3;            // px hoogte van het hupje
+const GAAP_BEGIN = 0.25;      // s de mond gaat eerst half open (`g-gaap-begin`) voordat de gaap vol is (#182)
+const SCHRIK_DUUR = 0.25;     // s schrikhup: het hoofd van een onderbroken kind hupt op (#183)
+const SCHRIK_HUP = 4;         // px hoogte van de schrikhup
+const BOOS_SCHUD = 1.5;       // px het boze kind schudt het hoofd heen en weer, drie keer binnen BOOS_DUUR (#183)
 const BEVRIES = 0.8;          // s stilstand voor het resultaatscherm
 const JOYSTICK_VERTRAGING = 250;  // ms vasthouden voordat de joystick verschijnt (besluiten.md #23)
 
@@ -60,7 +66,7 @@ const GRENS = { xMin: 0, xMax: B - 48, yMin: 130 - 72, yMax: H - 72 };
 function spriteLijst() {
   const lijst = [{ id: 'bed-onder' }, { id: 'raam' }, { id: 'kleedje' }, { id: 'nachtlamp' },
     { id: 'pino-staan' }, { id: 'pino-loop' }, { id: 'pino-romp' }, { id: 'pino-arm-links' }, { id: 'pino-arm-rechts' }, { id: 'pino-arm-vinger' },
-    { id: 'g-slaap' }, { id: 'g-wakker' }, { id: 'g-gaap' }, { id: 'g-verrast' }, { id: 'g-boos' },
+    { id: 'g-slaap' }, { id: 'g-wakker' }, { id: 'g-gaap' }, { id: 'g-gaap-begin' }, { id: 'g-verrast' }, { id: 'g-boos' },
     { id: 'm-vlinder' }, { id: 'm-boom' }, { id: 'm-vogel' }];
   for (const k of Object.values(KLEUR)) lijst.push({ id: 'bed-deken', kleur: k });
   for (const rij of BEZETTING) {
@@ -110,7 +116,7 @@ function speel({ root, dag, info, klaar, opnieuw }) {
   const bedden = [];
   BEZETTING.forEach((rij, r) => rij.forEach(([deken, motief, huid, haar, haarkleur], c) => {
     // status: slaap → wakker → (gaap →) slaap; onderbroken: gaap → verrast → boos → slaap (besluiten.md #142, #143)
-    bedden.push({ x: KOLOM[c], y: RIJ[r], deken, motief, huid, haar, haarkleur, status: 'slaap', wakkerTot: 0, gaapTot: 0, verrastTot: 0, boosTot: 0, rustTot: 0, dekenTot: 0 });
+    bedden.push({ x: KOLOM[c], y: RIJ[r], deken, motief, huid, haar, haarkleur, status: 'slaap', wakkerTot: 0, wekTot: 0, gaapTot: 0, verrastTot: 0, schrikTot: 0, boosTot: 0, rustTot: 0, dekenTot: 0 });
   }));
   const pino = { x: PINO_START.x, y: PINO_START.y, richting: 1, pose: 'staan', poseTot: 0, loopTijd: 0, beweegt: false, arm: null };
   const s = {
@@ -159,6 +165,7 @@ function speel({ root, dag, info, klaar, opnieuw }) {
     const b = kandidaten[Math.floor(Math.random() * kandidaten.length)];
     b.status = 'wakker';
     b.wakkerTot = WAKKER_DUUR;
+    b.wekTot = WEK_DUUR;
   }
 
   // Pino staat naast het bed: voetpunt links of rechts van het bed (binnen REIK) én op bedhoogte. Boven of
@@ -203,6 +210,7 @@ function speel({ root, dag, info, klaar, opnieuw }) {
     if (doel) {
       doel.status = 'verrast';
       doel.verrastTot = VERRAST_DUUR;
+      doel.schrikTot = SCHRIK_DUUR;
       doel.dekenTot = DEKEN_DUUR;
       doel.rustTot = RUST;
       s.score += 1;
@@ -258,6 +266,8 @@ function speel({ root, dag, info, klaar, opnieuw }) {
     for (const b of bedden) {
       if (b.rustTot > 0) b.rustTot -= dt;
       if (b.dekenTot > 0) b.dekenTot -= dt;
+      if (b.wekTot > 0) b.wekTot -= dt;
+      if (b.schrikTot > 0) b.schrikTot -= dt;
       if (b.status === 'wakker') {
         b.wakkerTot -= dt;
         if (b.wakkerTot <= 0) {
@@ -311,7 +321,13 @@ function speel({ root, dag, info, klaar, opnieuw }) {
   function tekenKindIn(c, b, x, y) {
     tekenSprite(c, 'k-hoofd', x, y, { kleur: b.huid });
     tekenSprite(c, b.haar, x, y, { kleur: b.haarkleur });
-    tekenSprite(c, `g-${b.status}`, x, y);
+    tekenSprite(c, gezichtVan(b), x, y);
+  }
+
+  // Het gezicht bij de status; een gaap begint met een half open mond (#182).
+  function gezichtVan(b) {
+    if (b.status === 'gaap' && b.gaapTot > GAAP_DUUR - GAAP_BEGIN) return 'g-gaap-begin';
+    return `g-${b.status}`;
   }
 
   function tekenDekenIn(c, b, x, y) {
@@ -340,9 +356,48 @@ function speel({ root, dag, info, klaar, opnieuw }) {
 
   // Een gapend kind binnen Pino's reik licht subtiel op (als een hover op een knop); bed en deken blijven gewoon.
   function tekenKind(b) {
-    const x = b.x + 16; const y = b.y + 14;
+    const x = b.x + 16 + boosSchud(b); const y = b.y + 14 + wekHup(b) + schrikHup(b);
     if (b.status === 'gaap' && naastBed(b)) tekenGetint(kindLaag, x, y, BEREIK_TINT, (c, lx, ly) => tekenKindIn(c, b, lx, ly));
     else tekenKindIn(ctx, b, x, y);
+  }
+
+  // Wakkerworden-effect (#178): het hoofd hupt WEK_HUP px op en komt weer neer binnen WEK_DUUR.
+  function wekHup(b) {
+    if (b.wekTot <= 0 || rustig) return 0;
+    const p = 1 - b.wekTot / WEK_DUUR; // 0 → 1
+    return -WEK_HUP * Math.sin(Math.PI * p);
+  }
+
+  // Schrikhup (#183): direct na een onderbreking hupt het hoofd SCHRIK_HUP px op, hoger en korter dan bij het wakker worden.
+  function schrikHup(b) {
+    if (b.schrikTot <= 0 || rustig) return 0;
+    const p = Math.max(0, Math.min(1, 1 - b.schrikTot / SCHRIK_DUUR));
+    return -SCHRIK_HUP * Math.sin(Math.PI * p);
+  }
+
+  // Boos (#183): het hoofd schudt drie keer heen en weer ("nee!"), uitdovend naar het einde van BOOS_DUUR.
+  function boosSchud(b) {
+    if (b.status !== 'boos' || rustig) return 0;
+    const p = Math.max(0, Math.min(1, 1 - b.boosTot / BOOS_DUUR));
+    return BOOS_SCHUD * Math.sin(Math.PI * 2 * 3 * p) * (1 - p);
+  }
+
+  // Drie korte streepjes die vanaf de kruin van het hoofd naar buiten schuiven en vervagen (over het hoofdeinde heen).
+  function tekenWek(b) {
+    const p = Math.max(0, Math.min(1, 1 - b.wekTot / WEK_DUUR));
+    const cx = b.x + 32; const cy = b.y + 20 + wekHup(b);
+    const spreid = rustig ? 2 : 2 + 5 * p;
+    ctx.save();
+    ctx.globalAlpha = 1 - p * p;
+    ctx.strokeStyle = '#1E3A4C'; ctx.lineWidth = 1.6; ctx.lineCap = 'round';
+    for (const hoek of [-Math.PI * 0.8, -Math.PI / 2, -Math.PI * 0.2]) {
+      const r0 = 7 + spreid; const r1 = 11 + spreid;
+      ctx.beginPath();
+      ctx.moveTo(cx + Math.cos(hoek) * r0, cy + Math.sin(hoek) * r0);
+      ctx.lineTo(cx + Math.cos(hoek) * r1, cy + Math.sin(hoek) * r1);
+      ctx.stroke();
+    }
+    ctx.restore();
   }
 
   // Na een geslaagde onderbreking wordt de deken kort donkerder en loopt in DEKEN_DUUR terug naar normaal.
@@ -380,7 +435,10 @@ function speel({ root, dag, info, klaar, opnieuw }) {
     lagen.sort((a, b) => a.y - b.y);
     for (const l of lagen) l.f();
     if (pino.arm) tekenWijsArm(); // de wijzende arm komt over bed en kind heen
-    for (const b of bedden) if (b.status === 'slaap') tekenZzz(b);
+    for (const b of bedden) {
+      if (b.status === 'slaap') tekenZzz(b);
+      else if (b.wekTot > 0) tekenWek(b);
+    }
   }
 
   // Romp (met of zonder armen in de pose) en, bij het wijzen, de hangende arm aan de andere kant.

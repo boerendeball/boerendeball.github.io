@@ -22,6 +22,8 @@ const GAAP_DUUR = 3.5;        // s zo lang gaapt een kind
 const INTERVAL_START = 4.0;   // s tussen kinderen die wakker worden, aan het begin
 const INTERVAL_EIND = 2.2;    // s tussen kinderen die wakker worden, aan het eind
 const RUST = 6;               // s een kind wordt niet twee keer wakker binnen deze tijd
+const SCHAARS_FACTOR = 0.5;   // kansfactor per tegel die Pino méér heeft dan van de schaarste tegel (besluit 188)
+const SCHAARS_MIN = 0.05;     // ondergrens van het gewicht: ook een kind met een volle voorraad wordt soms wakker
 const REIK = 28;              // px naast het bed (links of rechts) waarbinnen Pino's voetpunt moet staan
 const ZIJ_BOVEN = 30;         // px vanaf de bovenkant van het bed: hoger staat Pino erachter, niet ernaast
 const ZIJ_ONDER = 12;         // px onder het voeteneind waar "ernaast" nog telt
@@ -155,6 +157,20 @@ function speel({ root, dag, info, klaar, opnieuw }) {
     return INTERVAL_START + (INTERVAL_EIND - INTERVAL_START) * f;
   }
 
+  // Besluit 188: kinderen met een tegel waarvan Pino er het minst heeft, worden eerder wakker. Gewogen loting:
+  // per tegel meer dan de schaarste halveert de kans (SCHAARS_FACTOR), met een ondergrens zodat iedereen soms wakker
+  // wordt. De voorraad wordt live gelezen, dus tegels die Pino in deze ronde verdient tellen meteen mee.
+  function kiesSchaars(kandidaten) {
+    let voorraad = {};
+    try { voorraad = staat.lees().tegels || {}; } catch { /* zonder voorraad: gelijke kansen */ }
+    const aantal = (b) => voorraad[`${b.deken}-${b.motief}`] || 0;
+    const minst = Math.min(...kandidaten.map(aantal));
+    const gewichten = kandidaten.map((b) => Math.max(SCHAARS_MIN, SCHAARS_FACTOR ** (aantal(b) - minst)));
+    let r = Math.random() * gewichten.reduce((a, g) => a + g, 0);
+    for (let i = 0; i < kandidaten.length; i++) { r -= gewichten[i]; if (r < 0) return kandidaten[i]; }
+    return kandidaten[kandidaten.length - 1];
+  }
+
   // Een slapend kind wordt wakker; of het daarna gaat gapen, beslist GAAP_KANS na WAKKER_DUUR.
   function wordtWakker() {
     const actief = bedden.filter((b) => b.status === 'wakker' || b.status === 'gaap').length;
@@ -162,7 +178,7 @@ function speel({ root, dag, info, klaar, opnieuw }) {
     if (actief >= max) return;
     const kandidaten = bedden.filter((b) => b.status === 'slaap' && b.rustTot <= 0);
     if (!kandidaten.length) return;
-    const b = kandidaten[Math.floor(Math.random() * kandidaten.length)];
+    const b = kiesSchaars(kandidaten);
     b.status = 'wakker';
     b.wakkerTot = WAKKER_DUUR;
     b.wekTot = WEK_DUUR;

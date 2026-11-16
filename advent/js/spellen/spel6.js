@@ -104,7 +104,7 @@ function spriteLijst() {
   const lijst = [
     { id: 's5-kraam-voor' }, { id: 's5-gloed' }, { id: 'wk-lampion' },
     { id: 'b-blij' }, { id: 'b-bang' }, { id: 'b-lach' },
-    { id: 'pino-staan' }, { id: 'pino-loop' }, { id: 'pino-sip' }, { id: 's6-ketting' }, { id: 's6-tril' },
+    { id: 'pino-staan' }, { id: 'pino-loop' }, { id: 'pino-sip' }, { id: 'pino-boos' }, { id: 's6-ketting' }, { id: 's6-tril' },
     { id: 'b-lijf', kleur: DIEF_KLEUR }, { id: 'b-lijf-los', kleur: DIEF_KLEUR }, { id: 'b-handen', kleur: DIEF_HUID }, { id: 'b-hoofd', kleur: DIEF_HUID },
     { id: 'z-kap' }, { id: 'z-gezicht' }, { id: 'z-blij' }, { id: 'z-arm' }, { id: 'z-arm-hang' }, { id: 's5-ketting' },
     { id: 's6-klem' }, { id: 's6-klem-ketting' }, { id: 's6-klem-knie' }, { id: 's6-politie' },
@@ -465,6 +465,7 @@ function speel({ root, dag, info, klaar, opnieuw, zoek = false }) {
   function tekenPino() {
     const flip = pino.pose !== 'sip' && pino.richting < 0;
     tekenSprite(ctx, `pino-${pino.pose}`, pino.x, pino.y, { flip });
+    if (s.fase === 'greep') tekenSprite(ctx, 'pino-boos', pino.x, pino.y, { flip }); // boos zolang de dief grijpt (besluit 191)
     if (pino.ketting) tekenSprite(ctx, 's6-ketting', pino.x, pino.y, { flip });
     if (s.fase === 'greep') {
       const tril = rustig ? 0 : Math.sin(s.klok / 28) * 1.5;

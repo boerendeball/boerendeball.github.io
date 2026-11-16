@@ -5,7 +5,7 @@ Previews: `Spel5.png`, `Spel5-Onderhandel.png`, `Spel5-Klaar.png`, `Spel5-Sprite
 Sprites nieuw: `s5-lampion s5-gloed s5-kraam-achter s5-kraam-voor s5-waar-sieraden s5-waar-fruit s5-waar-stof s5-waar-lampion s5-put s5-mat s5-kruk s5-ketting s5-stemming-twijfel (oranje, besluit 78) s5-stemming-blij s5-stemming-boos s5-praat s5-wegloop` `b-boos b-twijfel s5-stemming-verdrietig s5-kniebeschermers s5-spray s5-schoenen s5-waar-wissel` (wisselkraam = `s5-kraam-*` op 75 % met paarse luifel + `s5-waar-wissel`, besluit 69)
 
 ## Bekend uit het ontwerp
-- Nachtmarkt met lampions, vier kramen (Mai en Arun boven, Siti en Minh onder), waterput. Pino loopt met D-pad (ook pijltjestoetsen).
+- Nachtmarkt met lampions, vier kramen (Mai en Arun boven, Siti en Minh onder), waterput. Pino loopt met de joystick of de pijltjestoetsen; er staan geen pijltjesknoppen op het scherm (besluit 186).
 - Bij een kraam: tekstballon-knop → onderhandelscherm met vraagprijs (ketting + munt + bedrag) en stemmingsbadge bij het portret. Bied met −/+ en de biedknop (praat + munt + bod) of loop weg. Prijzen zelf onthouden.
 - Doel: de ketting met roze steen voor de laagste prijs; betalen met geld uit spel 4.
 - Werker achter de waterput.
@@ -19,9 +19,10 @@ Pino koopt op de nachtmarkt eerst haar verjaardagssieraad en later wat ze nodig 
 - **Nog geen ketting gekocht** → spel 5 opent direct de **markt** (ronde 1).
 - **Ketting gekocht** → spel 5 opent het **productenalbum**. Daar start Pino een nieuwe marktronde.
 - **Alle vier de producten gekocht** → alleen nog het album, zonder marktknop.
+- **Laadscherm:** de tipkaart van dag 5 zegt "Tip: wat je op de markt nog meer koopt, komt in een ander spelletje goed van pas." (besluit 187). Welk product bij welk spel hoort, staat nergens (besluit 72).
 
 ### Markt
-Zoals `Spel5.png`: kopbalk (terug, label, titel, munt + geld), scène 358×582, D-pad links en de grote tekstballonknop rechts. Vanaf ronde 2 staat de wisselkraam in de scène (zie Regels).
+Zoals `Spel5.png`: kopbalk (terug, label, titel, munt + geld), scène 358×582 en daaronder, in het midden, de grote tekstballonknop. De D-pad uit de preview is weg (besluit 186). Vanaf ronde 2 staat de wisselkraam in de scène (zie Regels).
 
 ### Onderhandelscherm
 Zoals `Spel5-Onderhandel.png`, met het product van de ronde in plaats van de ketting: portret + stemmingsbadge, product + munt + V, stepper −/+ met het bod, wegloopknop, biedknop (praat + munt + bod).
@@ -141,7 +142,7 @@ De stepper gaat nooit hoger dan het geld. Is het geld plus de waarde van de edel
 - Vanaf de eigen ronde ligt het product vooraan op de toonbank van **alle vier** de kramen. Gekochte producten verdwijnen van de kramen.
 
 ### Matig: de twijfelende handelaar komt langs (besluit 140)
-- Heeft de handelaar met korting getwijfeld en **beëindigt Pino daarna een gesprek met een andere handelaar** (weglopen), dan stopt **na 1000 ms** de besturing (D-pad, joystick, toetsen en de tekstballon).
+- Heeft de handelaar met korting getwijfeld en **beëindigt Pino daarna een gesprek met een andere handelaar** (weglopen), dan stopt **na 1000 ms** de besturing (joystick, toetsen en de tekstballon).
 - De twijfelende handelaar **loopt naar Pino toe**: achter zijn toonbank langs naar buiten en dan om de put, het krukje, de lantaarnpaal, de kramen en de wisselkraam heen (route over een raster, rechtgetrokken), met het twijfelgezicht. Zijn kraam is zolang leeg.
 - Hij ziet er **gehaast** uit (besluit 141): hij loopt sneller (135 i.p.v. 100 px/s), wipt sneller en hoger, leunt 9° voorover in de looprichting, er vliegen zweetdruppels (`#8ED8F8`) van zijn hoofd en er blijven stofwolkjes (`s9-stof`) achter bij zijn voeten. Boven zijn hoofd staat een wit **tekstwolkje "miss! miss! wait!"** (Fredoka 700, 12 px, schaduw `#CDE4F0`, met een puntje naar hem toe; binnen de scène gehouden). Het wolkje verdwijnt zodra hij bij Pino staat. Teruglopen gaat in gewoon tempo, zonder wolkje. Met *reduced motion*: geen wippen, kantelen, druppels of stof, wel het wolkje.
 - Staat hij naast haar, dan draait Pino naar hem toe en **opent het onderhandelscherm opnieuw**, met hem. Zijn **vraagprijs is nu alles wat Pino heeft**: haar geld plus de waarde van de edelstenen die ze nog niet heeft ingeruild (= P van de ronde, besluit 139). Heeft ze nog niet ingeruild, dan reikt de stepper niet tot die vraagprijs.
@@ -159,7 +160,7 @@ De stepper gaat nooit hoger dan het geld. Is het geld plus de waarde van de edel
 
 ## Besturing
 - Telefoon, zoals spel 1 (besluiten 23, 24 en 71): vasthouden op het scherm laat na 250 ms de joystick verschijnen (ring met knop op de drukplek, richting én kracht); een korte tik doet hetzelfde als de tekstballonknop.
-- Daarnaast de D-pad (vasthouden = lopen, `invoer.js`) en pijltjestoetsen/WASD; Pino loopt 120 px/s (scène-eenheden) en botst tegen toonbanken, put, krukje, lantaarnpaal en wisselkraam.
+- Daarnaast pijltjestoetsen/WASD (`invoer.js`); geen D-pad (besluit 186); Pino loopt 120 px/s (scène-eenheden) en botst tegen toonbanken, put, krukje, lantaarnpaal en wisselkraam.
 - De grote tekstballonknop is alleen actief als Pino vóór een toonbank staat (of vóór de wisselkraam); spatie/Enter doet hetzelfde.
 - Onderhandelscherm: −/+ per 5, vasthouden herhaalt; pijltjestoetsen verhogen/verlagen; Escape = weglopen.
 
@@ -209,7 +210,7 @@ Uitzondering (besluit 141): het tekstwolkje "miss! miss! wait!" van de handelaar
 - Kaartjes in het album zijn `role="img"` met `aria-label` (bv. "Kniebeschermers, gekocht, 160 munten" of "Spray, op slot"); de marktknop is een `<button>`.
 - Opties in het wisseltaartmenu: `aria-label` bv. "Blauwe edelsteen, 2"; leeg = `aria-disabled`.
 - Decoratieve producten bij de kramen zijn `aria-hidden="true"`.
-- Scène: `role="img"` met `aria-label`; D-pad-knoppen en de tekstballon hebben een `aria-label` ("Praat met de handelaar" / "Edelstenen ruilen"); het onderhandelscherm is een dialoog met focus-val.
+- Scène: `role="img"` met `aria-label`; de tekstballon en de wisselkraam hebben een `aria-label` ("Praat met de handelaar" / "Edelstenen ruilen"); het onderhandelscherm is een dialoog met focus-val.
 
 ## Acceptatiecriteria
 - [x] Zonder ketting opent spel 5 de markt; met ketting het album; met alle vier alleen het album zonder marktknop.

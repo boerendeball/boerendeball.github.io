@@ -1,5 +1,5 @@
 // Spel 5 · Negotiate trade deal (specs/spel5.md, design/artboards/Spel5*.dc.html).
-// Pino loopt over de nachtmarkt (D-pad of pijltjestoetsen) en dingt bij vier handelaars af op het product van de
+// Pino loopt over de nachtmarkt (joystick of pijltjestoetsen) en dingt bij vier handelaars af op het product van de
 // ronde. Vanaf ronde 2 staat er een wisselkraam voor edelstenen. Na de ketting is het productenalbum het startpunt.
 // De regels (prijzen, niveaus, bieden) staan in markt.js.
 
@@ -232,21 +232,14 @@ function markt({ root, dag, info, klaar, opnieuw, kijken = false, zoek = false }
   }
   const kaart = h('div', { class: 'scene-kaart s5-kaart' }, [svg, knoppenLaag]);
 
-  const pijl = (naam, label) => h('button', { type: 'button', class: 'knop-icoon', 'aria-label': label }, [icoon(naam, 22)]);
-  const knopOp = pijl('pijlOmhoog', 'Omhoog');
-  const knopLinks = pijl('pijlLinks', 'Links');
-  const knopNeer = pijl('pijlOmlaag', 'Omlaag');
-  const knopRechts = pijl('pijlRechts', 'Rechts');
   const praatKnop = h('button', { type: 'button', class: 's5-praat-knop', 'aria-label': 'Praat met de handelaar', disabled: true, onclick: praat }, [
     el('svg', { class: 'ic', viewBox: '0 0 48 48', width: 60, height: 60, 'aria-hidden': 'true' }, [
       use('s5-praat', 0, 0, 48, 48, '#FFFFFF'),
       el('circle', { cx: 17, cy: 22, r: 2.5, fill: '#1FA3DC' }), el('circle', { cx: 24, cy: 22, r: 2.5, fill: '#1FA3DC' }), el('circle', { cx: 31, cy: 22, r: 2.5, fill: '#1FA3DC' }),
     ]),
   ]);
-  const besturing = h('div', { class: 'besturing s5-besturing' }, [
-    h('div', { class: 'dpad s5-dpad', role: 'group', 'aria-label': 'Loop met de pijlen' }, [h('span'), knopOp, h('span'), knopLinks, knopNeer, knopRechts]),
-    praatKnop,
-  ]);
+  // Geen pijltjesknoppen op het scherm (besluit 186): lopen gaat met de joystick of het toetsenbord.
+  const besturing = h('div', { class: 'besturing s5-besturing' }, [praatKnop]);
 
   const scherm = h('div', { class: 'scherm spel spel5' }, [
     kopbalk({ label: datum.dagLabel(dag), titel: info.titel, terugNaar: `/deur/${dag}`, terugLabel: 'Terug naar het deurtje', ...terugKnop(zoek), rechts: geldPil }),
@@ -255,10 +248,9 @@ function markt({ root, dag, info, klaar, opnieuw, kijken = false, zoek = false }
   ]);
   root.replaceChildren(scherm);
 
-  // Zoals spel 1 (besluiten 23/24): vasthouden op het scherm = joystick, korte tik = praten. Daarnaast de D-pad,
-  // de tekstballonknop en het toetsenbord. Knoppen in het vlak (D-pad, werker) blijven gewoon knoppen.
+  // Zoals spel 1 (besluiten 23/24): vasthouden op het scherm = joystick, korte tik = praten. Daarnaast de
+  // tekstballonknop en het toetsenbord. Knoppen in het vlak (werker) blijven gewoon knoppen.
   const invoer = maakInvoer({
-    richtingen: { omhoog: knopOp, omlaag: knopNeer, links: knopLinks, rechts: knopRechts },
     joystick: { element: scherm, vertraging: JOYSTICK_VERTRAGING, tik: 'actie' },
     bijActie: (naam) => { if (naam === 'actie' && !bezig) praat(); },
   });

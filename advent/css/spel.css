@@ -318,8 +318,7 @@
   border-radius: 50%; -webkit-tap-highlight-color: transparent;
 }
 .s5-knop-werker:focus-visible { outline: none; box-shadow: inset 0 0 0 3px #fff; }
-.s5-besturing { flex: none; margin-top: 0; padding-top: 0; }
-.s5-dpad { grid-template-rows: repeat(2, 52px); }
+.s5-besturing { flex: none; margin-top: 0; padding-top: 0; justify-content: center; }
 .s5-praat-knop {
   width: 128px; height: 128px; border-radius: 50%; border: 0; padding: 0; flex: none;
   background: var(--teal); color: #fff; cursor: pointer;
@@ -332,7 +331,6 @@
 .s5-praat-knop:focus-visible { outline: 3px solid #fff; outline-offset: 4px; }
 @media (max-height: 820px) {
   .s5-praat-knop { width: 108px; height: 108px; }
-  .s5-dpad { grid-template-rows: repeat(2, 46px); }
 }
 
 /* onderhandelscherm (Spel5-Onderhandel) */

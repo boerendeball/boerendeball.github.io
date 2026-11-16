@@ -80,6 +80,7 @@ Constanten staan bovenaan `spel1.js` en zijn tuning-waarden:
 | `START_PAUZE` | 1,5 s | geen gapen in de eerste seconden |
 | `WAKKER_DUUR` | 1,2 s | een kind ligt wakker (ogen open) voordat het gaapt of weer inslaapt (besluit 142) |
 | `GAAP_KANS` | 0,7 | kans dat een wakker kind gaat gapen; anders slaapt het weer in |
+| `SCHAARS_FACTOR` / `SCHAARS_MIN` | 0,5 / 0,05 | kans per extra tegel ten opzichte van de schaarste tegel, en de ondergrens daarvan (besluit 188) |
 | `GAAP_DUUR` | 3,5 s | zo lang blijft een kind gapen; daarna telt het als gemist |
 | `VERRAST_DUUR` | 0,6 s | verrast gezicht na een onderbreking |
 | `BOOS_DUUR` | 0,9 s | daarna even boos (`g-boos`), dan meteen weer slapen (besluit 143) |
@@ -98,7 +99,7 @@ Constanten staan bovenaan `spel1.js` en zijn tuning-waarden:
 | `POSE_DUUR` | 0,45 s | zo lang staat Pino met de arm uitgestoken (geen lopen) |
 
 - **Start**: Pino staat op (92, 232) (links van het middelste bed), kijkt naar rechts. De tijd begint te lopen bij de eerste invoer óf na 2 s, wat eerder is.
-- **Wakker worden** (besluit 142): op elk interval wordt willekeurig een slapend kind dat niet in `RUST` zit wakker (`g-wakker`: ogen open, mondje dicht, geen z's). Als er al `MAX_TEGELIJK` kinderen wakker of gapend zijn, wacht het. Na `WAKKER_DUUR` gaat het met kans `GAAP_KANS` gapen (`g-gaap`), anders valt het weer in slaap (`RUST` start). Een wakker kind is nog niet te onderbreken en licht niet op.
+- **Wakker worden** (besluit 142): op elk interval wordt een slapend kind dat niet in `RUST` zit wakker, gekozen met een gewogen loting naar de tegelvoorraad (besluit 188): het kind met de tegel waarvan Pino er het minst heeft, heeft de grootste kans; per tegel méér halveert de kans (`SCHAARS_FACTOR` 0,5, ondergrens `SCHAARS_MIN` 0,05) (`g-wakker`: ogen open, mondje dicht, geen z's). Als er al `MAX_TEGELIJK` kinderen wakker of gapend zijn, wacht het. Na `WAKKER_DUUR` gaat het met kans `GAAP_KANS` gapen (`g-gaap`), anders valt het weer in slaap (`RUST` start). Een wakker kind is nog niet te onderbreken en licht niet op.
 - **Onderbreken**: bij de actieknop zoekt het spel het dichtstbijzijnde gapende bed waar Pino **naast** staat (`naastBed`: voetpunt links of rechts van het bed binnen `REIK`, en op bedhoogte; boven of onder het bed telt niet, besluit 21). Gevonden → score +1 (onzichtbaar), kind `verrast`, dekenflits, token toegevoegd, Pino 0,45 s gekeerd naar het bed met de **arm aan de kant van het kind** uitgestoken: `pino-romp` + de hangende andere arm op Pino's eigen laag, en `pino-arm-vinger` om de schouder gedraaid naar de mond van het kind, als laatste getekend zodat hij over bed en kind heen ligt. Niet gevonden → dezelfde pose 0,3 s met de arm aan de kijkkant recht vooruit, zonder straf. Zo ontdekt Pino de afstand en de juiste kant zelf.
 - **Gemist**: een gaap die afloopt → `gemist` +1, kind valt weer in slaap; geen zichtbare straf; het kind sluit gewoon weer de ogen.
 - **Na een onderbreking**: verrast gezicht (`VERRAST_DUUR`), dan even boos (`BOOS_DUUR`, besluit 143) en dan meteen weer slapen, zonder wakker-fase; het kind wordt pas na `RUST` opnieuw wakker.

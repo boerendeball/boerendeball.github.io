@@ -224,6 +224,7 @@ export function oogstEdelsteen(veldIndex, kleur) {
     const veld = s.tuin && s.tuin.velden[veldIndex];
     if (!veld || veld.geoogst) return;
     veld.gekozen = (veld.gekozen || 0) + 1;
+    veld.stenen = [...(veld.stenen || []), kleur];   // de kleuren liggen in de kuiltjes van het midden (besluit 194)
     if (veld.gekozen >= STENEN_PER_RING) veld.geoogst = true;
     s.tuin.edelstenen = (s.tuin.edelstenen || 0) + 1;
     s.edelstenen[kleur] = (s.edelstenen[kleur] || 0) + 1;

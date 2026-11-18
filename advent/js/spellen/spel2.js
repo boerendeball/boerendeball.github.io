@@ -8,7 +8,7 @@ import { h } from '../ui/dom.js';
 import { kopbalk } from '../ui/kopbalk.js';
 import { toonResultaat } from '../ui/resultaat.js';
 import { toonTaartmenu } from '../ui/taartmenu.js';
-import { gemSvg, GEMS, GEM_BIJV } from '../ui/edelstenen.js';
+import { gemSvg, GEMS, GEM_BIJV, GEM_KLEUR } from '../ui/edelstenen.js';
 import { el, use, groep, scene } from '../sprites.js';
 import * as hex from './hex.js';
 import * as staat from '../staat.js';
@@ -74,13 +74,29 @@ function hexTegel(cx, cy, type, s = 56, kleur = null) {
   return g;
 }
 
-/** Het midden van een veld: stenen platform met tempel, beeld of waterval, of water met de kano. */
-function middenTekening(soort, cx, cy) {
+// De drie kuiltjes in hx-midden en hx-kano (besluit 194), t.o.v. het midden van het veld.
+const KUILEN = [[-12, 10], [0, 16], [12, 10]];
+const STEEN = 14;   // breedte van een edelsteen in een kuiltje
+
+/** De gekozen edelstenen in de kuiltjes; nieuw = de laatste valt er net in. */
+function stenenTekening(cx, cy, stenen = [], nieuw = false) {
+  return el('g', {}, stenen.slice(0, KUILEN.length).map((kleur, i) => {
+    const [dx, dy] = KUILEN[i];
+    const steen = use('gem', cx + dx - STEEN / 2, cy + dy - STEEN + 3, STEEN, STEEN, GEM_KLEUR[kleur]);
+    return nieuw && i === stenen.length - 1 ? el('g', { class: 'tuin-steen-in' }, [steen]) : steen;
+  }));
+}
+
+/** Het midden van een veld: stenen platform met tempel, beeld of waterval, of water met de kano; met de gekozen stenen. */
+function middenTekening(soort, cx, cy, stenen = [], nieuw = false) {
   const g = el('g');
-  if (soort === 'kano') { g.append(hexSym('hx-kano', cx, cy)); return g; }
-  g.append(hexSym('hx-midden', cx, cy));
-  const [id, b, hg] = MIDDEN_OBJECT[soort];
-  g.append(use(id, cx - b / 2, cy + 8 - hg, b, hg));
+  if (soort === 'kano') g.append(hexSym('hx-kano', cx, cy));
+  else {
+    g.append(hexSym('hx-midden', cx, cy));
+    const [id, b, hg] = MIDDEN_OBJECT[soort];
+    g.append(use(id, cx - b / 2, cy + 8 - hg, b, hg));
+  }
+  g.append(stenenTekening(cx, cy, stenen, nieuw));
   return g;
 }
 
@@ -121,7 +137,7 @@ function wereldItems(t, rect, opts = {}) {
       const klasse = ['tuin-vak', groei !== null ? 'groeit' : '', v === opts.nieuw ? 'valt-in' : ''].filter(Boolean).join(' ');
       const g = el('g', { class: klasse, style: groei !== null ? `animation-delay:${groei * GROEI_STAP}ms` : null, 'data-vak': v });
       if (v === veld.c) {
-        g.append(middenTekening(veld.soort, p.x, p.y));
+        g.append(middenTekening(veld.soort, p.x, p.y, veld.geoogst ? [] : veld.stenen));
         if (opts.glinster && opts.glinster.has(vi)) {
           for (const [dx, dy, s, d] of [[-20, -30, 0.8, 0], [18, -40, 1, 0.5], [22, -12, 0.7, 0.9], [-16, -6, 0.6, 0.3]]) {
             const ster = sterPad(p.x + dx, p.y + dy, s);
@@ -511,6 +527,15 @@ function speel({ root, dag, info, klaar, opnieuw, zoek = false }) {
     }
   }
 
+  // Na de derde steen vliegen de drie stenen samen uit de kuiltjes omhoog en vervagen (besluit 194).
+  function stenenWeg(p, stenen = []) {
+    if (rustig || !stenen.length) return;
+    const g = el('g', { class: 'tuin-stenen-weg' }, [stenenTekening(p.x, p.y, stenen)]);
+    effecten.append(g);
+    const tm = setTimeout(() => { timers.delete(tm); g.remove(); }, 800);
+    timers.add(tm);
+  }
+
   /* ---------- edelsteen kiezen ---------- */
   // Een volle ring geeft STENEN_PER_RING edelstenen (besluit 192): het menu gaat na elke keuze opnieuw open tot ze
   // alle drie gekozen zijn. Sluit Pino het menu eerder, dan blijft het midden glinsteren voor de rest.
@@ -529,7 +554,7 @@ function speel({ root, dag, info, klaar, opnieuw, zoek = false }) {
     const anker = (middenKnop || knop).getBoundingClientRect();
     menu = toonTaartmenu({
       anker, kloon: false, straal: GEM_STRAAL, label: 'Kies een edelsteen', dim: 'rgba(30, 58, 76, 0.42)',
-      midden: middenHex([middenTekening(veld.soort, 28, 33)], 'taart-midden-goud'),
+      midden: middenHex([middenTekening(veld.soort, 28, 33, veld.stenen, vervolg)], 'taart-midden-goud'),
       opties: GEMS.map((k, i) => ({
         hoek: [-150, -90, -30][i], klasse: 'taart-rond', label: `Kies ${GEM_BIJV[k]} edelsteen`,
         inhoud: gemSvg(k, 44),
@@ -538,7 +563,7 @@ function speel({ root, dag, info, klaar, opnieuw, zoek = false }) {
           if (rest < 0) return;
           sterretjes(p.x, p.y - 20, 8, 30);
           render();
-          if (rest === 0) return;
+          if (rest === 0) { stenenWeg(p, tuin().velden[vi].stenen); return; }
           if (!rustig) { bezig = true; await wacht(300); bezig = false; }
           if (gestopt || klaarGezet || tuin().huidig !== vi) return;
           kiesEdelsteen(v, knoppen.querySelector('.tuin-knop-midden') || knop, true);

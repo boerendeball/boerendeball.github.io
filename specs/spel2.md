@@ -87,6 +87,7 @@ Welke tegel waar past, ontdekt ze zelf: het menu toont alleen passende tegels. D
   - Liggen alle 6 ringplekken vol en is de edelsteen nog niet gekozen, dan glinstert het midden.
   - Een tik: sterretjes vliegen uit het midden, daarna het taartmenu groen/blauw/rood (het midden van het menu is het middenobject zelf, precies op zijn plek in de scène en zonder ring eromheen; besluit 193).
   - Een volle ring levert **3 edelstenen** op (besluit 192, `STENEN_PER_RING`): na elke keuze (`staat.oogstEdelsteen(veld, kleur)`, één steen) gaat het menu na 0,3 s opnieuw open, tot er drie gekozen zijn. Elke kleur mag vaker. Wegtikken laat de glinster staan voor de stenen die nog over zijn (`veld.gekozen` telt mee in de staat).
+  - **Kuiltjes** (besluit 194): `hx-midden` en `hx-kano` hebben vóór het object drie kuiltjes (lokaal (16,43), (28,49), (40,43); bij de kano op een stenen kade aan de voorkant). Elke gekozen steen ligt in zijn kleur in het volgende kuiltje (`veld.stenen`), in de scène én in het menumidden; de nieuwste valt er in 0,3 s in. Na de derde vliegen de drie samen omhoog weg (0,7 s) en zijn de kuiltjes weer leeg. Een veld waarvan Pino het menu eerder dichttikt, laat zo zien hoeveel en welke stenen ze al heeft.
   - Wie verder gaat voordat de ring vol is, laat die edelsteen liggen.
 - **Werker** (#170):
   - Zodra veld 3 ontstaat, staat hij (`wk-hark` ×0,6) te harken op een open plek op afstand 2 van dat veld, zo ver mogelijk van de brug. Die plek wordt nooit een brug.

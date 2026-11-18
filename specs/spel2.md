@@ -85,8 +85,8 @@ Welke tegel waar past, ontdekt ze zelf: het menu toont alleen passende tegels. D
   - De brug wordt een ringplek van het nieuwe veld en telt als 1 van de 3 tegels daar.
 - **Edelsteen**:
   - Liggen alle 6 ringplekken vol en is de edelsteen nog niet gekozen, dan glinstert het midden.
-  - Een tik: sterretjes vliegen uit het midden, daarna het taartmenu blauw/groen/geel (het midden van het menu is het middenobject met een gouden ring).
-  - Daarna `staat.oogstEdelsteen(veld, kleur)`, één keer per veld. Wegtikken laat de glinster staan.
+  - Een tik: sterretjes vliegen uit het midden, daarna het taartmenu groen/blauw/rood (het midden van het menu is het middenobject zelf, precies op zijn plek in de scène en zonder ring eromheen; besluit 193).
+  - Een volle ring levert **3 edelstenen** op (besluit 192, `STENEN_PER_RING`): na elke keuze (`staat.oogstEdelsteen(veld, kleur)`, één steen) gaat het menu na 0,3 s opnieuw open, tot er drie gekozen zijn. Elke kleur mag vaker. Wegtikken laat de glinster staan voor de stenen die nog over zijn (`veld.gekozen` telt mee in de staat).
   - Wie verder gaat voordat de ring vol is, laat die edelsteen liggen.
 - **Werker** (#170):
   - Zodra veld 3 ontstaat, staat hij (`wk-hark` ×0,6) te harken op een open plek op afstand 2 van dat veld, zo ver mogelijk van de brug. Die plek wordt nooit een brug.
@@ -154,7 +154,8 @@ Welke tegel waar past, ontdekt ze zelf: het menu toont alleen passende tegels. D
 - [x] Bij de start zie je het kanoveld met jungle en Pino in de kano. De 6 ringplekken lichten op, en de eerste tegel mag elk van de 9 types zijn (menu met 9 kleine tegels, geen overlap).
 - [x] Na 2 tegels zijn er nog geen open plekken in de jungle; na 3 wel, alleen naast gelegde tegels (gezien: 5 plekken).
 - [x] Een brug: het nieuwe veld groeit, er komen sterretjes, Pino hupt erheen en de camera schuift naar het nieuwe midden. Het oude veld is niet meer aan te tikken. De brug telt als 1 tegel op het nieuwe veld.
-- [x] Een volle ring (veld 2): het midden glinstert; een tik geeft sterretjes en het edelsteenmenu; groen → `edelstenen.groen` +1, `velden[1].geoogst`; de glinster is weg.
+- [x] Het tegelmenu heeft als midden de vraagtekentegel (`hx-doel`) zonder bol of ring; zijn bovenvlak valt precies op de witte stippelhex van het gekozen vak (gemeten: < 0,05 px verschil). Ook het middenobject in het edelsteenmenu ligt precies op het midden in de scène (besluit 193).
+- [x] Een volle ring (veld 2): het midden glinstert; een tik geeft sterretjes en het edelsteenmenu; drie keer kiezen (bv. groen, groen, rood) → `edelstenen.groen` +2 en `rood` +1, `velden[1].geoogst`; de glinster is weg (besluit 192).
 - [x] Veld 3: de werker harkt op een open plek; met `?test=1` is hij aanklikbaar en zet hij `werkers[2]`.
 - [x] Herladen midden in het spel: dezelfde velden, tegels, jungle, camera en Pino-positie.
 - [x] Veld 7 (waterval) heeft een weg met 2 wegplekken. Een tegel daar: taxi, Pino stapt in, de taxi rijdt weg, resultaat "Van kano tot taxi!" met TEGELS 23. Daarna `tuin` null, deurtje 2 gespeeld, `scores[2]` gezet.

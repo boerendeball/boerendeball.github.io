@@ -8,7 +8,7 @@ import { h } from '../ui/dom.js';
 import { kopbalk } from '../ui/kopbalk.js';
 import { toonResultaat } from '../ui/resultaat.js';
 import { toonTaartmenu } from '../ui/taartmenu.js';
-import { gemSvg, GEMS } from '../ui/edelstenen.js';
+import { gemSvg, GEMS, GEM_BIJV } from '../ui/edelstenen.js';
 import { el, use, groep, scene } from '../sprites.js';
 import * as hex from './hex.js';
 import * as staat from '../staat.js';
@@ -380,9 +380,12 @@ function speel({ root, dag, info, klaar, opnieuw, zoek = false }) {
     }
   }
 
+  // Het menumidden ligt precies op het vak in de scène (besluit 193): het menu centreert op de knop, en het midden
+  // van de knop is het midden van het bovenvlak (TOP, y 30 in een 56×66-hex). Daarom ligt y 30 in het midden van de
+  // viewBox (−11 + 82/2); de rand en wat erboven uitsteekt (tempel, waterval) vallen er met overflow buiten.
   function middenHex(inhoud, klasse) {
     const schaal = maat.b / CAMERA_BREEDTE;
-    const s = el('svg', { viewBox: '0 -16 56 82', width: 56 * schaal, height: 82 * schaal, 'aria-hidden': 'true', overflow: 'visible' }, inhoud);
+    const s = el('svg', { viewBox: '0 -11 56 82', width: 56 * schaal, height: 82 * schaal, 'aria-hidden': 'true', overflow: 'visible' }, inhoud);
     return { element: s, klasse: `taart-midden-hex ${klasse}` };
   }
 
@@ -509,23 +512,37 @@ function speel({ root, dag, info, klaar, opnieuw, zoek = false }) {
   }
 
   /* ---------- edelsteen kiezen ---------- */
-  async function kiesEdelsteen(v, knop) {
+  // Een volle ring geeft STENEN_PER_RING edelstenen (besluit 192): het menu gaat na elke keuze opnieuw open tot ze
+  // alle drie gekozen zijn. Sluit Pino het menu eerder, dan blijft het midden glinsteren voor de rest.
+  async function kiesEdelsteen(v, knop, vervolg = false) {
     if (menu || klaarGezet || bezig) return;
     const t = tuin();
     const vi = t.huidig;
     const veld = t.velden[vi];
     const p = hex.pixel(veld.c);
-    sterretjes(p.x, p.y - 20, 12, 40);
-    if (!rustig) { bezig = true; knoppen.replaceChildren(); await wacht(450); bezig = false; render(); }
+    if (!vervolg) {
+      sterretjes(p.x, p.y - 20, 12, 40);
+      if (!rustig) { bezig = true; knoppen.replaceChildren(); await wacht(450); bezig = false; render(); }
+    }
     if (gestopt) return;
-    const anker = knoppen.querySelector('.tuin-knop-midden')?.getBoundingClientRect() || knop.getBoundingClientRect();
+    const middenKnop = knoppen.querySelector('.tuin-knop-midden');
+    const anker = (middenKnop || knop).getBoundingClientRect();
     menu = toonTaartmenu({
       anker, kloon: false, straal: GEM_STRAAL, label: 'Kies een edelsteen', dim: 'rgba(30, 58, 76, 0.42)',
       midden: middenHex([middenTekening(veld.soort, 28, 33)], 'taart-midden-goud'),
       opties: GEMS.map((k, i) => ({
-        hoek: [-150, -90, -30][i], klasse: 'taart-rond', label: `Kies ${k}e edelsteen`,
+        hoek: [-150, -90, -30][i], klasse: 'taart-rond', label: `Kies ${GEM_BIJV[k]} edelsteen`,
         inhoud: gemSvg(k, 44),
-        actie: () => { if (staat.oogstEdelsteen(vi, k)) { sterretjes(p.x, p.y - 20, 8, 30); render(); } },
+        actie: async () => {
+          const rest = staat.oogstEdelsteen(vi, k);
+          if (rest < 0) return;
+          sterretjes(p.x, p.y - 20, 8, 30);
+          render();
+          if (rest === 0) return;
+          if (!rustig) { bezig = true; await wacht(300); bezig = false; }
+          if (gestopt || klaarGezet || tuin().huidig !== vi) return;
+          kiesEdelsteen(v, knoppen.querySelector('.tuin-knop-midden') || knop, true);
+        },
       })),
       bijSluiten: () => { menu = null; },
     });

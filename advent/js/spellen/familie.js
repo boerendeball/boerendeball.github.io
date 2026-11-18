@@ -16,10 +16,11 @@ export const KARAKTERS = {
 
 /** De kaarten in de bak, altijd dezelfde, in deze volgorde (besluit 38). */
 export const KAARTEN = [
-  { id: 'lam', prijs: { groen: 2 } },
-  { id: 'gansje', prijs: { geel: 1 } },
-  { id: 'meisje', prijs: { geel: 1, blauw: 1 } },
-  { id: 'biggetje', prijs: { blauw: 1, geel: 1 } },
+  // Prijzen: besluit 192 (samen 6 groen, 5 blauw, 6 rood; één tuin levert er tot 18 op).
+  { id: 'lam', prijs: { groen: 2, rood: 2 } },
+  { id: 'gansje', prijs: { rood: 1, groen: 1, blauw: 1 } },
+  { id: 'meisje', prijs: { blauw: 4, groen: 3 } },
+  { id: 'biggetje', prijs: { rood: 3 } },
 ];
 
 /**
@@ -84,11 +85,14 @@ export function betaalbaar(prijs, edelstenen) {
   return Object.entries(prijs).every(([kleur, n]) => (edelstenen[kleur] || 0) >= n);
 }
 
-/** "twee groene edelstenen", "een gele en een blauwe edelsteen" (voor aria-labels). */
+/** "drie rode edelstenen", "vier blauwe en drie groene edelstenen" (voor aria-labels). */
 export function prijsTekst(prijs) {
-  const bijv = { groen: 'groene', geel: 'gele', blauw: 'blauwe' };
-  const delen = Object.entries(prijs).map(([kleur, n]) => `${n === 1 ? 'een' : n === 2 ? 'twee' : n} ${bijv[kleur] || kleur}`);
-  // "twee groene edelstenen", maar "een gele en een blauwe edelsteen".
-  const meervoud = delen.length === 1 && Object.values(prijs)[0] > 1;
-  return `${delen.join(' en ')} ${meervoud ? 'edelstenen' : 'edelsteen'}`;
+  const bijv = { groen: 'groene', blauw: 'blauwe', rood: 'rode' };
+  const getal = ['nul', 'een', 'twee', 'drie', 'vier', 'vijf', 'zes'];
+  const delen = Object.entries(prijs).map(([kleur, n]) => `${getal[n] || n} ${bijv[kleur] || kleur}`);
+  const laatste = delen.pop();
+  const lijst = delen.length ? `${delen.join(', ')} en ${laatste}` : laatste;
+  // Het zelfstandig naamwoord volgt het laatste deel: "een rode, een groene en een blauwe edelsteen".
+  const laatsteAantal = Object.values(prijs).at(-1);
+  return `${lijst} ${laatsteAantal > 1 ? 'edelstenen' : 'edelsteen'}`;
 }

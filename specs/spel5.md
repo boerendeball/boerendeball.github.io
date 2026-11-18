@@ -76,7 +76,7 @@ Begrippen: **P** = de laagst haalbare prijs van de ronde (zie hieronder), **V** 
 - Het niveau wordt **nergens getoond**; Pino merkt het aan het gedrag van de handelaars.
 
 ### De laagste prijs P (besluit 139)
-- **P = het geld plus de waarde van alle edelstenen waarmee Pino aan spel 5 begint** (koers van de wisselkraam: blauw 100, groen 80, geel 60), afgerond omlaag op 5. Wie het product voor de laagste prijs wil, moet dus al haar geld uitgeven en al haar edelstenen inruilen.
+- **P = het geld plus de waarde van alle edelstenen waarmee Pino aan spel 5 begint** (koers van de wisselkraam: groen 25, blauw 35, rood 20; besluit 192), afgerond omlaag op 5. Wie het product voor de laagste prijs wil, moet dus al haar geld uitgeven en al haar edelstenen inruilen.
 - De edelstenen tellen alleen mee als de **wisselkraam** er staat (vanaf ronde 2). In ronde 1 is P dus het geld.
 - P is **nooit lager dan de ondergrens** van het product (240 / 160 / 180 / 200, tabel hierboven). Heeft Pino minder, dan is P de ondergrens en lukt geen deal (zie *Te weinig geld*).
 - P wordt berekend als de ronde begint en bewaard in de ronde (`ronde.p`). Inwisselen bij de wisselkraam verandert P niet (het geld gaat omhoog, de edelstenen omlaag). Heeft Pino sinds de bewaarde ronde méér verdiend (spel 2 of 4 gespeeld), dan begint bij het volgende bezoek een **nieuwe ronde op hetzelfde niveau** met de nieuwe P; stemmingen en laatste biedingen beginnen dan opnieuw.
@@ -128,9 +128,9 @@ De stepper gaat nooit hoger dan het geld. Is het geld plus de waarde van de edel
 ### Wisselkraam (vanaf ronde 2)
 - De wisselkraam staat er zodra de ketting gekocht is (`producten` bevat `ketting`), dus bij elke ronde na de eerste. In kijkmodus staat hij er niet.
 - **Plek:** op de plaats van de onderste mat, midden onderaan in de scène. Het is dezelfde kraam op 75 % met een paarse luifel en de waar `s5-waar-wissel` (weegschaal, kist met munten, edelsteentjes), met een vijfde handelaar (de wisselaar, met bril) erachter, gebouwd met `persoon()`.
-- **Interactie:** Pino loopt erheen, de tekstballon wordt actief, en een tik opent het bestaande **taartmenu** (`toonTaartmenu` in `ui/taartmenu.js`). Het menu heeft drie opties met het `gem`-symbool in blauw, groen en geel, elk met een aantal-badge. Een optie met 0 stenen is grijs.
+- **Interactie:** Pino loopt erheen, de tekstballon wordt actief, en een tik opent het bestaande **taartmenu** (`toonTaartmenu` in `ui/taartmenu.js`). Het menu heeft drie opties met het `gem`-symbool in groen, blauw en rood, elk met een aantal-badge. Een optie met 0 stenen is grijs.
 - **Ruilen:** één tik ruilt **één** edelsteen. Er springt een badge "munt + bedrag" naar de munt-teller in de kopbalk. Het menu blijft open tot Pino buiten tikt.
-- **Vaste koers** zonder onderhandeling: **blauw 100, groen 80, geel 60**. De koers staat nergens; Pino ontdekt hem aan de teller.
+- **Vaste koers** zonder onderhandeling: **groen 25, blauw 35, rood 20** (besluit 192: een derde van de oude koers, omdat een ring nu 3 stenen geeft). De koers staat nergens; Pino ontdekt hem aan de teller.
 - Pino kiest in spel 2 zelf welke edelsteen ze oogst. Wie de koers kent, oogst blauw. Ook dat is te ontdekken.
 
 ### Producten zichtbaar, maar niet aan te klikken
@@ -153,10 +153,10 @@ De stepper gaat nooit hoger dan het geld. Is het geld plus de waarde van de edel
 
 ### Voorbeeldrondes
 - **Ronde 1 · Simpel · ketting** (geld 240): Mai 270, Arun 240, Siti 295, Minh 255. Bij Mai kan de stepper niet hoger dan 240 → nee/boos (30 eronder). Bij Arun 240 → ja. Betaald 240, laagste 240, over 0.
-- **Ronde 2 · Matig · kniebeschermers** (29 nov): Pino begint met 0 munten en twee groene edelstenen → P = 160. Ze ruilt ze in → 160. V = 200 bij iedereen; Mai, Arun en Siti geven geen korting (G = 200), Minh zakt tot 160. Bij Arun: 160 → nee/verdrietig; 150 → nee/boos. Bij Minh: 160 → nee/twijfel (telt niet); nog eens 160 → weer twijfel. Pino loopt weg en praat met Arun; ze loopt weg. Na 1 s staat ze stil en Minh loopt naar haar toe; het scherm opent met vraagprijs 160. 160 → ja (blij). Betaald 160, laagste 160, over 0. (Had ze 155 geboden, dan was Minh boos geworden en terug naar 200 gegaan.) Met 160 munten kan ze bij de andere drie niets kopen.
-- **Ronde 3 · Moeilijk · spray** (1 dec): Pino begint met 0 munten, één groene en één blauwe edelsteen → P = 180. V = 225; gastheer Mai, Siti en Arun komen bij haar langs; die drie spannen samen met K = 200. Minh doet niet mee, B = 180. Bij Mai: 185 → nee/verdrietig; 200 → ja. Bij Minh: 180 → nee/verdrietig (telt niet); 180 → ja. Of: 175 → nee/verdrietig (telt wel; 5 onder B).
-- **Ronde 4 · Simpel · schoenen** (2 dec): Pino begint met 20 munten, één blauwe en twee gele edelstenen → P = 20 + 100 + 120 = 240 (boven de ondergrens 200). Goedkoopste V = 240, de andere drie bv. 255, 275, 300.
-- **Te weinig:** 0 munten en één gele edelsteen bij de schoenen → 60 < 200, dus P = 200 en geen enkele deal lukt.
+- **Ronde 2 · Matig · kniebeschermers** (29 nov): Pino begint met 0 munten, vijf groene en één blauwe edelsteen → P = 125 + 35 = 160. Ze ruilt ze in → 160. V = 200 bij iedereen; Mai, Arun en Siti geven geen korting (G = 200), Minh zakt tot 160. Bij Arun: 160 → nee/verdrietig; 150 → nee/boos. Bij Minh: 160 → nee/twijfel (telt niet); nog eens 160 → weer twijfel. Pino loopt weg en praat met Arun; ze loopt weg. Na 1 s staat ze stil en Minh loopt naar haar toe; het scherm opent met vraagprijs 160. 160 → ja (blij). Betaald 160, laagste 160, over 0. (Had ze 155 geboden, dan was Minh boos geworden en terug naar 200 gegaan.) Met 160 munten kan ze bij de andere drie niets kopen.
+- **Ronde 3 · Moeilijk · spray** (1 dec): Pino begint met 0 munten, vier blauwe en twee rode edelstenen → P = 140 + 40 = 180. V = 225; gastheer Mai, Siti en Arun komen bij haar langs; die drie spannen samen met K = 200. Minh doet niet mee, B = 180. Bij Mai: 185 → nee/verdrietig; 200 → ja. Bij Minh: 180 → nee/verdrietig (telt niet); 180 → ja. Of: 175 → nee/verdrietig (telt wel; 5 onder B).
+- **Ronde 4 · Simpel · schoenen** (2 dec): Pino begint met 20 munten, drie blauwe, drie groene en twee rode edelstenen → P = 20 + 105 + 75 + 40 = 240 (boven de ondergrens 200). Goedkoopste V = 240, de andere drie bv. 255, 275, 300.
+- **Te weinig:** 0 munten en drie rode edelstenen bij de schoenen → 60 < 200, dus P = 200 en geen enkele deal lukt.
 
 ## Besturing
 - Telefoon, zoals spel 1 (besluiten 23, 24 en 71): vasthouden op het scherm laat na 250 ms de joystick verschijnen (ring met knop op de drukplek, richting én kracht); een korte tik doet hetzelfde als de tekstballonknop.
@@ -225,7 +225,7 @@ Uitzondering (besluit 141): het tekstwolkje "miss! miss! wait!" van de handelaar
 - [x] Na drie keer nee accepteert een handelaar alleen nog V; de "vrije" nee van wie niet samenspant telt niet mee.
 - [x] Alleen in Moeilijk lopen Siti en Arun naar de kraam van de gastheer (Mai of Minh) en praten ze daar met z'n drieën boos; de vierde blijft staan. Zolang dat duurt, kan Pino met geen van de drie praten. Het gebeurt één keer per ronde, pas na het eerste afgewezen bod onder de vraagprijs.
 - [x] Weglopen en terugkomen (ook via de kalender) houdt prijzen, grenzen en nee-tellers vast.
-- [x] Wisselkraam: pas vanaf ronde 2; één tik = één steen; blauw +100, groen +80, geel +60; een kleur met 0 stenen is grijs.
+- [x] Wisselkraam: pas vanaf ronde 2; één tik = één steen; groen +25, blauw +35, rood +20; een kleur met 0 stenen is grijs.
 - [x] Latere producten liggen klein bij hun kraam en reageren nergens op; het product van de ronde ligt op alle vier de toonbanken.
 - [x] Na een deal: `producten` uitgebreid, `geld` met b verlaagd, de tegels tonen het juiste betaald / laagste / over.
 - [x] Nergens tekst die het niveau, de koers of de regels uitlegt.

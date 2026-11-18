@@ -5,7 +5,7 @@
 import { h } from '../ui/dom.js';
 import { kopbalk } from '../ui/kopbalk.js';
 import { toonResultaat } from '../ui/resultaat.js';
-import { edelsteenPil, gemSvg, GEMS } from '../ui/edelstenen.js';
+import { edelsteenPil, gemSvg, GEMS, TEKST_KLEUR } from '../ui/edelstenen.js';
 import { el, use, persoon, dier } from '../sprites.js';
 import * as fam from './familie.js';
 import * as staat from '../staat.js';
@@ -151,7 +151,11 @@ export function start({ root, dag, info, klaar, zoek = false }) {
         onanimationend: (ev) => { if (ev.animationName === 'schud') knop.classList.remove('schud'); },
       }, [
         kaartPlaatje(k.id),
-        h('span', { class: 'prijs' }, Object.entries(k.prijs).flatMap(([kleur, n]) => Array.from({ length: n }, () => gemSvg(kleur, 16)))),
+        // Per kleur één edelsteen met het aantal erachter (icoon + getal, besluit 192); bij 1 alleen de steen.
+        h('span', { class: 'prijs' }, Object.entries(k.prijs).map(([kleur, n]) => h('span', { class: 'prijs-deel' }, [
+          gemSvg(kleur, 16),
+          n > 1 ? h('span', { class: 'kop prijs-aantal', style: { color: TEKST_KLEUR[kleur] } }, String(n)) : null,
+        ]))),
       ]);
       kaartKnoppen[k.id] = knop;
       return knop;

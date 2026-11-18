@@ -13,7 +13,7 @@ Drie families staan bedroefd voor hun huis: er ontbreekt iemand. Met de edelsten
 
 1. **Kopbalk** (`ui/kopbalk.js`): terugknop → `#/deur/3`, label `DAG 3 · 26 NOVEMBER`, titel, rechts de **edelsteenpil** (`ui/edelstenen.js`): drie keer `gem` (20 px) + getal in `#0E6A98` / `#1F7A3A` / `#9A5B00`, `role="img"` + `aria-label`, live via `staat.abonneer`.
 2. **Drie familiescènes** onder elkaar, gap 10: elk een SVG 358×150 (`.familie`, radius 18, schaduw `0 5px 0 0 #CDE4F0`), `role="img"` + `aria-label`. Geen naamlabel (besluit 39).
-3. **Kaartenbak** onderin (`.kaart.kaartenbak`, `margin-top: auto`, padding 12): raster van vier kolommen, gap 8, met `<button class="kaartje">`: karakter (SVG 60×65, viewBox 0 0 48 52) en een prijspil (`gem` 16 px per steen). Geen kop "Karakterkaarten", geen namen.
+3. **Kaartenbak** onderin (`.kaart.kaartenbak`, `margin-top: auto`, padding 12): raster van vier kolommen, gap 8, met `<button class="kaartje">`: karakter (SVG 60×65, viewBox 0 0 48 52) en een prijspil (per kleur `gem` 16 px met het aantal erachter in Nunito 800 13 px in de donkere tint van de kleur; bij 1 alleen de steen, besluit 192). Geen kop "Karakterkaarten", geen namen.
 
 Op desktop staat het scherm 390 px breed gecentreerd, zoals spel 1 en 2.
 
@@ -33,7 +33,7 @@ Lagen: lucht (rect 358×150) → grond (y 104, h 46) + randje `rgba(0,0,0,0.08)`
 
 ## Regels
 
-- Vier vaste kaarten, altijd dezelfde, in deze volgorde (besluit 38): lammetje `{groen:2}`, gansje `{geel:1}`, meisje `{geel:1, blauw:1}`, biggetje `{blauw:1, geel:1}`. Samen 2 blauw, 2 groen, 3 geel.
+- Vier vaste kaarten, altijd dezelfde, in deze volgorde (besluit 38): lammetje `{groen:2, rood:2}`, gansje `{rood:1, groen:1, blauw:1}`, meisje `{blauw:4, groen:3}`, biggetje `{rood:3}` (besluit 192). Samen 6 groen, 5 blauw, 6 rood: 17 stenen, en één tuin levert er tot 18 op. Op het kaartje staat per kleur één steen met het aantal erachter (bij 1 alleen de steen).
 - Vaste koppeling: meisje + gansje → Nguyễn, biggetje → Tan, lammetje → Somchai.
 - Eén tik op een betaalbare kaart koopt hem meteen: edelstenen eraf, de kaart verdwijnt (de kolom blijft leeg), het karakter verschijnt met een pop en sterretjes op zijn plek.
 - Niet betaalbaar: kaart op 45 % dekking, `aria-disabled`; een tik laat hem kort schudden, verder niets.

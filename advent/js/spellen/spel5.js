@@ -816,7 +816,7 @@ function markt({ root, dag, info, klaar, opnieuw, kijken = false, zoek = false }
         return {
           hoek: [-150, -90, -30][n],
           klasse: 's5-gem-optie',
-          label: `${{ blauw: 'Blauwe', groen: 'Groene', geel: 'Gele' }[kleur]} edelsteen, ${aantal}`,
+          label: `${{ groen: 'Groene', blauw: 'Blauwe', rood: 'Rode' }[kleur]} edelsteen, ${aantal}`,
           uitgeschakeld: aantal <= 0,
           inhoud: h('span', { class: 's5-gem-inhoud' }, [gemSvg(kleur, 44), h('span', { class: 'aantal' }, String(aantal))]),
           actie: () => {

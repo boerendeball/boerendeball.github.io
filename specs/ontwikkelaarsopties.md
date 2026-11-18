@@ -67,7 +67,7 @@ Echte `<button>`s, `<label>` bij elke schakelaar en elk veld, `aria-pressed` op 
 - [ ] `#/dev` buiten devmodus toont "Dit deurtje bestaat niet" (pas na publicatie te testen).
 - [x] "Alle deurtjes open" aan → terug naar de kalender: alle deurtjes zijn open; de badge op de knop toont 1.
 - [x] Dag 5 kiezen → de nu-kaart toont 28 november, dag 5; deurtje 5 staat op "Vandaag". Daarna een vaste datum kiezen haalt `dag` uit de URL.
-- [x] Testvoorraad vullen → de samenvatting toont geld ≥ 240 en edelstenen 3/3/3, zonder herladen.
+- [x] Testvoorraad vullen → de samenvatting toont geld ≥ 240 en edelstenen 6/5/6 (groen/blauw/rood, besluit 192), zonder herladen.
 - [x] Staat wissen vraagt eerst bevestiging; daarna is de samenvatting leeg.
 - [ ] Familie/niveau zijn uitgeschakeld zonder `test=1` en werken met `test=1` (uitschakelen en de URL gecontroleerd; spel 4/5 zelf met de gekozen waarde nog niet nagelopen).
 - [x] Vinkje "gespeeld" bij dag 3 → de kalender toont deurtje 3 als "Gespeeld"; uitvinken zet het terug.

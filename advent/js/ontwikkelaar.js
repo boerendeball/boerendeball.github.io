@@ -156,7 +156,7 @@ function staatKaart() {
     const gespeeld = Object.entries(s.deurtjes).filter(([, v]) => v === 'gespeeld').map(([k]) => k);
     const regels = [
       ['Geld', String(s.geld)],
-      ['Edelstenen', `blauw ${s.edelstenen.blauw} · groen ${s.edelstenen.groen} · geel ${s.edelstenen.geel}`],
+      ['Edelstenen', `groen ${s.edelstenen.groen} · blauw ${s.edelstenen.blauw} · rood ${s.edelstenen.rood}`],
       ['Tegels', String(tegels)],
       ['Familie', s.familie ? FAMILIENAMEN[s.familie] || s.familie : '–'],
       ['Karakters', s.karakters.join(', ') || '–'],

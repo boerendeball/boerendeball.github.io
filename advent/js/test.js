@@ -38,7 +38,7 @@ export function schermTest({ root }) {
   s.append(use('s4-munt', 16, 230, 48, 48));
   s.append(use('gem', 70, 230, 48, 48, '#5BC0EB'));
   s.append(use('gem', 110, 230, 48, 48, '#39D353'));
-  s.append(use('gem', 150, 230, 48, 48, '#FFC93C'));
+  s.append(use('gem', 150, 230, 48, 48, '#FF5E5B'));
   s.append(use('hx-tegel', 210, 222, 56, 66, '#39D353'));
   s.append(use('wk-staan', 290, 222, 48, 72));
 

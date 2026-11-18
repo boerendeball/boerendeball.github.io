@@ -13,8 +13,8 @@ export const PRODUCTEN = [
   { id: 'schoenen', p: 200, spel: 9, label: 'Sportschoenen', symbool: 's5-schoenen' },
 ];
 
-/** Wisselkraam: vaste koers per edelsteen (besluit 65). */
-export const KOERS = { blauw: 100, groen: 80, geel: 60 };
+/** Wisselkraam: vaste koers per edelsteen (besluit 65; gedeeld door 3 in besluit 192, want een ring geeft er nu 3). */
+export const KOERS = { groen: 25, blauw: 35, rood: 20 };
 
 export const STAP = 5;          // stepper en alle bedragen: veelvouden van 5
 export const MAX_NEE = 3;       // daarna beledigd: alleen nog de vraagprijs

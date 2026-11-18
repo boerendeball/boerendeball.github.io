@@ -21,7 +21,7 @@ export function legeStaat() {
     deurtjes: {},                 // { "1": "open" | "gespeeld" }  (dicht = niet aanwezig)
     briefjesGelezen: [],
     tegels: {},                   // { "groen-vlinder": 2, ... }  (spel 1 → spel 2)
-    edelstenen: { blauw: 0, groen: 0, geel: 0 },   // spel 2 → spel 3
+    edelstenen: { groen: 0, blauw: 0, rood: 0 },   // spel 2 → spel 3 (besluit 192)
     tuin: null,                   // spel 2, onaffe tocht: { velden, huidig, gelegd, pino, weg, werker, edelstenen } (spellen/hex.js)
     karakters: [],                // spel 3: gekochte kaarten ("lam" | "gansje" | "meisje" | "biggetje"), blijven bewaard
     familie: null,                // "nguyen" | "tan" | "somchai": de eerste complete familie (spel 3 → spel 4)
@@ -45,6 +45,11 @@ function migreer(data) {
   const uit = { ...basis, ...data };
   for (const veld of ['edelstenen', 'werkers', 'levels', 'vaardigheden', 'behoeften']) {
     uit[veld] = { ...basis[veld], ...(data[veld] || {}) };
+  }
+  // Gele edelstenen bestaan niet meer (besluit 192): wat Pino aan geel had, wordt rood.
+  if ('geel' in uit.edelstenen) {
+    uit.edelstenen.rood = (uit.edelstenen.rood || 0) + (uit.edelstenen.geel || 0);
+    delete uit.edelstenen.geel;
   }
   if (!Array.isArray(uit.karakters)) uit.karakters = [];
   if (!Array.isArray(uit.fotos)) uit.fotos = [];
@@ -209,17 +214,22 @@ export function legTuinBrug(nieuweTuin, type) {
 }
 
 /** Edelsteen uit een veld waarvan de ring vol ligt: één keer per veld. */
+/** Edelstenen per volle ring (besluit 192): Pino kiest ze één voor één, elke kleur mag vaker. */
+export const STENEN_PER_RING = 3;
+
+/** Eén edelsteen uit de ring van dit veld. Geeft het aantal dat Pino daarna nog mag kiezen, of -1 als het niet kon. */
 export function oogstEdelsteen(veldIndex, kleur) {
-  let gelukt = false;
+  let rest = -1;
   schrijf((s) => {
     const veld = s.tuin && s.tuin.velden[veldIndex];
     if (!veld || veld.geoogst) return;
-    veld.geoogst = true;
+    veld.gekozen = (veld.gekozen || 0) + 1;
+    if (veld.gekozen >= STENEN_PER_RING) veld.geoogst = true;
     s.tuin.edelstenen = (s.tuin.edelstenen || 0) + 1;
     s.edelstenen[kleur] = (s.edelstenen[kleur] || 0) + 1;
-    gelukt = true;
+    rest = STENEN_PER_RING - veld.gekozen;
   });
-  return gelukt;
+  return rest;
 }
 
 export function wisTuin() {
@@ -231,7 +241,7 @@ export function voegEdelsteenToe(kleur, aantal = 1) {
 }
 
 export function betaalEdelstenen(prijs) {
-  // prijs: { blauw: 1, geel: 1 }
+  // prijs: { rood: 3 } of { blauw: 4, groen: 3 }
   const s = lees();
   for (const [kleur, n] of Object.entries(prijs)) {
     if ((s.edelstenen[kleur] || 0) < n) return false;
@@ -343,7 +353,7 @@ export function vulTestStaat() {
     for (const kleur of ['groen', 'geel', 'blauw']) {
       for (const figuur of ['vlinder', 'boom', 'vogel']) s.tegels[`${kleur}-${figuur}`] = 3;
     }
-    s.edelstenen = { blauw: 3, groen: 3, geel: 3 };
+    s.edelstenen = { groen: 6, blauw: 5, rood: 6 };   // precies genoeg voor alle vier de kaarten in spel 3
     s.familie = s.familie || 'tan';
     // Familie Tan echt compleet maken (spel 4 kijkt naar de gekochte kaarten).
     if (s.familie === 'tan' && !s.karakters.includes('biggetje')) s.karakters.push('biggetje');

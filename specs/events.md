@@ -62,8 +62,8 @@ const invoer = maakInvoer({ joystick: { element: schermEl, vertraging: 250, tik:
 invoer.as() → { dx, dy }   // toetsenbord/D-pad als die actief zijn, anders de joystick (kracht 0–1)
 ```
 - **Verschijnen**: `pointerdown` op het vlak (niet op een knop of link) start een timer; na `vertraging` ms (250) komt de joystick op de drukplek, met een korte schaal/fade-in (0,15 s; geen animatie bij `prefers-reduced-motion`).
-- **Graphics** (kalenderstijl): ring 120 px, wit 45 % met witte rand 4 px, 3D-schaduw `0 6px 0 0 #CDE4F0`, dunne teal binnenring (72 px); knop 52 px teal `#1FA3DC` met witte rand 3 px en schaduw `0 4px 0 0 #0E7FB5`. Vast gepositioneerd boven alles (`z-index: 40`), negeert pointer-events zelf.
-- **Sturen**: de knop volgt de vinger tot maximaal 34 px uit het midden; richting = vector vanaf de drukplek, kracht = uitslag/34 met een dode zone van 12 %. Ook diagonaal.
+- **Graphics** (kalenderstijl): ring 150 px (besluit 197), wit 45 % met witte rand 4 px, 3D-schaduw `0 6px 0 0 #CDE4F0`, dunne teal binnenring (88 px); knop 52 px teal `#1FA3DC` met witte rand 3 px en schaduw `0 4px 0 0 #0E7FB5`. Vast gepositioneerd boven alles (`z-index: 40`), negeert pointer-events zelf.
+- **Sturen** (besluit 197): de knop volgt de vinger tot maximaal 48 px uit het midden; richting = vector vanaf de drukplek. Kracht: dode zone van 12 %, daarna ((uitslag/48 − 0,12) / 0,88)^1,6, dus rustig bij het midden en de volle loopsnelheid aan de rand. Verder slepen dan de rand blijft de volle snelheid (nooit meer, nooit minder). Ook diagonaal.
 - **Loslaten** (`pointerup`, `pointercancel`, verlies van capture, venster verliest focus): joystick weg, vector (0, 0).
 - **Tik**: loslaten binnen 250 ms en 10 px, vóór de joystick verschijnt → `bijActie(tik)` (spel 1: onderbreken, besluiten.md #24).
 - Het vlak krijgt `touch-action: none` zodat de pagina niet scrolt of zoomt tijdens het spelen; muis: alleen de linkerknop; een tweede vinger wordt genegeerd.

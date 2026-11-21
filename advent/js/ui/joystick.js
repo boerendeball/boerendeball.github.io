@@ -2,6 +2,9 @@
 //
 // Druk ergens op het vlak en hou vast: na `vertraging` ms (250) verschijnt op de drukplek een ring met een knop.
 // Beweeg de vinger/cursor: de knop schuift binnen de ring mee en as() geeft de richting (en kracht 0–1).
+// Kracht (besluit 197): dicht bij het midden langzaam, aan de rand van de ring de volle snelheid; verder slepen dan
+// de rand geeft niet meer dan 1, dus de loopsnelheid van het spel is ook het maximum. Tussen doodzone en rand loopt
+// de kracht op met een kromme (macht KROMME), zodat er bij het midden ruimte is om rustig te lopen.
 // Loslaten: de joystick verdwijnt en as() is weer (0, 0). Een korte tik zonder beweging roept bijTik aan.
 //
 // const joystick = maakJoystick({ element: schermEl, vertraging: 250, bijTik: () => onderbreek() });
@@ -13,13 +16,14 @@ import { h } from './dom.js';
 
 const STANDAARD = {
   vertraging: 250,    // ms vasthouden voordat de joystick verschijnt
-  straal: 34,         // px maximale uitslag van de knop (ring 120 px, knop 52 px)
+  straal: 48,         // px maximale uitslag van de knop (ring 150 px, knop 52 px; besluit 197)
   doodZone: 0.12,     // deel van de straal zonder beweging
+  kromme: 1.6,        // kracht = lineair^kromme: 1 = lineair, hoger = langzamer rond het midden
   tikDuur: 250,       // ms: korter dan dit zonder beweging = tik (en de joystick is dan nog niet verschenen)
   tikBeweging: 10,    // px: meer beweging dan dit is geen tik
 };
 
-export function maakJoystick({ element, vertraging = STANDAARD.vertraging, straal = STANDAARD.straal, doodZone = STANDAARD.doodZone, bijTik = null, bijStart = null, bijStop = null } = {}) {
+export function maakJoystick({ element, vertraging = STANDAARD.vertraging, straal = STANDAARD.straal, doodZone = STANDAARD.doodZone, kromme = STANDAARD.kromme, bijTik = null, bijStart = null, bijStop = null } = {}) {
   if (!element) throw new Error('joystick: element ontbreekt');
   const opruimers = [];
   const knop = h('div', { class: 'joystick-knop', 'aria-hidden': 'true' });
@@ -60,9 +64,12 @@ export function maakJoystick({ element, vertraging = STANDAARD.vertraging, straa
     if (kracht < doodZone) {
       vector = { dx: 0, dy: 0 };
     } else {
-      // kracht opnieuw schalen zodat de doodzone op 0 begint
-      const k = (kracht - doodZone) / (1 - doodZone);
-      vector = { dx: (dx / (lengte || 1)) * k, dy: (dy / (lengte || 1)) * k };
+      // kracht opnieuw schalen zodat de doodzone op 0 begint, dan de kromme: rustig bij het midden, vol aan de rand
+      const k = ((kracht - doodZone) / (1 - doodZone)) ** kromme;
+      // Richting als eenheidsvector. Let op: dx/dy zijn hierboven al op de straal afgekapt, dus delen door de
+      // afgekapte lengte; delen door de echte vingerafstand maakte Pino trager hoe verder je buiten de ring sleepte.
+      const r = Math.hypot(dx, dy) || 1;
+      vector = { dx: (dx / r) * k, dy: (dy / r) * k };
     }
   }
 

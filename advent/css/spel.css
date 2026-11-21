@@ -54,7 +54,7 @@
 /* ---------- virtuele joystick (ui/joystick.js) ---------- */
 .joystick-vlak { touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
 .joystick {
-  position: fixed; z-index: 40; width: 120px; height: 120px; margin: -60px 0 0 -60px;
+  position: fixed; z-index: 40; width: 150px; height: 150px; margin: -75px 0 0 -75px;   /* besluit 197 */
   pointer-events: none; opacity: 0; transform: scale(0.7);
   transition: opacity 0.15s ease, transform 0.15s ease;
 }
@@ -65,7 +65,7 @@
   box-shadow: 0 6px 0 0 rgba(205, 228, 240, 0.9), 0 12px 24px rgba(30, 58, 76, 0.18), inset 0 0 0 2px rgba(31, 163, 220, 0.25);
 }
 .joystick-ring::before {
-  content: ""; position: absolute; left: 50%; top: 50%; width: 72px; height: 72px; margin: -36px 0 0 -36px;
+  content: ""; position: absolute; left: 50%; top: 50%; width: 88px; height: 88px; margin: -44px 0 0 -44px;
   border-radius: 50%; border: 2px solid rgba(31, 163, 220, 0.35);
 }
 .joystick-knop {

@@ -30,7 +30,7 @@ Melding bovenin: slot-icoon (geel bolletje) "**Actie niet beschikbaar.** Dit deu
 
 ## Briefje
 
-Dialoog met hartbol (`#FFE0EE`, ring roze) · "BRIEFJE VOOR PINO" · weekdag + datum als titel · de tekst uit `kalender.json` (`briefje`), anders de placeholder tussen rechte haken · knop **Fijn!**. Markeert `briefjesGelezen`. Het Open-scherm toont hetzelfde briefje als kaart.
+Dialoog met hartbol (`#FFE0EE`, ring roze) · "BRIEFJE VOOR PINO" · weekdag + datum als titel · de tekst uit `kalender.json` (`briefje`), anders de placeholder tussen rechte haken · sluitknop met de tekst uit `kalender.json` (`briefjeKnop`, per dag eigen tekst), anders **Fijn!** (besluit 195). Markeert `briefjesGelezen`. Het Open-scherm toont hetzelfde briefje als kaart.
 
 ## Telefoon (`Telefoon.png`)
 

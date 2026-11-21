@@ -211,7 +211,8 @@ export function toonBriefje(n) {
       h('div', { class: 'dialoog-sub', style: { color: 'var(--roze-schaduw)' } }, 'BRIEFJE VOOR PINO'),
       h('h2', { class: 'kop dialoog-titel' }, weekdagDatum(n)),
       h('p', { class: 'dialoog-tekst' }, info.briefje || '[Een persoonlijk zinnetje per dag – herinnering, grapje of hint voor het volgende deurtje.]'),
-      h('button', { type: 'button', class: 'knop-pil knop-pil-teal', onclick: () => d.sluit() }, 'Fijn!'),
+      // Eigen tekst op de sluitknop per dag (besluit 195), anders "Fijn!".
+      h('button', { type: 'button', class: 'knop-pil knop-pil-teal', onclick: () => d.sluit() }, info.briefjeKnop || 'Fijn!'),
     ],
   });
   return d;

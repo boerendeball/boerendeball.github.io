@@ -651,6 +651,56 @@ button.s7-foto:focus-visible { outline: 3px solid #FFC93C; outline-offset: -4px;
   .s8-wolk, .s8-nevel { animation: none; }
 }
 
+/* uitleg na de eerste spray (besluit 215): dialoogkaart met twee bewegende plaatjes, zonder tekst */
+.dialoog.s8-uitleg { gap: 12px; padding: 0 18px 18px; }
+.s8u-bol { width: 96px; height: 96px; margin-top: -48px; background: #fff; box-shadow: 0 0 0 3px var(--teal), 0 8px 18px rgba(30, 58, 76, 0.18); }
+.s8u-vak { width: 100%; border-radius: 16px; overflow: hidden; background: #4E9A3E; touch-action: pan-y; }
+.s8u-plaatje { display: block; width: 100%; height: auto; }
+.s8u-onder { width: 100%; display: flex; align-items: center; justify-content: space-between; }
+.s8u-stippen { display: flex; gap: 8px; }
+.s8u-stip { width: 10px; height: 10px; border-radius: 5px; background: #CDE4F0; transition: width 0.2s ease, background 0.2s ease; }
+.s8u-stip.aan { width: 24px; background: var(--teal); }
+.s8u-rechts { display: flex; }
+.s8u-verder, .s8u-klaar, .s8u-terug { border: 0; padding: 0; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.s8u-verder, .s8u-klaar { width: 56px; height: 56px; }
+.s8u-verder > svg, .s8u-klaar > svg { width: 28px; height: 28px; }
+.s8u-verder { background: var(--teal); color: #fff; box-shadow: 0 5px 0 0 var(--teal-schaduw); }
+.s8u-klaar { background: var(--groen); color: #0E3D1C; box-shadow: 0 5px 0 0 var(--groen-schaduw); }
+.s8u-terug { width: 44px; height: 44px; background: var(--vlak-licht); color: var(--gedempt); box-shadow: 0 4px 0 0 var(--kaart-schaduw); }
+.s8u-terug > svg { width: 22px; height: 22px; }
+.s8u-terug.leeg { visibility: hidden; }
+.s8u-verder:active, .s8u-klaar:active, .s8u-terug:active { transform: translateY(4px); box-shadow: none; }
+.s8u-verder:focus-visible, .s8u-klaar:focus-visible, .s8u-terug:focus-visible { outline: 3px solid var(--teal); outline-offset: 3px; }
+
+/* pagina 1 (4 s in een lus): spuiten, nevel, wolkje met dof lampje, weglopen */
+@keyframes s8u-weg { 0%, 42% { transform: translateX(0); } 70%, 100% { transform: translateX(72px); } }
+@keyframes s8u-spuit { 0%, 34% { opacity: 1; } 36%, 100% { opacity: 0; } }
+@keyframes s8u-staan { 0%, 34% { opacity: 0; } 36%, 100% { opacity: 1; } }
+@keyframes s8u-nevel { 0% { opacity: 0; } 6%, 28% { opacity: 1; } 36%, 100% { opacity: 0; } }
+@keyframes s8u-wolk { 0%, 36% { opacity: 0; } 40%, 64% { opacity: 1; } 68%, 100% { opacity: 0; } }
+.s8u-weg { animation: s8u-weg 4s ease-in-out infinite; }
+.s8u-spuit { animation: s8u-spuit 4s linear infinite; }
+.s8u-staan { animation: s8u-staan 4s linear infinite; }
+.s8u-nevel { animation: s8u-nevel 4s linear infinite; }
+.s8u-wolk { animation: s8u-wolk 4s linear infinite; }
+/* pagina 2 (4 s in een lus): tik op het dier, dan wisselen (Pino springt, het dier schuift) */
+@keyframes s8u-tik { 0%, 14% { opacity: 0; transform: scale(0.4); } 20% { opacity: 1; transform: scale(1); } 32%, 100% { opacity: 0; transform: scale(1.5); } }
+@keyframes s8u-pino { 0%, 36% { transform: translate(0, 0); } 48% { transform: translate(18px, -12px); } 60%, 100% { transform: translate(36px, 0); } }
+@keyframes s8u-dier { 0%, 36% { transform: translateX(0); } 60%, 100% { transform: translateX(-36px); } }
+@keyframes s8u-pijlen { 0%, 30% { opacity: 0; } 36%, 62% { opacity: 1; } 70%, 100% { opacity: 0; } }
+.s8u-tik { transform-box: fill-box; transform-origin: 50% 50%; animation: s8u-tik 4s ease-out infinite; }
+.s8u-pino { animation: s8u-pino 4s ease-in-out infinite; }
+.s8u-dier { animation: s8u-dier 4s ease-in-out infinite; }
+.s8u-pijlen { animation: s8u-pijlen 4s linear infinite; }
+/* zonder beweging: een stilstaand eindbeeld (het dier staat verder weg; Pino en het dier gewisseld, met de pijlen) */
+@media (prefers-reduced-motion: reduce) {
+  .s8u-plaatje * { animation: none !important; }
+  .s8u-spuit, .s8u-nevel, .s8u-tik { opacity: 0; }
+  .s8u-weg { transform: translateX(72px); }
+  .s8u-pino { transform: translateX(36px); }
+  .s8u-dier { transform: translateX(-36px); }
+}
+
 /* ---------- spel 9 · Vang de baby (design/artboards/Spel9*.dc.html, specs/spel9.md) ---------- */
 /* Eén venster hoog: de scène (358×680) krimpt mee met de ruimte onder de kopbalk. */
 .spel9 { height: 100vh; height: 100dvh; min-height: 0; overflow: hidden; gap: 12px; }

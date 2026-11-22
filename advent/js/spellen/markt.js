@@ -223,13 +223,18 @@ export function bied(ronde, id, bod) {
 }
 
 /**
- * Matig (besluit 140): komt de twijfelende handelaar naar Pino toe nu ze het gesprek met handelaar `id` beëindigt?
- * Alleen als `id` iemand anders is, de handelaar met korting al getwijfeld heeft en nog niet gekomen of boos is.
+ * Matig (besluit 140/214): heeft de handelaar met korting getwijfeld en is hij nog niet gekomen of boos? Dan komt hij
+ * nog naar Pino toe: 1 s nadat ze met een ander heeft gepraat (moetKomen), of na 5 s als ze met niemand anders praat.
  */
-export function moetKomen(ronde, id) {
-  if (!ronde || ronde.niveau !== 'matig' || !ronde.korting || id === ronde.korting) return false;
+export function twijfelaarWacht(ronde) {
+  if (!ronde || ronde.niveau !== 'matig' || !ronde.korting) return false;
   const h = ronde.handelaars[ronde.korting];
   return !!h && !!h.getwijfeld && !h.gekomen && !h.beledigd;
+}
+
+/** Matig (besluit 140): komt de twijfelaar naar Pino toe nu ze het gesprek met handelaar `id` (een ander) beëindigt? */
+export function moetKomen(ronde, id) {
+  return !!ronde && id !== ronde.korting && twijfelaarWacht(ronde);
 }
 
 /** De twijfelende handelaar staat bij Pino: zijn vraagprijs wordt alles wat ze heeft (P van de ronde). */

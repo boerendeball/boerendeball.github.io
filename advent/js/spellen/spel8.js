@@ -13,6 +13,7 @@ import { LEVELS } from './schaak-levels.js';
 import * as staat from '../staat.js';
 import * as datum from '../datum.js';
 import * as sap from '../ui/sap.js';
+import * as uitleg from './spel8-uitleg.js';
 
 /* ---------- tuning ---------- */
 const STAP_DUUR = 260;        // ms: Pino één vak, een stam één vak
@@ -337,8 +338,19 @@ function bord({ root, dag, info, klaar, nr, naarOverzicht, opnieuw, volgende, ge
     if (gestopt) return;
     beeld.pino = 's8-stuk-pino';
     beeld.nevel = [];
+    render();
+    // De eerste spray ooit: eerst de uitleg zonder tekst (weglopen en wisselen, besluit 215); het spel wacht.
+    if (!uitleg.alGezien()) await toonUitleg();
+    if (gestopt) return;
     fase = 'pino';
     render();
+  }
+
+  let uitlegDialoog = null;
+  function toonUitleg() {
+    return new Promise((ok) => {
+      uitlegDialoog = uitleg.toonSprayUitleg({ dier: level.dier, bijSluiten: () => { uitlegDialoog = null; ok(); } });
+    });
   }
 
   // Geen spray: de spray (licht vervaagd, met een klein rood "!?") springt uit de knop omhoog, boven Pino's duim uit,
@@ -496,7 +508,7 @@ function bord({ root, dag, info, klaar, nr, naarOverzicht, opnieuw, volgende, ge
 
   /* ---------- toetsenbord ---------- */
   function toets(ev) {
-    if (ev.altKey || ev.ctrlKey || ev.metaKey) return;
+    if (ev.altKey || ev.ctrlKey || ev.metaKey || uitlegDialoog) return;
     if (PIJL[ev.key]) {
       ev.preventDefault();
       const d = PIJL[ev.key];
@@ -521,6 +533,8 @@ function bord({ root, dag, info, klaar, nr, naarOverzicht, opnieuw, volgende, ge
       spel: 8, schaak, level, bord: b,
       stand: () => stand,
       oplossing: () => schaak.losOp(level, { heeftSpray: spray }),
+      /** Toont de uitleg na de eerste spray opnieuw (besluit 215). */
+      uitleg: () => toonUitleg(),
       /** Speelt de oplossing van de oplosser na via de gewone knoppenlogica. */
       speelOplossing: async () => {
         const opl = schaak.losOp(level, { heeftSpray: spray });
@@ -540,6 +554,7 @@ function bord({ root, dag, info, klaar, nr, naarOverzicht, opnieuw, volgende, ge
 
   return () => {
     gestopt = true;
+    if (uitlegDialoog) uitlegDialoog.sluit();
     cancelAnimationFrame(rafId);
     for (const t of timers) clearTimeout(t);
     for (const a of wachtAnimaties) a.cancel();

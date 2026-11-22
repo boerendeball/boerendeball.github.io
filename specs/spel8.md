@@ -87,6 +87,13 @@ Glijders stoppen vóór elk obstakel en elke stam.
   - Zolang een dier in de war is, is het **wisselbaar** zoals een stam (besluit #124): tikt Pino erop als het recht naast haar staat, dan wisselen ze van plek. Dat is haar wissel van die beurt en kan dus direct na de spray.
   - De "willekeur" komt vast uit de spelstand (hash), zodat het spel en de oplosser hetzelfde doen.
 - **Zonder spray** (`producten` zonder `spray`): bij een tik springt de spray 1200 ms uit de knop omhoog, boven Pino's duim uit (besluit 209), zoals de kniebeschermers in spel 6: een wit ballonnetje (84 px) met rode rand en een rood puntje naar de knop, daarin `s5-spray` licht vervaagd met een klein rood "!?" eronder (`ui/ontbreekt.js`). Het hangt aan een omhulsel om de knop (`.s8-spray-plek`), niet in de knop zelf, en staat boven de knop in het decor onder het bord. Er gebeurt verder niets.
+- **Uitleg na de eerste spray** (besluit 215, variant B uit het voorstelblad `design/spray-uitleg-voorstel/`): de eerste keer dat Pino de spray echt gebruikt (niet zonder spray), opent na de nevel een dialoogkaart (`spellen/spel8-uitleg.js`, CSS `.s8-uitleg`/`.s8u-*`). Het spel wacht; na het sluiten gaat Pino verder met dezelfde beurt.
+  - Bovenop een bol met `s5-spray`; daaronder een bewegend plaatje (lus van 4 s) van vijf schaakvakken met de echte sprites en het dier van het level. **Geen tekst.**
+  - Pagina 1: Pino spuit (`s8-stuk-pino-spuit` + `s8-nevel`), het dier is boos (`-boos`), krijgt een wolkje met een dof lampje en loopt twee vakken van haar weg.
+  - Pagina 2: een witte tik-ring op het verwarde dier naast Pino, daarna wisselen ze van plek (Pino springt, het dier schuift), met twee gebogen witte pijlen.
+  - Onderaan: terug-pijl (alleen op pagina 2), twee bolletjes, een blauwe pijl naar pagina 2 en op pagina 2 een groen vinkje om te sluiten. Vegen en de pijltjestoetsen bladeren; Escape sluit.
+  - Wordt onthouden in `uitleg` (`'spel8-spray'`); daarna nooit meer. Met *reduced motion* een stilstaand eindbeeld.
+  - Verlaat Pino het spel terwijl de uitleg openstaat, dan gaat die mee dicht.
 - **Level 5** is alleen met de spray te halen.
 
 ## Levels (besluit #117)
@@ -105,6 +112,7 @@ Glijders stoppen vóór elk obstakel en elke stam.
 
 ## Staat
 - In: `producten` (spray, besluit 63).
+- In/uit: `uitleg` (lijst; `'spel8-spray'` = de uitleg na de eerste spray is gezien, besluit 215).
 - In/uit: `levels` (`markeerLevelGehaald(n)`; gehaalde levels blijven gehaald).
 - Bij **level 5 gehaald**:
   - `rondSpelAf(8, { score: { levels, gevangen } })`;
@@ -137,7 +145,7 @@ Glijders stoppen vóór elk obstakel en elke stam.
   - R = opnieuw (als de knop actief is).
 
 ## Geen uitleg
-Er is geen tekst in het spel, behalve de kopbalk en de resultaatschermen. De zandloper, de spray en de opnieuw-knop zijn alleen een icoon. De vorm van het stuk is de enige hint over de beweging.
+Er is geen tekst in het spel, behalve de kopbalk en de resultaatschermen. De zandloper, de spray en de opnieuw-knop zijn alleen een icoon. De vorm van het stuk is de enige hint over de beweging. De uitleg na de eerste spray (besluit 215) heeft alleen bewegende plaatjes en icoonknoppen.
 
 ## Toegankelijkheid
 - **Leveloverzicht**: echte `<button>`s met `aria-label`s ("Level 2, gehaald" …).
@@ -155,12 +163,13 @@ Er is geen tekst in het spel, behalve de kopbalk en de resultaatschermen. De zan
 - [x] Met spray wordt het dier rood en boos en loopt het twee beurten in de war; zonder spray springt de spray met "!?" uit de knop omhoog (22 november, 375×812, geen consolefouten).
 - [x] Level 1–5 zijn uit te spelen in de app; na level 5 volgt "Schaakmat!" met Logica +1 en de behoefte Bordspellen op 100 %.
 - [x] Toetsenbord en touch werken; geen consolefouten; 390×844 en desktop.
+- [x] De eerste echte spray opent de uitleg (twee pagina's, pijl, vinkje, vegen, pijltjestoetsen, Escape); daarna speelt het level verder en bij een volgende spray komt hij niet terug (besluit 215; 22 november, 375×812, geen consolefouten).
 - [ ] Beoordeeld door Benjamin.
 
 ## Test-URL's
 - `/advent/?test=1#/spel/8`: het leveloverzicht.
 - `/advent/?test=1&level=5&spray=1#/spel/8`: meteen level 5, met spray (`spray=0`: zonder).
-- `window.pinoDebug.oplossing()` geeft de kortste oplossing; `window.pinoDebug.speelOplossing()` speelt die na in de app.
+- `window.pinoDebug.oplossing()` geeft de kortste oplossing; `window.pinoDebug.speelOplossing()` speelt die na in de app. `window.pinoDebug.uitleg()` toont de uitleg na de eerste spray opnieuw; zet `uitleg` in de staat leeg om hem weer echt na de eerste spray te zien.
 
 ## Open punten
 - De preview `Spel8.png` laat nog de oude besturing zien; de artboards zijn niet opnieuw gegenereerd.

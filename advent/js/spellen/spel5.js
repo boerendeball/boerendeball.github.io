@@ -421,7 +421,8 @@ function markt({ root, dag, info, klaar, opnieuw, kijken = false, zoek = false }
 
   /** Doet deze handelaar nu mee aan het samenzweren? Dan kan Pino niet met hem praten. */
   function weg(id) {
-    return (sz.t >= 0 && groepLeden.includes(id)) || (komst.fase !== null && komst.id === id);
+    // Terwijl de twijfelaar nog afwacht (fase 'wacht') staat hij gewoon achter zijn kraam en kan Pino met hem praten.
+    return (sz.t >= 0 && groepLeden.includes(id)) || (komst.fase !== null && komst.fase !== 'wacht' && komst.id === id);
   }
 
   function samenzweer(dt) {
@@ -473,7 +474,8 @@ function markt({ root, dag, info, klaar, opnieuw, kijken = false, zoek = false }
   const UITGANG = { mai: { x: 156, y: 154 }, arun: { x: 205, y: 154 }, siti: { x: 156, y: 444 }, minh: { x: 205, y: 444 } };
   const MUREN = [...obstakels, { x0: 8, x1: 140, y0: 40, y1: 176 }, { x0: 218, x1: 352, y0: 40, y1: 176 }];
   const MARGE = 6;
-  const KOMST_WACHT = 1;                                     // seconden na het gesprek
+  const KOMST_WACHT = 1;                                     // seconden na een gesprek met een andere handelaar
+  const KOMST_ZELF = 5;                                      // seconden na het gesprek met hem zelf (besluit 214)
   const komst = { id: null, fase: null, t: 0, afstand: 0 };  // fase: null | wacht | heen | gesprek | terug
 
   // Gehaast (besluit 141): sneller lopen, voorovergebogen, hoger en sneller wippen, stofwolkjes bij de voeten,
@@ -606,9 +608,14 @@ function markt({ root, dag, info, klaar, opnieuw, kijken = false, zoek = false }
     return { stukken, totaal };
   }
 
-  function planKomst() {
-    if (komst.fase !== null || !ronde) return;
-    Object.assign(komst, { id: ronde.korting, fase: 'wacht', t: KOMST_WACHT, afstand: 0 });
+  /**
+   * Zet de komst klaar: over `wacht` seconden (speltijd, dus niet tijdens een gesprek) komt hij eraan. Wacht hij al,
+   * dan wordt het hooguit eerder; met `opnieuw` begint de wachttijd opnieuw (Pino sprak hem zelf nog eens).
+   */
+  function planKomst(wacht, opnieuw = false) {
+    if (!ronde || (komst.fase !== null && komst.fase !== 'wacht')) return;
+    const t = komst.fase === 'wacht' && !opnieuw ? Math.min(komst.t, wacht) : wacht;
+    Object.assign(komst, { id: ronde.korting, fase: 'wacht', t, afstand: 0 });
   }
 
   function komstStap(dt) {
@@ -808,7 +815,11 @@ function markt({ root, dag, info, klaar, opnieuw, kijken = false, zoek = false }
       bijSluiten: () => {
         stopMin(); stopPlus(); d.element.removeEventListener('keydown', opToets);
         if (!dealt) {
-          if (naSluiten) naSluiten(); else if (M.moetKomen(ronde, id)) planKomst();
+          // Matig (besluit 140/214): de twijfelaar komt 1 s na een gesprek met een ander, of na 5 s als Pino
+          // na het twijfelgesprek met niemand anders praat.
+          if (naSluiten) naSluiten();
+          else if (M.moetKomen(ronde, id)) planKomst(KOMST_WACHT);
+          else if (id === ronde.korting && M.twijfelaarWacht(ronde)) planKomst(KOMST_ZELF, true);
           hervat();
           // Loopt Pino boos weg, dan zie je dat ook in de scène even boven zijn hoofd (besluit 210).
           if (M.stemmingVan(ronde.handelaars[id]) === 'boos') na(120, () => boosWolk(id));

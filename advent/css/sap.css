@@ -1,0 +1,108 @@
+/* Beeldfeedback ("sap", besluit 210): animaties die het geluid vervangen. Zie specs/beeldfeedback.md.
+   Geen gradients of filters op bewegende delen. Wachtanimaties (sap-wieg, -hang, -adem, -dobber, -gloei,
+   -twinkel) staan stil met reduced motion; zie onderaan. Ze gebruiken de losse eigenschappen rotate/scale/
+   translate, zodat een bestaande transform (ook het transform-attribuut van een SVG-groep) blijft staan. */
+
+/* ---------- effecten uit ui/sap.js ---------- */
+
+.sap-flits { position: absolute; inset: 0; pointer-events: none; opacity: 0; z-index: 5; border-radius: inherit; }
+
+.sap-vlieger {
+  position: fixed; left: 0; top: 0; z-index: 1000; pointer-events: none;
+  display: grid; place-items: center; will-change: transform;
+}
+.sap-vlieger > svg, .sap-vlieger > img { width: 100%; height: 100%; }
+
+@keyframes sap-deeltje {
+  0% { transform: translate(0, 0) scale(0.4); opacity: 0; }
+  20% { transform: translate(calc(var(--dx) * 0.35), calc(var(--dy) * 0.35)) scale(1.05); opacity: 1; }
+  100% { transform: translate(var(--dx), var(--dy)) scale(0.8); opacity: 0; }
+}
+.sap-deeltje { transform-box: fill-box; transform-origin: center; animation: sap-deeltje 0.7s ease-out forwards; pointer-events: none; }
+.sap-deeltjes, .sap-bubbel-plek { pointer-events: none; }
+
+@keyframes sap-bubbel {
+  0% { transform: scale(0); opacity: 0; }
+  12% { transform: scale(1.15); opacity: 1; }
+  20% { transform: scale(1); opacity: 1; }
+  80% { transform: translateY(0); opacity: 1; }
+  100% { transform: translateY(-6px); opacity: 0; }
+}
+.sap-bubbel { transform-box: fill-box; transform-origin: 50% 100%; animation: sap-bubbel 1.4s ease-out forwards; }
+
+/* vallende confetti (resultaatscherm, finale) */
+.sap-confetti { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+.sap-confetti-stuk { position: absolute; top: -16px; border-radius: 2px; animation: sap-confetti 3s cubic-bezier(0.3, 0.6, 0.6, 1) both; }
+@keyframes sap-confetti {
+  0% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
+  85% { opacity: 1; }
+  100% { transform: translate(var(--x), 105vh) rotate(var(--draai)); opacity: 0; }
+}
+
+/* ---------- wachtanimaties: de scène leeft ---------- */
+
+/* wiegen om de voet (planten, varens, palm) */
+@keyframes sap-wieg { from { rotate: calc(var(--wieg-hoek, 3deg) * -1); } to { rotate: var(--wieg-hoek, 3deg); } }
+.sap-wieg { transform-box: fill-box; transform-origin: 50% 100%; animation: sap-wieg var(--wieg-duur, 3.4s) ease-in-out var(--vertraging, 0s) infinite alternate; }
+/* zwaaien aan een draad (lampions) */
+.sap-hang { transform-box: fill-box; transform-origin: 50% 0; animation: sap-wieg var(--wieg-duur, 2.8s) ease-in-out var(--vertraging, 0s) infinite alternate; }
+/* ademen (dekens, familieleden) */
+@keyframes sap-adem { from { scale: 1 1; } to { scale: 1 var(--adem, 1.035); } }
+.sap-adem { transform-box: fill-box; transform-origin: 50% 100%; animation: sap-adem var(--adem-duur, 2.8s) ease-in-out var(--vertraging, 0s) infinite alternate; }
+/* dobberen (gedachtenwolkje, meeuwen) */
+@keyframes sap-dobber { from { translate: 0 0; } to { translate: 0 var(--dobber, -4px); } }
+.sap-dobber { animation: sap-dobber var(--dobber-duur, 2.6s) ease-in-out var(--vertraging, 0s) infinite alternate; }
+/* gloeien (lampjes, lampions) */
+@keyframes sap-gloei { from { opacity: var(--gloei-min, 0.7); } to { opacity: 1; } }
+.sap-gloei { animation: sap-gloei var(--gloei-duur, 1.8s) ease-in-out var(--vertraging, 0s) infinite alternate; }
+/* twinkelen (sterren) */
+@keyframes sap-twinkel { 0%, 100% { opacity: 0.25; } 50% { opacity: 1; } }
+.sap-twinkel { animation: sap-twinkel var(--twinkel-duur, 2.2s) ease-in-out var(--vertraging, 0s) infinite; }
+
+/* ---------- tijd: laatste seconden ---------- */
+
+@keyframes sap-haast { from { scale: 1; } to { scale: 1.035; } }
+.sap-haast { animation: sap-haast 0.5s ease-in-out infinite alternate; }
+.sap-haast .balk-tijd > span { background: var(--rood); box-shadow: inset 0 -4px 0 0 var(--rood-schaduw); }
+.sap-haast .tijd-tekst { color: var(--rood-schaduw); }
+.sap-haast .s6-balk > span { background: var(--rood); box-shadow: inset 0 -4px 0 0 var(--rood-schaduw); }
+.sap-haast .s6-tijd { color: var(--rood-schaduw); }
+
+/* een knop die met het toetsenbord is ingedrukt, ziet eruit als aangetikt (spel 6, 10) */
+.s6-move.ingedrukt { transform: translateY(3px); }
+.s10-knop.ingedrukt { transform: translateY(4px); box-shadow: 0 2px 0 0 var(--kaart-schaduw); }
+.s10-knop-teal.ingedrukt { box-shadow: 0 2px 0 0 var(--teal-schaduw); }
+.s10-knop-rood.ingedrukt { box-shadow: 0 2px 0 0 var(--rood-schaduw); }
+
+/* ---------- finale: kaarsjes uittikken (besluit 211) ---------- */
+.s10-taart-knop {
+  display: grid; place-items: center; width: 100%; height: 100%; padding: 0; border: 0; border-radius: 50%;
+  background: none; cursor: pointer; font: inherit; color: inherit;
+}
+.s10-taart-knop:disabled { cursor: default; }
+.s10-taart-knop:focus-visible { outline: 3px solid var(--teal); outline-offset: 4px; }
+@keyframes s10-flakker {
+  0% { scale: 1 1; rotate: -4deg; }
+  50% { scale: 0.9 1.1; rotate: 3deg; }
+  100% { scale: 1.06 0.94; rotate: -1deg; }
+}
+.s10-vlam { transform-box: fill-box; transform-origin: 50% 100%; animation: s10-flakker 0.45s ease-in-out infinite alternate; }
+.s10-feest-hint { margin-top: -6px; font-size: 14px; font-weight: 800; color: var(--roze-schaduw); }
+
+/* ---------- kalender ---------- */
+
+/* deurtje zwaait open op zijn scharnier (links); het licht erachter */
+.deur-zwaai-plek { position: fixed; z-index: 70; pointer-events: none; perspective: 700px; border-radius: 20px; background: #FFF1D6; box-shadow: 0 0 0 4px #FFE08A, 0 0 40px 10px rgba(255, 201, 60, 0.55); }
+.deur-zwaai-plek > .deur { position: absolute; inset: 0; margin: 0; transform-origin: 0 50%; backface-visibility: hidden; }
+
+/* gedachtenwolkje dobbert */
+.gedachte-dobber { animation: sap-dobber 2.8s ease-in-out infinite alternate; }
+
+/* ---------- reduced motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  /* De globale regel in basis.css zet oneindige animaties op 0,01 ms; dat flikkert. Dus hier echt uit. */
+  .sap-wieg, .sap-hang, .sap-adem, .sap-dobber, .sap-gloei, .sap-twinkel, .sap-haast, .gedachte-dobber, .s10-vlam { animation: none !important; }
+  .sap-confetti-stuk { animation: none !important; top: var(--rust-y, 30%); }
+  .sap-bubbel, .sap-deeltje { animation: none !important; }
+}

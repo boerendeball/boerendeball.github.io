@@ -30,9 +30,19 @@ export function aantalGevonden(s = staat.lees()) {
  * Markeert de werker van spel n als gevonden en toont de melding (alleen de eerste keer). In de zoekmodus gaat
  * het spel daarna terug naar het album, tenzij Pino intussen zelf al ergens anders heen is gegaan.
  */
+// Welke werker net (voor het eerst) gevonden is, alleen in het geheugen: het album laat dan de stempel op die
+// polaroid vallen (beeldfeedback, besluit 210). pakNetGevonden() geeft het een keer terug.
+let netGevonden = null;
+export function pakNetGevonden() {
+  const n = netGevonden;
+  netGevonden = null;
+  return n;
+}
+
 export function werkerGevonden(n, { zoek = false } = {}) {
   const nieuw = !staat.lees().werkers[n];
   staat.markeerWerkerGevonden(n);
+  if (nieuw) netGevonden = n;
   if (nieuw) toonMelding({ icoon: 'loep', kleur: '#DDF1FB', html: `<strong>${aantalGevonden()}</strong> / 5` }, 1800);
   if (!zoek) return;
   const hier = location.hash;

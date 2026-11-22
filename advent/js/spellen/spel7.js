@@ -10,7 +10,8 @@ import * as datum from '../datum.js';
 import { ga } from '../router.js';
 import { el, use, pino } from '../sprites.js';
 import { dagInfo } from '../kalender.js';
-import { aantalGevonden, zoekenMag } from './zoeken.js';
+import { aantalGevonden, zoekenMag, pakNetGevonden } from './zoeken.js';
+import * as sap from '../ui/sap.js';
 import { maakLaag } from './canvas.js';
 import { tuinScene } from './spel2.js';
 import { familieScene } from './spel3.js';
@@ -83,42 +84,88 @@ async function steegFoto() {
   return steegUrl;
 }
 
-/** Polaroid 120×140 (s4-polaroid) met de foto van het spel; zoals spel7_sprites.polaroid(). */
-function polaroid(n, gevonden, rot, s) {
+/**
+ * Polaroid 120×140 (s4-polaroid) met de foto van het spel; zoals spel7_sprites.polaroid().
+ * nieuw: de werker is net gevonden; dan ligt de "nog niet gevonden"-laag er nog even op, zodat het album die kan
+ * laten verdwijnen en de stempel erop kan laten vallen (zie stempelErop).
+ */
+function polaroid(n, gevonden, rot, s, { nieuw = false } = {}) {
   const kinderen = [use('s4-polaroid', 0, 0, 120, 140), fotoVan(n, s)];
-  if (gevonden) kinderen.push(use('s7-stempel', 70, 100, 34, 34), use('s7-vink', 92, -8, 30, 30));
-  else kinderen.push(el('rect', { x: 8, y: 8, width: 100, height: 96, fill: 'rgba(255,255,255,0.55)' }), use('s7-vraag', 70, 100, 34, 34));
+  const nietGevonden = () => el('g', { class: 's7-nog-niet' }, [el('rect', { x: 8, y: 8, width: 100, height: 96, fill: 'rgba(255,255,255,0.55)' }), use('s7-vraag', 70, 100, 34, 34)]);
+  if (gevonden) {
+    if (nieuw) kinderen.push(nietGevonden());
+    kinderen.push(el('g', { class: 's7-stempel' }, [use('s7-stempel', 70, 100, 34, 34)]), el('g', { class: 's7-vink' }, [use('s7-vink', 92, -8, 30, 30)]));
+  } else kinderen.push(nietGevonden());
   return el('svg', { class: 'ic', viewBox: '-12 -12 144 164', width: 160, height: 194, 'aria-hidden': 'true' }, [
-    el('g', { transform: `rotate(${rot})` }, kinderen),
+    el('g', { class: 's7-polaroid', transform: `rotate(${rot})` }, kinderen),
   ]);
+}
+
+/**
+ * Net gevonden (beeldfeedback, besluit 210): de vervaagde laag met het vraagteken trekt weg, de stempel valt met
+ * een klap op de foto en er springen sterretjes af, daarna verschijnt het vinkje. Met reduced motion: meteen klaar.
+ */
+function stempelErop(svg) {
+  const laag = svg.querySelector('.s7-nog-niet');
+  const stempel = svg.querySelector('.s7-stempel');
+  const vink = svg.querySelector('.s7-vink');
+  if (sap.rustig()) { laag?.remove(); return; }
+  laag?.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 450, delay: 250, easing: 'ease-in', fill: 'forwards' });
+  setTimeout(() => laag?.remove(), 800);
+  if (stempel) {
+    stempel.style.transformBox = 'fill-box';
+    stempel.style.transformOrigin = '50% 50%';
+    stempel.animate([
+      { scale: '2', rotate: '-18deg', opacity: 0 },
+      { scale: '0.9', rotate: '0deg', opacity: 1, offset: 0.7 },
+      { scale: '1', rotate: '0deg', opacity: 1 },
+    ], { duration: 380, delay: 650, easing: 'cubic-bezier(0.5, 0, 0.8, 1)', fill: 'backwards' });
+    setTimeout(() => sap.deeltjes(svg.querySelector('.s7-polaroid'), 87, 117, { soort: 'ster', aantal: 7, afstand: 28 }), 900);
+  }
+  sap.pop(vink, { vertraging: 1150, duur: 420 });
 }
 
 export function start({ root, dag, info, klaar }) {
   const s = staat.lees();
   const gevonden = aantalGevonden(s);
 
-  // Alle vijf gevonden en nog niet afgerond: afronden en het resultaatscherm tonen.
-  if (gevonden === 5 && s.deurtjes[dag] !== 'gespeeld') {
+  const nieuw = pakNetGevonden();
+  const afronden = gevonden === 5 && s.deurtjes[dag] !== 'gespeeld';
+  // Alle vijf gevonden en nog niet afgerond: afronden en het resultaatscherm tonen. Is de laatste net gevonden,
+  // dan eerst nog even de stempel in het album zien vallen.
+  if (afronden && !nieuw) {
     const eersteKeer = klaar();
     toonKlaar({ root, info, eersteKeer });
     return () => {};
   }
 
+  const timers = [];
   // De speltitel staat alleen in het aria-label (geen tekst in het spel).
   const fotos = SPELLEN.map((n, i) => {
     const g = !!s.werkers[n];
     const mag = zoekenMag(n);
     const label = `Spel ${n}, ${dagInfo(n).titel}: werker ${g ? 'gevonden' : 'nog niet gevonden'}`;
-    const svg = polaroid(n, g, i % 2 === 0 ? -3 : 3, s);
+    const svg = polaroid(n, g, i % 2 === 0 ? -3 : 3, s, { nieuw: n === nieuw });
+    if (n === nieuw) stempelErop(svg);
     const klasse = `s7-foto${n === 6 ? ' s7-foto-breed' : ''}${mag ? '' : ' s7-foto-dicht'}`;
+    // Een tik laat de polaroid even opveren voordat het spel opent (beeldfeedback, besluit 210).
+    const open = (ev) => {
+      if (sap.rustig()) { ga(`/spel/${n}?zoek=1`); return; }
+      sap.wip(ev.currentTarget, { sterkte: 0.6 });
+      timers.push(setTimeout(() => ga(`/spel/${n}?zoek=1`), 180));
+    };
     return mag
-      ? h('button', { type: 'button', class: klasse, 'aria-label': label, onclick: () => ga(`/spel/${n}?zoek=1`) }, [svg])
+      ? h('button', { type: 'button', class: klasse, 'aria-label': label, onclick: open }, [svg])
       : h('div', { class: klasse, role: 'img', 'aria-label': label }, [svg]);
   });
 
+  // Net gevonden: teller en voortgangsbalk beginnen bij de oude stand en lopen op als de stempel valt.
+  const vorig = nieuw ? gevonden - 1 : gevonden;
+  const tellerGetal = h('span', {}, String(vorig));
+  const vulling = h('span', { style: { width: `${vorig * 20}%` } });
   const teller = h('span', { class: 'teller-pil s7-teller', role: 'img', 'aria-label': `${gevonden} van de 5 werkers` }, [
     el('svg', { class: 'ic', viewBox: '0 0 48 48', width: 24, height: 24, 'aria-hidden': 'true' }, [use('s7-loep', 0, 0, 48, 48)]),
-    h('span', {}, [String(gevonden), h('span', { class: 's7-van' }, ' / 5')]),
+    h('span', {}, [tellerGetal, h('span', { class: 's7-van' }, ' / 5')]),
   ]);
 
   root.replaceChildren(h('div', { class: 'scherm spel s7' }, [
@@ -128,10 +175,25 @@ export function start({ root, dag, info, klaar }) {
       h('span', { class: 's7-voortgang-bol', 'aria-hidden': 'true' }, [
         el('svg', { class: 'ic', viewBox: '4 -4 40 74', width: 22, height: 40 }, [use('wk-staan', 0, 0, 48, 72)]),
       ]),
-      h('div', { class: 'balk balk-groen', 'aria-hidden': 'true' }, [h('span', { style: { width: `${gevonden * 20}%` } })]),
+      h('div', { class: 'balk balk-groen', 'aria-hidden': 'true' }, [vulling]),
     ]),
   ]));
-  return () => {};
+  if (vorig !== gevonden) {
+    timers.push(setTimeout(() => {
+      tellerGetal.textContent = String(gevonden);
+      sap.puls(teller, { schaal: 1.2, duur: 320 });
+      vulling.style.transition = 'width 0.7s ease-out';
+      vulling.style.width = `${gevonden * 20}%`;
+    }, sap.rustig() ? 0 : 1000));
+  }
+  // De laatste werker is net gevonden: na de stempel naar het resultaatscherm.
+  if (afronden) {
+    timers.push(setTimeout(() => {
+      const eersteKeer = klaar();
+      toonKlaar({ root, info, eersteKeer });
+    }, sap.rustig() ? 600 : 2400));
+  }
+  return () => { for (const t of timers) clearTimeout(t); };
 }
 
 function toonKlaar({ root, info, eersteKeer }) {

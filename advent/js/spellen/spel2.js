@@ -16,6 +16,7 @@ import * as hex from './hex.js';
 import * as staat from '../staat.js';
 import * as datum from '../datum.js';
 import { werkerGevonden, terugKnop, werkerVak } from './zoeken.js';
+import * as sap from '../ui/sap.js';
 
 /* ---------- tuning ---------- */
 const CAMERA_BREEDTE = 310;   // wereldeenheden in beeld (≈ 5,6 hexbreedtes: één veld met jungle eromheen)
@@ -109,9 +110,24 @@ function plantTekening(v, p, { laag = false } = {}) {
   const x = p.x - b / 2 + plant.dx;
   const y = p.y + 16 - hg + plant.dy;
   const g = el('g', { class: 'tuin-plant' });
-  g.append(plant.flip ? el('g', { transform: `translate(${x + b} ${y}) scale(-1 1)` }, [use(id, 0, 0, b, hg)]) : use(id, x, y, b, hg));
+  // De plant wiegt zacht om zijn voet (beeldfeedback, besluit 210); de bloem ervoor staat stil.
+  const wieg = el('g', { class: 'sap-wieg', style: wiegStijl(v) },
+    [plant.flip ? el('g', { transform: `translate(${x + b} ${y}) scale(-1 1)` }, [use(id, 0, 0, b, hg)]) : use(id, x, y, b, hg)]);
+  g.append(wieg);
   if (plant.bloem) g.append(use('s8-bloem', p.x + (plant.dx > 0 ? -18 : 10), p.y + 2, 12, 15));
   return g;
+}
+
+/**
+ * Wiegen per plant: eigen hoek en tempo uit het vaknummer. render() bouwt de planten steeds opnieuw; de negatieve
+ * vertraging rekent vanaf de klok van de pagina, zodat een nieuwe plant op dezelfde plek in de zwaai verdergaat.
+ */
+function wiegStijl(v) {
+  const n = Math.abs(Number(String(v).split('').reduce((a, c) => (a * 31 + c.charCodeAt(0)) | 0, 7)));
+  const duur = 3 + (n % 7) * 0.2;
+  const hoek = 1.6 + (n % 5) * 0.3;
+  const fase = (performance.now() / 1000 + (n % 13) * 0.37) % (2 * duur);
+  return `--wieg-duur:${duur.toFixed(2)}s;--wieg-hoek:${hoek.toFixed(1)}deg;--vertraging:-${fase.toFixed(2)}s`;
 }
 
 function sterPad(x, y, schaal = 1) {
@@ -454,11 +470,32 @@ function speel({ root, dag, info, klaar, opnieuw, zoek = false }) {
     if (klaarGezet || gestopt || bezig) return;
     if (!staat.legTuinTegel(v, type)) return;
     if (hex.isWegplek(tuin(), v)) { einde(v); return; }
+    const wasVol = hex.glinstert(tuin());
     bezig = true;
     render({ nieuw: v });   // zonder knoppen zolang Pino onderweg is
-    await hup(hex.pixel(v));
+    // De tegel valt neer met een stofwolkje en veert even na (beeldfeedback, besluit 210).
+    const pv = hex.pixel(v);
+    na(180, () => {
+      sap.deeltjes(effecten, pv.x, pv.y + 14, { soort: 'stof', aantal: 4, afstand: 18 });
+      sap.wip(wereld.querySelector(`[data-vak="${v}"]`), { sterkte: 0.5 });
+    });
+    await hup(pv);
     bezig = false;
-    if (!gestopt) render();
+    if (gestopt) return;
+    render();
+    // Ring net vol: een extra sterrenregen en het midden veert op. De glinster zelf is er al; dit verklapt niets.
+    if (!wasVol && hex.glinstert(tuin())) {
+      const c = hex.huidigVeld(tuin()).c;
+      const pc = hex.pixel(c);
+      sterretjes(pc.x, pc.y - 20, 14, 46);
+      sap.wip(wereld.querySelector(`[data-vak="${c}"]`), { sterkte: 0.8 });
+    }
+  }
+
+  /** Iets na een korte pauze, zonder het spel op te houden (timer wordt opgeruimd bij het verlaten). */
+  function na(ms, fn) {
+    const tm = setTimeout(() => { timers.delete(tm); if (!gestopt) fn(); }, ms);
+    timers.add(tm);
   }
 
   /* ---------- brug: een nieuw veld groeit in de jungle ---------- */
@@ -501,8 +538,17 @@ function speel({ root, dag, info, klaar, opnieuw, zoek = false }) {
     if (doel.x !== van.x) pino.flip = doel.x < van.x;
     pino.kano = false;
     if (!opDiepte) wereld.append(pinoG);
+    let geland = 0;
     await anim(hops * HUP_DUUR, (f) => {
       const fh = (f * hops) % 1;
+      // Bij elke landing een stofje onder haar voeten (beeldfeedback, besluit 210).
+      const landing = Math.min(hops, Math.floor(f * hops + 1e-6));
+      if (landing > geland) {
+        geland = landing;
+        const lx = van.x + ((doel.x - van.x) * landing) / hops;
+        const ly = van.y + ((doel.y - van.y) * landing) / hops;
+        if (!kano || landing < hops) sap.deeltjes(effecten, lx, ly + 6, { soort: 'stof', aantal: 2, afstand: 12 });
+      }
       const grondY = van.y + (doel.y - van.y) * f;
       pino.x = van.x + (doel.x - van.x) * f;
       pino.y = grondY - Math.sin(fh * Math.PI) * 12;
@@ -574,6 +620,8 @@ function speel({ root, dag, info, klaar, opnieuw, zoek = false }) {
           if (rest < 0) return;
           sterretjes(p.x, p.y - 20, 8, 30);
           render();
+          // Het midden veert op als de steen in zijn kuiltje valt (beeldfeedback, besluit 210).
+          na(160, () => sap.wip(wereld.querySelector(`[data-vak="${veld.c}"]`), { sterkte: 0.5 }));
           if (rest === 0) { stenenWeg(p, tuin().velden[vi].stenen); return; }
           if (!rustig) { bezig = true; await wacht(300); bezig = false; }
           if (gestopt || klaarGezet || tuin().huidig !== vi) return;

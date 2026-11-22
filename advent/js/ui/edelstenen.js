@@ -4,6 +4,7 @@
 import { h } from './dom.js';
 import { el, use } from '../sprites.js';
 import * as staat from '../staat.js';
+import { telOp, puls } from './sap.js';
 
 // Drie kleuren edelstenen: groen, blauw en rood (besluit 192; rood verving geel).
 export const GEMS = ['groen', 'blauw', 'rood'];
@@ -23,8 +24,17 @@ export function edelsteenPil() {
     getallen[k] = h('span', { class: 'kop', style: { color: TEKST_KLEUR[k] } }, '0');
     return h('span', { class: 'edelsteen-teller' }, [gemSvg(k, 20), getallen[k]]);
   }));
+  const vorige = {};
   const werkBij = (s) => {
-    for (const k of GEMS) getallen[k].textContent = String(s.edelstenen[k] || 0);
+    // Een veranderd aantal telt op of af en het steentje pulseert (beeldfeedback, besluit 210).
+    for (const k of GEMS) {
+      const n = s.edelstenen[k] || 0;
+      if (k in vorige && vorige[k] !== n) {
+        telOp(getallen[k], vorige[k], n, { duur: 450 });
+        puls(getallen[k].parentElement, { schaal: 1.2, duur: 300 });
+      } else if (!(k in vorige)) getallen[k].textContent = String(n);
+      vorige[k] = n;
+    }
     element.setAttribute('aria-label', `Edelstenen: ${GEMS.map((k) => `${s.edelstenen[k] || 0} ${k}`).join(', ')}`);
   };
   werkBij(staat.lees());

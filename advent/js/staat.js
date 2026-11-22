@@ -344,11 +344,22 @@ export function markeerLevelGehaald(level) {
  * Elk afgerond spel: de beloning van die dag (vaardigheden en behoeften, uit data/kalender.json), alleen bij
  * de eerste afronding (besluit 9 en 164). Score wordt altijd bijgewerkt. Geeft terug of dit de eerste keer was.
  */
+// Wat de laatste afronding opleverde, alleen in het geheugen: de kalender laat de balken daarna van de oude
+// naar de nieuwe waarde lopen (beeldfeedback, besluit 210). pakNetVerdiend() geeft het één keer terug.
+let netVerdiend = null;
+
+export function pakNetVerdiend() {
+  const v = netVerdiend;
+  netVerdiend = null;
+  return v;
+}
+
 export function rondSpelAf(dag, { beloning = beloningen?.[dag] ?? null, score = null } = {}) {
   let eersteKeer = false;
   schrijf((s) => {
     eersteKeer = s.deurtjes[dag] !== 'gespeeld';
     s.deurtjes[dag] = 'gespeeld';
+    if (eersteKeer && beloning) netVerdiend = { behoeften: { ...s.behoeften }, vaardigheden: { ...s.vaardigheden } };
     if (eersteKeer) telOp(s, beloning);
     if (score) s.scores[dag] = { ...(s.scores[dag] || {}), ...score };
   });

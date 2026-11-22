@@ -154,7 +154,10 @@
   "s5-kniebeschermers",
   "s5-spray",
   "s5-schoenen",
-  "s5-waar-wissel"
+  "s5-waar-wissel",
+  "bub-wolk",
+  "bub-boos",
+  "bub-uitroep"
  ],
  "spel6": [
   "z-kap",
@@ -273,7 +276,9 @@
   "s9-hakken",
   "s9-hakken-loop",
   "s9-stof",
-  "s9-ooievaar-troost"
+  "s9-ooievaar-troost",
+  "s9-molen-romp",
+  "s9-wieken"
  ],
  "spel10": [
   "s10-maan",
@@ -294,7 +299,10 @@
   "s10-slinger",
   "s10-lam-graas",
   "s10-gans",
-  "s10-gans-boos"
+  "s10-gans-boos",
+  "s10-taart-kaal",
+  "s10-vlam",
+  "s10-rook"
  ],
  "kamer": [
   "km-plank",

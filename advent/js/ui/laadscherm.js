@@ -8,6 +8,7 @@ import { ga } from '../router.js';
 import { dagInfo } from '../kalender.js';
 import { laadSpel } from '../spellen/index.js';
 import * as staat from '../staat.js';
+import { verschijn, pop, puls } from './sap.js';
 
 let laadteksten = null;
 // Lang genoeg om een paar laadzinnen en de tip te lezen (besluit 199): vier zinnen van 1,25 s, dus ± 5 s tot "Klaar!".
@@ -105,12 +106,18 @@ export function schermLaden({ root, params }) {
     function volgende() {
       if (gestopt) return;
       if (stap > 0) {
-        klaarLijst.append(h('div', { class: 'laden-regel' }, [h('span', { class: 'laden-vink', 'aria-hidden': 'true' }, [icoon('vink', 14)]), h('span', {}, teksten[(stap - 1) % teksten.length])]));
+        const vink = h('span', { class: 'laden-vink', 'aria-hidden': 'true' }, [icoon('vink', 14)]);
+        const regel = h('div', { class: 'laden-regel' }, [vink, h('span', {}, teksten[(stap - 1) % teksten.length])]);
+        klaarLijst.append(regel);
+        // Elke afgevinkte regel schuift erin en het vinkje springt op (beeldfeedback, besluit 210).
+        verschijn(regel, { dy: 8, schaal: 0.98, duur: 260 });
+        pop(vink, { vertraging: 120, duur: 320 });
         while (klaarLijst.children.length > 3) klaarLijst.firstChild.remove();
       }
       if (stap >= minStappen && moduleKlaar) {
         balk.style.transition = 'width 0.3s ease';
         zet(100, 'Klaar!');
+        puls(root.querySelector('.laden-bol'), { schaal: 1.12, duur: 360 });
         timer = setTimeout(() => { if (!gestopt) ga(`/spel/${n}`, { vervang: true }); }, KLAAR_MS);
         return;
       }

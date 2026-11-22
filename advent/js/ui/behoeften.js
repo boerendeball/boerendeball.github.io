@@ -2,6 +2,7 @@
 
 import { h } from './dom.js';
 import { icoon } from './iconen.js';
+import { rustig } from './sap.js';
 
 export const BEHOEFTE_LABELS = {
   verjaardag: 'Verjaardag vieren', gansjes: 'Gansjes', lammetjes: 'Lammetjes', snoepjes: 'Snoepjes',
@@ -36,15 +37,25 @@ export function paneel({ titel, rechts = [], inhoud, open = true, klasse = '', i
   return h('section', { class: `kaart paneel ${klasse}` }, [knop, inhoudEl]);
 }
 
-export function paneelBehoeften(staat, { dagen, deurtjesOpen, open = true }) {
+/**
+ * vorige: de behoeften vóór het net gespeelde spel (staat.pakNetVerdiend); dan lopen de balken die
+ * gestegen zijn rustig van oud naar nieuw (beeldfeedback, besluit 210).
+ */
+export function paneelBehoeften(staat, { dagen, deurtjesOpen, open = true, vorige = null }) {
+  let k = 0;
   const balken = Object.keys(BEHOEFTE_LABELS).map((sleutel) => {
     const pct = Math.round(staat.behoeften[sleutel] ?? 0);
     const label = BEHOEFTE_LABELS[sleutel];
+    const oud = vorige && !rustig() ? Math.round(vorige[sleutel] ?? pct) : pct;
+    const vulling = h('span', { style: { width: `${oud}%` } });
+    if (oud !== pct) {
+      Object.assign(vulling.style, { transition: 'width 0.9s ease-out', transitionDelay: `${350 + 180 * k++}ms` });
+      // Na het tekenen van de oude breedte de nieuwe zetten (een timeout, zodat het ook in een verborgen tab klopt).
+      setTimeout(() => { vulling.style.width = `${pct}%`; }, 60);
+    }
     return h('div', { class: 'nood' }, [
       h('span', { class: 'nood-label' }, label),
-      h('span', { class: `balk balk-${balkKleur(pct)}`, role: 'img', 'aria-label': `${label}: ${pct === 100 ? 'vol' : pct + ' procent'}` }, [
-        h('span', { style: { width: `${pct}%` } }),
-      ]),
+      h('span', { class: `balk balk-${balkKleur(pct)}`, role: 'img', 'aria-label': `${label}: ${pct === 100 ? 'vol' : pct + ' procent'}` }, [vulling]),
     ]);
   });
   const st = stemming(staat.behoeften);

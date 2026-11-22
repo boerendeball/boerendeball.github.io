@@ -15,6 +15,7 @@
 
 import { h, blokkeerScroll, focusVal } from './dom.js';
 import { icoon } from './iconen.js';
+import { pop } from './sap.js';
 
 const SPAAK = 92;         // lengte van de spaken
 const AFSTAND = 66;       // afstand van middelpunt tot de binnenkant van een optie
@@ -98,6 +99,10 @@ export function toonTaartmenu({ anker, kloon = true, midden = { tekst: 'P', sub:
     const boven = cy - AFSTAND - 56 - 24 - hb;
     hintEl.style.top = boven > 80 ? `${boven}px` : `${klem(cy + AFSTAND + 56 + 70, 0, vh - hb - 16)}px`;
   }
+
+  // Opties springen gestaffeld tevoorschijn, het midden eerst (beeldfeedback, besluit 210).
+  pop(menu.querySelector('.taart-midden'), { duur: 300 });
+  knoppen.forEach(({ knop }, i) => pop(knop, { vertraging: 40 + 45 * i, duur: 340 }));
 
   const herstelFocus = focusVal(menu, sluit);
 

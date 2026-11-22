@@ -15,6 +15,8 @@ import * as staat from '../staat.js';
 import * as datum from '../datum.js';
 import { ga } from '../router.js';
 import * as R from './bevalling.js';
+import { maakDeeltjes, maakSchok, maakFlits, voorbereidDeeltjes } from './effecten.js';
+import * as sap from '../ui/sap.js';
 
 /* ---------- tuning (specs/spel10.md; de spelregels staan in bevalling.js) ---------- */
 const HOP = 5;                 // px sprongetje per stap
@@ -25,6 +27,10 @@ const BEVRIES_BOTS = 0.8;      // s stilstand na een botsing
 const STER_DUUR = 0.5;
 const HART_DUUR = 1.4;
 const UITFADEN = 0.3;          // s verkeer dat bij het huis nog op de weg is, verdwijnt
+// Beeldfeedback (besluit 210, specs/beeldfeedback.md)
+const UITROEP_DUUR = 1.2;      // s uitroep-wolkje boven een gans die boos wordt
+const UITROEP_MAAT = 24;
+const LONTEN = [[15.5, 11], [24, 9], [32.5, 11]];   // de lontjes op s10-taart-kaal (finale)
 
 /* ---------- scène (design/generators/spel10_build2.py) ---------- */
 const { B, H } = R;
@@ -58,6 +64,8 @@ function spriteLijst() {
 
 /** Wordt door het laadscherm aangeroepen: sprite sheet klaarzetten. */
 export async function voorbereid() {
+  await voorbereidDeeltjes(['stof']);
+  await voorbereidSprites([{ id: 'bub-wolk' }, { id: 'bub-uitroep' }]);
   await voorbereidSprites(spriteLijst());
 }
 
@@ -153,6 +161,10 @@ function speel({ root, dag, info, klaar, opnieuw }) {
   };
   const sterren = [];
   const harten = [];
+  const stof = maakDeeltjes();      // stofjes bij het neerkomen (wereldcoordinaten van de stad)
+  const schok = maakSchok();
+  const flits = maakFlits();
+  const uitroepen = [];             // { gans, t } boven een gans die net boos werd
   let remToets = false;
   let procent = -1;
 
@@ -186,11 +198,21 @@ function speel({ root, dag, info, klaar, opnieuw }) {
     if (ev.key === ' ' && ev.target && ev.target.tagName === 'BUTTON') return;   // de knop handelt zijn eigen spatie af
     ev.preventDefault();
     if (ev.repeat) return;
-    if (naam === 'rem') remToets = true;
-    else actie(naam);
+    if (naam === 'rem') { remToets = true; knopRem.classList.add('ingedrukt'); }
+    else { actie(naam); druk(knopVoor(naam)); }
   }
-  function toetsOp(ev) { if (toetsNaam(ev) === 'rem') remToets = false; }
-  function toetsLos() { remToets = false; }
+  function toetsOp(ev) { if (toetsNaam(ev) === 'rem') { remToets = false; knopRem.classList.remove('ingedrukt'); } }
+  function toetsLos() { remToets = false; knopRem.classList.remove('ingedrukt'); }
+  // Een toets drukt de bijbehorende knop zichtbaar in, alsof hij is aangetikt (beeldfeedback, besluit 210).
+  function knopVoor(naam) {
+    if (s.fase === 'voet') return { links: knopLinks, omhoog: knopOmhoog, rechts: knopRechts }[naam];
+    return { links: knopStuurL, rechts: knopStuurR }[naam];
+  }
+  function druk(knop) {
+    if (!knop) return;
+    knop.classList.add('ingedrukt');
+    setTimeout(() => knop.classList.remove('ingedrukt'), 120);
+  }
   window.addEventListener('keydown', toetsNeer);
   window.addEventListener('keyup', toetsOp);
   window.addEventListener('blur', toetsLos);
@@ -207,10 +229,15 @@ function speel({ root, dag, info, klaar, opnieuw }) {
 
   function updateVoet(dt) {
     R.beweegVerkeer(verkeer, dt, rng, pino);
+    // Een gans die net boos wordt, krijgt even een uitroep-wolkje (beeldfeedback; dat hij boos is, zie je al).
+    for (const e of verkeer) {
+      if (e.soort === 'gans' && e.boos && !e.wolk) { e.wolk = true; uitroepen.push({ gans: e, t: 0 }); }
+    }
     if (pino.t < 1) {
       pino.t = Math.min(1, pino.t + dt / R.STAP_DUUR);
       pino.x = pino.vanX + (R.kolomX(pino.kolom) - pino.vanX) * pino.t;
       pino.y = pino.vanY + (R.RIJ_Y[pino.rij] - pino.vanY) * pino.t;
+      if (pino.t >= 1) stof.voeg('stof', pino.x, pino.y - 2, { aantal: 2, snelheid: 22 });   // neerkomen: stofje
     }
     // het beeld schuift mee: Pino blijft op dezelfde hoogte in beeld tot de bovenkant van de stad in zicht is
     const doel = R.camera(R.RIJ_Y[pino.rij]);
@@ -309,6 +336,10 @@ function speel({ root, dag, info, klaar, opnieuw }) {
 
   function bots(x, y) {
     s.fase = 'botsing'; s.bevries = BEVRIES_BOTS;
+    // Boem: het beeld schokt, een witte flits en de telefoon trilt (beeldfeedback, besluit 210).
+    schok.start(6, 0.45);
+    flits.start('#FFFFFF', 0.3, { piek: 0.75 });
+    sap.tril(80);
     for (let i = 0; i < 7; i += 1) {
       const hoek = (i / 7) * Math.PI * 2;
       sterren.push({ x, y, vx: Math.cos(hoek) * 60, vy: Math.sin(hoek) * 60, t: 0 });
@@ -327,6 +358,15 @@ function speel({ root, dag, info, klaar, opnieuw }) {
     else if (s.fase === 'auto') updateAuto(dt);
     else if (s.fase === 'aankomst') { s.aankomst += dt; if (s.aankomst >= R.AANKOMST_DUUR) { s.gelukt = true; einde(); } }
     else if (s.fase === 'botsing') { s.bevries -= dt; if (s.bevries <= 0) einde(); }
+  }
+
+  // Effecten lopen ook door als de spellogica stilstaat.
+  function effecten(dt) {
+    stof.update(dt);
+    schok.update(dt);
+    flits.update(dt);
+    for (const u of uitroepen) u.t += dt;
+    for (let i = uitroepen.length - 1; i >= 0; i -= 1) if (uitroepen[i].t >= UITROEP_DUUR) uitroepen.splice(i, 1);
   }
 
   /* ---------- tekenen ---------- */
@@ -352,7 +392,7 @@ function speel({ root, dag, info, klaar, opnieuw }) {
     const g = stad.ctx;
     g.fillStyle = NACHT; g.fillRect(0, 0, B, R.STAD_H);
     tekenSprite(g, 's10-maan', 296, 6, { w: 40, h: 40 });
-    for (const [x, y, maat] of STERREN) tekenSprite(g, 's10-ster', x, y, { w: maat, h: maat });
+    // De sterren twinkelen: ze worden per beeld getekend in tekenStad (beeldfeedback, besluit 210).
     // Alle banden liggen op de rijen van bevalling.js: elke looprij is RIJ_H hoog (besluit 155).
     const top = R.rijTop;
     const hh = R.RIJ_H;
@@ -403,6 +443,17 @@ function speel({ root, dag, info, klaar, opnieuw }) {
     ctx.save();
     ctx.translate(0, -cam);
     stad.teken(ctx);
+    // Sterren twinkelen en de lantaarns gloeien zacht na (beeldfeedback, besluit 210).
+    STERREN.forEach(([x, y, maat], i) => {
+      const a = rustig ? 1 : 0.45 + 0.55 * (0.5 + 0.5 * Math.sin(s.klok * (1.6 + (i % 3) * 0.5) + i * 1.7));
+      tekenSprite(ctx, 's10-ster', x, y, { w: maat, h: maat, alpha: a });
+    });
+    if (!rustig) {
+      LANTAARNS_STAD.forEach(([rij, x, boven, k], i) => {
+        const y = R.rijTop(rij) - boven;
+        tekenSprite(ctx, 's10-gloed', x - 28 * k, y - 26 * k, { w: 80 * k, h: 80 * k, alpha: 0.35 * (0.5 + 0.5 * Math.sin(s.klok * 1.8 + i)) });
+      });
+    }
     const lagen = [];
     for (const e of verkeer) {
       const st = e.strook;
@@ -430,7 +481,21 @@ function speel({ root, dag, info, klaar, opnieuw }) {
     if (pino.alpha > 0) lagen.push({ y: pino.y + 0.5, f: tekenPino });
     lagen.sort((a, b) => a.y - b.y);
     for (const l of lagen) l.f();
+    stof.teken(ctx);
+    for (const u of uitroepen) tekenUitroep(u);
     ctx.restore();
+  }
+
+  function tekenUitroep(u) {
+    const f = u.t / UITROEP_DUUR;
+    const schaal = f < 0.12 ? (f / 0.12) * 1.15 : f < 0.2 ? 1.15 - ((f - 0.12) / 0.08) * 0.15 : 1;
+    const m = UITROEP_MAAT * schaal;
+    const alpha = f < 0.8 ? 1 : Math.max(0, 1 - (f - 0.8) / 0.2);
+    const g = u.gans;
+    const x = g.x + g.w / 2 - m / 2;
+    const y = g.y - m * 0.95;
+    tekenSprite(ctx, 'bub-wolk', x, y, { w: m, h: m, alpha });
+    tekenSprite(ctx, 'bub-uitroep', x, y, { w: m, h: m, alpha });
   }
 
   function tekenWeg() {
@@ -498,7 +563,7 @@ function speel({ root, dag, info, klaar, opnieuw }) {
   }
 
   function teken() {
-    begin();
+    begin({ dx: schok.dx, dy: schok.dy });
     if (s.scene === 'stad') tekenStad(); else tekenWeg();
     for (const e of harten) {
       if (e.t <= 0) continue;
@@ -515,6 +580,7 @@ function speel({ root, dag, info, klaar, opnieuw }) {
       const donker = t <= 0 ? 0 : t < INSTAP_DONKER ? t / INSTAP_DONKER : Math.max(0, 1 - (t - INSTAP_DONKER) / INSTAP_LICHT);
       if (donker > 0) { ctx.globalAlpha = donker; ctx.fillStyle = NACHT; ctx.fillRect(0, 0, B, H); ctx.globalAlpha = 1; }
     }
+    flits.teken(ctx, B, H);
   }
 
   /* ---------- einde ---------- */
@@ -546,13 +612,13 @@ function speel({ root, dag, info, klaar, opnieuw }) {
   }
 
   /* ---------- start ---------- */
-  const lus = maakLus({ update, teken });
+  const lus = maakLus({ update, teken, effecten });
   if (begin0 === 'auto') naarAuto();
   if (datum.isTest()) {
     window.pinoDebug = {
       spel: 10, s, pino, rit, verkeer,
       /** Zet het spel met de hand ms vooruit (stappen van 20 ms) en teken. */
-      stap(ms) { for (let i = 0; i < Math.round(ms / 20) && !s.af; i += 1) update(0.02); if (!s.af) teken(); },
+      stap(ms) { for (let i = 0; i < Math.round(ms / 20) && !s.af; i += 1) { update(0.02); effecten(0.02); } if (!s.af) teken(); },
       actie,
     };
   }
@@ -610,23 +676,78 @@ function toonFinale({ root, info }) {
   ]);
 
   const knop = h('button', { type: 'button', class: 'knop-pil s10-feest-knop', onclick: () => ga('/') }, 'Terug naar de kalender');
-  const scherm = h('div', { class: 'scherm s10-finale' }, [
-    h('div', { class: 's10-confetti', 'aria-hidden': 'true' }),
-    el('svg', { class: 'ic s10-slinger', viewBox: '0 0 200 40', preserveAspectRatio: 'none', 'aria-hidden': 'true' }, [use('s10-slinger', 0, 0, 200, 40)]),
+
+  // Kaarsjes uittikken (besluit 211): de taart is een knop; elke tik blaast het kaarsje het dichtst bij de vinger
+  // uit (met het toetsenbord het volgende). Na het laatste kaarsje begint het feest: confetti, de ballonnen stijgen
+  // op en de behoeften vullen zich een voor een.
+  const vlammen = LONTEN.map(([lx, ly], i) => el('g', { class: 's10-vlam', style: `animation-delay:${-i * 0.37}s` }, [use('s10-vlam', lx - 2, ly - 7, 4, 7)]));
+  const taartSvg = el('svg', { class: 'ic', viewBox: '0 0 48 48', width: 104, height: 104, overflow: 'visible', 'aria-hidden': 'true' }, [use('s10-taart-kaal', 0, 0, 48, 48), ...vlammen]);
+  const brandt = [true, true, true];
+  const taartKnop = h('button', { type: 'button', class: 's10-taart-knop', 'aria-label': 'Taart met drie brandende kaarsjes: blaas een kaarsje uit', onclick: blaas }, [taartSvg]);
+  const hint = h('div', { class: 's10-feest-hint' }, 'Tik op de taart en blaas de kaarsjes uit!');
+  const ballonnen = [
     ballon('#1FA3DC', 44, 'left: 18px; top: 100px'),
     ballon('#FFC93C', 44, 'right: 26px; top: 80px; animation-delay: 0.6s'),
     ballon('#9B6BFF', 36, 'right: 54px; top: 160px; animation-delay: 1.2s'),
+  ];
+  for (const b of ballonnen) b.style.visibility = 'hidden';
+
+  function blaas(ev) {
+    const over = brandt.map((b, i) => (b ? i : -1)).filter((i) => i >= 0);
+    if (!over.length) return;
+    let i = over[0];
+    if (ev && ev.detail > 0) {
+      const r = taartSvg.getBoundingClientRect();
+      const x = ((ev.clientX - r.left) / r.width) * 48;
+      i = over.reduce((best, j) => (Math.abs(LONTEN[j][0] - x) < Math.abs(LONTEN[best][0] - x) ? j : best), over[0]);
+    }
+    brandt[i] = false;
+    vlammen[i].remove();
+    const [lx, ly] = LONTEN[i];
+    const rook = el('g', { 'aria-hidden': 'true' }, [use('s10-rook', lx - 3, ly - 10, 6, 10)]);
+    taartSvg.append(rook);
+    if (sap.rustig()) setTimeout(() => rook.remove(), 700);
+    else {
+      rook.animate([{ translate: '0 0', opacity: 0.95 }, { translate: '0 -9px', opacity: 0 }], { duration: 1100, easing: 'ease-out', fill: 'forwards' });
+      setTimeout(() => rook.remove(), 1200);
+    }
+    sap.wip(taartKnop.parentElement, { sterkte: 0.4 });
+    const rest = brandt.filter(Boolean).length;
+    taartKnop.setAttribute('aria-label', rest ? `Taart met ${rest === 1 ? 'nog een brandend kaarsje' : `nog ${rest} brandende kaarsjes`}: blaas een kaarsje uit` : 'Taart: alle kaarsjes zijn uit');
+    if (!rest) feest();
+  }
+
+  const noodVullingen = [];
+  function feest() {
+    taartKnop.disabled = true;
+    hint.remove();
+    sap.confetti(scherm, { aantal: 60 });
+    const rustig = sap.rustig();
+    ballonnen.forEach((b, i) => {
+      b.style.visibility = '';
+      if (!rustig) b.animate([{ translate: '0 110vh' }, { translate: '0 0' }], { duration: 1800, delay: 200 + i * 300, easing: 'cubic-bezier(0.2, 0.7, 0.3, 1)', fill: 'backwards' });
+    });
+    noodVullingen.forEach((v, i) => setTimeout(() => { v.style.width = '100%'; sap.puls(v.parentElement, { schaal: 1.06, duur: 260 }); }, rustig ? 0 : 500 + i * 160));
+  }
+
+  const scherm = h('div', { class: 'scherm s10-finale' }, [
+    el('svg', { class: 'ic s10-slinger', viewBox: '0 0 200 40', preserveAspectRatio: 'none', 'aria-hidden': 'true' }, [use('s10-slinger', 0, 0, 200, 40)]),
+    ...ballonnen,
     h('section', { class: 'kaart s10-feest-kaart', 'aria-labelledby': 's10-feest-titel' }, [
-      h('div', { class: 's10-taart-bol' }, [
-        el('svg', { class: 'ic', viewBox: '0 0 48 48', width: 104, height: 104, role: 'img', 'aria-label': 'Verjaardagstaart met drie kaarsjes' }, [use('s10-taart', 0, 0, 48, 48)]),
-      ]),
+      h('div', { class: 's10-taart-bol' }, [taartKnop]),
+      hint,
       h('div', { class: 's10-feest-label' }, '3 DECEMBER · DEURTJE 10 VAN 10'),
       h('h1', { class: 'kop s10-feest-titel', id: 's10-feest-titel' }, 'Hartelijk gefeliciteerd, Pino!'),
       tafereel,
-      h('div', { class: 's10-noden' }, Object.values(BEHOEFTE_LABELS).map((label) => h('div', { class: 's10-nood' }, [
-        h('span', { class: 's10-nood-label' }, label),
-        h('span', { class: 's10-nood-balk', role: 'img', 'aria-label': `${label}: helemaal vol` }, [h('span')]),
-      ]))),
+      h('div', { class: 's10-noden' }, Object.values(BEHOEFTE_LABELS).map((label) => {
+        // De balken lopen pas vol als de kaarsjes uit zijn (feest).
+        const vulling = h('span', { style: { width: '0%', transition: 'width 0.6s ease-out' } });
+        noodVullingen.push(vulling);
+        return h('div', { class: 's10-nood' }, [
+          h('span', { class: 's10-nood-label' }, label),
+          h('span', { class: 's10-nood-balk', role: 'img', 'aria-label': `${label}: helemaal vol` }, [vulling]),
+        ]);
+      })),
       h('div', { class: 's10-briefje' }, [
         el('svg', { class: 'ic', viewBox: '0 0 48 48', width: 28, height: 28, 'aria-hidden': 'true' }, [use('s9-hart', 0, 0, 48, 48, '#FF6FAE')]),
         h('div', { class: 's10-briefje-tekst' }, [
@@ -639,6 +760,6 @@ function toonFinale({ root, info }) {
   ]);
   document.body.classList.add('s10-feest');
   root.replaceChildren(scherm);
-  queueMicrotask(() => knop.focus());
+  queueMicrotask(() => taartKnop.focus());
   return () => document.body.classList.remove('s10-feest');
 }

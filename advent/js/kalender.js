@@ -12,6 +12,7 @@ import * as datum from './datum.js';
 import { ga } from './router.js';
 import { use, el } from './sprites.js';
 import { zichtbareVoorwerpen, heeftNieuws } from './kamer-inhoud.js';
+import { wip, schud, tril, rustig } from './ui/sap.js';
 
 let data = null;
 
@@ -36,6 +37,8 @@ export function schermKalender({ root, telefoon = true }) {
   for (let n = 1; n <= datum.AANTAL_DAGEN; n++) statussen[n] = datum.deurStatus(n, s, nu);
   const deurtjesOpen = Object.values(statussen).filter((st) => st !== 'dicht').length;
   const dagen = datum.dagenTotVerjaardag(nu);
+  // Net een spel uitgespeeld? Dan lopen de balken van de oude naar de nieuwe waarde (besluit 210).
+  const verdiend = staat.pakNetVerdiend();
 
   // Vandaag te verdienen vaardigheden (alleen als het deurtje van vandaag nog niet gespeeld is).
   const vandaagInfo = vandaagDag >= 1 && vandaagDag <= 10 ? dagInfo(vandaagDag) : null;
@@ -55,7 +58,7 @@ export function schermKalender({ root, telefoon = true }) {
       kamerKnop(s, (n) => statussen[n]),
       h('div', { style: { display: 'flex', alignItems: 'center', gap: '14px' } }, [
         h('div', { class: 'avatar-wrap' }, [
-          morgenInfo ? h('div', { class: 'wolkje', role: 'img', 'aria-label': 'Pino denkt aan morgen' }, [
+          morgenInfo ? h('div', { class: 'wolkje gedachte-dobber', role: 'img', 'aria-label': 'Pino denkt aan morgen' }, [
             h('span', { class: 'wolk-tekst' }, 'Morgen…'),
             h('span', { class: 'wolk-icoon' }, [icoon(morgenInfo.icoon, 30), h('span', { class: 'wolk-vraag' }, '?')]),
           ]) : null,
@@ -78,7 +81,7 @@ export function schermKalender({ root, telefoon = true }) {
       ]),
     ]),
 
-    paneelBehoeften(s, { dagen, deurtjesOpen, open: true }),
+    paneelBehoeften(s, { dagen, deurtjesOpen, open: true, vorige: verdiend?.behoeften }),
 
     // Rechterkolom op desktop; op mobiel (display: contents) vallen deze blokken in het raster van de kalender.
     h('div', { class: 'rechts' }, [
@@ -93,7 +96,8 @@ export function schermKalender({ root, telefoon = true }) {
       ]),
     ]),
 
-    paneelVaardigheden(s, { vandaagVaardigheden, open: isDesktop() }),
+    // Net iets verdiend: het paneel staat open, zodat de blokjes te zien zijn die erbij komen.
+    paneelVaardigheden(s, { vandaagVaardigheden, open: isDesktop() || !!verdiend, vorige: verdiend?.vaardigheden }),
   ]);
   root.append(kalender);
   if (datum.devModus()) root.append(devKnop());
@@ -160,7 +164,7 @@ function maakDeur(n, status) {
       pil,
     );
   }
-  knop.addEventListener('click', () => openTaartmenu(knop, n, status));
+  knop.addEventListener('click', () => { wip(knop, { sterkte: 0.6 }); openTaartmenu(knop, n, status); });
   return knop;
 }
 
@@ -173,12 +177,41 @@ function openTaartmenu(anker, n, status) {
     label: `Acties voor deurtje ${datum.langeDatum(n)}`,
     hint: '<strong>Tik op een deurtje</strong> en kies wat Pino gaat doen. Gluren mag, maar de gans houdt de wacht.',
     opties: [
-      { richting: 'boven', tekst: 'Open deurtje', icoon: 'deur', klasse: 'taart-optie-groen', actie: () => (dicht ? toonVergrendeld(n) : ga(`/laden/${n}`)) },
+      { richting: 'boven', tekst: 'Open deurtje', icoon: 'deur', klasse: 'taart-optie-groen', actie: () => (dicht ? toonVergrendeld(n) : zwaaiOpen(anker, () => ga(`/laden/${n}`))) },
       { richting: 'rechts', tekst: 'Gluren…', icoon: 'oog', actie: () => (dicht ? toonVergrendeld(n) : ga(`/deur/${n}`)) },
       { richting: 'onder', tekst: 'Briefje lezen', icoon: 'hart', actie: () => (dicht ? toonVergrendeld(n) : toonBriefje(n)) },
       { richting: 'links', tekst: 'Annuleren', icoon: 'kruis', klasse: 'taart-optie-grijs' },
     ],
   });
+}
+
+/**
+ * Het deurtje zwaait open op zijn scharnier, met warm licht erachter, en daarna gaat het verder (besluit 210).
+ * Een kopie van het deurtje staat fixed boven de pagina, zodat de navigatie de animatie niet afbreekt.
+ */
+function zwaaiOpen(deur, verder) {
+  if (rustig() || !deur || typeof deur.animate !== 'function' || !document.contains(deur)) { verder(); return; }
+  const r = deur.getBoundingClientRect();
+  const plek = h('div', { class: 'deur-zwaai-plek', 'aria-hidden': 'true', style: { left: `${r.left}px`, top: `${r.top}px`, width: `${r.width}px`, height: `${r.height}px` } });
+  const kopie = deur.cloneNode(true);
+  kopie.removeAttribute('data-deur');
+  plek.append(kopie);
+  document.body.append(plek);
+  let klaar = false;
+  const af = () => {
+    if (klaar) return;
+    klaar = true;
+    verder();
+    plek.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 220, fill: 'forwards' });
+    setTimeout(() => plek.remove(), 260);
+  };
+  const anim = kopie.animate([
+    { transform: 'rotateY(0deg)' },
+    { transform: 'rotateY(-12deg)', offset: 0.2 },
+    { transform: 'rotateY(-105deg)' },
+  ], { duration: 520, easing: 'cubic-bezier(0.5, 0, 0.7, 1)', fill: 'forwards' });
+  anim.finished.then(af, af);
+  setTimeout(af, 800);
 }
 
 /* ---------- Vergrendeld ---------- */
@@ -268,6 +301,15 @@ export function toonTelefoon(n) {
       ]),
     ],
   });
+  // De hele kaart rinkelt mee en de telefoon trilt één keer kort (besluit 210).
+  tril(60);
+  const rinkel = () => {
+    if (!document.contains(d.element)) return false;
+    schud(d.element, { sterkte: 3, duur: 420 });
+    return true;
+  };
+  setTimeout(rinkel, 250);
+  const interval = setInterval(() => { if (!rinkel()) clearInterval(interval); }, 1600);
   return d;
 }
 

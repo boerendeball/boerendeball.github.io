@@ -17,6 +17,7 @@ Per scherm één spec: wat het precies doet, hoe het eruitziet (met verwijzing n
 | [spel10.md](spel10.md) — Bereik de bevalling + finale | gebouwd, te beoordelen |
 | [spel8.md](spel8.md) | zie de spec zelf |
 | [kamer.md](kamer.md) — Pino's kamer: verzamelde spullen en aandenkens (`#/kamer`) | gebouwd, te beoordelen |
+| [beeldfeedback.md](beeldfeedback.md) — "sap": animaties, deeltjes, schudden en trillen in plaats van geluid, per scherm en per spel | in aanbouw |
 | [ontwikkelaarsopties.md](ontwikkelaarsopties.md) — pagina `#/dev` met alle dev-schakelaars (alleen lokaal) | gebouwd, te beoordelen |
 | [besluiten.md](besluiten.md) — beslislog en open vragen voor Benjamin | lopend |
 
@@ -73,7 +74,7 @@ Alles werkt met `npx serve .` op `http://localhost:3000/advent/`.
 | `?dev=1` | devmodus buiten een lokale host: de knop naar de ontwikkelaarsopties op de kalender |
 | `#/dev` | **ontwikkelaarsopties**: alle schakelaars hierboven met de hand aan/uit (alleen in devmodus, zie [ontwikkelaarsopties.md](ontwikkelaarsopties.md)) |
 | `#/test` | sprite-controlescherm en de ruwe staat |
-| `window.pinoDebug` | in testmodus: de live spelstaat van het lopende canvas-spel (console); in spel 6 ook `stap(ms)` om het spel met de hand vooruit te zetten; in spel 8 `oplossing()` en `speelOplossing()`; in spel 9 `stap(ms)` en `s.altijdRaak`; in spel 10 `stap(ms)`, `actie(naam)` en `s.onkwetsbaar` |
+| `window.pinoDebug` | in testmodus: de live spelstaat van het lopende canvas-spel (console); in spel 1, 5 en 6 ook `stap(ms)` om het spel met de hand vooruit te zetten (handig als de tab geen frames tekent); in spel 8 `oplossing()` en `speelOplossing()`; in spel 9 `stap(ms)` en `s.altijdRaak`; in spel 10 `stap(ms)`, `actie(naam)` en `s.onkwetsbaar` |
 | `#/spel/n` | spel n direct (laadscherm overgeslagen) |
 | `#/laden/n` | laadscherm en dan spel n |
 | `#/kamer` | Pino's kamer (ook via de huisjesknop op de Sim-kaart) |

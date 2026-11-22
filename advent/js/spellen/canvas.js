@@ -1,7 +1,7 @@
 // HiDPI-canvas in wereld-eenheden (CSS-px van het ontwerp, bv. 358×500).
 //
 // const { canvas, ctx, begin } = maakCanvas(358, 500, { label: '…' });
-// in teken(): begin(); … tekenen in wereld-eenheden …
+// in teken(): begin(); … tekenen in wereld-eenheden …  (met schok: begin({ dx, dy }))
 
 import { standaardSchaal } from './spritesheet.js';
 
@@ -24,9 +24,11 @@ export function maakCanvas(breedte, hoogte, { label = null, klasse = 'scene-canv
   ctx.imageSmoothingEnabled = true;
   ctx.imageSmoothingQuality = 'high';
 
-  function begin() {
-    ctx.setTransform(schaal, 0, 0, schaal, 0, 0);
-    ctx.clearRect(0, 0, breedte, hoogte);
+  /** Wist het canvas en zet de wereld-eenheden; dx/dy verschuiven de hele scène (schermschok, besluit 210). */
+  function begin({ dx = 0, dy = 0 } = {}) {
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.setTransform(schaal, 0, 0, schaal, dx * schaal, dy * schaal);
   }
 
   return { canvas, ctx, begin, breedte, hoogte, schaal };

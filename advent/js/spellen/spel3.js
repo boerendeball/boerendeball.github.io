@@ -11,6 +11,7 @@ import * as fam from './familie.js';
 import * as staat from '../staat.js';
 import * as datum from '../datum.js';
 import { werkerGevonden, terugKnop, werkerVak } from './zoeken.js';
+import * as sap from '../ui/sap.js';
 
 /* ---------- tuning ---------- */
 const POP_DUUR = 520;         // ms: karakter springt op zijn plek (CSS .fam-pop)
@@ -34,6 +35,19 @@ function karakterOpPlek(plek, gezicht) {
   const k = fam.KARAKTERS[plek.karakter];
   if (k.soort === 'dier') return dier(plek.x, plek.y, k.dier);
   return persoon(plek.x - 2, plek.y - 14, { ...k.persoon, gezicht });
+}
+
+/**
+ * Een familielid ademt zacht (beeldfeedback, besluit 210). De ademklasse zit op een eigen groep om het personage
+ * heen: op de personagegroep zelf zou het draaipunt van de animatie ook de schaal (kind) en spiegeling in het
+ * transform-attribuut verschuiven. Elk lid heeft een eigen tempo en fase, zodat ze niet in de maat ademen.
+ */
+function adem(g, i) {
+  const omhulsel = el('g', { class: 'sap-adem' }, [g]);
+  omhulsel.style.setProperty('--adem', '1.025');
+  omhulsel.style.setProperty('--adem-duur', `${(2.4 + (i % 3) * 0.35).toFixed(2)}s`);
+  omhulsel.style.setProperty('--vertraging', `-${((performance.now() / 1000 + i * 0.9) % 5).toFixed(2)}s`);
+  return omhulsel;
 }
 
 /** Sterretjes die vanuit het midden van een plek naar buiten vliegen (CSS .fam-ster). */
@@ -86,12 +100,13 @@ export function familieScene(familieId, gekocht = [], { nieuw = null, hup = fals
   // Leden en gekochte karakters, met wat de familie compleet maakt; bij hup springt de hele groep.
   const groep = el('g', { class: hup ? 'fam-groep fam-hup' : 'fam-groep' });
   groep.style.setProperty('--hup-vertraging', `${POP_DUUR + HUP_VERTRAGING - 300}ms`);
-  for (const lid of f.leden) groep.append(el('g', { class: 'fam-lid' }, [persoonVan(lid, gezicht)]));
+  let i = 0;
+  for (const lid of f.leden) groep.append(el('g', { class: 'fam-lid' }, [adem(persoonVan(lid, gezicht), i++)]));
   const plekken = el('g');
   for (const p of f.plekken) {
     if (gekocht.includes(p.karakter)) {
       const isNieuw = p.karakter === nieuw;
-      groep.append(el('g', { class: isNieuw ? 'fam-lid fam-pop' : 'fam-lid' }, [karakterOpPlek(p, gezicht)]));
+      groep.append(el('g', { class: isNieuw ? 'fam-lid fam-pop' : 'fam-lid', 'data-karakter': p.karakter }, [adem(karakterOpPlek(p, gezicht), i++)]));
       if (isNieuw) plekken.append(sterren(p));
     } else {
       plekken.append(use('plek', p.x, p.y, 48, 40));
@@ -131,6 +146,7 @@ export function start({ root, dag, info, klaar, zoek = false }) {
   const rustig = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   let gestopt = false;
   let bezig = false;      // laatste kaart gekocht, wacht op het resultaatscherm
+  const onderweg = new Set();   // karakters die nog naar hun plek vliegen
   const timers = new Set();
   const wacht = (ms) => new Promise((ok) => { const t = setTimeout(() => { timers.delete(t); ok(); }, ms); timers.add(t); });
   const gekocht = () => staat.lees().karakters;
@@ -203,23 +219,61 @@ export function start({ root, dag, info, klaar, zoek = false }) {
   }
 
   /* ---------- kopen ---------- */
-  function koop(k) {
-    if (gestopt || bezig) return;
+  async function koop(k) {
+    if (gestopt || bezig || onderweg.has(k.id)) return;
     const knop = kaartKnoppen[k.id];
     if (gekocht().includes(k.id)) return;
     if (!fam.betaalbaar(k.prijs, staat.lees().edelstenen)) {
       if (!rustig) { knop.classList.remove('schud'); void knop.offsetWidth; knop.classList.add('schud'); }
       return;
     }
+    const f = fam.familieVan(k.id);
+    const plek = f.plekken.find((p) => p.karakter === k.id);
+    const van = knop.getBoundingClientRect();
     // Eerst de wegklasse: koopKarakter meldt de wijziging meteen aan werkKaartenBij (abonnee).
     if (!rustig) knop.classList.add('kaartje-weg');
     if (!staat.koopKarakter(k.id, k.prijs)) { knop.classList.remove('kaartje-weg'); return; }
-    const f = fam.familieVan(k.id);
     const nuCompleet = fam.isCompleet(f, gekocht());
     if (nuCompleet && !staat.lees().familie) staat.zetFamilie(f.id);
     werkKaartenBij();
+    const alles = fam.alleCompleet(gekocht());
+    if (alles) bezig = true;
+    // Het karakter vliegt van het kaartje naar zijn lege plek en springt daar pas tevoorschijn
+    // (beeldfeedback, besluit 210). Met reduced motion is vlieg meteen klaar.
+    onderweg.add(k.id);
+    await sap.vlieg({ van: { x: van.left + van.width / 2, y: van.top + van.height / 2 }, naar: plekPunt(f, plek), inhoud: kaartPlaatje(k.id), maat: 44, eindSchaal: 0.85, duur: 520 });
+    onderweg.delete(k.id);
+    if (gestopt) return;
     tekenFamilie(f, { nieuw: k.id, hup: nuCompleet });
-    if (fam.alleCompleet(gekocht())) einde();
+    if (nuCompleet) hartjes(f);
+    if (alles) einde();
+  }
+
+  /** Midden van een lege plek in de familiescène, in px op het scherm. */
+  function plekPunt(f, plek) {
+    const r = scenes[f.id].querySelector('svg')?.getBoundingClientRect();
+    if (!r || !plek) return null;
+    return { x: r.left + ((plek.x + 24) / B) * r.width, y: r.top + ((plek.y + 20) / H) * r.height };
+  }
+
+  /** Een complete familie: na de hup verschijnt boven elk lid een hartje-wolkje, één voor één. */
+  function hartjes(f) {
+    if (rustig) return;
+    const t = setTimeout(() => {
+      timers.delete(t);
+      const svg = scenes[f.id].querySelector('svg');
+      if (!svg) return;
+      [...svg.querySelectorAll('.fam-lid')].forEach((lid, i) => {
+        const tm = setTimeout(() => {
+          timers.delete(tm);
+          let b;
+          try { b = lid.getBBox(); } catch { return; }
+          sap.bubbel(svg, b.x + b.width / 2, b.y - 2, 'hart', { maat: 24, duur: 1500 });
+        }, i * 140);
+        timers.add(tm);
+      });
+    }, POP_DUUR + HUP_VERTRAGING);
+    timers.add(t);
   }
 
   /* ---------- werker (spel 7) ---------- */

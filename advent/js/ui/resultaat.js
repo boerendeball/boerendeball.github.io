@@ -6,6 +6,7 @@ import { icoon, BOL_KLEUR, RING_KLEUR } from './iconen.js';
 import { VAARDIGHEID_LABELS } from './vaardigheden.js';
 import { BEHOEFTE_LABELS } from './behoeften.js';
 import { ga } from '../router.js';
+import * as sap from './sap.js';
 
 /**
  * toonResultaat({ root, icoon, label, titel, zin, inhoud, tegels: [{ label, waarde, kleur, icoon }],
@@ -37,13 +38,47 @@ export function toonResultaat({ root, icoon: naam, label, titel, zin = null, inh
       opnieuw ? h('button', { type: 'button', class: 'knop-pil knop-pil-grijs', onclick: opnieuw }, 'Nog een keer') : null,
     ]),
   ]);
-  const scherm = h('div', { class: 'scherm resultaat' }, [
-    confetti ? h('div', { class: 'confetti', 'aria-hidden': 'true' }) : null,
-    kaart,
-  ]);
+  const scherm = h('div', { class: 'scherm resultaat' }, [kaart]);
   root.replaceChildren(scherm);
+  if (confetti) sap.confetti(scherm, { aantal: 36 });
+  animeerResultaat(kaart, { gelukt: confetti });
   queueMicrotask(() => kaart.querySelector('button')?.focus());
   return scherm;
+}
+
+/**
+ * Het resultaat bouwt stap voor stap op (beeldfeedback, besluit 210): de bol springt erin (bij een mislukking
+ * zakt hij even door), dan de titel, de scoretegels één voor één terwijl hun getal optelt, de beloning en
+ * als laatste de knoppen. Met reduced motion vervaagt alles kort en staan de getallen meteen goed.
+ */
+function animeerResultaat(kaart, { gelukt }) {
+  const bol = kaart.querySelector('.resultaat-bol');
+  if (gelukt) sap.pop(bol, { duur: 520 });
+  else if (bol && !sap.rustig()) bol.animate?.([{ translate: '0 -10px', opacity: 0 }, { translate: '0 8px', opacity: 1, offset: 0.55 }, { translate: '0 0' }], { duration: 700, easing: 'ease-out' });
+  let t = 180;
+  for (const e of [kaart.querySelector('.kopbalk-label'), kaart.querySelector('.resultaat-titel'), kaart.querySelector('.resultaat-zin')]) {
+    if (!e) continue;
+    sap.verschijn(e, { dy: 10, vertraging: t });
+    t += 90;
+  }
+  for (const tegel of kaart.querySelectorAll('.tegel')) {
+    sap.verschijn(tegel, { dy: 14, schaal: 0.9, vertraging: t });
+    const waarde = tegel.querySelector('.tegel-waarde');
+    const tekst = waarde?.textContent ?? '';
+    if (/^\d+$/.test(tekst) && Number(tekst) > 0) {
+      const n = Number(tekst);
+      waarde.textContent = '0';
+      setTimeout(() => sap.telOp(waarde, 0, n, { duur: Math.min(900, 300 + n * 25) }).then(() => sap.puls(waarde)), t + 150);
+    }
+    t += 220;
+  }
+  const beloning = kaart.querySelector('.beloning');
+  if (beloning) {
+    sap.verschijn(beloning, { dy: 14, vertraging: t + 100 });
+    setTimeout(() => sap.puls(beloning.querySelector('.beloning-bol'), { schaal: 1.25, duur: 360 }), t + 450);
+    t += 250;
+  }
+  sap.verschijn(kaart.querySelector('.resultaat-knoppen'), { dy: 10, vertraging: t + 150 });
 }
 
 // "Verjaardag vieren" is te lang voor de regel; de rest volgt BEHOEFTE_LABELS.

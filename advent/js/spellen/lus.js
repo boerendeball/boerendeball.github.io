@@ -1,13 +1,18 @@
 // Spellus op requestAnimationFrame met delta-tijd (seconden), pauze als de tab verborgen is.
 //
-// const lus = maakLus({ update(dt), teken() });
+// const lus = maakLus({ update(dt), teken(), effecten(dt) });
 // lus.start(); lus.pauzeer(); lus.hervat(); lus.stop();
+// lus.bevries(70): hit-stop (besluit 210). De spellogica krijgt even dt = 0, maar effecten(dt) (deeltjes,
+// schok, flits) en teken() lopen door. Met reduced motion doet bevries niets.
 
-export function maakLus({ update, teken, maxDt = 0.05 }) {
+import { rustig } from '../ui/sap.js';
+
+export function maakLus({ update, teken, effecten = null, maxDt = 0.05 }) {
   let frame = 0;
   let vorige = 0;
   let actief = false;
   let gepauzeerd = false;
+  let bevrorenTot = 0;
 
   function tik(nu) {
     if (!actief) return;
@@ -15,7 +20,8 @@ export function maakLus({ update, teken, maxDt = 0.05 }) {
     if (gepauzeerd) return;
     const dt = Math.min(maxDt, Math.max(0, (nu - vorige) / 1000));
     vorige = nu;
-    update(dt);
+    update(nu < bevrorenTot ? 0 : dt);
+    if (effecten) effecten(dt);
     teken();
   }
 
@@ -44,6 +50,10 @@ export function maakLus({ update, teken, maxDt = 0.05 }) {
     },
     pauzeer() { gepauzeerd = true; },
     hervat() { gepauzeerd = false; vorige = performance.now(); },
+    bevries(ms) {
+      if (rustig()) return;
+      bevrorenTot = Math.max(bevrorenTot, performance.now() + ms);
+    },
     get gepauzeerd() { return gepauzeerd; },
   };
 }

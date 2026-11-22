@@ -2,6 +2,7 @@
 
 import { h } from './dom.js';
 import { paneel } from './behoeften.js';
+import { rustig, puls } from './sap.js';
 
 // Labels volgen de artboards (Main/Desktop): daar heten mechanica en lichaam "Techniek" en "Conditie".
 export const VAARDIGHEID_LABELS = {
@@ -14,16 +15,23 @@ const MAX_TOTAAL = 10 * Object.keys(VAARDIGHEID_LABELS).length;
  * vandaagVaardigheden: { lichaam: 3, charisma: 2 } als het deurtje van vandaag nog te spelen is (besluit 164);
  * de blokjes die dat oplevert zijn `straks` (geel omrand).
  */
-export function paneelVaardigheden(staat, { vandaagVaardigheden = null, open = false }) {
+export function paneelVaardigheden(staat, { vandaagVaardigheden = null, open = false, vorige = null }) {
   let totaal = 0;
+  let k = 0;
   const rijen = Object.keys(VAARDIGHEID_LABELS).map((sleutel) => {
     const n = Math.max(0, Math.min(10, staat.vaardigheden[sleutel] ?? 0));
     totaal += n;
     const straks = Math.min(10 - n, vandaagVaardigheden?.[sleutel] ?? 0);
     const label = VAARDIGHEID_LABELS[sleutel];
+    // Net verdiende blokjes vullen zich één voor één, met een kleine puls (beeldfeedback, besluit 210).
+    const oud = vorige && !rustig() ? Math.max(0, Math.min(n, vorige[sleutel] ?? n)) : n;
     const blokjes = [];
     for (let i = 0; i < 10; i++) {
-      blokjes.push(h('span', { class: i < n ? 'vol' : (i < n + straks ? 'straks' : null) }));
+      const blok = h('span', { class: i < oud ? 'vol' : (i >= n && i < n + straks ? 'straks' : null) });
+      if (i >= oud && i < n) {
+        setTimeout(() => { blok.classList.add('vol'); puls(blok, { schaal: 1.35, duur: 320 }); }, 500 + 220 * k++);
+      }
+      blokjes.push(blok);
     }
     return h('div', { class: 'vaard' }, [
       h('span', { class: 'vaard-label' }, label),

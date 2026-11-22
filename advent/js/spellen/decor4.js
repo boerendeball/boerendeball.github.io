@@ -13,6 +13,8 @@ const rect = (x, y, width, height, fill, extra = {}) => el('rect', { x, y, width
 const stippen = (fill, lijst) => el('g', { fill }, lijst.map(([cx, cy, r]) => el('circle', { cx, cy, r })));
 // De werker zwaait met een kokosdrankje naar de camera (wk-zwaai, besluit 108).
 const werkerKnoop = (w) => el('g', { class: 's4-werker' }, [use('wk-zwaai', w.x, w.y, w.b, w.h)]);
+// Wachtanimatie (beeldfeedback, besluit 210): sap.leven() in spel4.js leest data-sap. Zie ui/sap.js.
+const sap = (waarde) => ({ 'data-sap': waarde });
 
 /* ---------- strand ---------- */
 
@@ -24,15 +26,15 @@ function strandAchter() {
   return el('g', { class: 's4-achter' }, [
     rect(0, 0, 358, 200, '#8ED8F8'),
     use('s4-zon', 266, 22, 60, 60),
-    use('s4-wolk', 22, 42, 96, 36), use('s4-wolk', 176, 78, 66, 25),
-    use('s4-meeuw', 112, 116, 24, 12), use('s4-meeuw', 140, 104, 20, 10), use('s4-meeuw', 62, 130, 16, 8),
+    use('s4-wolk', 22, 42, 96, 36, null, sap('drijf 7 9000')), use('s4-wolk', 176, 78, 66, 25, null, sap('drijf 5 7500')),
+    use('s4-meeuw', 112, 116, 24, 12, null, sap('dobber -5 1900')), use('s4-meeuw', 140, 104, 20, 10, null, sap('dobber -4 2300')), use('s4-meeuw', 62, 130, 16, 8, null, sap('dobber -3 2100')),
     rect(0, 152, 358, 150, '#1FA3DC'),
     rect(0, 152, 358, 5, '#FFFFFF', { opacity: 0.7 }),
     rect(0, 268, 358, 34, '#0E7FB5'),
-    pad('M30 206 h54 M150 232 h40 M60 250 h36 M240 200 h30', { stroke: '#FFFFFF', 'stroke-width': 4, 'stroke-linecap': 'round', opacity: 0.7 }),
+    el('g', sap('gloei 0.35 1700'), [pad('M30 206 h54 M150 232 h40 M60 250 h36 M240 200 h30', { stroke: '#FFFFFF', 'stroke-width': 4, 'stroke-linecap': 'round', opacity: 0.7 })]),
     use('s4-rots', 12, 96, 130, 86), use('s4-rots', 196, 124, 84, 56),
     use('s4-pier', 268, 160, 80, 140),
-    use('s4-boot', 118, 222, 112, 45),
+    use('s4-boot', 118, 222, 112, 45, null, sap('dobber -2 2400')),
     pad('M0 302 q30 -10 60 0 t60 0 t60 0 t60 0 t60 0 t60 0 v368 h-358z', { fill: '#F2CF8A' }),
     pad('M0 296 q30 -10 60 0 t60 0 t60 0 t60 0 t60 0 t60 0 v8 q-30 10 -60 0 t-60 0 t-60 0 t-60 0 t-60 0 t-60 0z', { fill: '#FFFFFF', opacity: 0.85 }),
     pad('M0 316 q30 -10 60 0 t60 0 t60 0 t60 0 t60 0 t60 0 v354 h-358z', { fill: '#FDE9B6' }),
@@ -47,12 +49,12 @@ function strandAchter() {
 function strandRekwisieten() {
   return [
     { y: 319, werker: true, knoop: werkerKnoop(STRAND_WERKER) },
-    { y: 320, knoop: use('s4-palm', 4, 194, 80, 130) },
+    { y: 320, knoop: use('s4-palm', 4, 194, 80, 130, null, sap('wieg 1.5 3800')) },
     { y: 418, knoop: use('s4-kraam', 232, 322, 120, 100) },
     { y: 424, knoop: use('s4-boog', 112, 300, 130, 130) },
     { y: 442, knoop: use('s4-bank', 20, 398, 84, 48) },
     { y: 496, knoop: use('s4-bal', 92, 466, 32, 32) },
-    { y: 516, knoop: use('s4-parasol', 288, 436, 72, 84) },
+    { y: 516, knoop: use('s4-parasol', 288, 436, 72, 84, null, sap('wieg 0.8 3200')) },
   ];
 }
 
@@ -64,8 +66,8 @@ function bergAchter() {
   return el('g', { class: 's4-achter' }, [
     rect(0, 0, 358, 340, '#8ED8F8'),
     use('s4-zon', 34, 30, 54, 54),
-    use('s4-wolk', 150, 36, 96, 36), use('s4-wolk', 268, 92, 66, 25),
-    use('s4-meeuw', 120, 110, 22, 11), use('s4-meeuw', 96, 124, 16, 8),
+    use('s4-wolk', 150, 36, 96, 36, null, sap('drijf 7 9500')), use('s4-wolk', 268, 92, 66, 25, null, sap('drijf 5 8000')),
+    use('s4-meeuw', 120, 110, 22, 11, null, sap('dobber -5 2000')), use('s4-meeuw', 96, 124, 16, 8, null, sap('dobber -3 2400')),
     use('s4-bergen', 0, 140, 358, 190),
     // Het rotspunt steekt uit boven de diepte; zijn voorkant sluit aan op het gras van het uitzichtpunt.
     use('s4-rotspunt', 230, 268, 120, 64),
@@ -92,13 +94,13 @@ function bergAchter() {
 function bergRekwisieten() {
   return [
     { y: 340, knoop: use('s4-hek', 12, 290, 200, 52) },
-    { y: 426, knoop: use('s4-den', 300, 330, 54, 96) },
+    { y: 426, knoop: use('s4-den', 300, 330, 54, 96, null, sap('wieg 1.2 4200')) },
     { y: 459, werker: true, knoop: werkerKnoop(BERG_WERKER) },
     { y: 460, knoop: use('s4-kijker', 186, 388, 44, 72) },
-    { y: 470, knoop: use('s4-struik', 290, 436, 56, 36) },
+    { y: 470, knoop: use('s4-struik', 290, 436, 56, 36, null, sap('wieg 1 3000')) },
     { y: 474, knoop: use('s4-bank', 20, 430, 84, 48) },
     { y: 588, knoop: use('s4-wegwijzer', 36, 520, 44, 70) },
-    { y: 634, knoop: use('s4-struik', 128, 600, 56, 36) },
+    { y: 634, knoop: use('s4-struik', 128, 600, 56, 36, null, sap('wieg 1 3400')) },
   ];
 }
 
@@ -114,7 +116,7 @@ function marktAchter() {
   for (let x = -120; x < 400; x += 46) tegels.push(`M${x} 304 L${x + 70} 670`);
   return el('g', { class: 's4-achter' }, [
     rect(0, 0, 358, 140, '#8ED8F8'),
-    use('s4-wolk', 40, 18, 80, 30), use('s4-wolk', 236, 40, 66, 25),
+    use('s4-wolk', 40, 18, 80, 30, null, sap('drijf 7 9000')), use('s4-wolk', 236, 40, 66, 25, null, sap('drijf 5 7800')),
     use('s4-gevels', 0, 86, 358, 210),
     rect(0, 290, 358, 14, '#DDE7EE'),
     rect(0, 300, 358, 4, '#CFD8DC'),
@@ -129,7 +131,8 @@ function marktRekwisieten() {
   return [
     { y: 392, knoop: use('s4-bloemkraam', 22, 284, 130, 110) },
     // Dierentafel: verkoper erachter, kooien met twee katten en een vliegende eekhoorn erop; het jongetje staat ervoor.
-    { y: 396, knoop: persoon(293 - 24, 394 - 71, VERKOPER) },
+    // In een eigen groep: de ademanimatie mag het draaipunt van de personagegroep (transform) niet verzetten.
+    { y: 396, knoop: el('g', {}, [el('g', sap('adem 1.025 2600'), [persoon(293 - 24, 394 - 71, VERKOPER)])]) },
     { y: 443, werker: true, knoop: werkerKnoop(MARKT_WERKER) },
     { y: 444, knoop: use('s4-dierentafel', 232, 378, 120, 70) },
     { y: 444.5, knoop: el('g', {}, [

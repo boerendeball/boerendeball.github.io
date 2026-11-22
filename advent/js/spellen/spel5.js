@@ -17,6 +17,8 @@ import { el, use, groep, scene, persoon, pino } from '../sprites.js';
 import { maakLus } from './lus.js';
 import { maakInvoer } from '../invoer.js';
 import * as M from './markt.js';
+import * as sap from '../ui/sap.js';
+import { maakTeller } from '../ui/teller.js';
 
 const B = 358;
 const H = 582;
@@ -70,8 +72,13 @@ function svgIcoon(id, maat, { kleur = null, label = null } = {}) {
 }
 const munt = (maat) => svgIcoon('s4-munt', maat);
 
-function lampion(x, y, kleur) {
-  return groep(x, y, {}, [use('s5-gloed', -28, -22, 80, 80), use('s5-lampion', 0, 0, 24, 34, kleur)]);
+// Een lampion zwaait zacht aan zijn haakje (bovenkant midden) en zijn gloed ademt licht (data-sap, sap.leven;
+// beeldfeedback, besluit 210). De groep staat op het haakje, zodat het zwaaien om (0,0) gaat.
+function lampion(x, y, kleur, { zwaai = true } = {}) {
+  return groep(x + 12, y, {}, [el('g', zwaai ? { 'data-sap': 'haak 4 2600' } : {}, [
+    use('s5-gloed', -40, -22, 80, 80, null, { 'data-sap': 'gloei 0.55 1700' }),
+    use('s5-lampion', -12, 0, 24, 34, kleur),
+  ])]);
 }
 
 /** Portret van een handelaar (hoofd en schouders), voor het onderhandelscherm en het resultaat. */
@@ -167,7 +174,7 @@ function marktDingen({ product = null, producten = [], metWissel = false, werker
   const werkerKnoop = werker ? use('wk-emmer', WERKER.x, WERKER.y, WERKER.b, WERKER.h) : null;
   dingen.push({ y: 308, knoop: el('g', {}, [werkerKnoop, use('s5-put', 143, 228, 72, 84)].filter(Boolean)) });
   dingen.push({ y: 324, knoop: use('s5-kruk', 106, 296, 24, 28) });
-  dingen.push({ y: 400, knoop: el('g', {}, [el('rect', { x: 194, y: 330, width: 4, height: 70, fill: '#8B4A1E' }), lampion(186, 308, '#FF8A3D')]) });
+  dingen.push({ y: 400, knoop: el('g', {}, [el('rect', { x: 194, y: 330, width: 4, height: 70, fill: '#8B4A1E' }), lampion(186, 308, '#FF8A3D', { zwaai: false })]) });   // op de paal: staat stil
   if (metWissel) {
     dingen.push({ y: WISSEL.y + 116 * WISSEL.s, knoop: groep(WISSEL.x, WISSEL.y, { schaal: WISSEL.s }, [
       use('s5-kraam-achter', 0, 0, 130, 120, '#9B6BFF'), persoon(41, 28, WISSELAAR), use('s5-kraam-voor', 0, 0, 130, 120), use('s5-waar-wissel', 14, 58, 100, 30),
@@ -222,12 +229,10 @@ function markt({ root, dag, info, klaar, opnieuw, kijken = false, zoek = false }
   for (const d of dingen) laag.append(d.knoop);
 
   /* ---------- DOM ---------- */
-  const geldGetal = h('span', {}, String(s0.geld));
-  const geldPil = h('span', { class: 'teller-pil s5-geld', role: 'img', 'aria-label': `Portemonnee: ${s0.geld} munten` }, [munt(24), geldGetal]);
-  const afmelden = staat.abonneer((s) => {
-    geldGetal.textContent = String(s.geld);
-    geldPil.setAttribute('aria-label', `Portemonnee: ${s.geld} munten`);
-  });
+  // Portemonnee die optelt en aftelt en pulseert bij elke wijziging (beeldfeedback, besluit 210).
+  const geld = maakTeller({ icoon: munt(24), waarde: s0.geld, label: (n) => `Portemonnee: ${n} munten`, klasse: 's5-geld', getalKlasse: '' });
+  const geldPil = geld.element;
+  const afmelden = staat.abonneer((s) => geld.zet(s.geld));
 
   const knoppenLaag = h('div', { class: 's5-knoppen' });
   if (datum.deurOpen(7)) {
@@ -432,6 +437,8 @@ function markt({ root, dag, info, klaar, opnieuw, kijken = false, zoek = false }
     const t = sz.t;
     const praten = t >= HEEN && t < HEEN + PRATEN;
     const klaar = t >= 2 * HEEN + PRATEN;
+    // Zodra ze samen staan te praten (met boze gezichten), even een boos wolkje boven elk van hen (besluit 210).
+    if (praten && !sz.wolk) { sz.wolk = true; groepLeden.forEach((id, n) => na(150 * n, () => boosWolk(id))); }
     groepLeden.forEach((id, n) => {
       if (id === gastheer) {
         zet(id, THUIS[id], praten ? praatWip(t, n) : 0, praten ? 'b-boos' : gezichtVan(id), false);
@@ -455,6 +462,7 @@ function markt({ root, dag, info, klaar, opnieuw, kijken = false, zoek = false }
     if (klaar) {
       sz.t = -1;
       sz.wacht = null;
+      sz.wolk = false;
     }
   }
 
@@ -697,7 +705,11 @@ function markt({ root, dag, info, klaar, opnieuw, kijken = false, zoek = false }
     const badge = h('span', { class: 's5-badge', role: 'img' });
     const uitsnede = h('div', { class: 's5-portret-uitsnede' });
     // Badge én gezicht tonen dezelfde stemming; ook de handelaar in de scène kijkt zo (besluit 77).
+    let vorigeStemming = null;
     const zetStemming = (stemming) => {
+      // Een nieuwe stemming springt in beeld (beeldfeedback, besluit 210).
+      if (vorigeStemming && vorigeStemming !== stemming) sap.pop(badge, { duur: 360 });
+      vorigeStemming = stemming;
       badge.replaceChildren(svgIcoon(`s5-stemming-${stemming}`, 26));
       badge.setAttribute('aria-label', STEMMING_LABEL[stemming]);
       uitsnede.replaceChildren(portretSvg(id, GEZICHT[stemming]));
@@ -733,8 +745,10 @@ function markt({ root, dag, info, klaar, opnieuw, kijken = false, zoek = false }
     }
     function stap(richting) {
       if (dealt) return;
+      const voor = bod;
       bod += richting * M.STAP;
       toonBod();
+      if (bod !== voor) sap.puls(bodGetal.parentElement, { schaal: 1.08, duur: 160 });
     }
     // Vasthouden herhaalt; toetsenbord (klik zonder aanwijzer) zet één stap.
     function maakHerhaal(knop, richting) {
@@ -767,6 +781,9 @@ function markt({ root, dag, info, klaar, opnieuw, kijken = false, zoek = false }
         dealt = true;
         toonBod();
         const betaald = bod;
+        // Akkoord: drie munten vliegen van het bod naar de handelaar (beeldfeedback, besluit 210).
+        for (let n = 0; n < 3; n++) na(n * 120, () => sap.vlieg({ van: bodGetal.parentElement, naar: portret, inhoud: munt(26), maat: 26, duur: 480, boog: 50 }));
+        na(420, () => sap.wip(portret, { sterkte: 0.6 }));
         await wacht(rustig ? 300 : 800);
         if (gestopt) return;
         d.sluit();
@@ -788,7 +805,15 @@ function markt({ root, dag, info, klaar, opnieuw, kijken = false, zoek = false }
     ];
     const d = toonDialoog({
       label: `Onderhandelen met ${i.naam}`, klasse: 's5-onderhandel', dim: 'rgba(30, 58, 76, 0.5)', inhoud: kaartInhoud,
-      bijSluiten: () => { stopMin(); stopPlus(); d.element.removeEventListener('keydown', opToets); if (!dealt) { if (naSluiten) naSluiten(); else if (M.moetKomen(ronde, id)) planKomst(); hervat(); } },
+      bijSluiten: () => {
+        stopMin(); stopPlus(); d.element.removeEventListener('keydown', opToets);
+        if (!dealt) {
+          if (naSluiten) naSluiten(); else if (M.moetKomen(ronde, id)) planKomst();
+          hervat();
+          // Loopt Pino boos weg, dan zie je dat ook in de scène even boven zijn hoofd (besluit 210).
+          if (M.stemmingVan(ronde.handelaars[id]) === 'boos') na(120, () => boosWolk(id));
+        }
+      },
     });
     function opToets(ev) {
       if (ev.key === 'ArrowUp' || ev.key === 'ArrowRight') { ev.preventDefault(); stap(1); }
@@ -846,6 +871,19 @@ function markt({ root, dag, info, klaar, opnieuw, kijken = false, zoek = false }
     setTimeout(() => b.remove(), 1500);
   }
 
+  /** Iets na een korte pauze; de timer wordt opgeruimd bij het verlaten. */
+  function na(ms, fn) {
+    const tm = setTimeout(() => { timers.delete(tm); if (!gestopt) fn(); }, ms);
+    timers.add(tm);
+  }
+
+  /** Boos wolkje boven het hoofd van een handelaar in de scène, in zijn kraam of los op de markt. */
+  function boosWolk(id) {
+    const p = plek[id] || { ...THUIS[id], binnen: true };
+    if (p.binnen) sap.bubbel(svg, p.x, INFO[id].y + 31, 'boos', { maat: 28 });
+    else sap.bubbel(svg, p.x, p.y - 68, 'boos', { maat: 28 });
+  }
+
   /* ---------- werker (spel 7) ---------- */
   function vindWerker() {
     werkerGevonden(5, { zoek });
@@ -885,7 +923,8 @@ function markt({ root, dag, info, klaar, opnieuw, kijken = false, zoek = false }
   update(0);
   teken();
   lus.start();
-  if (datum.isTest()) window.pinoDebug = { spel: 5, get ronde() { return ronde; }, pino: pinoStaat };
+  const wachtAnimaties = sap.leven(svg);
+  if (datum.isTest()) window.pinoDebug = { spel: 5, get ronde() { return ronde; }, pino: pinoStaat, stap: (ms) => { update(ms / 1000); teken(); } };
 
   return () => {
     gestopt = true;
@@ -893,6 +932,7 @@ function markt({ root, dag, info, klaar, opnieuw, kijken = false, zoek = false }
     invoer.vernietig();
     afmelden();
     for (const id of timers) clearTimeout(id);
+    for (const a of wachtAnimaties) a.cancel();
     document.querySelectorAll('.s5-plus').forEach((n) => n.remove());
     if (window.pinoDebug && window.pinoDebug.spel === 5) delete window.pinoDebug;
   };

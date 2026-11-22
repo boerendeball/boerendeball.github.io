@@ -14,6 +14,8 @@ import { maakLus } from './lus.js';
 import * as F from './fotos.js';
 import * as fam from './familie.js';
 import { DECOR } from './decor4.js';
+import * as sap from '../ui/sap.js';
+import { maakTeller } from '../ui/teller.js';
 
 const WIT = '#FFFFFF';
 const ROOD = '#FF5E5B';
@@ -183,10 +185,9 @@ function speel({ root, dag, info, klaar, opnieuw, familieId, kijken = false, zoe
   const wacht = (ms) => new Promise((ok) => { const id = setTimeout(() => { timers.delete(id); ok(); }, ms); timers.add(id); });
 
   /* ---------- DOM ---------- */
-  const tellerGetal = h('span', {}, '0');
-  const teller = h('span', { class: 'teller-pil s4-teller', role: 'img', 'aria-label': 'Filmrolletje: 0 opnames' }, [
-    svgIcoon('s4-film', 48, 48, 26, 26), tellerGetal,
-  ]);
+  // Teller die bij elke opname optelt en pulseert (beeldfeedback, besluit 210).
+  const filmrol = maakTeller({ icoon: svgIcoon('s4-film', 48, 48, 26, 26), waarde: 0, label: (n) => `Filmrolletje: ${n} opnames`, klasse: 's4-teller', getalKlasse: '' });
+  const teller = filmrol.element;
 
   const decor = DECOR[omg.omgeving];
   const WERKER = decor.werker;
@@ -342,11 +343,11 @@ function speel({ root, dag, info, klaar, opnieuw, familieId, kijken = false, zoe
     const r = F.beoordeel(omg, rol, standen(), gedaan);
     if (r.uitkomst === 'niets') return;
     opnames++;
-    tellerGetal.textContent = String(opnames);
-    teller.setAttribute('aria-label', `Filmrolletje: ${opnames} opnames`);
+    filmrol.zet(opnames);
     if (r.uitkomst === 'fout') {
       miskliks++;
       toonFrame(r.frame, ROOD);
+      sap.schud(frameLaag.firstElementChild, { sterkte: 4, duur: 300 });
       clearTimeout(roodTimer);
       roodTimer = setTimeout(wisFrame, F.ROOD_MS);
       return;
@@ -413,6 +414,7 @@ function speel({ root, dag, info, klaar, opnieuw, familieId, kijken = false, zoe
     await Promise.race([new Promise((ok) => { anim.onfinish = ok; anim.oncancel = ok; }), wacht(800)]);
     vlieger.remove();
     polaroid.style.visibility = '';
+    sap.puls(vak, { schaal: 1.1, duur: 300 });
   }
 
   function frameRechthoek(frame) {
@@ -472,12 +474,20 @@ function speel({ root, dag, info, klaar, opnieuw, familieId, kijken = false, zoe
   update(0);
   teken();
   lus.start();
+  // De omgeving leeft: meeuwen, wolken, golfjes, palm, den, struiken (data-sap in decor4.js, besluit 210).
+  const wachtAnimaties = sap.leven(svg);
+  // sap.leven zet een wiegende <use> in een eigen groep; het sorteren op diepte moet die groep verplaatsen.
+  for (const d of dingen) {
+    const ouder = d.knoop.parentNode;
+    if (ouder && ouder !== laag && ouder.classList?.contains('sap-omhulsel')) d.knoop = ouder;
+  }
   if (datum.isTest()) window.pinoDebug = { spel: 4, familie: familieId, omg, routes, standen, get t() { return t; }, controleer: () => F.controleer(familieId) };
 
   return () => {
     gestopt = true;
     lus.stop();
     clearTimeout(roodTimer);
+    for (const a of wachtAnimaties) a.cancel();
     for (const id of timers) clearTimeout(id);
     document.querySelectorAll('.s4-vlieger').forEach((n) => n.remove());
     if (window.pinoDebug && window.pinoDebug.spel === 4) delete window.pinoDebug;

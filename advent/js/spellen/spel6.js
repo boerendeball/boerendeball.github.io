@@ -19,6 +19,7 @@ import * as datum from '../datum.js';
 import { werkerGevonden, terugKnop, werkerVak } from './zoeken.js';
 import { ga } from '../router.js';
 import * as K from './klem.js';
+import * as sap from '../ui/sap.js';
 
 /* ---------- tuning (specs/spel6.md) ---------- */
 const START_PAUZE = 2000;     // ms: zo lang loopt iedereen blij rond voordat de dief verschijnt
@@ -121,8 +122,14 @@ function spriteLijst() {
 
 /** Wordt door het laadscherm aangeroepen: sprite sheet klaarzetten. */
 export async function voorbereid() {
-  await voorbereidSprites(spriteLijst());
+  await voorbereidSprites([...spriteLijst(), { id: 'bub-wolk' }, { id: 'bub-uitroep' }]);
 }
+
+// Beeldfeedback (besluit 210, specs/beeldfeedback.md)
+const HIT_STOP = 60;            // ms stilstand bij een gelukte move
+const UITROEP_DUUR = 1.4;       // s een uitroep-wolkje boven een geschrokken omstander
+const UITROEP_MAAT = 26;
+const HAAST = 5000;             // ms laatste seconden tot de politie er is: de tijdkaart wordt rood en pulseert
 
 /* ---------- steeg tekenen (gedeeld door het spel en de polaroid in spel 7) ---------- */
 
@@ -139,8 +146,8 @@ function tekenLampion(c, x, y, kleur) {
   tekenSprite(c, 's5-lampion', x, y, { w: 24, h: 34, kleur });
 }
 
-/** Kasseien, lampionslinger en lampions. */
-function tekenSteegGrond(g) {
+/** Kasseien, lampionslinger en (zonder { lampions: false }) de lampions. */
+function tekenSteegGrond(g, { lampions = true } = {}) {
   g.fillStyle = '#556B8E'; g.fillRect(0, 0, B, H);
   g.fillStyle = '#4E6384';
   for (let y = 0; y < H; y += 28) {
@@ -149,7 +156,20 @@ function tekenSteegGrond(g) {
   }
   g.strokeStyle = '#8B4A1E'; g.lineWidth = 2.5;
   g.stroke(new Path2D('M0 28 q90 22 180 0 t178 0'));
-  for (const [x, y, kleur] of LAMPIONS) tekenLampion(g, x, y, kleur);
+  if (lampions) for (const [x, y, kleur] of LAMPIONS) tekenLampion(g, x, y, kleur);
+}
+
+const ZWAAI_HOEK = 0.07;        // rad (± 4°): zo ver zwaait een lampion aan zijn haakje (beeldfeedback, besluit 210)
+const ZWAAI_DUUR = 2.6;         // s per heen-en-weer
+
+/** Een lampion die zacht aan zijn haakje (bovenkant midden) zwaait; elke lampion in zijn eigen fase. */
+function tekenZwaaiLampion(c, x, y, kleur, klok, i, rustig) {
+  const hoek = rustig ? 0 : Math.sin((klok * Math.PI * 2) / (ZWAAI_DUUR + (i % 3) * 0.3) + i * 1.3) * ZWAAI_HOEK;
+  c.save();
+  c.translate(x + 12, y);
+  c.rotate(hoek);
+  tekenLampion(c, -12, 0, kleur);
+  c.restore();
 }
 
 // Persoon 48×72 (kind × 0,72): lijf of jurk → hoofd → haar → gezicht → accessoires.
@@ -271,11 +291,12 @@ function speel({ root, dag, info, klaar, opnieuw, zoek = false }) {
   const pino = { x: PINO_START.x, y: PINO_START.y, richting: 1, loopTijd: 0, pose: 'staan', ketting: true };
   const menigte = beginMenigte();
   let klem = null;
+  const uitroepen = [];   // { x, y, t, vertraging } boven geschrokken omstanders (beeldfeedback)
   // Testmodus: de staat plus stap(ms) om het spel met de hand vooruit te zetten (in stappen van hooguit 50 ms).
   if (datum.isTest()) {
     window.pinoDebug = {
       spel: 6, s, pino, dief, get klem() { return klem; }, reageer, drukBaan,
-      stap(ms = 16) { for (let rest = ms; rest > 0 && !s.af; rest -= 50) update(Math.min(50, rest) / 1000); if (!s.af) teken(); },
+      stap(ms = 16) { for (let rest = ms; rest > 0 && !s.af; rest -= 50) { update(Math.min(50, rest) / 1000); effecten(Math.min(50, rest) / 1000); } if (!s.af) teken(); },
     };
   }
 
@@ -296,6 +317,10 @@ function speel({ root, dag, info, klaar, opnieuw, zoek = false }) {
     if (baan === undefined || ev.repeat || ev.metaKey || ev.ctrlKey) return;
     ev.preventDefault();
     drukBaan(baan);
+    // De knop gaat zichtbaar omlaag, alsof hij aangetikt is (besluit 210).
+    const knop = moveKnoppen[baan];
+    knop.classList.add('ingedrukt');
+    straks(() => knop.classList.remove('ingedrukt'), 120);
   }
   window.addEventListener('keydown', opToets);
   // Lopen (alleen in de eerste START_PAUZE ms): joystick door vasthouden op het scherm, of pijltjes/WASD. Een eigen
@@ -320,8 +345,13 @@ function speel({ root, dag, info, klaar, opnieuw, zoek = false }) {
     if (s.fase !== 'klem' || gestopt) return;
     const r = K.druk(klem, baan, s.t);
     knopFlits(baan, r.soort === 'raak' ? 'raak' : 'mis');
-    if (r.soort === 'raak') toonMove(K.BANEN[baan]);
-    else if (r.soort === 'knie') toonKnieMis(baan);
+    if (r.soort === 'raak') {
+      toonMove(K.BANEN[baan]);
+      // Raak: even stilstaan en een tikje trillen (besluit 210; sterretjes vond Benjamin te veel).
+      lus.bevries(HIT_STOP);
+      sap.tril(20);
+    } else if (r.soort === 'knie') toonKnieMis(baan);
+    else sap.schud(kaart, { sterkte: 3, duur: 220 });
   }
 
   const timers = new Set();
@@ -418,6 +448,7 @@ function speel({ root, dag, info, klaar, opnieuw, zoek = false }) {
         for (const m of menigte) m.pauze = 0;
         reageerKnop.hidden = false;
         naarFase('greep');
+        schrik();
       }
     } else if (s.fase === 'greep') {
       ring.setAttribute('stroke-dashoffset', String(OMTREK * Math.min(1, s.t / REACTIE)));
@@ -428,8 +459,10 @@ function speel({ root, dag, info, klaar, opnieuw, zoek = false }) {
       politieVulling.style.width = `${Math.min(100, (s.t / K.DUUR) * 100)}%`;
       const tekst = formatteerTijd(Math.ceil(rest / 1000));
       if (politieTijd.textContent !== tekst) politieTijd.textContent = tekst;
-      if (klem.los) { moves.hidden = true; vlucht(); }
-      else if (K.gehaald(klem, s.t)) { moves.hidden = true; naarFase('politie'); }
+      const haast = rest > 0 && rest <= HAAST;
+      if (politieKaart.classList.contains('sap-haast') !== haast) politieKaart.classList.toggle('sap-haast', haast);
+      if (klem.los) { moves.hidden = true; politieKaart.classList.remove('sap-haast'); vlucht(); }
+      else if (K.gehaald(klem, s.t)) { moves.hidden = true; politieKaart.classList.remove('sap-haast'); naarFase('politie'); }
     } else if (s.fase === 'vlucht') {
       dief.x += VLUCHT_SNELHEID * dt;
       if (dief.x > B + 24 && s.vluchtKlaar === null) s.vluchtKlaar = s.t;
@@ -441,7 +474,8 @@ function speel({ root, dag, info, klaar, opnieuw, zoek = false }) {
 
   /* ---------- achtergrond (één keer) ---------- */
   const achtergrond = maakLaag(B, H);
-  function tekenAchtergrond() { tekenSteegGrond(achtergrond.ctx); }
+  // De lampions staan niet in de vaste laag: ze zwaaien (beeldfeedback, besluit 210).
+  function tekenAchtergrond() { tekenSteegGrond(achtergrond.ctx, { lampions: false }); }
 
   /* ---------- tekenen ---------- */
   const wip = (fase) => (rustig ? 0 : -Math.abs(Math.sin((s.klok / 1000 + fase) * Math.PI * 5)) * 2);
@@ -562,6 +596,7 @@ function speel({ root, dag, info, klaar, opnieuw, zoek = false }) {
   function teken() {
     begin();
     achtergrond.teken(ctx);
+    LAMPIONS.forEach(([x, y, kleur], i) => tekenZwaaiLampion(ctx, x, y, kleur, s.klok / 1000, i, rustig));
     const gezicht = gezichtNu();
     for (const k of KRAMEN) tekenKraam(ctx, k, gezicht);
     // tekenvolgorde achter → voor op voet-y
@@ -576,7 +611,44 @@ function speel({ root, dag, info, klaar, opnieuw, zoek = false }) {
     for (const l of lagen) l.f();
     if (inKlem) tekenBalk();
     if (s.fase === 'klem') tekenBanen();
+    for (const u of uitroepen) tekenUitroep(u);
     tekenNoten();
+  }
+
+  /* ---------- beeldfeedback (besluit 210) ---------- */
+
+  /**
+   * De dief grijpt: de hele kolom (scène, knoppen, noten) schudt, een rode rand flitst op, de telefoon trilt kort
+   * en boven de omstanders die het dichtst bij staan verschijnt een uitroep-wolkje. Dat ze schrikken, is al te zien.
+   */
+  function schrik() {
+    sap.schud(kolom, { sterkte: 6, duur: 420 });
+    sap.flits(kaart, { kleur: '#FF5E5B', rand: true, duur: 600, piek: 0.9 });
+    sap.tril(80);
+    if (rustig) return;
+    const dichtbij = menigte.filter((m) => !m.werker)
+      .map((m) => { const k = m.s * (m.kind ? 0.72 : 1); return { x: m.x + 24 * k, y: m.y + 4 * k, d: Math.hypot(m.x + 24 * k - (pino.x + 24), m.y - pino.y) }; })
+      .sort((a, b) => a.d - b.d).slice(0, 3);
+    dichtbij.forEach((m, i) => uitroepen.push({ x: m.x, y: m.y, t: 0, vertraging: 0.08 + i * 0.12 }));
+  }
+
+  function tekenUitroep(u) {
+    const t = u.t - u.vertraging;
+    if (t < 0) return;
+    const f = t / UITROEP_DUUR;
+    const schaal = f < 0.12 ? (f / 0.12) * 1.15 : f < 0.2 ? 1.15 - ((f - 0.12) / 0.08) * 0.15 : 1;
+    const m = UITROEP_MAAT * schaal;
+    const alpha = f < 0.8 ? 1 : Math.max(0, 1 - (f - 0.8) / 0.2);
+    const x = u.x - m / 2;
+    const y = u.y - m * 0.95;
+    tekenSprite(ctx, 'bub-wolk', x, y, { w: m, h: m, alpha });
+    tekenSprite(ctx, 'bub-uitroep', x, y, { w: m, h: m, alpha });
+  }
+
+  // Effecten lopen ook door tijdens de hit-stop (lus.bevries).
+  function effecten(dt) {
+    for (const u of uitroepen) u.t += dt;
+    for (let i = uitroepen.length - 1; i >= 0; i -= 1) if (uitroepen[i].t - uitroepen[i].vertraging >= UITROEP_DUUR) uitroepen.splice(i, 1);
   }
 
   /* ---------- werker (spel 7) ---------- */
@@ -613,7 +685,7 @@ function speel({ root, dag, info, klaar, opnieuw, zoek = false }) {
   }
 
   /* ---------- start ---------- */
-  const lus = maakLus({ update, teken });
+  const lus = maakLus({ update, teken, effecten });
   voorbereid().then(() => {
     if (gestopt) return;
     tekenAchtergrond();

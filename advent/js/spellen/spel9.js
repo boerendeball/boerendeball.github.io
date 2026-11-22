@@ -14,6 +14,14 @@ import * as staat from '../staat.js';
 import * as datum from '../datum.js';
 import { ga } from '../router.js';
 import * as V from './vang.js';
+import { maakDeeltjes, maakSchok, voorbereidDeeltjes } from './effecten.js';
+import { maakTeller } from '../ui/teller.js';
+import * as sap from '../ui/sap.js';
+
+// Beeldfeedback (besluit 210, specs/beeldfeedback.md)
+const MOLEN = { x: 6, y: 96, b: 60, h: 82 };   // de molen in het dorp (80×110-frame, geschaald)
+const WIEK_SNELHEID = 0.7;   // rad/s: de wieken draaien rustig rond
+const HIT_STOP = 60;         // ms stilstand bij een vangst
 
 /* ---------- tuning (specs/spel9.md; de spelregels staan in vang.js) ---------- */
 const JOYSTICK_VERTRAGING = 250;  // ms, zoals spel 1
@@ -53,7 +61,7 @@ const PAD_LINKS = { x: -30, y: 606 };
 const PAD_RECHTS = { x: B + 30, y: 622 };
 
 function spriteLijst() {
-  const lijst = ['s4-zon', 's4-wolk', 's9-molen', 's8-boom', 's9-ooievaar', 's9-val', 's9-schaduw', 's9-laken', 's9-ring',
+  const lijst = ['s4-zon', 's4-wolk', 's9-molen-romp', 's9-wieken', 's8-boom', 's9-ooievaar', 's9-val', 's9-schaduw', 's9-laken', 's9-ring',
     'pino-staan', 'pino-loop', 'pino-duw', 'pino-duw-op', 'pino-duw-neer', 's9-stetho',
     's9-sneakers', 's9-sneakers-loop', 's9-hakken', 's9-hakken-loop', 's9-stof',
     'b-blij', 's9-heg', 's9-klinker', 's9-lantaarn', 's9-kliniek', 's10-ster'].map((id) => ({ id }));
@@ -72,7 +80,7 @@ function spriteLijst() {
 
 /** Wordt door het laadscherm aangeroepen: sprite sheet klaarzetten. */
 export async function voorbereid() {
-  await voorbereidSprites(spriteLijst());
+  await Promise.all([voorbereidSprites(spriteLijst()), voorbereidDeeltjes(['stof'])]);
 }
 
 /** Heeft Pino sportschoenen? In testmodus overschrijft ?schoenen=0|1 de staat (specs/ontwikkelaarsopties.md). */
@@ -100,8 +108,10 @@ function speel({ root, dag, info, klaar, opnieuw }) {
   let gestopt = false;
 
   /* ---------- DOM: kopbalk met één teller (bundel + gevangen), daaronder de scène ---------- */
-  const tellerTekst = h('span', {}, '0');
-  const teller = h('div', { class: 'teller-pil', role: 'status', 'aria-label': '0 baby\'s gevangen' }, [icoon('baby', 24), tellerTekst]);
+  // Teller die bij elke vangst optelt en pulseert (beeldfeedback, besluit 210).
+  const bundels = maakTeller({ icoon: icoon('baby', 24), waarde: 0, label: (n) => `${n} baby's gevangen`, getalKlasse: '' });
+  const teller = bundels.element;
+  teller.setAttribute('role', 'status');
   const { canvas, ctx, begin } = maakCanvas(B, H, {
     label: 'Nederlands dorp: een ooievaar laat bundeltjes vallen boven een grasveld met drie mannen met een laken; Pino loopt ertussen. Onderaan een klinkerpad naar de kraamkliniek',
   });
@@ -124,6 +134,8 @@ function speel({ root, dag, info, klaar, opnieuw }) {
   const sterren = [];
   const harten = [];
   const stof = [];
+  const deeltjes = maakDeeltjes();   // stofwolk bij een misser
+  const schok = maakSchok();
   const ooievaar = { cx: 210, richting: 1, doel: 210 };
   const s = {
     t: 0, klok: 0, gestart: false, wacht: 0, volgende: V.EERSTE_WORP, plan: null,
@@ -150,7 +162,8 @@ function speel({ root, dag, info, klaar, opnieuw }) {
     g.fillStyle = '#9ADB7A';
     g.beginPath(); g.ellipse(110, 178, 150, 12, 0, 0, Math.PI * 2); g.fill();
     g.beginPath(); g.ellipse(300, 180, 120, 10, 0, 0, Math.PI * 2); g.fill();
-    tekenSprite(g, 's9-molen', 6, 96, { w: 60, h: 82 });
+    // De molen zonder wieken; de wieken draaien in teken() (beeldfeedback, besluit 210).
+    tekenSprite(g, 's9-molen-romp', MOLEN.x, MOLEN.y, { w: MOLEN.b, h: MOLEN.h });
     for (const [x, y, w, hh, kleur] of HUISJES) tekenSprite(g, 's9-huisje', x, y, { w, h: hh, kleur });
     for (const [x, y, w, hh] of BOMEN) tekenSprite(g, 's8-boom', x, y, { w, h: hh });
     // vangstrook: gemaaide banen die naar achteren smaller worden (diepte)
@@ -232,8 +245,10 @@ function speel({ root, dag, info, klaar, opnieuw }) {
     const kant = m.x < B / 2 ? -1 : 1;
     m.toestand = 'weg'; m.doek = b.doek; m.richting = kant; m.ring = 0;
     s.gevangen += 1;
-    tellerTekst.textContent = String(s.gevangen);
-    teller.setAttribute('aria-label', `${s.gevangen} baby's gevangen`);
+    bundels.zet(s.gevangen);
+    // Gevangen: even stilstaan en een tikje trillen (beeldfeedback, besluit 210).
+    lus.bevries(HIT_STOP);
+    sap.tril(20);
     // meteen loopt aan dezelfde kant een nieuwe man met een laken het veld in (besluit 131)
     const nieuw = nieuweMan(kant < 0 ? -30 : B + 30, m.y, 'in');
     const x = kant < 0 ? V.MAN_VELD.xMin + 4 : V.MAN_VELD.xMax - 4;
@@ -251,8 +266,11 @@ function speel({ root, dag, info, klaar, opnieuw }) {
     let m = vangers().find((k) => V.vangt(k, b.x, b.y));
     if (!m && s.altijdRaak) m = vangers().sort((p, q) => Math.hypot(p.x - b.x, p.y - b.y) - Math.hypot(q.x - b.x, q.y - b.y))[0];
     if (m) { babys.splice(babys.indexOf(b), 1); vang(m, b); return; }
-    // gemist: het spel stopt meteen (besluit 130)
+    // gemist: het spel stopt meteen (besluit 130). Plof: het beeld schokt en er stuift een wolk op (besluit 210).
     s.klaar = true; s.gelukt = false; s.bevries = BEVRIES_MIS;
+    schok.start(5, 0.4);
+    deeltjes.voeg('stof', b.x, b.y - 4, { aantal: 8, snelheid: 40, maat: 22 });
+    sap.tril(60);
   }
 
   function lever(m) {
@@ -279,6 +297,8 @@ function speel({ root, dag, info, klaar, opnieuw }) {
     for (const e of sterren) { e.t += dt; e.x += e.vx * dt; e.y += e.vy * dt; }
     for (const e of harten) { e.t += dt; if (e.t > 0) e.y -= 26 * dt; }
     for (const e of stof) e.t += dt;
+    deeltjes.update(dt);
+    schok.update(dt);
     for (const lijst of [[sterren, STER_DUUR], [harten, HART_DUUR], [stof, STOF_DUUR]]) {
       const [l, duur] = lijst;
       for (let i = l.length - 1; i >= 0; i -= 1) if (l[i].t >= duur) l.splice(i, 1);
@@ -418,8 +438,11 @@ function speel({ root, dag, info, klaar, opnieuw }) {
   }
 
   function teken() {
-    begin();
+    begin({ dx: schok.dx, dy: schok.dy });
     achter.teken(ctx);
+    // Molenwieken: s9-wieken (80×80, draaipunt in het midden) op x 0, y 6 in het 80×110-frame van de molen.
+    const kx = MOLEN.b / 80; const ky = MOLEN.h / 110;
+    tekenSprite(ctx, 's9-wieken', MOLEN.x, MOLEN.y + 6 * ky, { w: 80 * kx, h: 80 * ky, hoek: rustig ? 0 : s.klok * WIEK_SNELHEID, draai: [40, 40] });
 
     const bob = rustig ? 0 : Math.sin(s.klok * 5) * 3;
     tekenSprite(ctx, 's9-ooievaar', ooievaar.cx - 60, OOIEVAAR_Y + bob, { w: 120, h: 70, flip: ooievaar.richting < 0 });
@@ -462,6 +485,7 @@ function speel({ root, dag, info, klaar, opnieuw }) {
       const f = e.t / HART_DUUR;
       tekenSprite(ctx, 's9-hart', e.x - 8, e.y - 8, { w: 16, h: 16, kleur: '#FF6FAE', alpha: 1 - f * f });
     }
+    deeltjes.teken(ctx);
   }
 
   /* ---------- einde ---------- */

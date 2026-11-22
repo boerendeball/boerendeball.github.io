@@ -9,6 +9,8 @@ import { maakLus } from './lus.js';
 import { voorbereidSprites, tekenSprite } from './spritesheet.js';
 import { maakCanvas, maakLaag } from './canvas.js';
 import { maakInvoer } from '../invoer.js';
+import { maakDeeltjes, voorbereidDeeltjes } from './effecten.js';
+import { tril } from '../ui/sap.js';
 import * as staat from '../staat.js';
 import * as datum from '../datum.js';
 import { ga } from '../router.js';
@@ -52,6 +54,13 @@ const SCHRIK_HUP = 4;         // px hoogte van de schrikhup
 const BOOS_SCHUD = 1.5;       // px het boze kind schudt het hoofd heen en weer, drie keer binnen BOOS_DUUR (#183)
 const BEVRIES = 0.8;          // s stilstand voor het resultaatscherm
 const JOYSTICK_VERTRAGING = 250;  // ms vasthouden voordat de joystick verschijnt (besluiten.md #23)
+// Beeldfeedback (besluit 210, specs/beeldfeedback.md)
+const HIT_STOP = 70;          // ms het beeld staat even stil bij een geslaagde onderbreking
+const PLUS_DUUR = 0.8;        // s de "+1" stijgt op boven het kind en vervaagt
+const PLUS_HOOGTE = 26;       // px zo ver stijgt de "+1"
+const ADEM_DUUR = 2.8;        // s één ademhaling van een slapend kind (de deken gaat op en neer)
+const ADEM = 0.025;           // relatieve uitzetting van de deken
+const HAAST = 5;              // s laatste seconden: de tijdkaart wordt rood en pulseert
 
 /* ---------- scène ---------- */
 const B = 358;
@@ -84,7 +93,7 @@ function spriteLijst() {
 
 /** Wordt door het laadscherm aangeroepen: sprite sheet en font klaarzetten. */
 export async function voorbereid() {
-  await voorbereidSprites(spriteLijst());
+  await Promise.all([voorbereidSprites(spriteLijst()), voorbereidDeeltjes(['ster', 'stof'])]);
   try { await Promise.all([document.fonts.load('800 11px Nunito'), document.fonts.load('800 13px Nunito')]); } catch { /* font is niet kritiek */ }
 }
 
@@ -102,17 +111,18 @@ function speel({ root, dag, info, klaar, opnieuw }) {
   /* ---------- DOM ---------- */
   const tijdBalk = h('span', { style: { width: '100%' } });
   const tijdTekst = h('span', { class: 'kop tijd-tekst' }, formatteerTijd(DUUR));
+  const tijdKaart = h('div', { class: 'kaart tijdkaart' }, [
+    icoon('klok', 22),
+    h('span', { class: 'balk balk-tijd', 'aria-hidden': 'true' }, [tijdBalk]),
+    tijdTekst,
+  ]);
   const { canvas, ctx, begin } = maakCanvas(B, H, { label: 'Slaapzaal met negen bedden; Pino loopt tussen de bedden' });
 
   // Geen besturingspaneel (besluiten.md #22): touch/muis gaat via de joystick (vasthouden op het scherm,
   // besluiten.md #23) en een tik om te onderbreken (#24); daarnaast toetsenbord (pijltjes/WASD, spatie/Enter).
   const scherm = h('div', { class: 'scherm spel' }, [
     kopbalk({ label: datum.dagLabel(dag), titel: info.titel, terugNaar: `/deur/${dag}`, terugLabel: 'Terug naar het deurtje' }),
-    h('div', { class: 'kaart tijdkaart' }, [
-      icoon('klok', 22),
-      h('span', { class: 'balk balk-tijd', 'aria-hidden': 'true' }, [tijdBalk]),
-      tijdTekst,
-    ]),
+    tijdKaart,
     h('div', { class: 'scene-kaart' }, [canvas]),
   ]);
   root.replaceChildren(scherm);
@@ -129,7 +139,9 @@ function speel({ root, dag, info, klaar, opnieuw }) {
     score: 0, gemist: 0, gaapTimer: START_PAUZE, klok: 0,
   };
   const lapjes = [];   // tegels die net uit een deken vliegen (besluit 200)
-  if (datum.isTest()) window.pinoDebug = { spel: 1, s, pino, bedden, lapjes };
+  const plussen = [];  // "+1" boven een onderbroken kind (beeldfeedback, besluit 210)
+  const deeltjes = maakDeeltjes();
+  if (datum.isTest()) window.pinoDebug = { spel: 1, s, pino, bedden, lapjes, plussen, stap: (ms) => { update(ms / 1000); effecten(ms / 1000); teken(); } };
 
   /* ---------- invoer ---------- */
   const invoer = maakInvoer({
@@ -240,6 +252,11 @@ function speel({ root, dag, info, klaar, opnieuw }) {
       pino.richting = doel.x + 32 >= pino.x + 24 ? 1 : -1;
       wijs(doel);
       pino.poseTot = POSE_DUUR;
+      // Beeldfeedback (besluit 210): even stilstaan, sterretjes rond het hoofd, "+1" en een tikje trillen.
+      lus.bevries(HIT_STOP);
+      deeltjes.voeg('ster', doel.x + 32, doel.y + 28, { aantal: 6, snelheid: 80 });
+      plussen.push({ x: doel.x + 54, y: doel.y + 18, t: 0 });
+      tril(20);
     } else {
       wijs(null);
       pino.poseTot = POSE_MIS;
@@ -277,7 +294,10 @@ function speel({ root, dag, info, klaar, opnieuw }) {
         const ny = Math.max(GRENS.yMin, Math.min(GRENS.yMax, pino.y + dy * SNELHEID * dt));
         if (!botst(pino.x, ny)) pino.y = ny;
         pino.loopTijd += dt;
-        pino.pose = Math.floor(pino.loopTijd / 0.18) % 2 === 0 ? 'loop' : 'staan';
+        const pose = Math.floor(pino.loopTijd / 0.18) % 2 === 0 ? 'loop' : 'staan';
+        // Een stofje bij elke stap (beeldfeedback, besluit 210).
+        if (pose === 'loop' && pino.pose !== 'loop') deeltjes.voeg('stof', pino.x + 24, pino.y + 70, { aantal: 2 });
+        pino.pose = pose;
       } else {
         pino.loopTijd = 0;
         pino.pose = 'staan';
@@ -319,12 +339,12 @@ function speel({ root, dag, info, klaar, opnieuw }) {
       }
     }
 
-    // Badges
-
-    // Tijd-UI
+    // Tijd-UI; in de laatste seconden wordt de tijdkaart rood en pulseert hij (besluit 210).
     tijdBalk.style.width = `${(s.tijd / DUUR) * 100}%`;
     const tekst = formatteerTijd(Math.ceil(s.tijd));
     if (tijdTekst.textContent !== tekst) tijdTekst.textContent = tekst;
+    const haast = s.gestart && s.tijd > 0 && s.tijd <= HAAST;
+    if (tijdKaart.classList.contains('sap-haast') !== haast) tijdKaart.classList.toggle('sap-haast', haast);
 
     if (s.gestart && s.tijd <= 0) {
       s.klaar = true;
@@ -356,11 +376,59 @@ function speel({ root, dag, info, klaar, opnieuw }) {
     return `g-${b.status}`;
   }
 
+  // Een slapend kind ademt: de deken zet heel licht uit vanaf het voeteneind (beeldfeedback, besluit 210).
   function tekenDekenIn(c, b, x, y) {
+    const adem = b.status === 'slaap' && !rustig ? 1 + ADEM * (0.5 + 0.5 * Math.sin(s.klok * (Math.PI * 2 / ADEM_DUUR) + b.x * 0.031 + b.y * 0.017)) : 1;
+    if (adem !== 1) { c.save(); c.translate(0, y + 84); c.scale(1, adem); c.translate(0, -(y + 84)); }
     tekenSprite(c, 'bed-deken', x, y, { kleur: KLEUR[b.deken] });
     tekenSprite(c, `m-${b.motief}`, x + 10, y + 50, { w: 14, h: 14 });
     tekenSprite(c, `m-${b.motief}`, x + 40, y + 54, { w: 14, h: 14 });
     tekenSprite(c, `m-${b.motief}`, x + 25, y + 60, { w: 12, h: 12 });
+    if (adem !== 1) c.restore();
+  }
+
+  // Het nachtlampje gloeit zacht na (een plat, doorzichtig rondje, geen gradient).
+  function tekenNachtlamp() {
+    const gloed = rustig ? 0.16 : 0.13 + 0.07 * Math.sin(s.klok * 1.9);
+    ctx.save();
+    ctx.globalAlpha = gloed;
+    ctx.fillStyle = '#FFE08A';
+    ctx.beginPath(); ctx.arc(336, 450, 26, 0, Math.PI * 2); ctx.fill();
+    ctx.globalAlpha = gloed * 1.4;
+    ctx.beginPath(); ctx.arc(336, 450, 16, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+    tekenSprite(ctx, 'nachtlamp', 320, 440);
+  }
+
+  // "+1" boven het kind: een wit pilletje met het getal in groen, stijgt op en vervaagt. Spelstand, geen uitleg.
+  function tekenPlus(p) {
+    const f = Math.min(1, p.t / PLUS_DUUR);
+    const stijg = rustig ? 0 : (1 - (1 - f) ** 2) * PLUS_HOOGTE;
+    const schaal = rustig ? 1 : (f < 0.15 ? 0.6 + (f / 0.15) * 0.5 : f < 0.3 ? 1.1 - ((f - 0.15) / 0.15) * 0.1 : 1);
+    ctx.save();
+    ctx.globalAlpha = f < 0.6 ? 1 : 1 - (f - 0.6) / 0.4;
+    ctx.translate(p.x, p.y - stijg);
+    ctx.scale(schaal, schaal);
+    ctx.fillStyle = '#CDE4F0';
+    rondePil(-15, -9 + 2, 30, 18);
+    ctx.fillStyle = '#FFFFFF';
+    rondePil(-15, -9, 30, 18);
+    ctx.fillStyle = '#1F7A3A';
+    ctx.font = '800 13px Nunito, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('+1', 0, 1);
+    ctx.restore();
+  }
+
+  function rondePil(x, y, w, hh) {
+    const r = hh / 2;
+    ctx.beginPath();
+    ctx.moveTo(x + r, y); ctx.lineTo(x + w - r, y);
+    ctx.arc(x + w - r, y + r, r, -Math.PI / 2, Math.PI / 2);
+    ctx.lineTo(x + r, y + hh);
+    ctx.arc(x + r, y + r, r, Math.PI / 2, Math.PI * 1.5);
+    ctx.fill();
   }
 
   // Getint tekenen: teken(c, x, y) tekent op een tussenlaag, daarna krijgen alleen de dekkende pixels de tint
@@ -456,7 +524,7 @@ function speel({ root, dag, info, klaar, opnieuw }) {
     // tekenvolgorde achter → voor: bedrijen, nachtlamp en Pino op onderkant-y
     const lagen = [];
     for (const b of bedden) lagen.push({ y: b.y + 84, f: () => tekenBed(b) });
-    lagen.push({ y: 484, f: () => tekenSprite(ctx, 'nachtlamp', 320, 440) });
+    lagen.push({ y: 484, f: tekenNachtlamp });
     lagen.push({ y: pino.y + 72, f: tekenPino });
     lagen.sort((a, b) => a.y - b.y);
     for (const l of lagen) l.f();
@@ -466,6 +534,15 @@ function speel({ root, dag, info, klaar, opnieuw }) {
       else if (b.wekTot > 0) tekenWek(b);
     }
     for (const l of lapjes) tekenLapje(l);
+    deeltjes.teken(ctx);
+    for (const p of plussen) tekenPlus(p);
+  }
+
+  // Effecten lopen ook door tijdens de hit-stop (lus.bevries).
+  function effecten(dt) {
+    deeltjes.update(dt);
+    for (const p of plussen) p.t += dt;
+    for (let i = plussen.length - 1; i >= 0; i -= 1) if (plussen[i].t >= PLUS_DUUR) plussen.splice(i, 1);
   }
 
   // Een tegel zoals in spel 2 (hx-tegel + motief), klein, die uit de deken omhoog schiet en vervaagt (besluit 200).
@@ -526,7 +603,7 @@ function speel({ root, dag, info, klaar, opnieuw }) {
   }
 
   /* ---------- start ---------- */
-  const lus = maakLus({ update, teken });
+  const lus = maakLus({ update, teken, effecten });
   voorbereid().then(() => {
     if (gestopt) return;
     tekenAchtergrond();

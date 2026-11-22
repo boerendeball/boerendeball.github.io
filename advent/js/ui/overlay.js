@@ -2,6 +2,7 @@
 
 import { h, blokkeerScroll, focusVal } from './dom.js';
 import { icoon } from './iconen.js';
+import { verschijn } from './sap.js';
 
 /**
  * Dialoog over een dimlaag. Geeft { element, sluit } terug.
@@ -16,6 +17,10 @@ export function toonDialoog({ melding = null, inhoud = [], label = 'Dialoog', di
 
   blokkeerScroll(true);
   document.body.append(laag);
+  // Binnenkomen (beeldfeedback, besluit 210): de laag vervaagt in, de kaart springt omhoog, de melding zakt in.
+  laag.animate?.([{ opacity: 0 }, { opacity: 1 }], { duration: 180 });
+  verschijn(kaart, { dy: 24, schaal: 0.92, duur: 320 });
+  if (melding) verschijn(laag.firstElementChild, { dy: -20, schaal: 1, duur: 300, vertraging: 80 });
   const herstelFocus = focusVal(kaart, sluit);
 
   function sluit() {
@@ -43,6 +48,7 @@ export function toonMelding(opties, duur = 2600) {
   const m = maakMelding(opties);
   m.classList.add('melding-zwevend');
   document.body.append(m);
+  verschijn(m, { dy: -20, schaal: 1, duur: 300 });
   setTimeout(() => { m.classList.add('melding-weg'); setTimeout(() => m.remove(), 300); }, duur);
   return m;
 }

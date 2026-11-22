@@ -12,6 +12,7 @@ import * as schaak from './schaak.js';
 import { LEVELS } from './schaak-levels.js';
 import * as staat from '../staat.js';
 import * as datum from '../datum.js';
+import * as sap from '../ui/sap.js';
 
 /* ---------- tuning ---------- */
 const STAP_DUUR = 260;        // ms: Pino één vak, een stam één vak
@@ -175,7 +176,11 @@ function bord({ root, dag, info, klaar, nr, naarOverzicht, opnieuw, volgende, ge
     }
   }
   const wereld = el('g');
-  svg.append(grond, wereld, jungleVoor());
+  // Effecten (stofjes, sterren, wolkjes) in een eigen laag: render() bouwt `wereld` steeds opnieuw op.
+  const effecten = el('g', { 'aria-hidden': 'true' });
+  svg.append(grond, wereld, effecten, jungleVoor());
+  // De jungle leeft: varens en bloemen wiegen om hun voet (data-sap, beeldfeedback, besluit 210).
+  const wachtAnimaties = sap.leven(svg);
   const knoppen = h('div', { class: 's8-knoppen' });
 
   const sprayKnop = h('button', { type: 'button', class: 's8-rond s8-spray', 'aria-label': 'Spray', onclick: () => sprayen() }, [
@@ -246,7 +251,8 @@ function bord({ root, dag, info, klaar, nr, naarOverzicht, opnieuw, volgende, ge
         const { x, y } = vakXY(d.pos);
         wereld.append(el('g', { class: 's8-wolk' }, [
           use('s8-wolk', x + 16, y - 52, 44, 37),
-          use(beeld.lampAan.has(i) ? 's8-lamp-aan' : 's8-lamp-uit', x + 29, y - 47, 18, 18),
+          beeld.lampAan.has(i) ? el('circle', { class: 'sap-gloei', cx: x + 38, cy: y - 38, r: 11, fill: '#FFE08A', style: '--gloei-min:0.35;--gloei-duur:0.7s' }) : null,
+          beeld.lampAan.has(i) ? el('g', { class: 's8-lamp-aan' }, [use('s8-lamp-aan', x + 29, y - 47, 18, 18)]) : use('s8-lamp-uit', x + 29, y - 47, 18, 18),
         ]));
       });
     }
@@ -342,6 +348,8 @@ function bord({ root, dag, info, klaar, nr, naarOverzicht, opnieuw, volgende, ge
     // Dieren in de war houden een dof lampje en lopen zomaar een kant op.
     beeld.lampAan = new Set(stand.dieren.map((d, i) => (d.verward > 0 ? -1 : i)).filter((i) => i >= 0));
     render();
+    // Het lampje springt aan (beeldfeedback, besluit 210); bij elk dier hetzelfde, wat het ook van plan is.
+    wereld.querySelectorAll('.s8-lamp-aan').forEach((lamp) => sap.pop(lamp, { duur: 320 }));
     await wacht(LAMP_DUUR);
     if (gestopt) return;
     const beurt = schaak.zetDieren(b, stand);
@@ -380,7 +388,12 @@ function bord({ root, dag, info, klaar, nr, naarOverzicht, opnieuw, volgende, ge
         };
         render();
         if (f < 1) rafId = requestAnimationFrame(frame);
-        else { beeld.bewegend = null; ok(); }
+        else {
+          beeld.bewegend = null;
+          // Neerkomen: een stofje op het vak (beeldfeedback, besluit 210).
+          sap.deeltjes(effecten, z.x + S / 2, z.y + S - 3, { soort: 'stof', aantal: hop > 10 ? 4 : 2, afstand: 14 });
+          ok();
+        }
       };
       rafId = requestAnimationFrame(frame);
     });
@@ -394,6 +407,10 @@ function bord({ root, dag, info, klaar, nr, naarOverzicht, opnieuw, volgende, ge
     beeld.wolk = false;
     beeld.nevel = [];
     render();
+    // Gevangen: het bord schudt en boven Pino verschijnt een uitroep-wolkje (beeldfeedback, besluit 210).
+    sap.schud(svg.parentElement, { sterkte: 5, duur: 380 });
+    const pp = vakXY(stand.pino);
+    sap.bubbel(effecten, pp.x + S / 2, pp.y + S - 46, 'uitroep', { maat: 26, duur: 1500 });
     gevangenTeller.plus();
     await wacht(VERLOREN_PAUZE);
     if (gestopt) return;
@@ -412,6 +429,10 @@ function bord({ root, dag, info, klaar, nr, naarOverzicht, opnieuw, volgende, ge
   async function gewonnen() {
     fase = 'einde';
     render();
+    // De tempel bereikt: sterretjes en hartjes rond Pino (beeldfeedback, besluit 210).
+    const pt = vakXY(stand.pino);
+    sap.deeltjes(effecten, pt.x + S / 2, pt.y + S - 24, { soort: 'ster', aantal: 8, afstand: 34 });
+    sap.deeltjes(effecten, pt.x + S / 2, pt.y + S - 24, { soort: 'hart', aantal: 4, afstand: 26 });
     staat.markeerLevelGehaald(nr);
     await wacht(GEWONNEN_PAUZE);
     if (gestopt) return;
@@ -503,12 +524,16 @@ function bord({ root, dag, info, klaar, nr, naarOverzicht, opnieuw, volgende, ge
     gestopt = true;
     cancelAnimationFrame(rafId);
     for (const t of timers) clearTimeout(t);
+    for (const a of wachtAnimaties) a.cancel();
     document.removeEventListener('keydown', toets);
     if (window.pinoDebug && window.pinoDebug.spel === 8) delete window.pinoDebug;
   };
 }
 
 /* ---------- jungle (port van jungle() in design/generators/spel8_build2.py) ---------- */
+
+/** Wiegen om de voet (midden onder): varens en bloemen staan recht op hun stengel (sap.leven, besluit 210). */
+const wieg = (hoek, duur) => ({ 'data-sap': `wieg ${hoek} ${duur}` });
 
 /** Achter: grond, jungle boven het bord, het bord zelf en de zijkanten. */
 function jungleAchter() {
@@ -522,16 +547,16 @@ function jungleAchter() {
     use('s8-grootboom', -18, -10, 90, 110), use('s8-grootboom', 70, -30, 90, 110), use('s8-grootboom', 190, -28, 90, 110), use('s8-grootboom', 286, -12, 90, 110),
     use('s8-bamboe', 150, 40, 44, 56), use('s8-bamboe', 258, 56, 44, 56),
     use('s8-liaan', 40, 0, 120, 40), use('s8-liaan', 220, -6, 120, 40),
-    use('s8-varen', 6, 96, 48, 40), use('s8-varen', 118, 100, 48, 40), use('s8-varen', 300, 92, 48, 40),
-    use('s8-bloem', 70, 118, 16, 20, '#FF6FAE'), use('s8-bloem', 236, 116, 16, 20, '#FF5E5B'),
+    use('s8-varen', 6, 96, 48, 40, null, wieg(2.5, 3200)), use('s8-varen', 118, 100, 48, 40, null, wieg(2, 3600)), use('s8-varen', 300, 92, 48, 40, null, wieg(2.5, 3400)),
+    use('s8-bloem', 70, 118, 16, 20, '#FF6FAE', wieg(5, 2400)), use('s8-bloem', 236, 116, 16, 20, '#FF5E5B', wieg(5, 2700)),
   );
   // het schaakbord: versleten stenen vakken, vlak in de grond (de rivier hoort bij het level en komt erbij)
   g.append(el('rect', { x: BX - 5, y: BY - 5, width: 8 * S + 10, height: 8 * S + 10, rx: 6, fill: BORD_RAND }));
   const vakken = el('g', { class: 's8-vakken' });
   g.append(vakken);
   g.append(
-    use('s8-varen', -14, 250, 48, 40), use('s8-varen', 324, 210, 48, 40), use('s8-varen', -10, 380, 48, 40), use('s8-varen', 322, 350, 48, 40),
-    use('s8-bloem', 10, 330, 16, 20, '#FFC93C'), use('s8-bloem', 336, 300, 16, 20, '#9B6BFF'),
+    use('s8-varen', -14, 250, 48, 40, null, wieg(2, 3300)), use('s8-varen', 324, 210, 48, 40, null, wieg(2.5, 3700)), use('s8-varen', -10, 380, 48, 40, null, wieg(2, 3500)), use('s8-varen', 322, 350, 48, 40, null, wieg(2.5, 3100)),
+    use('s8-bloem', 10, 330, 16, 20, '#FFC93C', wieg(5, 2500)), use('s8-bloem', 336, 300, 16, 20, '#9B6BFF', wieg(5, 2800)),
   );
   return g;
 }
@@ -539,9 +564,9 @@ function jungleAchter() {
 /** Voor: jungle onder het bord. */
 function jungleVoor() {
   return el('g', { 'aria-hidden': 'true' }, [
-    use('s8-varen', 30, 448, 48, 40), use('s8-varen', 270, 452, 48, 40),
+    use('s8-varen', 30, 448, 48, 40, null, wieg(2.5, 3400)), use('s8-varen', 270, 452, 48, 40, null, wieg(2, 3000)),
     use('s8-grootboom', -26, 470, 90, 110), use('s8-grootboom', 292, 478, 90, 110),
     use('s8-bamboe', 120, 500, 44, 56), use('s8-boom', 216, 506, 44, 56),
-    use('s8-bloem', 100, 540, 16, 20, '#FF6FAE'), use('s8-bloem', 190, 552, 16, 20, '#FF5E5B'), use('s8-bloem', 268, 536, 16, 20, '#FFC93C'),
+    use('s8-bloem', 100, 540, 16, 20, '#FF6FAE', wieg(5, 2600)), use('s8-bloem', 190, 552, 16, 20, '#FF5E5B', wieg(5, 2300)), use('s8-bloem', 268, 536, 16, 20, '#FFC93C', wieg(5, 2900)),
   ]);
 }

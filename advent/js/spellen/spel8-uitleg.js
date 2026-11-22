@@ -1,4 +1,4 @@
-// Spel 8: uitleg na de eerste spray (besluit 215, variant B uit design/spray-uitleg-voorstel). Een dialoogkaart
+// Spel 8: uitleg na de eerste spray (besluit 215, variant B van een voorstelblad). Een dialoogkaart
 // met twee pagina's, alleen bewegende plaatjes, geen tekst:
 //   1. Pino spuit, het dier wordt boos, krijgt een wolkje met een dof lampje en loopt van haar weg;
 //   2. een tik op het verwarde dier naast Pino, daarna wisselen ze van plek.

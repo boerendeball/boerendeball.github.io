@@ -244,6 +244,30 @@ export function komBij(ronde) {
   return { ...ronde, handelaars: { ...ronde.handelaars, [id]: h } };
 }
 
+/**
+ * Een nieuw bezoek aan de markt in een bewaarde ronde (besluit 198): de handelaars zijn weer blij. Stemming,
+ * nee-tellers, beledigd en de "nog een keer vragen"-nee beginnen opnieuw; in Matig gaat de handelaar met korting terug
+ * naar zijn eigen vraagprijs en grens en kan hij weer twijfelen en langskomen. Prijzen, grenzen, rollen, het laatste
+ * bod en het samenzweren (één keer per ronde, besluit 75) blijven zoals ze waren.
+ */
+export function nieuwBezoek(ronde) {
+  if (!ronde || !ronde.handelaars) return ronde;
+  const handelaars = {};
+  for (const [id, oud] of Object.entries(ronde.handelaars)) {
+    const h = { ...oud, nee: 0, afgewezen: 0, beledigd: false, twijfelt: false, vrijeNee: false };
+    if (ronde.niveau === 'matig' && id === ronde.korting) {
+      h.v = oud.oudeV ?? oud.v;
+      h.g = laagstePrijs(ronde);
+      delete h.gekomen;
+      delete h.oudeV;
+      delete h.getwijfeld;
+      if (oud.gekomen) h.laatsteBod = null;
+    }
+    handelaars[id] = h;
+  }
+  return { ...ronde, handelaars };
+}
+
 /* ---------- productenalbum (besluit 67) ---------- */
 
 /**

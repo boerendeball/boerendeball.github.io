@@ -109,7 +109,13 @@ function huidigeRonde() {
   // P = geld + waarde van de edelstenen bij de start (besluit 139). Is dat veranderd sinds de bewaarde ronde
   // (Pino heeft intussen spel 2 of 4 gespeeld), dan begint een nieuwe ronde op hetzelfde niveau.
   const P = M.prijsVoor(product.id, s.geld, s.edelstenen, s.producten.includes('ketting'));
-  if (ronde && ronde.product === product.id && M.laagstePrijs(ronde) === P && (!gevraagd || ronde.niveau === gevraagd)) return ronde;
+  if (ronde && ronde.product === product.id && M.laagstePrijs(ronde) === P && (!gevraagd || ronde.niveau === gevraagd)) {
+    // Zelfde ronde, maar een nieuw bezoek: de handelaars zijn weer blij (besluit 198). Anders kon Pino in Matig of
+    // Moeilijk vastlopen met alleen nog boze handelaars, tot ze ergens anders meer geld verdiende.
+    ronde = M.nieuwBezoek(ronde);
+    staat.bewaarMarkt({ ronde });
+    return ronde;
+  }
   if (!cyclus) cyclus = M.nieuweCyclus();
   const niveau = M.NIVEAUS.includes(gevraagd) ? gevraagd : cyclus[s.markt.stap] || 'simpel';
   ronde = M.maakRonde(product.id, niveau, Math.random, P);

@@ -7,10 +7,17 @@ import * as datum from '../datum.js';
 import { ga } from '../router.js';
 import { dagInfo } from '../kalender.js';
 import { laadSpel } from '../spellen/index.js';
+import * as staat from '../staat.js';
 
 let laadteksten = null;
-const STAP_MS = 650;
+// Lang genoeg om een paar laadzinnen en de tip te lezen (besluit 199): vier zinnen van 1,25 s, dus ± 5 s tot "Klaar!".
+// Bij een spel dat al gespeeld is (de tip is dan bekend) drie zinnen van 1,1 s. Ook met ?test=1 even lang, zodat je
+// het laadscherm ziet zoals Pino het ziet.
+const STAP_MS = 1250;
 const MIN_STAPPEN = 4;
+const STAP_MS_OPNIEUW = 1100;
+const MIN_STAPPEN_OPNIEUW = 3;
+const KLAAR_MS = 600;
 
 async function haalTeksten() {
   if (laadteksten) return laadteksten;
@@ -73,7 +80,13 @@ export function schermLaden({ root, params }) {
     if (gestopt) return;
     let stap = 0;
     let moduleKlaar = false;
-    const totaal = MIN_STAPPEN + 1;
+    const opnieuw = staat.lees().deurtjes[n] === 'gespeeld';
+    const stapMs = opnieuw ? STAP_MS_OPNIEUW : STAP_MS;
+    const minStappen = opnieuw ? MIN_STAPPEN_OPNIEUW : MIN_STAPPEN;
+    const totaal = minStappen + 1;
+    // De balk loopt rustig en gelijkmatig vol: elke stap schuift hij in precies de duur van die stap naar het volgende
+    // punt. Met prefers-reduced-motion zet basis.css de overgang uit en springt hij per stap.
+    balk.style.transition = `width ${stapMs}ms linear`;
 
     // Spelmodule (en eventuele voorbereiding, zoals de sprite sheet) parallel laden.
     const voorbereiding = laadSpel(n)
@@ -87,6 +100,7 @@ export function schermLaden({ root, params }) {
       voortgang.setAttribute('aria-valuenow', String(pct));
       if (tekst) huidig.textContent = tekst;
     }
+    const pctNa = (k) => Math.min(96, Math.round(8 + (k / totaal) * 88));
 
     function volgende() {
       if (gestopt) return;
@@ -94,15 +108,16 @@ export function schermLaden({ root, params }) {
         klaarLijst.append(h('div', { class: 'laden-regel' }, [h('span', { class: 'laden-vink', 'aria-hidden': 'true' }, [icoon('vink', 14)]), h('span', {}, teksten[(stap - 1) % teksten.length])]));
         while (klaarLijst.children.length > 3) klaarLijst.firstChild.remove();
       }
-      if (stap >= MIN_STAPPEN && moduleKlaar) {
+      if (stap >= minStappen && moduleKlaar) {
+        balk.style.transition = 'width 0.3s ease';
         zet(100, 'Klaar!');
-        timer = setTimeout(() => { if (!gestopt) ga(`/spel/${n}`, { vervang: true }); }, 350);
+        timer = setTimeout(() => { if (!gestopt) ga(`/spel/${n}`, { vervang: true }); }, KLAAR_MS);
         return;
       }
-      const pct = Math.min(96, Math.round(8 + (stap / totaal) * 88));
-      zet(pct, teksten[stap % teksten.length]);
+      // Het percentage toont waar de balk aan het eind van deze stap is; de balk zelf glijdt erheen.
+      zet(pctNa(stap + 1), teksten[stap % teksten.length]);
       stap += 1;
-      timer = setTimeout(volgende, STAP_MS);
+      timer = setTimeout(volgende, stapMs);
     }
     volgende();
     await voorbereiding;

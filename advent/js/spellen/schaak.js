@@ -271,8 +271,7 @@ export function pasToe(bord, stand, actie) {
 
 /**
  * Alle mogelijke beurten van Pino: hooguit één stap, één wissel met een stam en (als ze die heeft) één spray,
- * in elke volgorde.
- * Een beurt heeft minstens één handeling; daarna kan Pino de zandloper drukken.
+ * in elke volgorde. Pino mag ook niets doen en meteen de zandloper drukken (besluit 213): de lege beurt komt eerst.
  * Geeft per beurt { acties, stand, uitkomst } (uitkomst 'gewonnen' of 'gevangen' beëindigt de beurt meteen).
  */
 export function* beurten(bord, stand, heeftSpray) {
@@ -285,6 +284,7 @@ export function* beurten(bord, stand, heeftSpray) {
       if (!na.uitkomst) yield* verder(na.stand, reeks, { ...gedaan, [actie.soort]: true });
     }
   }
+  yield { acties: [], stand, uitkomst: null };
   yield* verder(stand, [], {});
 }
 

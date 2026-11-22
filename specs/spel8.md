@@ -6,7 +6,7 @@ Previews: `Spel8-Levels.png`, `Spel8.png`, `Spel8-Klaar.png`, `Spel8-Sprites.png
 Sprites nieuw: `s8-tegel s8-water s8-doelvak s8-boom s8-bamboe s8-tempel s8-rots s8-stam s8-voet s8-stuk-python s8-stuk-tijger s8-stuk-luiaard s8-stuk-leeuw s8-stuk-krokodil s8-stuk-pino s8-wacht s8-opnieuw s8-speel s8-slot s8-vlag s8-stap s8-varen s8-gras s8-bloem s8-grootboom s8-liaan s8-vak s8-vak-water` · bij besluit spel 8 (stemmingen, spray, nadenken): `s8-stuk-{python,tijger,luiaard,leeuw,krokodil}-blij` `s8-stuk-{…}-boos` `s8-stuk-pino-sip s8-stuk-pino-spuit s8-wolk s8-lamp-uit s8-lamp-aan s8-nevel`
 
 De preview `Spel8.png` is van vóór de besluiten #110–#121. Waar ze afwijkt, is deze spec leidend:
-- er is geen D-pad en geen opnieuw-knop meer, maar een sprayknop naast de zandloper;
+- er is geen D-pad meer, maar een sprayknop naast de zandloper; de opnieuw-knop staat links en wordt pas na de eerste zet bruikbaar (besluit 213);
 - er staat geen voetstappen- of zettenteller in de kopbalk;
 - rotsen zijn vast;
 - level 2 heeft een andere kaart.
@@ -37,7 +37,11 @@ In de jungle ligt een oud stenen schaakbord in de grond. Pino (roze pion) moet i
   - De scène schaalt mee met het scherm en staat samen met de knoppen in één kolom (`.s8-kolom`).
 - **Knoppen** onder de scène, rechts:
   - **spray** (rond 64 px, `s5-spray`): standaard grijs;
-  - **zandloper** (rond 92 px, groen, `s8-wacht`): grijs zolang Pino deze beurt nog niets deed.
+  - **zandloper** (rond 92 px, groen, `s8-wacht`): altijd actief in Pino's beurt, ook als ze nog niets deed (besluit 213); grijs terwijl de dieren zetten.
+- **Opnieuw** (rond 54 px, icoon `s8-opnieuw`, zoals in `Spel8.png`) links onder de scène (besluit 213):
+  - grijs (uitgeschakeld) tot Pino's eerste handeling, spray of beurt in dit level; dan licht hij op: wit met een blauw icoon (`#0E7FB5`), met een kort pulsje;
+  - een tik begint het level meteen opnieuw, ook midden in een animatie; daarna is de knop weer grijs;
+  - het icoon is een open cirkelpijl: de boog loopt niet over zijn eigen begin heen (22 november aangepast in `spel8_sprites.py`).
 
 ## Regels (besluiten #110–#116)
 **Bord**
@@ -46,7 +50,7 @@ In de jungle ligt een oud stenen schaakbord in de grond. Pino (roze pion) moet i
 - **Tempel**: het doel. Het dier kan er niet op.
 
 **Beurt van Pino**
-- Pino begint. Per beurt doet ze hooguit één **stap** en één **wissel**, in elke volgorde, en eventueel de **spray**. Daarna drukt ze op de zandloper.
+- Pino begint. Per beurt doet ze hooguit één **stap** en één **wissel**, in elke volgorde, en eventueel de **spray**. Daarna drukt ze op de zandloper. Ze mag ook niets doen en meteen de zandloper drukken (besluit 213).
 - **Stap**: één vak recht (omhoog, omlaag, links, rechts) naar een vrij vak. Het vak van het dier en de tempel tellen ook als vrij.
 - **Wissel** (besluit #123): tik op een stam die recht naast Pino ligt. Pino en de stam wisselen van plek: Pino staat daarna op het vak van de stam, de stam op Pino's oude vak (Pino springt er met een boogje overheen, de stam schuift terug).
 - **Markering**: de vakken waar Pino heen kan en de stammen waarmee ze kan wisselen, lichten op zoals in spel 2 (wit 22 %, gestippelde witte rand).
@@ -89,14 +93,14 @@ Glijders stoppen vóór elk obstakel en elke stam.
 - Kaarten in `schaak-levels.js`, 8 strings van 8 tekens:
   `.` vak, `~` rivier, `B` boom, `b` bamboe, `R` rots, `S` stam, `T` tempel, `P` Pino, `D` dier (meer `D`'s = meer dieren van dezelfde soort).
 - Pino begint altijd linksonder, de tempel staat rechtsboven.
-- De kaarten zijn met een zoekprogramma gevonden. Ze worden gecontroleerd met de oplosser `losOp()` uit `schaak.js` (BFS over Pino, dier, stammen, spray en verwarring).
+- De kaarten zijn met een zoekprogramma gevonden. Ze worden gecontroleerd met de oplosser `losOp()` uit `schaak.js` (BFS over Pino, dier, stammen, spray en verwarring; sinds besluit 213 telt ook een beurt zonder handeling mee).
 
 | Level | Dier | Minste beurten zonder spray | Bijzonder |
 |---|---|---|---|
 | 1 | 3 × python | 24 | lange omweg langs drie pionnen (besluit #122) |
 | 2 | tijger | 19 | één wissel met een stam |
-| 3 | luiaard | 17 | twee wissels met dezelfde stam |
-| 4 | leeuw | 17 | drie wissels |
+| 3 | luiaard | 15 (was 17 zonder lege beurt) | twee wissels met dezelfde stam |
+| 4 | leeuw | 16 (was 17 zonder lege beurt) | drie wissels |
 | 5 | krokodil | onmogelijk (met spray 19) | drie stammen; spray en direct wisselen met de krokodil, die daarna achter de stammen vastzit |
 
 ## Staat
@@ -125,24 +129,27 @@ Glijders stoppen vóór elk obstakel en elke stam.
   - "Nog een keer" = hetzelfde level.
 
 ## Besturing
-- **Touch/muis**: tik op een opgelicht vak (stap) of een opgelichte stam (wissel), daarna op de sprayknop of de zandloper.
+- **Touch/muis**: tik op een opgelicht vak (stap) of een opgelichte stam (wissel), daarna op de sprayknop of de zandloper. De opnieuw-knop begint het level opnieuw.
 - **Toetsenbord**:
   - pijltjes = stap in die richting, of wissel met de stam in die richting;
   - spatie/Enter = zandloper;
-  - S = spray.
+  - S = spray;
+  - R = opnieuw (als de knop actief is).
 
 ## Geen uitleg
-Er is geen tekst in het spel, behalve de kopbalk en de resultaatschermen. De zandloper en de spray zijn alleen een icoon. De vorm van het stuk is de enige hint over de beweging.
+Er is geen tekst in het spel, behalve de kopbalk en de resultaatschermen. De zandloper, de spray en de opnieuw-knop zijn alleen een icoon. De vorm van het stuk is de enige hint over de beweging.
 
 ## Toegankelijkheid
 - **Leveloverzicht**: echte `<button>`s met `aria-label`s ("Level 2, gehaald" …).
-- **Bord**: de scène heeft `role="img"` met een beschrijving. De klikvakken zijn `<button>`s met labels ("Stap omhoog", "Wissel met de stam naar rechts", "Wissel met het dier omhoog"). De zandloper en de spray hebben `aria-label`s.
+- **Bord**: de scène heeft `role="img"` met een beschrijving. De klikvakken zijn `<button>`s met labels ("Stap omhoog", "Wissel met de stam naar rechts", "Wissel met het dier omhoog"). De zandloper, de spray en de opnieuw-knop ("Level opnieuw") hebben `aria-label`s.
 - **`prefers-reduced-motion`**: geen animaties; stukken verspringen meteen en het denken duurt korter.
 
 ## Acceptatiecriteria
 - [x] `node design/generators/spel8_levels_check.mjs` slaagt (level 1–4 zonder spray, level 5 alleen met spray).
 - [x] Het leveloverzicht toont vinkjes en slotjes; een dicht level is niet te kiezen.
-- [x] Opgelichte vakken en stammen; een stap en een wissel in één beurt; de zandloper is pas actief na een handeling.
+- [x] Opgelichte vakken en stammen; een stap en een wissel in één beurt.
+- [x] De zandloper is ook zonder handeling actief; de dieren zetten dan gewoon (besluit 213; 22 november, 375×812).
+- [x] De opnieuw-knop is grijs tot de eerste handeling of beurt, licht dan op en zet het level terug naar de beginstand (besluit 213; 22 november, 375×812).
 - [x] Zandloper → wolkje met dof lampje → lampje aan → het dier zet volgens zijn stuk.
 - [x] Gevangen → verdrietige Pino en blij dier → "Gevangen!" → opnieuw.
 - [x] Met spray wordt het dier rood en boos en loopt het twee beurten in de war; zonder spray springt de spray met "!?" uit de knop omhoog (22 november, 375×812, geen consolefouten).

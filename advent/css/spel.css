@@ -621,6 +621,10 @@ button.s7-foto:focus-visible { outline: 3px solid #FFC93C; outline-offset: -4px;
 .s8-spray-icoon { width: 40px; height: 40px; }
 .s8-spray:active:not(:disabled) { transform: translateY(4px); box-shadow: 0 1px 0 0 var(--kaart-schaduw); }
 .s8-rond:disabled { cursor: default; background: #E6EFF5; box-shadow: 0 4px 0 0 #CDE4F0; color: #9FB3C1; }
+/* opnieuw (besluit 213): links, 54 px zoals in Spel8.png; grijs (disabled) tot de eerste zet, daarna wit met een blauw icoon */
+.s8-opnieuw { width: 54px; height: 54px; margin-right: auto; background: #fff; color: var(--teal-schaduw); box-shadow: 0 4px 0 0 var(--kaart-schaduw); }
+.s8-opnieuw > svg { width: 30px; height: 30px; }
+.s8-opnieuw:active:not(:disabled) { transform: translateY(3px); box-shadow: 0 1px 0 0 var(--kaart-schaduw); }
 .s8-spray:disabled .s8-spray-icoon { opacity: 0.35; }
 
 /* geen spray (besluit 209): springt boven de sprayknop uit, iets breder dan de knop, het puntje wijst naar de knop.

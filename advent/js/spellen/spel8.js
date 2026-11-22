@@ -191,12 +191,24 @@ function bord({ root, dag, info, klaar, nr, naarOverzicht, opnieuw, volgende, ge
   const zandloper = h('button', { type: 'button', class: 's8-rond s8-zandloper', 'aria-label': 'Beurt klaar: het dier zet', onclick: () => beurtKlaar() }, [
     el('svg', { class: 'ic', viewBox: '0 0 48 48', 'aria-hidden': 'true' }, [use('s8-wacht', 0, 0, 48, 48)]),
   ]);
+  // Opnieuw (besluit 213): links onder de scène, grijs tot Pino's eerste handeling of beurt en daarna wit met een
+  // blauw icoon; begint het level meteen opnieuw, ook midden in een animatie.
+  const opnieuwKnop = h('button', { type: 'button', class: 's8-rond s8-opnieuw', 'aria-label': 'Level opnieuw', disabled: true, onclick: () => { if (!gestopt) opnieuw(); } }, [
+    el('svg', { class: 'ic', viewBox: '0 0 48 48', 'aria-hidden': 'true' }, [use('s8-opnieuw', 0, 0, 48, 48)]),
+  ]);
+  let begonnen = false;
+  function eersteZet() {
+    if (begonnen) return;
+    begonnen = true;
+    opnieuwKnop.disabled = false;
+    sap.puls(opnieuwKnop, { schaal: 1.15, duur: 320 });
+  }
 
   const scherm = h('div', { class: 'scherm spel spel8 s8-bordscherm' }, [
     kopbalk({ label: `DAG 8 · LEVEL ${nr} VAN ${LEVELS.length}`, titel: info.titel, terugLabel: 'Terug naar de levels', terugActie: naarOverzicht }),
     h('div', { class: 's8-ruimte' }, [h('div', { class: 's8-kolom' }, [
       h('div', { class: 'scene-kaart s8-kaart' }, [svg, knoppen]),
-      h('div', { class: 's8-besturing' }, [sprayPlek, zandloper]),
+      h('div', { class: 's8-besturing' }, [opnieuwKnop, sprayPlek, zandloper]),
     ])]),
   ]);
   root.replaceChildren(scherm);
@@ -284,7 +296,8 @@ function bord({ root, dag, info, klaar, nr, naarOverzicht, opnieuw, volgende, ge
 
   function werkBesturingBij() {
     const pinoBeurt = fase === 'pino';
-    zandloper.disabled = !pinoBeurt || !Object.keys(gedaan).length;
+    // De zandloper kan altijd in Pino's beurt, ook als ze nog niets deed (besluit 213).
+    zandloper.disabled = !pinoBeurt;
     // De spray kan alleen als er een dier naast Pino staat (ook zonder spray, dan volgt het kruis).
     sprayKnop.disabled = !pinoBeurt || gedaan.spray || !schaak.kanSprayen(stand);
   }
@@ -292,6 +305,7 @@ function bord({ root, dag, info, klaar, nr, naarOverzicht, opnieuw, volgende, ge
   /* ---------- Pino ---------- */
   async function doe(actie) {
     if (fase !== 'pino' || gedaan[actie.soort]) return;
+    eersteZet();
     fase = 'bezig';
     render();
     if (actie.soort === 'stap') await beweeg('pino', stand.pino, actie.naar, STAP_DUUR);
@@ -312,6 +326,7 @@ function bord({ root, dag, info, klaar, nr, naarOverzicht, opnieuw, volgende, ge
   async function sprayen() {
     if (fase !== 'pino' || gedaan.spray || !schaak.kanSprayen(stand)) return;
     if (!spray) { toonSprayMis(); return; }
+    eersteZet();
     fase = 'bezig';
     beeld.pino = 's8-stuk-pino-spuit';
     beeld.nevel = stand.dieren.filter((d) => schaak.naastPino(stand, d)).map((d) => d.pos);
@@ -338,7 +353,8 @@ function bord({ root, dag, info, klaar, nr, naarOverzicht, opnieuw, volgende, ge
 
   /* ---------- de dieren ---------- */
   async function beurtKlaar() {
-    if (fase !== 'pino' || !Object.keys(gedaan).length) return;
+    if (fase !== 'pino') return;
+    eersteZet();
     fase = 'dier';
     beeld.wolk = true;
     beeld.lampAan = new Set();
@@ -492,6 +508,8 @@ function bord({ root, dag, info, klaar, nr, naarOverzicht, opnieuw, volgende, ge
       beurtKlaar();
     } else if (ev.key === 's' || ev.key === 'S') {
       if (!sprayKnop.disabled) sprayen();
+    } else if (ev.key === 'r' || ev.key === 'R') {
+      if (!opnieuwKnop.disabled) opnieuwKnop.click();
     }
   }
   document.addEventListener('keydown', toets);

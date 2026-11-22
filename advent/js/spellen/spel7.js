@@ -89,7 +89,18 @@ async function steegFoto() {
  * nieuw: de werker is net gevonden; dan ligt de "nog niet gevonden"-laag er nog even op, zodat het album die kan
  * laten verdwijnen en de stempel erop kan laten vallen (zie stempelErop).
  */
-function polaroid(n, gevonden, rot, s, { nieuw = false } = {}) {
+function polaroid(n, gevonden, rot, s, { nieuw = false, dicht = false } = {}) {
+  // Spel nog niet uitgespeeld (dicht, besluit 212): de foto grijs onder een dikker waas en geen vraagteken, zodat
+  // de polaroid er niet uitziet als een knop.
+  if (dicht && !gevonden) {
+    return el('svg', { class: 'ic', viewBox: '-12 -12 144 164', width: 160, height: 194, 'aria-hidden': 'true' }, [
+      el('g', { class: 's7-polaroid', transform: `rotate(${rot})` }, [
+        use('s4-polaroid', 0, 0, 120, 140),
+        el('g', { class: 's7-grijs' }, [fotoVan(n, s)]),
+        el('rect', { x: 8, y: 8, width: 100, height: 96, fill: 'rgba(255,255,255,0.6)' }),
+      ]),
+    ]);
+  }
   const kinderen = [use('s4-polaroid', 0, 0, 120, 140), fotoVan(n, s)];
   const nietGevonden = () => el('g', { class: 's7-nog-niet' }, [el('rect', { x: 8, y: 8, width: 100, height: 96, fill: 'rgba(255,255,255,0.55)' }), use('s7-vraag', 70, 100, 34, 34)]);
   if (gevonden) {
@@ -144,8 +155,8 @@ export function start({ root, dag, info, klaar }) {
   const fotos = SPELLEN.map((n, i) => {
     const g = !!s.werkers[n];
     const mag = zoekenMag(n);
-    const label = `Spel ${n}, ${dagInfo(n).titel}: werker ${g ? 'gevonden' : 'nog niet gevonden'}`;
-    const svg = polaroid(n, g, i % 2 === 0 ? -3 : 3, s, { nieuw: n === nieuw });
+    const label = `Spel ${n}, ${dagInfo(n).titel}: ${g ? 'werker gevonden' : mag ? 'werker nog niet gevonden' : 'nog niet uitgespeeld'}`;
+    const svg = polaroid(n, g, i % 2 === 0 ? -3 : 3, s, { nieuw: n === nieuw, dicht: !mag });
     if (n === nieuw) stempelErop(svg);
     const klasse = `s7-foto${n === 6 ? ' s7-foto-breed' : ''}${mag ? '' : ' s7-foto-dicht'}`;
     // Een tik laat de polaroid even opveren voordat het spel opent (beeldfeedback, besluit 210).

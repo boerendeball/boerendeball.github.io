@@ -550,6 +550,7 @@ button.s5-kaartje:focus-visible { outline: 3px solid var(--teal); outline-offset
 button.s7-foto { cursor: pointer; transition: transform 0.15s ease; }
 button.s7-foto:active { transform: scale(0.97); }
 button.s7-foto:focus-visible { outline: 3px solid #FFC93C; outline-offset: -4px; }
+.s7-grijs { filter: grayscale(1); } /* polaroid van een spel dat nog niet uitgespeeld is (besluit 212) */
 .s7-voortgang {
   width: 100%; max-width: var(--scene-breedte); margin: 0 auto; box-sizing: border-box;
   padding: 10px 14px; display: flex; align-items: center; gap: 12px;

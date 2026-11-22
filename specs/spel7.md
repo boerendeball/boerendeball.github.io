@@ -28,7 +28,7 @@ Elke polaroid is een SVG 160×194 (viewBox −12 −12 144 164): `s4-polaroid` 1
 |---|---|---|
 | gevonden | `s7-stempel` (70,100, 34) + `s7-vink` (92,−8, 30) | opent het spel in de zoekmodus |
 | te zoeken (spel doorgespeeld) | wit waas 55 % + `s7-vraag` | opent het spel in de zoekmodus |
-| spel nog niet doorgespeeld | wit waas 55 % + `s7-vraag` | geen knop |
+| spel nog niet doorgespeeld | foto grijs (`.s7-grijs`, grayscale) onder wit waas 60 %, **geen** `s7-vraag` (besluit 212) | geen knop |
 
 De mini-scènes uit het artboard (`spel7_sprites.scene2()`…`scene6()`) blijven alleen voor de artboards; in scène 6 draagt Pino daar nu de ketting in plaats van de tas (besluit 80; `pino_tas` bestond niet meer).
 
@@ -78,7 +78,7 @@ Er zijn geen tijd en geen miskliks (#104) en er is geen "Nog een keer". Opent Pi
 Geen tekst op of bij de polaroids. Het album zegt niet dat er iemand gezocht moet worden. De melding na een vondst is alleen loep + getal.
 
 ## Toegankelijkheid
-- Polaroids zijn `<button>` met `aria-label` "Spel n, titel: werker gevonden / nog niet gevonden". Een niet-doorgespeeld spel is `role="img"`.
+- Polaroids zijn `<button>` met `aria-label` "Spel n, titel: werker gevonden / werker nog niet gevonden". Een niet-doorgespeeld spel is `role="img"` met "Spel n, titel: nog niet uitgespeeld".
 - De teller en de voortgang hebben `role="img"` + `aria-label`.
 
 ## Acceptatiecriteria
@@ -88,6 +88,7 @@ Geen tekst op of bij de polaroids. Het album zegt niet dat er iemand gezocht moe
 - [x] Spel 4 en 5 openen hun eigen album; de terugknop gaat naar het album van spel 7.
 - [x] Spel 6 in de zoekmodus: geen dief, ook niet na 5 s; Pino loopt.
 - [x] 5/5 → resultaatscherm `Spel7-Klaar.png` zonder tijd en miskliks; Logica +1 en deurtje 7 gespeeld.
+- [x] Een spel dat nog niet uitgespeeld is, staat er grijs en zonder vraagteken in en lijkt dus geen knop (besluit 212; getest op 375×812).
 - [x] Beoordeeld door Benjamin (10 november 2026): uitsneden, werker, testen en speltitel goed.
 
 ## Test-URL's

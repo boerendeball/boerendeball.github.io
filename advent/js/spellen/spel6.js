@@ -8,6 +8,7 @@
 import { h } from '../ui/dom.js';
 import { kopbalk } from '../ui/kopbalk.js';
 import { toonResultaat } from '../ui/resultaat.js';
+import { ontbreektBallon } from '../ui/ontbreekt.js';
 import { el, use } from '../sprites.js';
 import { maakLus } from './lus.js';
 import { voorbereidSprites, tekenSprite } from './spritesheet.js';
@@ -31,7 +32,9 @@ const POLITIE_RIT = 600;      // ms: de politieauto rijdt de scène in
 const POLITIE_BLIJF = 1500;   // ms tot het resultaat na het einde van de klem
 const KNOP_FLITS = 180;       // ms ring om een move-knop na een druk of een gemiste noot
 const MOVE_SCENE = 900;       // ms: de scène van een gelukte move fadet in en uit
-const KNIE_POP = 900;         // ms: de ontbrekende kniebeschermers poppen op in de knop
+const KNIE_POP = 1200;        // ms: de ontbrekende kniebeschermers springen uit de knop de baan in (besluit 208)
+const KNIE_POP_B = 92;        // breedte van dat ballonnetje (scène-eenheden; iets breder dan de knop)
+const KNIE_POP_H = KNIE_POP_B * 116 / 100;
 
 /* ---------- scène (358 × 530; posities uit steeg() in design/generators/spel6_build2.py) ---------- */
 const B = 358;
@@ -253,10 +256,11 @@ function speel({ root, dag, info, klaar, opnieuw, zoek = false }) {
   const moveKnoppen = K.BANEN.map((m) => h('button', { type: 'button', class: 's6-move', 'aria-label': MOVE_LABEL[m] }, [moveSvg(`s6-knop-${m}`, 'ic s6-move-icoon')]));
   const moves = h('div', { class: 's6-moves', role: 'group', 'aria-label': 'Jiujitsu-moves', hidden: true }, moveKnoppen);
 
+  const kolom = h('div', { class: 's6-kolom' }, [kaart, h('div', { class: 's6-onder' }, [reageerKnop, moves]), noten.canvas]);
   const scherm = h('div', { class: 'scherm spel spel6' }, [
     kopbalk({ label: datum.dagLabel(dag), titel: info.titel, terugNaar: `/deur/${dag}`, terugLabel: 'Terug naar het deurtje', ...terugKnop(zoek) }),
     politieKaart,
-    h('div', { class: 's6-veld' }, [h('div', { class: 's6-kolom' }, [kaart, h('div', { class: 's6-onder' }, [reageerKnop, moves]), noten.canvas])]),
+    h('div', { class: 's6-veld' }, [kolom]),
   ]);
   root.replaceChildren(scherm);
 
@@ -341,17 +345,16 @@ function speel({ root, dag, info, klaar, opnieuw, zoek = false }) {
     straks(() => d.remove(), MOVE_SCENE);
   }
 
-  // Knee on belly zonder kniebeschermers: de ontbrekende kniebeschermers poppen kort op in de knop.
+  // Knee on belly zonder kniebeschermers: de ontbrekende kniebeschermers (licht vervaagd, met een klein rood "!?")
+  // springen uit de knop omhoog de baan in, boven Pino's duim uit (besluit 208). Onder het notencanvas: vallende noten
+  // blijven zichtbaar.
   function toonKnieMis(baan) {
-    const knop = moveKnoppen[baan];
-    knop.querySelectorAll('.s6-knie-mis').forEach((e) => e.remove());
-    const d = h('span', { class: 's6-knie-mis', 'aria-hidden': 'true' }, [
-      el('svg', { class: 'ic', viewBox: '0 0 48 48' }, [
-        use('s5-kniebeschermers', 0, 0, 48, 48, null, { opacity: 0.45 }),
-        el('path', { d: 'M9 9 L39 39 M39 9 L9 39', fill: 'none', stroke: '#FF5E5B', 'stroke-width': 5, 'stroke-linecap': 'round' }),
-      ]),
-    ]);
-    knop.append(d);
+    kolom.querySelectorAll('.s6-knie-mis').forEach((e) => e.remove());
+    const d = ontbreektBallon('s5-kniebeschermers', {
+      klasse: 's6-knie-mis',
+      style: { left: pct(baanMidden(baan) - KNIE_POP_B / 2, B), top: pct(STROOK_TOP - KNIE_POP_H - 8, HK), width: pct(KNIE_POP_B, B) },
+    });
+    kolom.append(d);
     straks(() => d.remove(), KNIE_POP);
   }
 

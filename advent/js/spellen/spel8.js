@@ -6,6 +6,7 @@
 import { h } from '../ui/dom.js';
 import { kopbalk } from '../ui/kopbalk.js';
 import { toonResultaat } from '../ui/resultaat.js';
+import { ontbreektBallon } from '../ui/ontbreekt.js';
 import { el, use, scene } from '../sprites.js';
 import * as schaak from './schaak.js';
 import { LEVELS } from './schaak-levels.js';
@@ -21,7 +22,7 @@ const LAMP_DUUR = 300;        // ms: lampje aan, dan zet het dier
 const SPRAY_DUUR = 700;       // ms: Pino spuit, nevelwolkje
 const VERLOREN_PAUZE = 1200;  // ms: verdrietige Pino en blij dier, dan het resultaatscherm
 const GEWONNEN_PAUZE = 600;   // ms: Pino bij de tempel, dan het resultaatscherm
-const KRUIS_POP = 900;        // ms: spray met kruis als Pino geen spray heeft
+const SPRAY_POP = 1200;       // ms: ontbrekende spray springt uit de knop (besluit 209)
 
 /* ---------- scène (maten uit design/generators/spel8_build2.py) ---------- */
 const B = 358;
@@ -180,6 +181,8 @@ function bord({ root, dag, info, klaar, nr, naarOverzicht, opnieuw, volgende, ge
   const sprayKnop = h('button', { type: 'button', class: 's8-rond s8-spray', 'aria-label': 'Spray', onclick: () => sprayen() }, [
     el('svg', { class: 'ic s8-spray-icoon', viewBox: '0 0 48 48', 'aria-hidden': 'true' }, [use('s5-spray', 0, 0, 48, 48)]),
   ]);
+  // Om de sprayknop heen: daarin springt het ballonnetje bij een ontbrekende spray boven de knop uit (besluit 209).
+  const sprayPlek = h('span', { class: 's8-spray-plek' }, [sprayKnop]);
   const zandloper = h('button', { type: 'button', class: 's8-rond s8-zandloper', 'aria-label': 'Beurt klaar: het dier zet', onclick: () => beurtKlaar() }, [
     el('svg', { class: 'ic', viewBox: '0 0 48 48', 'aria-hidden': 'true' }, [use('s8-wacht', 0, 0, 48, 48)]),
   ]);
@@ -188,7 +191,7 @@ function bord({ root, dag, info, klaar, nr, naarOverzicht, opnieuw, volgende, ge
     kopbalk({ label: `DAG 8 · LEVEL ${nr} VAN ${LEVELS.length}`, titel: info.titel, terugLabel: 'Terug naar de levels', terugActie: naarOverzicht }),
     h('div', { class: 's8-ruimte' }, [h('div', { class: 's8-kolom' }, [
       h('div', { class: 'scene-kaart s8-kaart' }, [svg, knoppen]),
-      h('div', { class: 's8-besturing' }, [sprayKnop, zandloper]),
+      h('div', { class: 's8-besturing' }, [sprayPlek, zandloper]),
     ])]),
   ]);
   root.replaceChildren(scherm);
@@ -317,17 +320,13 @@ function bord({ root, dag, info, klaar, nr, naarOverzicht, opnieuw, volgende, ge
     render();
   }
 
-  // Geen spray: de spray met een rood kruis popt kort op in de knop (zoals de kniebeschermers in spel 6).
+  // Geen spray: de spray (licht vervaagd, met een klein rood "!?") springt uit de knop omhoog, boven Pino's duim uit,
+  // zoals de kniebeschermers in spel 6 (besluit 209).
   function toonSprayMis() {
-    sprayKnop.querySelectorAll('.s8-spray-mis').forEach((e) => e.remove());
-    const d = h('span', { class: 's8-spray-mis', 'aria-hidden': 'true' }, [
-      el('svg', { class: 'ic', viewBox: '0 0 48 48' }, [
-        use('s5-spray', 0, 0, 48, 48, null, { opacity: 0.45 }),
-        el('path', { d: 'M9 9 L39 39 M39 9 L9 39', fill: 'none', stroke: '#FF5E5B', 'stroke-width': 5, 'stroke-linecap': 'round' }),
-      ]),
-    ]);
-    sprayKnop.append(d);
-    const t = setTimeout(() => { timers.delete(t); d.remove(); }, KRUIS_POP);
+    sprayPlek.querySelectorAll('.s8-spray-mis').forEach((e) => e.remove());
+    const d = ontbreektBallon('s5-spray', { klasse: 's8-spray-mis' });
+    sprayPlek.append(d);
+    const t = setTimeout(() => { timers.delete(t); d.remove(); }, SPRAY_POP);
     timers.add(t);
   }
 

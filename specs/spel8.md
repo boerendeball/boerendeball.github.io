@@ -82,7 +82,7 @@ Glijders stoppen vóór elk obstakel en elke stam.
   - Elk dier naast Pino wordt rood en boos (`-boos`) en is **twee beurten in de war**: het lampje blijft dof en het dier loopt een willekeurige kant op die niet naar Pino gaat. Het kiest eerst een zet die verder weg gaat, dan een op gelijke afstand, dan een andere. Een dier in de war slaat nooit.
   - Zolang een dier in de war is, is het **wisselbaar** zoals een stam (besluit #124): tikt Pino erop als het recht naast haar staat, dan wisselen ze van plek. Dat is haar wissel van die beurt en kan dus direct na de spray.
   - De "willekeur" komt vast uit de spelstand (hash), zodat het spel en de oplosser hetzelfde doen.
-- **Zonder spray** (`producten` zonder `spray`): bij een tik popt de spray met een rood kruis kort op in de knop, zoals de kniebeschermers in spel 6. Er gebeurt verder niets.
+- **Zonder spray** (`producten` zonder `spray`): bij een tik springt de spray 1200 ms uit de knop omhoog, boven Pino's duim uit (besluit 209), zoals de kniebeschermers in spel 6: een wit ballonnetje (84 px) met rode rand en een rood puntje naar de knop, daarin `s5-spray` licht vervaagd met een klein rood "!?" eronder (`ui/ontbreekt.js`). Het hangt aan een omhulsel om de knop (`.s8-spray-plek`), niet in de knop zelf, en staat boven de knop in het decor onder het bord. Er gebeurt verder niets.
 - **Level 5** is alleen met de spray te halen.
 
 ## Levels (besluit #117)
@@ -145,7 +145,7 @@ Er is geen tekst in het spel, behalve de kopbalk en de resultaatschermen. De zan
 - [x] Opgelichte vakken en stammen; een stap en een wissel in één beurt; de zandloper is pas actief na een handeling.
 - [x] Zandloper → wolkje met dof lampje → lampje aan → het dier zet volgens zijn stuk.
 - [x] Gevangen → verdrietige Pino en blij dier → "Gevangen!" → opnieuw.
-- [x] Met spray wordt het dier rood en boos en loopt het twee beurten in de war; zonder spray verschijnt het kruis.
+- [x] Met spray wordt het dier rood en boos en loopt het twee beurten in de war; zonder spray springt de spray met "!?" uit de knop omhoog (22 november, 375×812, geen consolefouten).
 - [x] Level 1–5 zijn uit te spelen in de app; na level 5 volgt "Schaakmat!" met Logica +1 en de behoefte Bordspellen op 100 %.
 - [x] Toetsenbord en touch werken; geen consolefouten; 390×844 en desktop.
 - [ ] Beoordeeld door Benjamin.

@@ -1,6 +1,6 @@
 # Spel 6 · Selfdefense
 
-**Status:** goedgekeurd (Benjamin, 10 november 2026) (`advent/js/spellen/spel6.js`, regels in `spellen/klem.js`; gedeeld: `spellen/lus.js`, `spellen/spritesheet.js`, `spellen/canvas.js`, `invoer.js`, `ui/resultaat.js`, `css/spel.css`; popup zonder ketting in `spellen/index.js`)
+**Status:** goedgekeurd (Benjamin, 10 november 2026) (`advent/js/spellen/spel6.js`, regels in `spellen/klem.js`; gedeeld: `spellen/lus.js`, `spellen/spritesheet.js`, `spellen/canvas.js`, `invoer.js`, `ui/resultaat.js`, `ui/ontbreekt.js`, `css/spel.css`; popup zonder ketting in `spellen/index.js`)
 **Dag 6 · 29 november · Conditie +3 · Techniek +2 (besluit 164)**
 Previews: `design/previews/Spel6.png`, `Spel6-Controle.png`, `Spel6-Klaar.png`, `Spel6-Sprites.png` · Artboards: `design/artboards/Spel6*.dc.html` · Generator: `design/generators/spel6_build2.py`, `spel6_sprites.py`
 Rendering: **canvas** (actiespel), sprite sheet gerasterd uit `sprites.svg`.
@@ -11,7 +11,7 @@ De previews en artboards zijn van vóór de besluiten 80–95 (9 november 2026).
 
 Pino loopt over de nachtmarkt tussen blije bezoekers, met de ketting uit spel 5 om haar hals. Na twee seconden kan ze niet meer bewegen: een dief in een donkere hoodie loopt recht op haar af, naar de plek waar ze op dat moment staat, en grijpt naar de ketting. Reageert ze op tijd, dan ligt hij in een armklem op de kasseien en moet ze hem met de juiste moves op het juiste moment vasthouden tot de politie er is. Kort, spannend en fysiek: eerst schrikken, dan ritme houden.
 
-Verborgen ketens: zonder ketting uit spel 5 valt er niets te stelen (popup). Zonder kniebeschermers uit spel 5 mislukt de derde move (knee on belly) altijd; de ontbrekende kniebeschermers poppen dan kort op in de knop, verder staat er nergens waarom.
+Verborgen ketens: zonder ketting uit spel 5 valt er niets te stelen (popup). Zonder kniebeschermers uit spel 5 mislukt de derde move (knee on belly) altijd; de ontbrekende kniebeschermers springen dan met een rood "!?" uit de knop omhoog de baan in (besluit 208), verder staat er nergens waarom.
 
 ## Scherm (390×844, van boven naar beneden)
 
@@ -71,7 +71,7 @@ Constanten staan bovenaan `spel6.js` (fase 1, animatie) en `klem.js` (fase 2); h
 | `KNIE_BAAN` | 2 (de derde) | knee on belly: lukt alleen met kniebeschermers |
 | `KNIE_KANS` | 36 % | aandeel knee on belly in het patroon (7 tot 12 van de 28 noten, gemiddeld bijna 10) |
 | `LOS_VANAF` | 80 % | zonder kniebeschermers loopt de balk ook met foutloos spel vol, maar pas na 16 s (besluit 99) |
-| `MOVE_SCENE` / `KNIE_POP` | 900 / 900 ms | duur van de move-scène en van de opgepopte kniebeschermers |
+| `MOVE_SCENE` / `KNIE_POP` | 900 / 1200 ms | duur van de move-scène en van de opgesprongen kniebeschermers (besluit 208) |
 
 **Fasen** (`s.fase`): `rust` → `nadert` → `greep` → `klem` → `politie` (gelukt), of vanuit `greep` en `klem` naar `vlucht` (mislukt).
 
@@ -79,7 +79,7 @@ Constanten staan bovenaan `spel6.js` (fase 1, animatie) en `klem.js` (fase 2); h
 - **nadert**: de besturing gaat uit (de loop-invoer wordt opgeruimd, ook de joystick) en Pino blijft staan waar ze is. De dief loopt van de rechterrand op haar hoogte recht naar die plek. Dief, trillijntjes, klem, worstelbalk en politieauto staan vanaf nu ten opzichte van Pino.
 - **greep**: hij staat naast haar en steekt zijn hand uit naar de ketting; trillijntjes, bange omstanders, de rode knop verschijnt en de ring loopt leeg. Drukken → `reactie` = verstreken ms, door naar de klem. Niets gedaan na 2000 ms → vlucht. Vóór de greep doet drukken niets (de knop is er nog niet).
 - **klem**: noten vallen in de vier banen tot op de knoppen. Het moment om te drukken is als de noot op de knop ligt (de tekening in de noot dekt dan de tekening in de knop). Een druk op een baan zoekt de dichtstbijzijnde open noot in die baan binnen het venster: raak (balk −5, de scène van die move fadet kort in en uit) of mis (balk +10). Een noot die het venster voorbij is, is gemist (balk +20). Nooit drie keer achter elkaar dezelfde baan. Balk vol → vlucht. Tijd om en balk niet vol → politie.
-- **Zonder kniebeschermers** (besluit 94): een op tijd gedrukte knee on belly mislukt altijd. De noot telt als gemist (balk +20, geen scène, niet bij Moves), de knop krijgt een rode ring en in de knop poppen 900 ms de ontbrekende kniebeschermers op (`s5-kniebeschermers` vervaagd met een rood kruis). Niet drukken is ook gemist. Zo kost elke knee on belly minpunten. Met kniebeschermers is het een gewone move en zijn ze zichtbaar op Pino's knieën.
+- **Zonder kniebeschermers** (besluit 94): een op tijd gedrukte knee on belly mislukt altijd. De noot telt als gemist (balk +20, geen scène, niet bij Moves), de knop krijgt een rode ring en de ontbrekende kniebeschermers springen 1200 ms uit de knop omhoog de baan in, boven Pino's duim uit (besluit 208): een wit ballonnetje (92 breed) met rode rand en een rood puntje naar de knop, daarin `s5-kniebeschermers` licht vervaagd (65 %) en daaronder een klein rood "!?" (wit omrand), zodat de kniebeschermers zelf goed zichtbaar blijven. Het ligt onder het notencanvas, zodat een vallende noot er zichtbaar overheen gaat; met reduced motion fadet het alleen. Niet drukken is ook gemist. Zo kost elke knee on belly minpunten. Met kniebeschermers is het een gewone move en zijn ze zichtbaar op Pino's knieën.
 - **Net niet te halen zonder kniebeschermers** (besluit 99): `maakPatroon` kiest alleen een patroon waarbij foutloos spel zonder kniebeschermers (elke knee on belly +20, elke andere move −5) de balk toch laat vollopen, en pas in de laatste 20 % van de tijd (`zonderKnie`). De dief ontsnapt dan tussen 16,5 en 19,5 s. Met kniebeschermers is hetzelfde patroon gewoon te halen.
 - **vlucht**: Pino staat verdrietig zonder ketting; de dief rent blij met de ketting naar rechts de scène uit; 500 ms later het faalscherm.
 - **politie**: de politieauto rijdt in, iedereen lacht; na 1500 ms het resultaatscherm.
@@ -133,7 +133,7 @@ Geen tekst in het spelscherm: geen "Reageer!", geen namen bij de moves, geen lab
 - [x] Noten vallen tot op de knoppen (geen raakring); op het raakmoment ligt de noot precies op zijn knop. Raak geeft een paarse ring, haalt de balk omlaag en toont kort de scène van die move; een gemiste noot en een druk zonder noot laten de balk oplopen met een rode ring (gecontroleerd via `pinoDebug`, pijltjes- en cijfertoetsen).
 - [x] 20 s volgehouden (met kniebeschermers, foutloos 28/28): politieauto rijdt in, omstanders lachen, "Osssuu" met Pino in gi, tegels Reactie en Moves, Conditie +1; `deurtjes[6]` = gespeeld, `vaardigheden.lichaam` +1, `scores[6]` gevuld.
 - [x] Balk vol: Pino laat los, de dief rent met de ketting naar rechts weg, "Gestolen!" met tegels, geen punt.
-- [x] `knie=1`: kniebeschermers zichtbaar in de klem, knee on belly lukt. `knie=0`: knee on belly mislukt altijd (balk +20), de kniebeschermers poppen op in de knop. Zonder kniebeschermers is de klem net niet te halen: 5000 patronen doorgerekend, met foutloos spel loopt de balk altijd vol, tussen 16,5 en 19,4 s; met kniebeschermers en foutloos spel nooit. In de browser: zonder los op 17,1 s, met gehaald.
+- [x] `knie=1`: kniebeschermers zichtbaar in de klem, knee on belly lukt. `knie=0`: knee on belly mislukt altijd (balk +20), de kniebeschermers springen met "!?" uit de knop de baan in, onder de vallende noten (22 november, 375×812, geen consolefouten). Zonder kniebeschermers is de klem net niet te halen: 5000 patronen doorgerekend, met foutloos spel loopt de balk altijd vol, tussen 16,5 en 19,4 s; met kniebeschermers en foutloos spel nooit. In de browser: zonder los op 17,1 s, met gehaald.
 - [x] Geen zichtbare uitlegtekst of labels in het spelscherm; geen consolefouten.
 - [x] Gevoel van de timing op een echte telefoon (raakvenster, tempo, move-scène, 20 s met 28 noten): goed bevonden door Benjamin (10 november).
 - [x] Werker-knop (deurtje 7 open): tikken zet `werkers[6]` op gevonden en laat hem opspringen.

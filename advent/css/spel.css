@@ -491,14 +491,27 @@ button.s5-kaartje:focus-visible { outline: 3px solid var(--teal); outline-offset
 .s6-move.s6-move-raak { box-shadow: 0 0 0 4px var(--paars), 0 6px 0 0 var(--paars-schaduw); }
 .s6-move.s6-move-mis { box-shadow: 0 0 0 4px var(--rood), 0 6px 0 0 var(--rood-schaduw); }
 
-/* ontbrekende kniebeschermers: popt kort op in de knop van knee on belly (boven het notencanvas) */
-.s6-knie-mis {
-  position: absolute; inset: 8%; z-index: 3; border-radius: 50%; background: #fff; box-shadow: 0 0 0 3px var(--rood);
-  display: flex; align-items: center; justify-content: center; pointer-events: none;
-  animation: s6-knie-pop 0.9s ease-out forwards;
+/* ontbrekend product uit spel 5 (besluit 208 en 209, ui/ontbreekt.js): springt uit de knop omhoog, boven de duim uit.
+   Plek en breedte per spel. */
+.ontbreekt {
+  position: absolute; display: block; pointer-events: none; transform-origin: 50% 100%;
+  animation: ontbreekt-spring 1.2s ease-out forwards;
 }
-.s6-knie-mis > svg { width: 74%; height: 74%; }
-@keyframes s6-knie-pop { 0% { transform: scale(0.2); opacity: 0; } 18% { transform: scale(1.15); opacity: 1; } 30% { transform: scale(1); } 80% { transform: scale(1); opacity: 1; } 100% { transform: scale(1); opacity: 0; } }
+.ontbreekt > svg { display: block; width: 100%; height: auto; overflow: visible; }
+@keyframes ontbreekt-spring {
+  0% { transform: translateY(45%) scale(0.3); opacity: 0; }
+  15% { transform: translateY(-4%) scale(1.08); opacity: 1; }
+  25% { transform: translateY(0) scale(1); }
+  82% { transform: translateY(0) scale(1); opacity: 1; }
+  100% { transform: translateY(-6%) scale(1); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ontbreekt { animation-name: ontbreekt-toon; }
+  @keyframes ontbreekt-toon { 0% { opacity: 0; } 20%, 80% { opacity: 1; } 100% { opacity: 0; } }
+}
+/* spel 6: boven de knop van knee on belly in de baan; onder het notencanvas (z-index 2), zodat een vallende noot er
+   zichtbaar overheen gaat. Plek en breedte uit spel6.js. */
+.s6-knie-mis { z-index: 1; }
 
 /* scène van een gelukte move: fadet kort in en uit, midden in de scène boven de banen */
 .s6-gelukt {
@@ -515,7 +528,6 @@ button.s5-kaartje:focus-visible { outline: 3px solid var(--teal); outline-offset
 @media (prefers-reduced-motion: reduce) {
   .s6-reageer { animation: none; }
   .s6-gelukt { animation-name: s6-toon; }
-  .s6-knie-mis { animation-name: s6-toon; }
   @keyframes s6-toon { 0% { opacity: 0; } 20%, 75% { opacity: 1; } 100% { opacity: 0; } }
 }
 
@@ -610,13 +622,10 @@ button.s7-foto:focus-visible { outline: 3px solid #FFC93C; outline-offset: -4px;
 .s8-rond:disabled { cursor: default; background: #E6EFF5; box-shadow: 0 4px 0 0 #CDE4F0; color: #9FB3C1; }
 .s8-spray:disabled .s8-spray-icoon { opacity: 0.35; }
 
-/* geen spray: popt kort op met een rood kruis (zoals .s6-knie-mis) */
-.s8-spray-mis {
-  position: absolute; inset: -6%; z-index: 3; border-radius: 50%; background: #fff; box-shadow: 0 0 0 3px var(--rood);
-  display: flex; align-items: center; justify-content: center; pointer-events: none;
-  animation: s6-knie-pop 0.9s ease-out forwards;
-}
-.s8-spray-mis > svg { width: 70%; height: 70%; }
+/* geen spray (besluit 209): springt boven de sprayknop uit, iets breder dan de knop, het puntje wijst naar de knop.
+   Het ballonnetje hangt aan .s8-spray-plek (om de knop heen), niet in de knop zelf. */
+.s8-spray-plek { position: relative; flex: none; display: flex; }
+.s8-spray-mis { z-index: 3; left: 50%; bottom: calc(100% + 4px); width: 84px; margin-left: -42px; }
 
 /* wolkje boven het dier en de spraynevel */
 @keyframes s8-wolk-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
@@ -635,7 +644,6 @@ button.s7-foto:focus-visible { outline: 3px solid #FFC93C; outline-offset: -4px;
 }
 @media (prefers-reduced-motion: reduce) {
   .s8-wolk, .s8-nevel { animation: none; }
-  .s8-spray-mis { animation-name: s6-toon; }
 }
 
 /* ---------- spel 9 · Vang de baby (design/artboards/Spel9*.dc.html, specs/spel9.md) ---------- */

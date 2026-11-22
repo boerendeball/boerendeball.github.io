@@ -448,5 +448,47 @@
   <!-- OUDE GANS 48x40 (wit, borst vooruit) en BOZE GANS (hals gestrekt, snavel open, vleugel omhoog) -->
   <symbol id="s10-gans" viewBox="0 0 48 40"><ellipse cx="23" cy="37" rx="14" ry="3" fill="rgba(30,58,76,0.18)"/><rect x="18" y="30" width="3" height="7" rx="1.5" fill="#FF8A3D"/><rect x="25" y="30" width="3" height="7" rx="1.5" fill="#FF8A3D"/><path d="M17 36 h6 v2 h-6z M24 36 h6 v2 h-6z" fill="#FF8A3D"/><path d="M11 21 l-9 -5 l3 9z" fill="#FFFFFF"/><ellipse cx="20" cy="24" rx="13" ry="8.5" fill="#FFFFFF"/><circle cx="30" cy="22" r="8" fill="#FFFFFF"/><ellipse cx="21" cy="28.5" rx="11" ry="3.5" fill="#DDE7EE"/><path d="M32 20 q1 -8 4 -12" fill="none" stroke="#FFFFFF" stroke-width="6.5" stroke-linecap="round"/><circle cx="37" cy="7.5" r="4.8" fill="#FFFFFF"/><path d="M10 21 q9 -6 19 0 q-9 7 -19 0z" fill="#DDE7EE"/><path d="M41 6 l7 2.2 l-7 2.2z" fill="#FF8A3D"/><circle cx="38.5" cy="6.6" r="1.1" fill="#1E3A4C"/></symbol>
   <symbol id="s10-gans-boos" viewBox="0 0 48 40"><ellipse cx="22" cy="37" rx="17" ry="3" fill="rgba(30,58,76,0.18)"/><path d="M13 30 l-4 7 M20 30 l5 7" fill="none" stroke="#FF8A3D" stroke-width="3" stroke-linecap="round"/><path d="M6 36 h6 v2 h-6z M23 36 h6 v2 h-6z" fill="#FF8A3D"/><path d="M6 20 l-6 -7 l1 10z" fill="#FFFFFF"/><ellipse cx="15" cy="23" rx="12.5" ry="8.5" fill="#FFFFFF"/><ellipse cx="16" cy="27.5" rx="10" ry="3.5" fill="#DDE7EE"/><path d="M24 22 L37 25" fill="none" stroke="#FFFFFF" stroke-width="6.5" stroke-linecap="round"/><circle cx="38.5" cy="25" r="4.8" fill="#FFFFFF"/><path d="M5 17 q5 -11 17 -5 q-6 8 -17 5z" fill="#DDE7EE"/><path d="M7 16 q5 -7 12 -4" fill="none" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round"/><path d="M42 23 l6 -2.5 l-4.5 4z" fill="#FF8A3D"/><path d="M42 27 l5.5 3 h-6z" fill="#FF8A3D"/><path d="M42.5 25 l3 1.2 l-3 0.6z" fill="#FF5E5B"/><circle cx="39.5" cy="24" r="1.1" fill="#1E3A4C"/><path d="M37 21 l4.5 1.6" fill="none" stroke="#1E3A4C" stroke-width="1.3" stroke-linecap="round"/></symbol>
+<!-- KAMER: begin -->
+<symbol id="km-plank" viewBox="0 0 150 18"><rect x="0" y="0" width="150" height="6" rx="2" fill="#D98E55"/><rect x="0" y="5" width="150" height="6" rx="1.5" fill="#C2743C"/><path d="M14 11 h10 l-10 7z M126 11 h10 v7z" fill="#8B4A1E"/></symbol>
+<symbol id="km-haak" viewBox="0 0 12 14"><circle cx="6" cy="4" r="4" fill="#C2743C"/><circle cx="5" cy="3" r="1.5" fill="#D98E55"/><path d="M6 6 v4 q0 3 3 3 q2 0 2 -3" fill="none" stroke="#8B4A1E" stroke-width="2" stroke-linecap="round"/></symbol>
+<symbol id="km-kaptafel" viewBox="0 0 96 130"><ellipse cx="48" cy="127" rx="44" ry="3" fill="rgba(30,58,76,0.18)"/>
+    <rect x="44" y="58" width="8" height="16" fill="#C2743C"/>
+    <ellipse cx="48" cy="32" rx="30" ry="32" fill="#D98E55"/><ellipse cx="51" cy="34" rx="27" ry="29" fill="#C2743C"/><ellipse cx="48" cy="32" rx="23" ry="25" fill="#DDF1FB"/>
+    <path d="M34 22 q6 -12 18 -13 l-14 26z" fill="#FFFFFF" opacity="0.7"/><path d="M58 44 l4 -8 v10z" fill="#FFFFFF" opacity="0.5"/>
+    <rect x="2" y="72" width="92" height="10" rx="3" fill="#D98E55"/><rect x="6" y="80" width="84" height="30" fill="#C2743C"/>
+    <rect x="11" y="85" width="35" height="19" rx="2" fill="#D98E55"/><rect x="50" y="85" width="35" height="19" rx="2" fill="#D98E55"/>
+    <circle cx="28.5" cy="94.5" r="2.2" fill="#8B4A1E"/><circle cx="67.5" cy="94.5" r="2.2" fill="#8B4A1E"/>
+    <rect x="10" y="110" width="7" height="17" rx="1.5" fill="#8B4A1E"/><rect x="79" y="110" width="7" height="17" rx="1.5" fill="#8B4A1E"/></symbol>
+<symbol id="km-nachtkastje" viewBox="0 0 44 52"><ellipse cx="22" cy="50" rx="20" ry="2.5" fill="rgba(30,58,76,0.18)"/>
+    <rect x="0" y="0" width="44" height="9" rx="2.5" fill="#D98E55"/><rect x="3" y="8" width="38" height="34" fill="#C2743C"/>
+    <rect x="7" y="12" width="30" height="12" rx="2" fill="#D98E55"/><rect x="7" y="27" width="30" height="12" rx="2" fill="#D98E55"/>
+    <circle cx="22" cy="18" r="1.8" fill="#8B4A1E"/><circle cx="22" cy="33" r="1.8" fill="#8B4A1E"/>
+    <rect x="5" y="42" width="5" height="8" fill="#8B4A1E"/><rect x="34" y="42" width="5" height="8" fill="#8B4A1E"/></symbol>
+<symbol id="km-tafel" viewBox="0 0 128 64"><ellipse cx="64" cy="61" rx="60" ry="3" fill="rgba(30,58,76,0.18)"/>
+    <rect x="26" y="30" width="7" height="22" fill="#8B4A1E"/><rect x="95" y="30" width="7" height="22" fill="#8B4A1E"/>
+    <rect x="0" y="0" width="128" height="32" rx="7" fill="#D98E55"/><path d="M12 10 h56 M40 20 h64" stroke="#C2743C" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/>
+    <rect x="0" y="26" width="128" height="9" rx="3" fill="#C2743C"/>
+    <rect x="8" y="34" width="8" height="26" rx="1.5" fill="#8B4A1E"/><rect x="112" y="34" width="8" height="26" rx="1.5" fill="#8B4A1E"/></symbol>
+<symbol id="km-spaarvarken" viewBox="0 0 40 32"><ellipse cx="20" cy="30" rx="14" ry="2" fill="rgba(30,58,76,0.18)"/>
+    <rect x="9" y="22" width="5" height="7" rx="1.5" fill="#FF6FAE"/><rect x="25" y="22" width="5" height="7" rx="1.5" fill="#FF6FAE"/>
+    <path d="M5 15 q-4 -1 -3 -5 q1 -2 3 0" fill="none" stroke="#FF6FAE" stroke-width="1.6" stroke-linecap="round"/>
+    <ellipse cx="20" cy="16" rx="15" ry="11" fill="#FF9BC8"/><path d="M20 27 a15 11 0 0 0 15 -11 h-6 a9 8 0 0 1 -9 8z" fill="#FF6FAE" opacity="0.55"/>
+    <path d="M22 7 l4 -6 l3 7z" fill="#FF6FAE"/><ellipse cx="34.5" cy="17" rx="4" ry="3.5" fill="#FF6FAE"/><circle cx="33.5" cy="17" r="0.9" fill="#B23A6A"/><circle cx="35.8" cy="17" r="0.9" fill="#B23A6A"/>
+    <circle cx="28.5" cy="12.5" r="1.4" fill="#1E3A4C"/><ellipse cx="27" cy="17" rx="2" ry="1.2" fill="#FF6FAE"/>
+    <rect x="12" y="5" width="9" height="2.4" rx="1.2" fill="#B23A6A"/><rect x="14" y="0" width="5" height="6" rx="1.5" fill="#FFC93C"/><rect x="17" y="0" width="2" height="6" rx="1" fill="#D97A00"/></symbol>
+<symbol id="km-bordje" viewBox="0 0 60 40"><ellipse cx="30" cy="38" rx="28" ry="2" fill="rgba(30,58,76,0.18)"/>
+    <rect x="0" y="26" width="60" height="8" rx="2" fill="#2E7D1E"/><rect x="0" y="0" width="60" height="30" rx="3" fill="#3D7A30"/>
+    <rect x="4" y="3" width="13" height="6" fill="#D9CFA8"/><rect x="17" y="3" width="13" height="6" fill="#8AA66E"/><rect x="30" y="3" width="13" height="6" fill="#D9CFA8"/><rect x="43" y="3" width="13" height="6" fill="#8AA66E"/><rect x="4" y="9" width="13" height="6" fill="#8AA66E"/><rect x="17" y="9" width="13" height="6" fill="#D9CFA8"/><rect x="30" y="9" width="13" height="6" fill="#8AA66E"/><rect x="43" y="9" width="13" height="6" fill="#D9CFA8"/><rect x="4" y="15" width="13" height="6" fill="#D9CFA8"/><rect x="17" y="15" width="13" height="6" fill="#8AA66E"/><rect x="30" y="15" width="13" height="6" fill="#D9CFA8"/><rect x="43" y="15" width="13" height="6" fill="#8AA66E"/><rect x="4" y="21" width="13" height="6" fill="#8AA66E"/><rect x="17" y="21" width="13" height="6" fill="#D9CFA8"/><rect x="30" y="21" width="13" height="6" fill="#8AA66E"/><rect x="43" y="21" width="13" height="6" fill="#D9CFA8"/></symbol>
+<symbol id="km-stetho" viewBox="0 0 48 32"><ellipse cx="24" cy="29" rx="20" ry="2.5" fill="rgba(30,58,76,0.18)"/>
+    <path d="M8 4 v8 a8 8 0 0 0 16 0 v-8" fill="none" stroke="#2F3A4A" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M16 20 q2 8 12 6 q6 -1 8 -5" fill="none" stroke="#2F3A4A" stroke-width="2.5" stroke-linecap="round"/>
+    <circle cx="8" cy="4" r="2.2" fill="#B8C4D0"/><circle cx="24" cy="4" r="2.2" fill="#B8C4D0"/>
+    <circle cx="40" cy="19" r="6.5" fill="#B8C4D0" stroke="#2F3A4A" stroke-width="1.5"/><circle cx="39" cy="18" r="3" fill="#DDE7EE"/></symbol>
+<symbol id="km-huisje" viewBox="0 0 48 48"><rect x="10" y="22" width="28" height="20" rx="2" fill="#FFF1D6"/><rect x="31" y="22" width="7" height="20" fill="#FFE08A"/>
+    <path d="M5 24 L24 7 L43 24 L39 27 L24 13.5 L9 27z" fill="#FF6FAE"/><path d="M24 7 L43 24 L39 27 L24 13.5z" fill="#B23A6A"/>
+    <rect x="15" y="28" width="9" height="14" rx="1.5" fill="#D98E55"/><circle cx="21.5" cy="35.5" r="1.1" fill="#8B4A1E"/><rect x="27" y="27" width="8" height="7" rx="1.5" fill="#8ED8F8"/>
+    <rect x="8" y="41" width="32" height="3" rx="1.5" fill="#C2743C"/></symbol>
+<symbol id="km-ster" viewBox="0 0 16 16"><path d="M8 0.8 l2 4.6 5 0.5 -3.8 3.3 1.1 4.9 -4.3 -2.6 -4.3 2.6 1.1 -4.9 -3.8 -3.3 5 -0.5z" fill="#FFC93C" stroke="#D97A00" stroke-width="1.2" stroke-linejoin="round"/></symbol>
+<!-- KAMER: einde -->
 </defs>
 </svg>

@@ -35,6 +35,7 @@ export function legeStaat() {
     behoeften: { ...START_BEHOEFTEN },
     scores: {},                   // per spel een klein object, bv. { "1": { onderbroken: 7 } }
     telefoonGezien: 0,            // laatste dag waarop de telefoon-notificatie is getoond
+    kamer: { gezien: [] },        // Pino's kamer: voorwerp-id's die bij het laatste bezoek zichtbaar waren (besluit 205)
   };
 }
 
@@ -55,6 +56,7 @@ function migreer(data) {
   if (!Array.isArray(uit.fotos)) uit.fotos = [];
   if (!Array.isArray(uit.producten)) uit.producten = [];
   uit.markt = { ...basis.markt, ...(data.markt && typeof data.markt === 'object' ? data.markt : {}) };
+  uit.kamer = { gezien: Array.isArray(data.kamer?.gezien) ? data.kamer.gezien : [] };
   // Spel 2 is herontworpen (besluit 166): een tuin uit het oude 6×14-raster kan niet verder. Wis hem en geef de
   // tegels die erin lagen terug aan de voorraad, zodat er niemand tegels kwijtraakt.
   if (uit.tuin && typeof uit.tuin === 'object' && !Array.isArray(uit.tuin.velden)) {
@@ -320,6 +322,11 @@ export function koopProduct({ product, bod, laagste }) {
     if (s.markt.stap >= 3) { s.markt.cyclus = null; s.markt.stap = 0; }
     s.markt.ronde = null;
   });
+}
+
+/** Pino's kamer: wat er nu staat, is gezien (de glinster-ster op de kamerknop gaat uit; besluit 205). */
+export function markeerKamerGezien(ids) {
+  return schrijf((s) => { s.kamer = { gezien: [...ids] }; });
 }
 
 export function markeerWerkerGevonden(spel) {

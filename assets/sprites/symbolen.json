@@ -295,5 +295,17 @@
   "s10-lam-graas",
   "s10-gans",
   "s10-gans-boos"
+ ],
+ "kamer": [
+  "km-plank",
+  "km-haak",
+  "km-kaptafel",
+  "km-nachtkastje",
+  "km-tafel",
+  "km-spaarvarken",
+  "km-bordje",
+  "km-stetho",
+  "km-huisje",
+  "km-ster"
  ]
 }

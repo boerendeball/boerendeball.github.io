@@ -253,6 +253,14 @@ function spelKaart() {
       }),
     ]),
     h('div', { class: `dev-blok${test ? '' : ' dev-uit'}` }, [
+      h('span', { class: 'dev-rij-label' }, "Pino's kamer"),
+      h('span', { class: 'dev-rij-uitleg' }, uitleg || 'kamer=vol · alles in de kamer, zonder de staat te lezen of te schrijven'),
+      keuzes({
+        opties: [[null, 'Uit de staat'], ['vol', 'Vol']],
+        gekozen: p.get('kamer'), uit: !test, bijKies: (w) => pasToe({ kamer: w }),
+      }),
+    ]),
+    h('div', { class: `dev-blok${test ? '' : ' dev-uit'}` }, [
       h('span', { class: 'dev-rij-label' }, 'Spel 10 · fase'),
       h('span', { class: 'dev-rij-uitleg' }, uitleg || 'fase=2|finale · start meteen in de auto of in de finale (de finale schrijft dan geen staat)'),
       keuzes({
@@ -305,6 +313,7 @@ function snelKaart() {
   return sectie('Snel naar', [
     h('div', { class: 'dev-knoppen' }, [
       h('button', { type: 'button', class: 'knop knop-klein', onclick: () => ga('/') }, 'Kalender'),
+      h('button', { type: 'button', class: 'knop knop-klein dev-knop-wit', onclick: () => ga('/kamer') }, 'Kamer'),
       h('button', { type: 'button', class: 'knop knop-klein dev-knop-wit', onclick: () => ga('/test') }, 'Sprite-controle'),
     ]),
     lijst,

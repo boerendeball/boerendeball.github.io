@@ -1,0 +1,53 @@
+/* Pino's kamer (#/kamer, specs/kamer.md) en de kamerknop op de Sim-kaart van de kalender.
+   Maten uit design/artboards/Kamer.dc.html. */
+
+/* ---------- kamerknop op de Sim-kaart ---------- */
+.sim-kaart { position: relative; }
+.sim-kaart .sim-titel { padding-right: 44px; }
+.kamer-knop {
+  position: absolute; top: 14px; right: 14px;
+  box-shadow: 0 0 0 3px var(--teal), 0 4px 0 0 var(--kaart-schaduw);
+}
+.kamer-knop:active { box-shadow: 0 0 0 3px var(--teal), 0 1px 0 0 var(--kaart-schaduw); }
+.kamer-ster { position: absolute; top: -6px; right: -6px; animation: kamer-ster 1.6s ease-in-out infinite; }
+@keyframes kamer-ster { 0%, 100% { transform: scale(1) rotate(0deg); } 50% { transform: scale(1.18) rotate(12deg); } }
+@media (min-width: 1000px) { .kamer-knop { top: 18px; right: 18px; } }
+
+/* ---------- het scherm ---------- */
+.km { padding: 14px 16px calc(16px + env(safe-area-inset-bottom)); gap: 12px; }
+.km .kopbalk { padding: 0; gap: 10px; }
+.km .kopbalk-label { font-size: 11px; }
+.km .kopbalk-titel { font-size: 20px; }
+
+.km-scene-kaart {
+  position: relative; width: 100%; max-width: var(--scene-breedte); margin: 0 auto;
+  border-radius: 22px; overflow: hidden; box-shadow: 0 6px 0 0 var(--kaart-schaduw);
+  background: #F6EBDD; user-select: none; -webkit-user-select: none;
+}
+.km-scene { display: block; width: 100%; height: auto; }
+.km-voorwerp { transform-box: fill-box; }
+
+/* Doorzichtige tikvlakken over de voorwerpen (zoals de werkerknop in spel 2–6). */
+.km-vak {
+  position: absolute; padding: 0; border: 0; border-radius: 10px; background: transparent; cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.km-vak:focus-visible { outline: 3px solid var(--teal); outline-offset: 0; background: rgba(255, 255, 255, 0.22); }
+@media (hover: hover) { .km-vak:hover { background: rgba(255, 255, 255, 0.22); } }
+.km-vak[aria-pressed='true'] { background: rgba(255, 255, 255, 0.3); }
+
+/* Gedachtenwolk onder de scène; de stipjes wijzen naar het voorwerp (--stip-x). */
+.km-wolk { position: relative; width: 100%; max-width: var(--scene-breedte); margin: 10px auto 0; --stip-x: 50%; }
+.km-wolk[hidden] { display: none; }
+.km-wolk-stip { position: absolute; display: block; border-radius: 50%; background: #fff; box-shadow: 0 2px 0 0 var(--kaart-schaduw); }
+.km-wolk-stip-1 { left: var(--stip-x); top: -6px; width: 9px; height: 9px; transform: translateX(-50%); }
+.km-wolk-stip-2 { left: calc(var(--stip-x) - 10px); top: 6px; width: 14px; height: 14px; transform: translateX(-50%); }
+.km-wolk-kaart { position: relative; margin-top: 12px; padding: 12px 16px; display: flex; gap: 14px; align-items: center; }
+.km-wolk-icoon { flex-shrink: 0; width: 56px; height: 56px; }
+.km-wolk-tekstblok { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.km-wolk-naam { font-size: 18px; }
+.km-wolk-tekst { font-size: 15px; line-height: 1.4; color: var(--gedempt-2); }
+
+@media (prefers-reduced-motion: reduce) {
+  .kamer-ster { animation: none; }
+}

@@ -15,6 +15,7 @@ Desktop (≥ 1000 px, raster 380 px + rest, padding 32): links Sim-kaart, Behoef
 
 ### Sim-kaart
 Avatar 72 px (88 desktop): roze bol met "P" (Fredoka 34/40, `#B23A6A`), witte rand 4 px, ring teal. Titel "Pino's verjaardags­kalender" (Fredoka 28/30, met zachte afbreking). Desktop-subtitel "24 november t/m 3 december". Chips: Verloskundige (teal), Ganzenfluisteraar (groen), Bordspelbaas (geel), Jiujitsu (paars); desktop ook Zoetekauw (roze) en Wereldreiziger (teal).
+**Kamerknop** rechtsboven in de Sim-kaart (huisje-icoon, glinster-ster bij iets nieuws) → `#/kamer` (`kamerKnop()` in `kalender.js`, besluit 201); zie [kamer.md](kamer.md).
 **Gedachtenwolkje** boven de avatar (links 34, top −74): "Morgen…" + het icoon van het deurtje van morgen met een gele "?"-badge, twee witte stipjes eronder. `role="img" aria-label="Pino denkt aan morgen"`. Voor de start toont het dag 1; na dag 10 verdwijnt het.
 
 ### Behoeften (paneel, standaard open)

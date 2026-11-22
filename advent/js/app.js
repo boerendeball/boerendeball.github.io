@@ -7,6 +7,7 @@ import { zetKalenderData, schermKalender, schermDeur } from './kalender.js';
 import { schermLaden } from './ui/laadscherm.js';
 import { schermSpel } from './spellen/index.js';
 import { schermTest } from './test.js';
+import { schermKamer } from './kamer.js';
 import { wis, vulTestStaat, zetBeloningen } from './staat.js';
 import { devModus } from './datum.js';
 
@@ -57,6 +58,7 @@ async function start() {
   route('/deur/:n', schermDeur);
   route('/laden/:n', schermLaden);
   route('/spel/:n', schermSpel);
+  route('/kamer', schermKamer);
   route('/test', schermTest);
   // Ontwikkelaarsopties alleen in devmodus; de module laadt pas als je de pagina opent.
   if (devModus()) route('/dev', async (ctx) => (await import('./ontwikkelaar.js')).schermOntwikkelaar(ctx));

@@ -343,6 +343,29 @@
       "w": 1000,
       "x": 4745,
       "y": 4700
+    },
+    "Kamer.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Pino's kamer – vol (met gedachtenwolk)",
+      "w": 390,
+      "x": 0,
+      "y": 7600
+    },
+    "Kamer-Leeg.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Pino's kamer – leeg (verse staat)",
+      "w": 390,
+      "x": 460,
+      "y": 7600
+    },
+    "Kamer-Sprites.dc.html": {
+      "h": 560,
+      "title": "Pino's kamer – sprite-set",
+      "w": 1000,
+      "x": 920,
+      "y": 7600
     }
   },
   "createdOnFiles": {
@@ -601,7 +624,10 @@
     "Spel9-Klaar.dc.html",
     "Spel10.dc.html",
     "Spel10-Auto.dc.html",
-    "Spel10-Finale.dc.html"
+    "Spel10-Finale.dc.html",
+    "Kamer.dc.html",
+    "Kamer-Leeg.dc.html",
+    "Kamer-Sprites.dc.html"
   ],
   "pages": [],
   "title": "Pino's Adventkalender"

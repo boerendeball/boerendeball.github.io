@@ -10,6 +10,8 @@ import { kopbalk } from './ui/kopbalk.js';
 import * as staat from './staat.js';
 import * as datum from './datum.js';
 import { ga } from './router.js';
+import { use, el } from './sprites.js';
+import { zichtbareVoorwerpen, heeftNieuws } from './kamer-inhoud.js';
 
 let data = null;
 
@@ -50,6 +52,7 @@ export function schermKalender({ root, telefoon = true }) {
 
     // Sim-kaart
     h('section', { class: 'kaart sim-kaart', 'aria-label': 'Pino' }, [
+      kamerKnop(s, (n) => statussen[n]),
       h('div', { style: { display: 'flex', alignItems: 'center', gap: '14px' } }, [
         h('div', { class: 'avatar-wrap' }, [
           morgenInfo ? h('div', { class: 'wolkje', role: 'img', 'aria-label': 'Pino denkt aan morgen' }, [
@@ -99,6 +102,18 @@ export function schermKalender({ root, telefoon = true }) {
   if (telefoon && vandaagInfo && statussen[vandaagDag] === 'vandaag' && s.telefoonGezien !== vandaagDag) {
     toonTelefoon(vandaagDag);
   }
+}
+
+/** Knop naar Pino's kamer, rechtsboven op de Sim-kaart; een glinster-ster als er iets nieuws staat (specs/kamer.md). */
+function kamerKnop(s, status) {
+  const nieuw = heeftNieuws(zichtbareVoorwerpen(s, status), s.kamer?.gezien);
+  return h('button', {
+    type: 'button', class: 'knop-rond kamer-knop', 'aria-label': nieuw ? "Pino's kamer, er is iets nieuws" : "Pino's kamer",
+    onclick: () => ga('/kamer'),
+  }, [
+    el('svg', { viewBox: '0 0 48 48', width: 30, height: 30, class: 'ic', 'aria-hidden': 'true' }, [use('km-huisje', 0, 0, 48, 48)]),
+    nieuw ? el('svg', { viewBox: '0 0 16 16', width: 18, height: 18, class: 'kamer-ster', 'aria-hidden': 'true' }, [use('km-ster', 0, 0, 16, 16)]) : null,
+  ]);
 }
 
 /** Alleen in devmodus: pil rechtsonder naar #/dev, met het aantal actieve opties (specs/ontwikkelaarsopties.md). */

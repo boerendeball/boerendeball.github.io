@@ -8,6 +8,8 @@ import { h } from '../ui/dom.js';
 import { kopbalk } from '../ui/kopbalk.js';
 import { toonResultaat } from '../ui/resultaat.js';
 import { toonTaartmenu } from '../ui/taartmenu.js';
+import { icoon } from '../ui/iconen.js';
+import { ga } from '../router.js';
 import { gemSvg, GEMS, GEM_BIJV, GEM_KLEUR } from '../ui/edelstenen.js';
 import { el, use, groep, scene } from '../sprites.js';
 import * as hex from './hex.js';
@@ -410,16 +412,18 @@ function speel({ root, dag, info, klaar, opnieuw, zoek = false }) {
     if (menu || klaarGezet || bezig) return;
     const s = staat.lees();
     const typen = hex.kandidaten(tuin().gelegd, v);
-    const n = typen.length;
+    // Heeft Pino van geen enkele passende tegel er nog één, dan komt er een kroonknop bij die naar spel 1 gaat,
+    // waar de tegels vandaan komen (besluit 200). Alleen het kroon-icoon, geen uitleg.
+    const op = typen.length > 0 && typen.every((type) => !(s.tegels[type] > 0));
+    const n = typen.length + (op ? 1 : 0);
     // Naast een lege plek (de eerste tegel op het startveld) passen alle 9 types: dan kleinere tegels op een
     // grotere ring, zodat de opties niet over elkaar vallen.
     const klein = n > 4;
     const [tb, th] = klein ? [52, 62] : [68, 80];
-    const opties = typen.map((type, i) => {
+    const opties = typen.map((type) => {
       const aantal = s.tegels[type] || 0;
       const [k, f] = hex.splits(type);
       return {
-        hoek: 90 + ((i + 1) * 360) / (n + 1),
         klasse: klein ? 'taart-hex taart-hex-klein' : 'taart-hex',
         label: `Tegel ${k} ${f}, ${aantal}`,
         uitgeschakeld: aantal <= 0,
@@ -430,6 +434,13 @@ function speel({ root, dag, info, klaar, opnieuw, zoek = false }) {
         actie: () => (hex.veldVan(tuin(), v) >= 0 ? legTegel(v, type) : legBrug(v, type)),
       };
     });
+    if (op) {
+      // in het midden van de rij, dus (ongeveer) bovenaan de ring
+      opties.splice(Math.floor(opties.length / 2), 0, {
+        klasse: 'taart-rond s2-kroon', label: 'Naar deurtje 1', inhoud: icoon('kroon', 40), actie: () => ga('/deur/1'),
+      });
+    }
+    opties.forEach((o, i) => { o.hoek = 90 + ((i + 1) * 360) / (n + 1); });
     opties.push({ hoek: 90, klasse: 'taart-annuleer', label: 'Annuleren', inhoud: el('svg', { viewBox: '0 0 48 48', width: 20, height: 20, 'aria-hidden': 'true' }, [el('path', { d: 'M12 12 L36 36 M36 12 L12 36', stroke: '#4F6B7E', 'stroke-width': 6, 'stroke-linecap': 'round' })]) });
     menu = toonTaartmenu({
       anker: knop.getBoundingClientRect(), kloon: false, straal: klein ? MENU_STRAAL_GROOT : MENU_STRAAL, label: 'Kies een tegel', dim: 'rgba(30, 58, 76, 0.42)',

@@ -107,7 +107,7 @@ Welke tegel waar past, ontdekt ze zelf: het menu toont alleen passende tegels. D
   4. Een kring sterretjes rond het nieuwe midden.
   5. Pino hupt erheen.
   6. De camera schuift.
-- **Vastlopen**: er is geen melding of hint. Het menu toont grijze tegels met een 0. De tuin blijft bewaard.
+- **Vastlopen**: er is geen melding of tekst. Het menu toont grijze tegels met een 0. Heeft Pino van geen enkele passende tegel er nog één, dan staat er ook een roze bol met de kroon van spel 1 in het menu (ongeveer bovenaan); een tik gaat naar `#/deur/1` (besluit 200). De tuin blijft bewaard.
 - **Animaties**: via rAF, met een timer als vangnet (`duur + 400 ms`). Zo blijft het spel niet hangen als de browser de frames stillegt.
 - Bij `prefers-reduced-motion` springt alles direct: geen groei, geen hupjes, geen knipperen of rijden.
 

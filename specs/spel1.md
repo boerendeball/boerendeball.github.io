@@ -40,6 +40,7 @@ Lagen van achter naar voor:
 | wijzende arm | `pino-arm-vinger` (40×10, schouder op 4,5) | schouder op (x+31, y+36) of (x+17, y+36) | **boven alles**: over bed en kind heen; gedraaid naar de mond van het kind (x+32, y+38) en in de lengte gerekt (max. 1,6×) zodat de vinger de mond haalt |
 | bereik-tint | witte tint 22 % over het kind (hoofd, haar, gezicht) | op het kind | alleen gapend én Pino naast het bed |
 | dekenflits | donkere tint over deken en motieven, 30 % → 0 in 0,4 s | op de deken | direct na een geslaagde onderbreking |
+| lapje | de verdiende tegel zoals in spel 2 (`hx-tegel` in de dekenkleur + motief, 30 px breed) springt uit de deken, stijgt 90 px, kantelt licht en vervaagt in 0,6 s; met reduced motion vervaagt hij alleen op zijn plek | boven alles | direct na een geslaagde onderbreking (besluit 200) |
 | schrikhup | het kind (hoofd, haar, gezicht) 4 px op en neer in 0,25 s | op het kind | direct na een geslaagde onderbreking (besluit 183) |
 | hoofdschudden | het kind 3× ±1,5 px heen en weer, uitdovend | op het kind | tijdens de boze fase (besluit 183) |
 
@@ -92,6 +93,7 @@ Constanten staan bovenaan `spel1.js` en zijn tuning-waarden:
 | `MAX_TEGELIJK` | 2 (eerste 30 s), daarna 3 | gelijktijdig gapende kinderen |
 | `RUST` | 6 s | een kind gaapt niet twee keer binnen deze tijd |
 | `DEKEN_DUUR` | 0,4 s | de deken loopt na een onderbreking van donker terug naar normaal |
+| `LAPJE_DUUR` / `LAPJE_HOOGTE` / `LAPJE_MAAT` | 0,6 s / 90 px / 30 px | de tegel die uit de deken vliegt (besluit 200) |
 | `REIK` | 28 px | strook links én rechts van het bed waarbinnen Pino's voetpunt moet staan |
 | `ZIJ_BOVEN` / `ZIJ_ONDER` | 30 / 12 px | voetpunt tussen bed-y+30 en bed-y+96: daarboven staat Pino achter het bed, daaronder te ver eronder; beide tellen niet |
 | `ARM_LENGTE` / `ARM_REK_MAX` | 30 px / 1,6 | natuurlijke lengte van de wijzende arm en de maximale rek om de mond te halen |
@@ -100,7 +102,7 @@ Constanten staan bovenaan `spel1.js` en zijn tuning-waarden:
 
 - **Start**: Pino staat op (92, 232) (links van het middelste bed), kijkt naar rechts. De tijd begint te lopen bij de eerste invoer óf na 2 s, wat eerder is.
 - **Wakker worden** (besluit 142): op elk interval wordt een slapend kind dat niet in `RUST` zit wakker, gekozen met een gewogen loting naar de tegelvoorraad (besluit 188): het kind met de tegel waarvan Pino er het minst heeft, heeft de grootste kans; per tegel méér halveert de kans (`SCHAARS_FACTOR` 0,5, ondergrens `SCHAARS_MIN` 0,05) (`g-wakker`: ogen open, mondje dicht, geen z's). Als er al `MAX_TEGELIJK` kinderen wakker of gapend zijn, wacht het. Na `WAKKER_DUUR` gaat het met kans `GAAP_KANS` gapen (`g-gaap`), anders valt het weer in slaap (`RUST` start). Een wakker kind is nog niet te onderbreken en licht niet op.
-- **Onderbreken**: bij de actieknop zoekt het spel het dichtstbijzijnde gapende bed waar Pino **naast** staat (`naastBed`: voetpunt links of rechts van het bed binnen `REIK`, en op bedhoogte; boven of onder het bed telt niet, besluit 21). Gevonden → score +1 (onzichtbaar), kind `verrast`, dekenflits, token toegevoegd, Pino 0,45 s gekeerd naar het bed met de **arm aan de kant van het kind** uitgestoken: `pino-romp` + de hangende andere arm op Pino's eigen laag, en `pino-arm-vinger` om de schouder gedraaid naar de mond van het kind, als laatste getekend zodat hij over bed en kind heen ligt. Niet gevonden → dezelfde pose 0,3 s met de arm aan de kijkkant recht vooruit, zonder straf. Zo ontdekt Pino de afstand en de juiste kant zelf.
+- **Onderbreken**: bij de actieknop zoekt het spel het dichtstbijzijnde gapende bed waar Pino **naast** staat (`naastBed`: voetpunt links of rechts van het bed binnen `REIK`, en op bedhoogte; boven of onder het bed telt niet, besluit 21). Gevonden → score +1 (en er vliegt een tegel ("lapje") uit de deken, besluit 200), kind `verrast`, dekenflits, token toegevoegd, Pino 0,45 s gekeerd naar het bed met de **arm aan de kant van het kind** uitgestoken: `pino-romp` + de hangende andere arm op Pino's eigen laag, en `pino-arm-vinger` om de schouder gedraaid naar de mond van het kind, als laatste getekend zodat hij over bed en kind heen ligt. Niet gevonden → dezelfde pose 0,3 s met de arm aan de kijkkant recht vooruit, zonder straf. Zo ontdekt Pino de afstand en de juiste kant zelf.
 - **Gemist**: een gaap die afloopt → `gemist` +1, kind valt weer in slaap; geen zichtbare straf; het kind sluit gewoon weer de ogen.
 - **Na een onderbreking**: verrast gezicht (`VERRAST_DUUR`), dan even boos (`BOOS_DUUR`, besluit 143) en dan meteen weer slapen, zonder wakker-fase; het kind wordt pas na `RUST` opnieuw wakker.
 - **Einde**: bij 0:00 bevriest de scène 0,8 s en opent het resultaatscherm. De terugknop tijdens het spel gaat terug zonder op te slaan (bevestiging is niet nodig: niets gaat verloren behalve deze poging).

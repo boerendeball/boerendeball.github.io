@@ -171,6 +171,9 @@
 .taart-hex:disabled .aantal { color: var(--gedempt-3); }
 .taart-optie.taart-rond { width: 64px; height: 64px; min-height: 0; padding: 0; border-radius: 50%; justify-content: center; box-shadow: 0 4px 0 0 var(--kaart-schaduw), 0 8px 16px rgba(30, 58, 76, 0.25); }
 .taart-optie.taart-annuleer { width: 48px; height: 48px; min-height: 0; padding: 0; border-radius: 50%; justify-content: center; box-shadow: 0 4px 0 0 var(--kaart-schaduw), 0 8px 16px rgba(30, 58, 76, 0.25); }
+/* Spel 2: kroonknop naar spel 1 als er geen passende tegels meer zijn (besluit 200); dezelfde roze bol als deurtje 1 */
+.taart-optie.taart-rond.s2-kroon { background: #FFE0EE; box-shadow: inset 0 0 0 3px var(--roze), 0 4px 0 0 var(--roze-schaduw), 0 8px 16px rgba(30, 58, 76, 0.25); }
+.taart-optie.taart-rond.s2-kroon:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
 /* Spel 2: het menumidden is de tegel zelf, op zijn plek in de scène; geen bol of ring eromheen (besluit 193). */
 .taart-midden.taart-midden-hex { width: 72px; height: 72px; border: 0; background: transparent; box-shadow: none; }
 

@@ -34,6 +34,9 @@ const ARM_REK_MAX = 1.6;      // de wijzende arm mag zover gerekt worden om de m
 const LAAG_RAND = 16;         // px extra rand van de tintlagen (kind en deken steken niet verder buiten hun frame uit)
 const BEREIK_TINT = 'rgba(255, 255, 255, 0.22)'; // lichte oplichting van een kind dat Pino kan onderbreken
 const DEKEN_DUUR = 0.4;       // s de deken wordt kort donkerder na een geslaagde onderbreking
+const LAPJE_DUUR = 0.6;       // s een tegel ("lapje") vliegt uit de deken omhoog en vervaagt (besluit 200)
+const LAPJE_HOOGTE = 90;      // px zo ver stijgt het lapje
+const LAPJE_MAAT = 30;        // px breedte van het lapje (hx-tegel 56×66, geschaald)
 const DEKEN_TINT = [30, 58, 76]; // rgb van de dekenflits (tekstkleur); alpha loopt van DEKEN_ALPHA naar 0
 const DEKEN_ALPHA = 0.3;
 const SNELHEID = 130;         // px/s
@@ -70,7 +73,7 @@ function spriteLijst() {
     { id: 'pino-staan' }, { id: 'pino-loop' }, { id: 'pino-romp' }, { id: 'pino-arm-links' }, { id: 'pino-arm-rechts' }, { id: 'pino-arm-vinger' },
     { id: 'g-slaap' }, { id: 'g-wakker' }, { id: 'g-gaap' }, { id: 'g-gaap-begin' }, { id: 'g-verrast' }, { id: 'g-boos' },
     { id: 'm-vlinder' }, { id: 'm-boom' }, { id: 'm-vogel' }];
-  for (const k of Object.values(KLEUR)) lijst.push({ id: 'bed-deken', kleur: k });
+  for (const k of Object.values(KLEUR)) lijst.push({ id: 'bed-deken', kleur: k }, { id: 'hx-tegel', kleur: k });
   for (const rij of BEZETTING) {
     for (const [, , huid, haar, haarkleur] of rij) {
       lijst.push({ id: 'k-hoofd', kleur: huid }, { id: haar, kleur: haarkleur });
@@ -125,7 +128,8 @@ function speel({ root, dag, info, klaar, opnieuw }) {
     tijd: DUUR, verstreken: 0, gestart: false, wacht: 0, klaar: false, bevries: 0,
     score: 0, gemist: 0, gaapTimer: START_PAUZE, klok: 0,
   };
-  if (datum.isTest()) window.pinoDebug = { spel: 1, s, pino, bedden };
+  const lapjes = [];   // tegels die net uit een deken vliegen (besluit 200)
+  if (datum.isTest()) window.pinoDebug = { spel: 1, s, pino, bedden, lapjes };
 
   /* ---------- invoer ---------- */
   const invoer = maakInvoer({
@@ -230,7 +234,9 @@ function speel({ root, dag, info, klaar, opnieuw }) {
       doel.dekenTot = DEKEN_DUUR;
       doel.rustTot = RUST;
       s.score += 1;
-      staat.voegTegelToe(doel.deken, doel.motief); // token (kleur-figuur) voor spel 2, onzichtbaar in dit spel
+      staat.voegTegelToe(doel.deken, doel.motief); // tegel (kleur-figuur) voor spel 2
+      // Besluit 200: de tegel springt als lapje uit de deken omhoog en verdwijnt (je ziet dát je iets krijgt).
+      lapjes.push({ x: doel.x + 32, y: doel.y + 58, kleur: KLEUR[doel.deken], motief: doel.motief, t: 0 });
       pino.richting = doel.x + 32 >= pino.x + 24 ? 1 : -1;
       wijs(doel);
       pino.poseTot = POSE_DUUR;
@@ -277,6 +283,10 @@ function speel({ root, dag, info, klaar, opnieuw }) {
         pino.pose = 'staan';
       }
     }
+
+    // Lapjes die uit een deken vliegen
+    for (const l of lapjes) l.t += dt;
+    for (let i = lapjes.length - 1; i >= 0; i -= 1) if (lapjes[i].t >= LAPJE_DUUR) lapjes.splice(i, 1);
 
     // Kinderen
     for (const b of bedden) {
@@ -455,6 +465,33 @@ function speel({ root, dag, info, klaar, opnieuw }) {
       if (b.status === 'slaap') tekenZzz(b);
       else if (b.wekTot > 0) tekenWek(b);
     }
+    for (const l of lapjes) tekenLapje(l);
+  }
+
+  // Een tegel zoals in spel 2 (hx-tegel + motief), klein, die uit de deken omhoog schiet en vervaagt (besluit 200).
+  // Met reduced motion staat hij stil op de deken en vervaagt alleen.
+  function tekenLapje(l) {
+    const p = Math.min(1, l.t / LAPJE_DUUR);
+    const stijg = rustig ? 0 : (1 - (1 - p) ** 2) * LAPJE_HOOGTE;
+    const schaal = rustig ? 1 : (p < 0.15 ? 0.5 + (p / 0.15) * 0.5 : 1 - ((p - 0.15) / 0.85) * 0.25);
+    const hoek = rustig ? 0 : Math.sin(p * Math.PI * 2) * 0.12;
+    const alpha = p < 0.5 ? 1 : 1 - (p - 0.5) / 0.5;
+    const w = LAPJE_MAAT, hh = (LAPJE_MAAT * 66) / 56, n = LAPJE_MAAT / 56;
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.translate(l.x, l.y - stijg);
+    ctx.rotate(hoek);
+    ctx.scale(schaal, schaal);
+    const x = -w / 2, y = -hh / 2;
+    tekenSprite(ctx, 'hx-tegel', x, y, { kleur: l.kleur, w, h: hh });
+    if (l.motief === 'vlinder') {
+      const m = 15 * n;
+      for (const [mx, my] of [[28, 13], [16, 33], [40, 33]]) tekenSprite(ctx, 'm-vlinder', x + mx * n - m / 2, y + my * n - m / 2 + 4 * n, { w: m, h: m });
+    } else {
+      const m = 30 * n;
+      tekenSprite(ctx, `m-${l.motief}`, -m / 2, y + 14 * n, { w: m, h: m });
+    }
+    ctx.restore();
   }
 
   // Romp (met of zonder armen in de pose) en, bij het wijzen, de hangende arm aan de andere kant.

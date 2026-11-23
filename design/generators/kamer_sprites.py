@@ -81,11 +81,18 @@ def g(x, y, s=1.0, inhoud='', rot=0):
     return f'<g transform="translate({x} {y}) scale({s}){r}">{inhoud}</g>'
 
 
-def tegelstapel(cx, cy, kleur, figuur, aantal, s=34):
-    """Een stapeltje tegels (hooguit drie getekend) met het midden van het bovenvlak op (cx, cy)."""
-    out = ''
-    for i in range(min(3, max(1, aantal)) - 1, -1, -1):
-        out += hex_tegel(cx, cy - i * 3.5, kleur, figuur, s)
+def platte_tegel(cx, cy, kleur, figuur, s):
+    """Een platte tegel in driekwartaanzicht: dezelfde tegel, verticaal half zo hoog, met het midden op (cx, cy)."""
+    t = hex_tegel(cx, round(cy + s * 58 / 112 + 4 - s * 33 / 56, 2), kleur, figuur, s)
+    return f'<g transform="translate({cx} {cy}) scale(1 0.5) translate({-cx} {-cy})">{t}</g>'
+
+
+def tegelstapel(cx, cy, kleur, figuur, aantal, s=26):
+    """Een stapeltje platte tegels op de vloer, als speelgoed rond het kleed (besluit 223): hooguit drie getekend,
+    elke tegel 2,6 px hoger, met een zachte schaduw eronder. (cx, cy) is het midden van de onderste tegel."""
+    out = f'<ellipse cx="{cx}" cy="{round(cy + s * 0.22, 2)}" rx="{round(s * 0.55, 2)}" ry="{round(s * 0.2, 2)}" fill="rgba(139, 74, 30, 0.18)"/>'
+    for i in range(min(3, max(1, aantal))):
+        out += platte_tegel(cx, round(cy - i * 2.6, 2), kleur, figuur, s)
     return out
 
 

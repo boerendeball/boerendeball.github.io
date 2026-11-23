@@ -58,10 +58,9 @@ VOL = {
 LEEG = {'gespeeld': set(), 'tegels': {}, 'edelstenen': {}, 'karakters': [], 'familie': None, 'fotos': [],
         'geld': 0, 'producten': [], 'werkers': 0, 'levels': []}
 
-# Vaste plek van elk tegeltype in de honingraat vooraan rechts (achterste rij 5, voorste rij 4).
-TEGEL_PLEK = {}
-for i, (k, f) in enumerate([(k, f) for k in TEGEL_KLEUR for f in TEGEL_FIGUUR]):
-    TEGEL_PLEK[f'{k}-{f}'] = (196 + i * 36, 482) if i < 5 else (214 + (i - 5) * 36, 516)
+# Vaste plek van elk tegeltype: losse stapeltjes verspreid over de vloer rond het kleed (besluit 223).
+_PLEKKEN = [(176, 424), (218, 436), (262, 420), (306, 440), (334, 482), (196, 478), (244, 498), (292, 506), (158, 506)]
+TEGEL_PLEK = {f'{k}-{f}': _PLEKKEN[i] for i, (k, f) in enumerate([(k, f) for k in TEGEL_KLEUR for f in TEGEL_FIGUUR])}
 
 
 def kamer_scene(st):
@@ -139,7 +138,7 @@ def kamer_scene(st):
         o.append(use('s10-taart', 80, 428, 38, 38))
     if 7 in gs:
         o.append(use('s7-loep', 112, 454, 26, 26))
-    # tegels als stapeltjes in een honingraat vooraan rechts (achterste rij eerst)
+    # tegels als platte stapeltjes rond het kleed (van achter naar voor)
     for sleutel, (cx, cy) in sorted(TEGEL_PLEK.items(), key=lambda kv: kv[1][1]):
         n = st['tegels'].get(sleutel, 0)
         if n > 0:

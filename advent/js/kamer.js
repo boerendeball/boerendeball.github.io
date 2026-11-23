@@ -51,9 +51,19 @@ function hexTegel(cx, cy, kleur, figuur, s = 34) {
   return g;
 }
 
-function tegelstapel(cx, cy, kleur, figuur, aantal, s = 34) {
-  const g = el('g');
-  for (let i = Math.min(3, Math.max(1, aantal)) - 1; i >= 0; i--) g.append(hexTegel(cx, cy - i * 3.5, kleur, figuur, s));
+/** Een platte tegel in driekwartaanzicht: dezelfde tegel, verticaal half zo hoog, met het midden op (cx, cy). */
+function platteTegel(cx, cy, kleur, figuur, s) {
+  const t = hexTegel(cx, cy + (s * 58) / 112 + 4 - (s * 33) / 56, kleur, figuur, s);
+  return el('g', { transform: `translate(${cx} ${cy}) scale(1 0.5) translate(${-cx} ${-cy})` }, [t]);
+}
+
+/**
+ * Een stapeltje platte tegels op de vloer, als speelgoed rond het kleed (besluit 223): hooguit drie getekend, elke
+ * tegel 2,6 px hoger, met een zachte schaduw eronder. (cx, cy) is het midden van de onderste tegel.
+ */
+function tegelstapel(cx, cy, kleur, figuur, aantal, s = 26) {
+  const g = el('g', {}, [el('ellipse', { cx, cy: cy + s * 0.22, rx: s * 0.55, ry: s * 0.2, fill: 'rgba(139, 74, 30, 0.18)' })]);
+  for (let i = 0; i < Math.min(3, Math.max(1, aantal)); i++) g.append(platteTegel(cx, cy - i * 2.6, kleur, figuur, s));
   return g;
 }
 
@@ -143,22 +153,22 @@ function tekenVoorwerp(v) {
     case 'taart': return { knoop: use('s10-taart', 80, 428, 38, 38), rand: r(80, 428, 38, 38), vak: r(80, 424, 36, 40) };
     case 'loep': return { knoop: use('s7-loep', 112, 454, 26, 26), rand: r(112, 454, 26, 26), vak: r(116, 446, 30, 34) };
     case 'tegel': {
-      const [cx, cy, voor] = tegelPlek(v.kleur, v.figuur);
+      const [cx, cy] = tegelPlek(v.kleur, v.figuur);
       const k = Math.min(3, v.aantal);
       return {
         knoop: tegelstapel(cx, cy, v.kleur, v.figuur, v.aantal),
-        rand: r(cx - 18, cy - 22 - (k - 1) * 3.5, 36, 42 + (k - 1) * 3.5),
-        vak: voor ? r(cx - 18, cy - 22, 36, 40) : r(cx - 18, cy - 24, 36, 36),
+        rand: r(cx - 15, cy - 9 - (k - 1) * 2.6, 30, 24 + (k - 1) * 2.6),
+        vak: r(cx - 18, cy - 16, 36, 32),
       };
     }
     default: return null;
   }
 }
 
-/** Vaste plek per tegeltype in de honingraat vooraan rechts: achterste rij 5, voorste rij 4. */
+/** Vaste plek per tegeltype: losse stapeltjes verspreid over de vloer rond het kleed (besluit 223). */
+const TEGEL_PLEK = [[176, 424], [218, 436], [262, 420], [306, 440], [334, 482], [196, 478], [244, 498], [292, 506], [158, 506]];
 function tegelPlek(kleur, figuur) {
-  const i = ['groen', 'geel', 'blauw'].indexOf(kleur) * 3 + ['vlinder', 'boom', 'vogel'].indexOf(figuur);
-  return i < 5 ? [196 + i * 36, 482, false] : [214 + (i - 5) * 36, 516, true];
+  return TEGEL_PLEK[['groen', 'geel', 'blauw'].indexOf(kleur) * 3 + ['vlinder', 'boom', 'vogel'].indexOf(figuur)];
 }
 
 /** Tekenvolgorde van achter naar voor (ook de Tab-volgorde van de tikvlakken). */

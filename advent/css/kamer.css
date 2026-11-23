@@ -36,13 +36,16 @@
 @media (hover: hover) { .km-vak:hover { background: rgba(255, 255, 255, 0.22); } }
 .km-vak[aria-pressed='true'] { background: rgba(255, 255, 255, 0.3); }
 
-/* Gedachtenwolk onder de scène; de stipjes wijzen naar het voorwerp (--stip-x). */
-.km-wolk { position: relative; width: 100%; max-width: var(--scene-breedte); margin: 10px auto 0; --stip-x: 50%; }
+/* Gedachtenwolk in de scène, boven (of onder) het voorwerp (besluit 216); kamer.js zet left/top/breedte en
+   --stip-x. De stipjes hangen onder de kaart, naar het voorwerp toe; met .km-wolk-onder erboven. */
+.km-wolk { position: absolute; left: 0; top: 0; z-index: 2; --stip-x: 50%; }
 .km-wolk[hidden] { display: none; }
-.km-wolk-stip { position: absolute; display: block; border-radius: 50%; background: #fff; box-shadow: 0 2px 0 0 var(--kaart-schaduw); }
-.km-wolk-stip-1 { left: var(--stip-x); top: -6px; width: 9px; height: 9px; transform: translateX(-50%); }
-.km-wolk-stip-2 { left: calc(var(--stip-x) - 10px); top: 6px; width: 14px; height: 14px; transform: translateX(-50%); }
-.km-wolk-kaart { position: relative; margin-top: 12px; padding: 12px 16px; display: flex; gap: 14px; align-items: center; }
+.km-wolk-stip { position: absolute; display: block; border-radius: 50%; background: #fff; box-shadow: 0 2px 0 0 var(--kaart-schaduw); transform: translateX(-50%); }
+.km-wolk-stip-1 { left: var(--stip-x); top: calc(100% + 19px); width: 9px; height: 9px; }
+.km-wolk-stip-2 { left: calc(var(--stip-x) - 8px); top: calc(100% + 4px); width: 14px; height: 14px; }
+.km-wolk-onder .km-wolk-stip-1 { top: -28px; }
+.km-wolk-onder .km-wolk-stip-2 { top: -18px; }
+.km-wolk-kaart { position: relative; padding: 12px 16px; display: flex; gap: 14px; align-items: center; }
 .km-wolk-icoon { flex-shrink: 0; width: 56px; height: 56px; }
 .km-wolk-tekstblok { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
 .km-wolk-naam { font-size: 18px; }

@@ -9,7 +9,7 @@ De preview `Spel8.png` is van vóór de besluiten #110–#121. Waar ze afwijkt, 
 - er is geen D-pad meer, maar een sprayknop naast de zandloper; de opnieuw-knop staat links en wordt pas na de eerste zet bruikbaar (besluit 213);
 - er staat geen voetstappen- of zettenteller in de kopbalk;
 - rotsen zijn vast;
-- level 2 heeft een andere kaart.
+- level 2 heeft een andere kaart (twee keer veranderd: besluit #117 en #217).
 
 ## Doel en gevoel
 In de jungle ligt een oud stenen schaakbord in de grond. Pino (roze pion) moet in vijf levels de tempel bereiken, telkens met een ander roofdier als schaakstuk op het bord (level 1: drie pythons). De dieren denken na en komen op haar af; de vorm van het stuk verraadt hoe het beweegt. Rustig puzzelen: niets gebeurt tot Pino de zandloper drukt.
@@ -105,7 +105,7 @@ Glijders stoppen vóór elk obstakel en elke stam.
 | Level | Dier | Minste beurten zonder spray | Bijzonder |
 |---|---|---|---|
 | 1 | 3 × python | 24 | lange omweg langs drie pionnen (besluit #122) |
-| 2 | tijger | 19 | één wissel met een stam |
+| 2 | tijger | 13 (met spray 12) | één wissel met een stam; makkelijker gemaakt (besluit 217, was 19) |
 | 3 | luiaard | 15 (was 17 zonder lege beurt) | twee wissels met dezelfde stam |
 | 4 | leeuw | 16 (was 17 zonder lege beurt) | drie wissels |
 | 5 | krokodil | onmogelijk (met spray 19) | drie stammen; spray en direct wisselen met de krokodil, die daarna achter de stammen vastzit |
@@ -164,6 +164,7 @@ Er is geen tekst in het spel, behalve de kopbalk en de resultaatschermen. De zan
 - [x] Level 1–5 zijn uit te spelen in de app; na level 5 volgt "Schaakmat!" met Logica +1 en de behoefte Bordspellen op 100 %.
 - [x] Toetsenbord en touch werken; geen consolefouten; 390×844 en desktop.
 - [x] De eerste echte spray opent de uitleg (twee pagina's, pijl, vinkje, vegen, pijltjestoetsen, Escape); daarna speelt het level verder en bij een volgende spray komt hij niet terug (besluit 215; 22 november, 375×812, geen consolefouten).
+- [x] Level 2 (besluit 217): de levelcontrole slaagt (13 beurten zonder spray, 12 met), en de oplossing is in de app uitgespeeld met en zonder spray (23 november, 375×812, geen consolefouten).
 - [ ] Beoordeeld door Benjamin.
 
 ## Test-URL's

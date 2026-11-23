@@ -214,7 +214,7 @@ def sprites_blad():
     out += f'<div class="vak"><svg class="ic" viewBox="0 0 132 170" width="88" height="113">{foto("tan", 4, 4, 1.0)}</svg><span class="lbl">foto Tan</span></div>'
     out += f'<div class="vak"><svg class="ic" viewBox="0 0 132 170" width="88" height="113">{foto("nguyen", 4, 4, 1.0)}</svg><span class="lbl">foto Nguyễn</span></div>'
     out += f'<div class="vak"><svg class="ic" viewBox="0 0 132 170" width="88" height="113">{foto("somchai", 4, 4, 1.0)}</svg><span class="lbl">foto Somchai</span></div>'
-    out += f'<div class="vak"><svg class="ic" viewBox="0 -24 60 64" width="90" height="96">{schaakbord(0, 0, [1, 2, 3, 4, 5])}</svg><span class="lbl">bordje, 5 levels</span></div>'
+    out += f'<div class="vak"><svg class="ic" viewBox="0 -8 60 48" width="90" height="72">{schaakbord(0, 0, [1, 2, 3, 4, 5])}</svg><span class="lbl">bordje, 5 levels</span></div>'
     out += f'<div class="vak"><svg class="ic" viewBox="0 0 48 72" width="48" height="72">{poppetje(6, 14, 1.2)}</svg><span class="lbl">poppetje</span></div>'
     out += f'<div class="vak"><svg class="ic" viewBox="0 0 48 56" width="72" height="84">{tegelstapel(24, 30, "groen", "vogel", 3, 40)}</svg><span class="lbl">tegelstapel (3)</span></div>'
     out += '''

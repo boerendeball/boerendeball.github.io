@@ -23,7 +23,7 @@ Mobiel 390×844, op desktop gecentreerd met dezelfde breedte (max 420 px) op de 
 
 1. **Kopbalk** (`ui/kopbalk.js`): terugknop (→ `#/`, vervangt de geschiedenis niet), label `PINO'S KAMER`, titel **Mijn Kamer** (besluit 206).
 2. **Scène**: één SVG, viewBox `0 0 358 560`, breedte 358 px (schaalt mee tot de schermbreedte), `role="img"`, `aria-label="Pino's kamer"`. Afgeronde hoeken 22 px en de kaartschaduw `0 6px 0 0 #CDE4F0`.
-3. **Gedachtenwolk** onder de scène (verborgen tot Pino ergens op tikt): een witte kaart in de stijl van het "Morgen…"-wolkje van de kalender (afgerond 22 px, twee witte stipjes die naar boven wijzen, naar het voorwerp toe). Inhoud: links het voorwerp groot (56 px, dezelfde sprite en kleur als in de kamer), rechts de **naam** (Fredoka 700, 18 px, `#1E3A4C`) en de **omschrijving** (Nunito 400, 15 px, `#35505F`, regelafstand 1,4). Geen knoppen in de wolk.
+3. **Gedachtenwolk** in de scène, bij het voorwerp (verborgen tot Pino ergens op tikt; besluit 216): een witte kaart in de stijl van het "Morgen…"-wolkje van de kalender (afgerond 22 px), max. 320 px breed en minstens 8 px van de rand van de scène. Hij staat **boven** het voorwerp, of **eronder** als er boven te weinig ruimte is (slinger, foto's), horizontaal gecentreerd op het voorwerp; twee witte stipjes in de 30 px ertussen wijzen naar het voorwerp. Het artboard toont de wolk nog onder de scène: op een telefoon met browserbalken viel hij daar buiten beeld. Inhoud: links het voorwerp groot (56 px, dezelfde sprite en kleur als in de kamer), rechts de **naam** (Fredoka 700, 18 px, `#1E3A4C`) en de **omschrijving** (Nunito 400, 15 px, `#35505F`, regelafstand 1,4). Geen knoppen in de wolk.
 
 Er is geen tekst in de scène zelf en geen teller boven de scène.
 
@@ -80,7 +80,7 @@ Twee soorten:
 | 16 | 6 | gi | aandenken | `deurtjes[6]` gespeeld | na spel 6 | linker haakje (262, 64, 40 × 40) | `s6-gi` |
 | 17 | 7 | vergrootglas | aandenken | `deurtjes[7]` gespeeld | na spel 7 | tafel (112, 454, 26 × 26) | `s7-loep` |
 | 18 | 7 | beeldje van de werker | verzameld | aantal `true` in `werkers` | deurtje 7 open of gespeeld **en** ≥ 1 gevonden | wandplank, rechts (245, 101, 18 × 23) | `werker` (spel 4) |
-| 19 | 8 | schaakbordje met de dieren die Pino te slim af was | verzameld | `levels.gehaald` | ≥ 1 level gehaald | tafel (20, 446) | `schaakbord(levels)`: `km-bordje` + per gehaald level het stuk van dat level: 1 `s8-stuk-python`, 2 `s8-stuk-tijger`, 3 `s8-stuk-luiaard`, 4 `s8-stuk-leeuw`, 5 `s8-stuk-krokodil` |
+| 19 | 8 | schaakbordje met de dieren die Pino te slim af was | verzameld | `levels.gehaald` | ≥ 1 level gehaald | tafel (20, 446) | `schaakbord(levels)`: `km-bordje` + per gehaald level het stuk van dat level: 1 `s8-stuk-python`, 2 `s8-stuk-tijger`, 3 `s8-stuk-luiaard`, 4 `s8-stuk-leeuw`, 5 `s8-stuk-krokodil`; de stukken staan in een zigzag óp de vakjes (voetpunten 9,5/24 · 20/13 · 30,5/24 · 41/13 · 51/24 binnen het bordje), achterste eerst getekend |
 | 20 | 9 | stethoscoop | aandenken | `deurtjes[9]` gespeeld | na spel 9 | nachtkastje (214, 184, 24 × 16) | `km-stetho` |
 | 21 | 10 | verjaardagstaart | aandenken | `deurtjes[10]` gespeeld | na de finale | tafel (80, 428, 38 × 38) | `s10-taart` |
 | 22 | 10 | ballonnen en slinger | aandenken | `deurtjes[10]` gespeeld | na de finale | ballonnen boven de tafel (x 8/32/56, y 376/362/380, 28 × 49), slinger twee keer over de bovenrand van de muur | `s10-ballon` (`#FF6FAE`, `#FFC93C`, `#1FA3DC`) + `s10-slinger` |
@@ -132,7 +132,7 @@ Elke tegel (9 typen) en elke edelsteen (3 kleuren) is een eigen voorwerp met een
 ## Bediening
 
 - Elk voorwerp heeft een **doorzichtige `<button>`** die in procenten over de scène ligt, hetzelfde patroon als `werkerVak` in `advent/js/spellen/zoeken.js`. Tikvlak minstens 36×36 px op een telefoon; overlappen ze, dan wint het voorwerp dat vooraan getekend is.
-- **Tik** op een voorwerp: het voorwerp wipt één keer 4 px op (0,3 s) en de gedachtenwolk toont naam en omschrijving. Tik op een ander voorwerp: de wolk wisselt direct. **Nog eens tikken** op hetzelfde voorwerp, **tikken op de vloer of de wand** of **Escape** sluit de wolk.
+- **Tik** op een voorwerp: het voorwerp wipt één keer 4 px op (0,3 s) en de gedachtenwolk verschijnt erbij (160 ms) met naam en omschrijving. Tik op een ander voorwerp: de wolk wisselt direct. **Nog eens tikken** op hetzelfde voorwerp, **tikken op de vloer, de wand of de wolk zelf** of **Escape** sluit de wolk.
 - **Toetsenbord**: Tab loopt door de voorwerpen van achter naar voor en van links naar rechts; Enter/spatie werkt als tikken; de focusring is de standaard teal ring van de app (`:focus-visible`).
 - Met *reduced motion*: geen wip, geen pulserende ster, de wolk verschijnt zonder overgang.
 - Geen geluid.

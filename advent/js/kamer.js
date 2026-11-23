@@ -87,10 +87,12 @@ function foto(familie, x, y, s, rot) {
 
 function schaakbord(x, y, levels) {
   const g = groep(x, y, {}, [use('km-bordje', 0, 0, 60, 40)]);
-  const plekken = [[2, -14], [14, -18], [26, -14], [38, -18], [48, -14]];
-  for (const lv of levels) {
-    const [px, py] = plekken[lv - 1];
-    g.append(use(`s8-stuk-${LEVEL_STUK[lv]}`, px, py, 15, 19));
+  // Voetpunt per level op de vakjes van het bord (vakjes y 3–27), zigzag voor/achter; achterste stukken eerst.
+  // Het stuk (15×19) heeft zijn voetmidden op (7,5; 16,5). Zelfde als schaakbord() in kamer_sprites.py.
+  const plekken = [[9.5, 24], [20, 13], [30.5, 24], [41, 13], [51, 24]];
+  for (const lv of [...levels].sort((a, b) => plekken[a - 1][1] - plekken[b - 1][1] || a - b)) {
+    const [vx, vy] = plekken[lv - 1];
+    g.append(use(`s8-stuk-${LEVEL_STUK[lv]}`, vx - 7.5, vy - 16.5, 15, 19));
   }
   return g;
 }
@@ -137,7 +139,7 @@ function tekenVoorwerp(v) {
       knoop: el('g', {}, [[8, 376, '#FF6FAE'], [32, 362, '#FFC93C'], [56, 380, '#1FA3DC']].map(([x, y, k]) => use('s10-ballon', x, y, 28, 49, k))),
       rand: r(8, 362, 76, 67), vak: r(6, 358, 80, 70),
     };
-    case 'schaakbord': return { knoop: schaakbord(20, 446, v.levels), rand: r(20, 426, 60, 60), vak: r(18, 428, 62, 54) };
+    case 'schaakbord': return { knoop: schaakbord(20, 446, v.levels), rand: r(18, 438, 64, 48), vak: r(18, 436, 62, 48) };
     case 'taart': return { knoop: use('s10-taart', 80, 428, 38, 38), rand: r(80, 428, 38, 38), vak: r(80, 424, 36, 40) };
     case 'loep': return { knoop: use('s7-loep', 112, 454, 26, 26), rand: r(112, 454, 26, 26), vak: r(116, 446, 30, 34) };
     case 'tegel': {
@@ -213,10 +215,11 @@ export function schermKamer({ root }) {
   ]);
   const live = h('div', { class: 'visueel-verborgen', 'aria-live': 'polite' });
 
+  // De wolk staat in de scène bij het voorwerp (besluit 216), zodat hij op elke telefoon in beeld is.
+  kaart.append(wolk);
   root.append(h('div', { class: 'scherm km' }, [
     kopbalk({ label: "PINO'S KAMER", titel: 'Mijn Kamer' }),
     kaart,
-    wolk,
     live,
   ]));
 
@@ -255,12 +258,40 @@ export function schermKamer({ root }) {
     wolkIcoon.replaceChildren(el('svg', { viewBox: `${x + w / 2 - zijde / 2} ${y + hh / 2 - zijde / 2} ${zijde} ${zijde}`, width: 56, height: 56, class: 'ic' }, [t.knoop.cloneNode(true)]));
     wolkNaam.textContent = naam;
     wolkTekst.textContent = tekst;
-    // De stipjes wijzen naar het voorwerp.
-    wolk.style.setProperty('--stip-x', pct(Math.min(Math.max(x + w / 2, 30), B - 30), B));
     wolk.hidden = false;
+    plaatsWolk();
+    if (!rustig) wolk.animate([{ opacity: 0, transform: 'scale(0.92)' }, { opacity: 1, transform: 'scale(1)' }], { duration: 160, easing: 'ease-out' });
     live.textContent = `${naam}. ${tekst}`;
     if (!rustig) t.wrap.animate([{ transform: 'translateY(0)' }, { transform: 'translateY(-4px)' }, { transform: 'translateY(0)' }], { duration: 300, easing: 'ease-out' });
   };
+
+  /**
+   * Zet de wolk boven het voorwerp, of eronder als er boven te weinig ruimte is (bv. de slinger en de foto's),
+   * horizontaal gecentreerd op het voorwerp en altijd binnen de scène. De stipjes wijzen naar het voorwerp.
+   */
+  const RAND = 8;      // px vrij aan de rand van de scène
+  const AFSTAND = 30;  // px tussen wolk en voorwerp (ruimte voor de stipjes)
+  function plaatsWolk() {
+    if (!actief) return;
+    const W = kaart.clientWidth;
+    const Hk = kaart.clientHeight;
+    const k = W / B;
+    const { x, y, w, h: hh } = actief.rand;
+    const breedte = Math.min(W - 2 * RAND, 320);
+    wolk.style.width = `${breedte}px`;
+    const hoogte = wolk.offsetHeight;
+    const midden = (x + w / 2) * k;
+    const links = Math.min(Math.max(midden - breedte / 2, RAND), W - breedte - RAND);
+    const boven = y * k - AFSTAND - hoogte >= RAND;
+    const top = boven ? y * k - AFSTAND - hoogte : Math.min((y + hh) * k + AFSTAND, Hk - hoogte - RAND);
+    wolk.style.left = `${links}px`;
+    wolk.style.top = `${top}px`;
+    wolk.classList.toggle('km-wolk-onder', !boven);
+    wolk.style.setProperty('--stip-x', `${Math.min(Math.max(midden - links, 22), breedte - 22)}px`);
+    wolk.style.transformOrigin = `${midden - links}px ${boven ? '100%' : '0%'}`;
+  }
+  const opMaat = () => plaatsWolk();
+  window.addEventListener('resize', opMaat);
 
   haalTeksten().then(() => {
     for (const t of getekend) {
@@ -279,7 +310,7 @@ export function schermKamer({ root }) {
   kaart.addEventListener('click', sluit);
   const opToets = (e) => { if (e.key === 'Escape') sluit(); };
   document.addEventListener('keydown', opToets);
-  return () => document.removeEventListener('keydown', opToets);
+  return () => { document.removeEventListener('keydown', opToets); window.removeEventListener('resize', opMaat); };
 }
 
 function leesParam(naam) {

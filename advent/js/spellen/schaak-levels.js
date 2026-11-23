@@ -20,15 +20,15 @@ export const LEVELS = [
   {
     nr: 2,
     dier: 'tijger',
-    kaart: [
+    kaart: [            // makkelijker gemaakt (besluit 217): meer bomen als dekking, stam hoger, rotsen erbij
       '....B..T',
-      'RB.B.B..',
-      'B.B.....',
+      'RB.BBB..',
+      'B.B.B...',
       '.~~~...D',
-      'R.......',
-      '.S..Bb..',
-      '........',
-      'P.B.....',
+      'R.S.....',
+      'R.B.Bb..',
+      '.......R',
+      'P....B..',
     ],
   },
   {

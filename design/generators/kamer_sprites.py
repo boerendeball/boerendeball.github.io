@@ -121,8 +121,10 @@ def poppetje(x, y, s=0.5):
 def schaakbord(x, y, levels, s=1.0):
     """Bordje met een stuk per gehaald level (python, tijger, luiaard, leeuw, krokodil)."""
     out = use('km-bordje', 0, 0, 60, 40)
-    plekken = [(2, -14), (14, -18), (26, -14), (38, -18), (48, -14)]
-    for lv in sorted(levels):
-        px, py = plekken[lv - 1]
-        out += use(f's8-stuk-{LEVEL_STUK[lv]}', px, py, 15, 19)
+    # Voetpunt (midden van de voet) per level, op de vakjes van het bord (vakjes y 3-27): zigzag voor/achter.
+    # Het stuk (15x19) heeft zijn voetmidden op (7.5, 16.5). Achterste stukken eerst tekenen.
+    plekken = [(9.5, 24), (20, 13), (30.5, 24), (41, 13), (51, 24)]
+    for lv in sorted(levels, key=lambda lv: (plekken[lv - 1][1], lv)):
+        vx, vy = plekken[lv - 1]
+        out += use(f's8-stuk-{LEVEL_STUK[lv]}', vx - 7.5, vy - 16.5, 15, 19)
     return g(x, y, s, out)

@@ -216,6 +216,21 @@ function zwaaiOpen(deur, verder) {
 
 /* ---------- Vergrendeld ---------- */
 
+/**
+ * De gans als poortwachter (besluit 224): de boze gans uit spel 10 (s10-gans-boos) met het rode uitroep-wolkje van de
+ * beeldfeedback (bub-wolk + bub-uitroep), met zijn voeten op een grasveldje. viewBox 64×64, getekend in de bol van 124 px.
+ * De voeten van s10-gans-boos staan op y 37 van 40; bij schaal 1,2 en y 12 is dat y 56,4: het midden van het gras.
+ */
+function gansWacht() {
+  return el('svg', { viewBox: '0 0 64 64', width: 100, height: 100, class: 'ic', role: 'img', 'aria-label': 'Boze gans die de weg verspert' }, [
+    el('ellipse', { cx: 31, cy: 56, rx: 26, ry: 6.5, fill: '#8BD35A' }),
+    el('ellipse', { cx: 33, cy: 57.5, rx: 20, ry: 4, fill: '#9ADB7A' }),
+    use('s10-gans-boos', 4, 12, 58, 48),
+    use('bub-wolk', 35, 4, 22, 22),
+    use('bub-uitroep', 35, 4, 22, 22),
+  ]);
+}
+
 export function toonVergrendeld(n) {
   const nu = datum.vandaag();
   const vandaagDag = datum.dagVanVandaag(nu);
@@ -229,7 +244,7 @@ export function toonVergrendeld(n) {
     label: 'Dit deurtje is nog vergrendeld',
     melding: { icoon: 'slot', kleur: '#FFF1D6', html: '<strong>Actie niet beschikbaar.</strong> Dit deurtje is nog vergrendeld.' },
     inhoud: [
-      h('div', { class: 'dialoog-bol', style: { background: '#D9F5DE' } }, [icoon('gans', 88, { label: 'Gans die de weg verspert' })]),
+      h('div', { class: 'dialoog-bol', style: { background: '#D9F5DE' } }, [gansWacht()]),
       h('div', { class: 'dialoog-sub', style: { color: 'var(--roze-schaduw)' } }, 'KWAK KWAK KWAAAK!'),
       h('h2', { class: 'kop dialoog-titel' }, 'Nog even wachten, Pino!'),
       h('p', { class: 'dialoog-tekst', html: `Dit deurtje gaat pas open op <strong>${datum.langeDatum(n)}</strong>. De gans laat je er nog niet langs.` }),

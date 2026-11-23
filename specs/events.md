@@ -26,7 +26,7 @@ De Sims-momenten rondom de spellen. Alles behalve het resultaatscherm is gebouwd
 
 ## Vergrendeld (`Vergrendeld.png`)
 
-Melding bovenin: slot-icoon (geel bolletje) "**Actie niet beschikbaar.** Dit deurtje is nog vergrendeld." Dialoog (top 250 px op mobiel, gecentreerd op desktop): gansbol 124 px (`#D9F5DE`, ring groen) · "KWAK KWAK KWAAAK!" (roze) · **Nog even wachten, Pino!** · "Dit deurtje gaat pas open op **28 november**. De gans laat je er nog niet langs." · vak "Ontgrendelt over" + "**1 dag**" (Fredoka 22 groen) + groene balk (breedte `100 − dagen × 22`, min 8 %) · knop **Oké, ik wacht wel** (teal pil) · link **Naar het deurtje van vandaag** (alleen als er een deurtje van vandaag is).
+Melding bovenin: slot-icoon (geel bolletje) "**Actie niet beschikbaar.** Dit deurtje is nog vergrendeld." Dialoog (top 250 px op mobiel, gecentreerd op desktop): gansbol 124 px (`#D9F5DE`, ring groen) met de gans als poortwachter (besluit 224): de boze gans uit spel 10 (`s10-gans-boos`) met zijn voeten op een grasveldje en het rode uitroep-wolkje (`bub-wolk` + `bub-uitroep`) boven zijn kop; `gansWacht()` in `kalender.js`, viewBox 64×64, 100 px · "KWAK KWAK KWAAAK!" (roze) · **Nog even wachten, Pino!** · "Dit deurtje gaat pas open op **28 november**. De gans laat je er nog niet langs." · vak "Ontgrendelt over" + "**1 dag**" (Fredoka 22 groen) + groene balk (breedte `100 − dagen × 22`, min 8 %) · knop **Oké, ik wacht wel** (teal pil) · link **Naar het deurtje van vandaag** (alleen als er een deurtje van vandaag is).
 
 ## Briefje
 

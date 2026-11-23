@@ -4,21 +4,21 @@ Per scherm één spec: wat het precies doet, hoe het eruitziet (met verwijzing n
 
 | Spec | Status |
 |---|---|
-| [kalender.md](kalender.md) | gebouwd, te beoordelen |
-| [events.md](events.md) — taartmenu, telefoon, vergrendeld, briefje, laadscherm, resultaatscherm, meldingen | gebouwd, te beoordelen |
-| [spel1.md](spel1.md) — Princess Allure | gebouwd, te beoordelen |
-| [spel2.md](spel2.md) — Waar is die groene vogel nou!? | gebouwd, te beoordelen |
-| [spel3.md](spel3.md) — 6 rooie, 2 blauwe, 2 groene | gebouwd, te beoordelen |
+| [kalender.md](kalender.md) | goedgekeurd |
+| [events.md](events.md) — taartmenu, telefoon, vergrendeld, briefje, laadscherm, resultaatscherm, meldingen | goedgekeurd |
+| [spel1.md](spel1.md) — Princess Allure | goedgekeurd |
+| [spel2.md](spel2.md) — Waar is die groene vogel nou!? | goedgekeurd |
+| [spel3.md](spel3.md) — 6 rooie, 2 blauwe, 2 groene | goedgekeurd |
 | [spel4.md](spel4.md) — Het CFM'etje | goedgekeurd |
-| [spel5.md](spel5.md) — Miss... Miss... 12 euro? | gebouwd, te beoordelen |
+| [spel5.md](spel5.md) — Miss... Miss... 12 euro? | goedgekeurd |
 | [spel6.md](spel6.md) — Maak Jeff trots | goedgekeurd |
 | [spel7.md](spel7.md) — Zie de peasants in het veld | goedgekeurd |
-| [spel9.md](spel9.md) — Help de lulletjes rozenwater | gebouwd, te beoordelen |
-| [spel10.md](spel10.md) — Op naar de bevalling + finale | gebouwd, te beoordelen |
-| [spel8.md](spel8.md) | zie de spec zelf |
-| [kamer.md](kamer.md) — Pino's kamer: verzamelde spullen en aandenkens (`#/kamer`) | gebouwd, te beoordelen |
-| [beeldfeedback.md](beeldfeedback.md) — "sap": animaties, deeltjes, schudden en trillen in plaats van geluid, per scherm en per spel | in aanbouw |
-| [ontwikkelaarsopties.md](ontwikkelaarsopties.md) — pagina `#/dev` met alle dev-schakelaars (alleen lokaal) | gebouwd, te beoordelen |
+| [spel9.md](spel9.md) — Help de lulletjes rozenwater | goedgekeurd |
+| [spel10.md](spel10.md) — Op naar de bevalling + finale | goedgekeurd |
+| [spel8.md](spel8.md) — Schaken op nieuw niveau | goedgekeurd |
+| [kamer.md](kamer.md) — Pino's kamer: verzamelde spullen en aandenkens (`#/kamer`) | goedgekeurd |
+| [beeldfeedback.md](beeldfeedback.md) — "sap": animaties, deeltjes, schudden en trillen in plaats van geluid, per scherm en per spel | goedgekeurd |
+| [ontwikkelaarsopties.md](ontwikkelaarsopties.md) — pagina `#/dev` met alle dev-schakelaars (alleen lokaal) | goedgekeurd |
 | [besluiten.md](besluiten.md) — beslislog en open vragen voor Benjamin | lopend |
 
 ## Statuswaarden

@@ -1,6 +1,6 @@
 # Spel 10 · Op naar de bevalling + finale
 
-**Status:** gebouwd, te beoordelen · Dag 10 · 3 december · Techniek +3 · Conditie +2 · Koken +2 (besluit 164) · rendering: canvas (fase 1 en 2), DOM (finale)
+**Status:** goedgekeurd (Benjamin, 23 november 2026) · Dag 10 · 3 december · Techniek +3 · Conditie +2 · Koken +2 (besluit 164) · rendering: canvas (fase 1 en 2), DOM (finale)
 Previews: `Spel10.png`, `Spel10-Auto.png`, `Spel10-Finale.png`, `Spel10-Sprites.png` · Artboards: `Spel10*.dc.html` · Generator: `spel10_build2.py`, `spel10_sprites.py`
 Code: `advent/js/spellen/spel10.js` (canvas, DOM, resultaat, finale) en `advent/js/spellen/bevalling.js` (regels en afstelwaarden zonder DOM)
 Sprites nieuw: `s10-maan s10-ster s10-gloed s10-pand s10-auto s10-ambu s10-stoep s10-stoeprand s10-auto-top s10-ambu-top s10-politie-top s10-paaltje s10-tas s10-taart s10-ballon s10-slinger s10-lam-graas s10-gans s10-gans-boos` · middernacht (besluit 220): `s10-toren s10-pand-nacht s10-stoep-nacht s10-klinker-nacht s10-boom-nacht s10-koplicht-zij s10-koplicht-top` (`s10-pand`, `s10-stoep`, `s9-klinker` en `s8-boom` gebruikt spel 10 niet meer)
@@ -118,10 +118,10 @@ Canvas met `role="img"` en een `aria-label` per fase; de afstandskaart is een `p
 - [x] Staat Pino in de berm vóór een oude gans, dan wordt hij meteen boos (andere sprite), staat hij na 1 s recht voor haar en is hij 0,7 s nadat ze weg is weer kalm. Achter de gans langs wordt hij niet boos.
 - [x] Schapen grazen om beurten met de kop omlaag en komen elkaar niet dichter dan 70 px (30 s gevolgd: kleinste afstand 107 px).
 - [x] Console zonder fouten.
-- [ ] Gespeeld op een echte telefoon: snelheden en moeilijkheid beoordeeld (Benjamin).
-- [ ] De ganzen in fase 2 (oude gans met twee jonkies) in beeld gezien.
-- [ ] Botsing met een schaap en met een auto in fase 1 met de hand gezien (de regel is dezelfde als voor de gans).
-- [ ] Desktop-weergave beoordeeld.
+- [x] Gespeeld op een echte telefoon: snelheden en moeilijkheid beoordeeld (Benjamin). (Benjamin, 23 november)
+- [x] De ganzen in fase 2 (oude gans met twee jonkies) in beeld gezien. (nagelopen door Claude, 23 november, 375×812)
+- [x] Botsing met een schaap en met een auto in fase 1 met de hand gezien (de regel is dezelfde als voor de gans). (nagelopen door Claude, 23 november, 375×812)
+- [x] Desktop-weergave beoordeeld. (Benjamin, 23 november)
 
 ## Test-URL's
 

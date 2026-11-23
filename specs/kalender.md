@@ -1,6 +1,6 @@
 # Kalender (Main / Desktop)
 
-**Status:** gebouwd, te beoordelen
+**Status:** goedgekeurd (Benjamin, 23 november 2026)
 Previews: `design/previews/Main.png` (390×1440), `Desktop.png` (1280×940) · Artboards: `Main.dc.html`, `Desktop.dc.html`
 Code: `advent/js/kalender.js` (`schermKalender`), `advent/js/ui/behoeften.js`, `advent/js/ui/vaardigheden.js`, `advent/css/kalender.css` · Route `#/`
 
@@ -51,7 +51,7 @@ Kop "Vaardigheden" · badge "Vandaag: +5 vaardigheid" (paars, de som van de belo
 - [x] Statussen kloppen bij `?dag=1` … `?dag=10`, `?test=1` en na `?datum=2026-12-05` (alles open, geen "vandaag").
 - [x] Panelen klappen in en uit met `aria-expanded`; pijl draait.
 - [x] Fonts geladen (Fredoka/Nunito); alle iconen zichtbaar, ook de sprite-iconen (gi, loep, tijger, baby).
-- [ ] Beoordeling door Benjamin op telefoon en desktop.
+- [x] Beoordeling door Benjamin op telefoon en desktop. (Benjamin, 23 november)
 
 ## Open punten
 

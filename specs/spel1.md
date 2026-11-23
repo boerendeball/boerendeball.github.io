@@ -1,6 +1,6 @@
 # Spel 1 · Princess Allure
 
-**Status:** gebouwd, te beoordelen (`advent/js/spellen/spel1.js`; gedeeld: `spellen/lus.js`, `spellen/spritesheet.js`, `spellen/canvas.js`, `invoer.js`, `ui/resultaat.js`, `css/spel.css`)
+**Status:** goedgekeurd (Benjamin, 23 november 2026) (`advent/js/spellen/spel1.js`; gedeeld: `spellen/lus.js`, `spellen/spritesheet.js`, `spellen/canvas.js`, `invoer.js`, `ui/resultaat.js`, `css/spel.css`)
 **Dag 1 · 24 november · Conditie +3 · Charisma +2 (besluit 164)**
 Previews: `design/previews/Spel1.png`, `Spel1-Klaar.png`, `Spel1-Sprites.png` · Artboards: `design/artboards/Spel1*.dc.html` · Generator: `design/generators/spel1_build.py`, `spel1_sprites.py`
 Rendering: **canvas** (actiespel), sprite sheet gerasterd uit `sprites.svg` (set spel1).
@@ -149,14 +149,14 @@ Weggelaten uit het artboard: het woord "TIJD" bij de balk. Niet aanwezig: de kro
 - [x] Bij het wakker worden hupt het hoofd op en vervagen drie streepjes vanaf de kruin in 0,5 s (besluiten 178, 184; in de preview gezien).
 - [x] Elke status (slaap, wakker, gaap-begin, gaap, verrast, boos) is op 32 px bij DPR 2 in één oogopslag te onderscheiden, ook met donker haar; elk haartype heeft een glanstint en de bob omlijst het gezicht (besluiten 180–181; gecontroleerd met een gerasterd overzicht van 6 haren × 6 gezichten op DPR 2 en op groot formaat).
 - [x] Een gaap begint 0,25 s met de mond half open; een onderbreking geeft een schrikhup, de boze fase een hoofdschudden (besluiten 182, 183; in de preview gezien: gaap → verrast (schrikhup + dekenflits) → boos → slaap).
-- [ ] Onderbreken naast het bed (links of rechts): verrast gezicht, dekenflits, arm aan de kant van het kind over het bed heen naar de mond; boven/onder het bed of te ver weg: alleen de pose met de arm recht vooruit. (Nog te controleren in de browser na deze wijziging.)
+- [x] Onderbreken naast het bed (links of rechts): verrast gezicht, dekenflits, arm aan de kant van het kind over het bed heen naar de mond; boven/onder het bed of te ver weg: alleen de pose met de arm recht vooruit. (Nog te controleren in de browser na deze wijziging.) (Benjamin, 23 november)
 - [x] Tijdbalk en `m:ss` lopen gelijk; op 0:00 volgt het resultaatscherm met het juiste getal.
 - [x] Na afronden: deurtje 1 `gespeeld`, `vaardigheden.lichaam` +1 en `behoeften.verjaardag` +10 (alleen eerste keer), `tegels` per onderbreking één tegel met de juiste sleutel (`geel-vogel` gezien), `scores[1]` bijgewerkt.
 - [x] "Nog een keer" start schoon opnieuw; terugknop ruimt lus, invoer en debug-haak op.
-- [ ] Tab verbergen pauzeert; terugkomen geeft geen tijdsprong (code aanwezig, nog niet handmatig gezien).
+- [x] Tab verbergen pauzeert; terugkomen geeft geen tijdsprong (code aanwezig, nog niet handmatig gezien). (Benjamin, 23 november)
 - [x] Geen zichtbare uitlegtekst of labels buiten titel/kopbalk; geen consolefouten.
 - [x] Joystick: verschijnt na de vertraging op de drukplek, knop volgt binnen de ring, Pino beweegt mee (ook diagonaal), loslaten verbergt en stopt; tik onderbreekt (gecontroleerd met gesimuleerde pointer-events).
-- [ ] Beoordeling door Benjamin op telefoon (gevoel van de joystick, tik om te onderbreken) en desktop.
+- [x] Beoordeling door Benjamin op telefoon (gevoel van de joystick, tik om te onderbreken) en desktop. (Benjamin, 23 november)
 
 In testmodus (`?test=1`) staat de spelstaat op `window.pinoDebug` (`s`, `pino`, `bedden`) om in de console te sturen, bijvoorbeeld `pinoDebug.s.tijd = 1` om het einde te forceren of `pinoDebug.bedden[4].status = 'gaap'`.
 

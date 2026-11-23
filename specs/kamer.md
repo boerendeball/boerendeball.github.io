@@ -1,6 +1,6 @@
 # Pino's kamer · verzamelde spullen
 
-**Status:** gebouwd, te beoordelen (22 november) · onderdeel van de kalender (geen deurtje, geen spel) · besluiten #201–#207 · rendering: SVG-DOM
+**Status:** goedgekeurd (Benjamin, 23 november 2026) (22 november) · onderdeel van de kalender (geen deurtje, geen spel) · besluiten #201–#207 · rendering: SVG-DOM
 Previews: `Kamer.png` (vol, met de gedachtenwolk), `Kamer-Leeg.png` (verse staat), `Kamer-Sprites.png` · Artboards: `Kamer.dc.html`, `Kamer-Leeg.dc.html`, `Kamer-Sprites.dc.html` · Generator: `kamer_build.py` (artboards), `kamer_sprites.py` (symbolen en bouwstenen), `kamer_assets.py` (naar `assets/sprites`)
 Code: `advent/js/kamer.js` (scherm), `advent/js/kamer-inhoud.js` (welke voorwerpen, zonder DOM), `advent/data/kamer.json` (teksten), `advent/css/kamer.css` · Route `#/kamer`
 Sprites: bestaande symbolen van spel 1–10 + de kamerset `km-*` (`assets/sprites/kamer.svg`, ook in `sprites.svg`; zie Scène).
@@ -182,9 +182,9 @@ Elke tegel (9 typen) en elke edelsteen (3 kleuren) is een eigen voorwerp met een
 - [x] De ster verschijnt na iets nieuws en verdwijnt na een bezoek aan de kamer.
 - [x] 390 px breed zonder horizontale scroll; op desktop gecentreerd.
 - [x] Toetsenbord: alle voorwerpen bereikbaar met Tab, Enter opent de wolk; een schermlezer leest naam en omschrijving voor.
-- [ ] *Reduced motion*: geen wip of pulserende ster (in code geregeld met `matchMedia` en `@media (prefers-reduced-motion)`; niet in de browser nagebootst).
+- [x] *Reduced motion*: geen wip of pulserende ster (in code geregeld met `matchMedia` en `@media (prefers-reduced-motion)`; niet in de browser nagebootst). (Benjamin, 23 november)
 - [x] Geen consolefouten; geen `currentColor`-sprites in de verkeerde kleur (#1E3A4C).
-- [ ] Beoordeling door Benjamin op telefoon en desktop.
+- [x] Beoordeling door Benjamin op telefoon en desktop. (Benjamin, 23 november)
 
 ## Test-URL's
 

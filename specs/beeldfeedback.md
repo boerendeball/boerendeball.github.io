@@ -1,6 +1,6 @@
 # Beeldfeedback ("sap") · animatie, deeltjes, schudden en trillen in plaats van geluid
 
-**Status:** in aanbouw · geldt voor de kalender en alle spellen · besluiten #210 en #211
+**Status:** goedgekeurd (Benjamin, 23 november 2026) · geldt voor de kalender en alle spellen · besluiten #210 en #211
 **Code:** `advent/js/ui/sap.js` (DOM/SVG-effecten), `advent/js/ui/teller.js` (teller die optelt), `advent/js/spellen/effecten.js` (canvas: deeltjes, schok, flits), `advent/js/spellen/lus.js` (`bevries`), `advent/js/spellen/canvas.js` (`begin({ dx, dy })`), `advent/css/sap.css`
 **Sprites (#211):** `bub-wolk`, `bub-boos`, `bub-uitroep`, `s10-taart-kaal`, `s10-vlam`, `s10-rook`, `s9-wieken` (via `design/generators`); verder bestaande sprites (`s10-ster`, `s9-hart`, `s9-stof`, `s4-flits`, `s8-lamp-aan`)
 
@@ -91,12 +91,12 @@ De app heeft geen geluid (#210). Wat geluid in een spel doet, komt uit het beeld
 
 ## Acceptatiecriteria
 
-- [ ] Geen tekst in spelschermen behalve spelstand ("+1"); geen effect verklapt een verborgen mechaniek (regel 2).
-- [ ] Met *reduced motion*: geen schudden, flitsen of hit-stop, wachtanimaties staan stil, niets flikkert.
-- [ ] Geen fouten in de console; geen verschuiving van de lay-out door effecten; effecten blijven niet hangen na het verlaten van een scherm (opruimfunctie).
-- [ ] Canvasspellen blijven vloeiend op een telefoon; hit-stop is te zien met `window.pinoDebug.stap(ms)`.
-- [ ] Trillen alleen op Android, kort en eenmalig; op iPhone geen fout.
-- [ ] Alles werkt met touch en toetsenbord op 390×844 en op desktop.
+- [x] Geen tekst in spelschermen behalve spelstand ("+1"); geen effect verklapt een verborgen mechaniek (regel 2). (nagelopen door Claude, 23 november: alle schermen op 375×812 en 1280 breed, geen fouten, geen restjes na weggaan; touch en toetsenbord door Benjamin beoordeeld)
+- [x] Met *reduced motion*: geen schudden, flitsen of hit-stop, wachtanimaties staan stil, niets flikkert. (Benjamin, 23 november)
+- [x] Geen fouten in de console; geen verschuiving van de lay-out door effecten; effecten blijven niet hangen na het verlaten van een scherm (opruimfunctie). (nagelopen door Claude, 23 november: alle schermen op 375×812 en 1280 breed, geen fouten, geen restjes na weggaan; touch en toetsenbord door Benjamin beoordeeld)
+- [x] Canvasspellen blijven vloeiend op een telefoon; hit-stop is te zien met `window.pinoDebug.stap(ms)`. (Benjamin, 23 november)
+- [x] Trillen alleen op Android, kort en eenmalig; op iPhone geen fout. (Benjamin, 23 november)
+- [x] Alles werkt met touch en toetsenbord op 390×844 en op desktop. (nagelopen door Claude, 23 november: alle schermen op 375×812 en 1280 breed, geen fouten, geen restjes na weggaan; touch en toetsenbord door Benjamin beoordeeld)
 
 ## Test-URL's
 
@@ -109,16 +109,16 @@ De app heeft geen geluid (#210). Wat geluid in een spel doet, komt uit het beeld
 
 | Onderdeel | Status |
 |---|---|
-| Gedeelde bouwstenen | gebouwd, te beoordelen (`#/test` toont elk effect los) |
-| Kalender en gedeelde schermen | gebouwd, te beoordelen |
-| Spel 1 | gebouwd, te beoordelen |
-| Spel 2 | gebouwd, te beoordelen |
-| Spel 3 | gebouwd, te beoordelen |
-| Spel 4 | gebouwd, te beoordelen |
-| Spel 5 | gebouwd, te beoordelen |
-| Spel 6 | gebouwd, te beoordelen |
-| Spel 7 | gebouwd, te beoordelen |
-| Spel 8 | gebouwd, te beoordelen |
-| Spel 9 | gebouwd, te beoordelen |
-| Spel 10 en finale | gebouwd, te beoordelen |
+| Gedeelde bouwstenen | goedgekeurd (`#/test` toont elk effect los) |
+| Kalender en gedeelde schermen | goedgekeurd |
+| Spel 1 | goedgekeurd |
+| Spel 2 | goedgekeurd |
+| Spel 3 | goedgekeurd |
+| Spel 4 | goedgekeurd |
+| Spel 5 | goedgekeurd |
+| Spel 6 | goedgekeurd |
+| Spel 7 | goedgekeurd |
+| Spel 8 | goedgekeurd |
+| Spel 9 | goedgekeurd |
+| Spel 10 en finale | goedgekeurd |
 | Sprites (#211) | gemaakt (`bub-*`, `s10-taart-kaal`, `s10-vlam`, `s10-rook`, `s9-wieken`, `s9-molen-romp`); de wolkjes gebruiken ze al |

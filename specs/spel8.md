@@ -1,6 +1,6 @@
 # Spel 8 · Schaken op nieuw niveau
 
-**Status:** gebouwd, te beoordelen (`advent/js/spellen/spel8.js`, regels en oplosser in `spellen/schaak.js`, levels in `spellen/schaak-levels.js`; controle `design/generators/spel8_levels_check.mjs`; besluiten #110–#124)
+**Status:** goedgekeurd (Benjamin, 23 november 2026) (`advent/js/spellen/spel8.js`, regels en oplosser in `spellen/schaak.js`, levels in `spellen/schaak-levels.js`; controle `design/generators/spel8_levels_check.mjs`; besluiten #110–#124)
 **Dag 8 · 1 december · Logica +3 · Techniek +1 · Creativiteit +1 · Bordspellen +40 % (besluit 164) · rendering: SVG-DOM**
 Previews: `Spel8-Levels.png`, `Spel8.png`, `Spel8-Klaar.png`, `Spel8-Sprites.png` · Generator: `spel8_build*.py`, `spel8_sprites.py`
 Sprites nieuw: `s8-tegel s8-water s8-doelvak s8-boom s8-bamboe s8-tempel s8-rots s8-stam s8-voet s8-stuk-python s8-stuk-tijger s8-stuk-luiaard s8-stuk-leeuw s8-stuk-krokodil s8-stuk-pino s8-wacht s8-opnieuw s8-speel s8-slot s8-vlag s8-stap s8-varen s8-gras s8-bloem s8-grootboom s8-liaan s8-vak s8-vak-water` · bij besluit spel 8 (stemmingen, spray, nadenken): `s8-stuk-{python,tijger,luiaard,leeuw,krokodil}-blij` `s8-stuk-{…}-boos` `s8-stuk-pino-sip s8-stuk-pino-spuit s8-wolk s8-lamp-uit s8-lamp-aan s8-nevel`
@@ -165,7 +165,7 @@ Er is geen tekst in het spel, behalve de kopbalk en de resultaatschermen. De zan
 - [x] Toetsenbord en touch werken; geen consolefouten; 390×844 en desktop.
 - [x] De eerste echte spray opent de uitleg (twee pagina's, pijl, vinkje, vegen, pijltjestoetsen, Escape); daarna speelt het level verder en bij een volgende spray komt hij niet terug (besluit 215; 22 november, 375×812, geen consolefouten).
 - [x] Level 2 (besluit 217): de levelcontrole slaagt (13 beurten zonder spray, 12 met), en de oplossing is in de app uitgespeeld met en zonder spray (23 november, 375×812, geen consolefouten).
-- [ ] Beoordeeld door Benjamin.
+- [x] Beoordeeld door Benjamin. (Benjamin, 23 november)
 
 ## Test-URL's
 - `/advent/?test=1#/spel/8`: het leveloverzicht.

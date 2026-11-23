@@ -418,7 +418,7 @@ function markt({ root, dag, info, klaar, opnieuw, kijken = false, zoek = false }
       if (los[id] && los[id].sleutel) { los[id].knoop.replaceChildren(); los[id].sleutel = ''; }
       if (getekend[id] !== sleutel) {
         getekend[id] = sleutel;
-        handelaarKnoop[id].replaceChildren(persoon(41, 28, { ...INFO[id].persoon, gezicht, flip }), bel ? boosWolkVast(65, 31) : null);
+        handelaarKnoop[id].replaceChildren(...[persoon(41, 28, { ...INFO[id].persoon, gezicht, flip }), bel ? boosWolkVast(65, 31) : null].filter(Boolean));
       }
       const dx = x - THUIS[id].x;
       handelaarKnoop[id].setAttribute('transform', dx || wip ? `translate(${dx.toFixed(1)} ${wip.toFixed(2)})` : '');
@@ -427,7 +427,7 @@ function markt({ root, dag, info, klaar, opnieuw, kijken = false, zoek = false }
       if (getekend[id]) { handelaarKnoop[id].replaceChildren(); getekend[id] = ''; }
       if (los[id].sleutel !== sleutel) {
         los[id].sleutel = sleutel;
-        los[id].knoop.replaceChildren(persoon(-24, -72, { ...INFO[id].persoon, gezicht, flip }), bel ? boosWolkVast(0, -68) : null);
+        los[id].knoop.replaceChildren(...[persoon(-24, -72, { ...INFO[id].persoon, gezicht, flip }), bel ? boosWolkVast(0, -68) : null].filter(Boolean));
       }
       los[id].knoop.setAttribute('transform', `translate(${x.toFixed(1)} ${(y + wip).toFixed(2)})${kantel ? ` rotate(${kantel})` : ''}`);
       los[id].ding.y = y;

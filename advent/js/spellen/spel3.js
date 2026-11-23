@@ -227,6 +227,7 @@ export function start({ root, dag, info, klaar, zoek = false }) {
       if (!rustig) { knop.classList.remove('schud'); void knop.offsetWidth; knop.classList.add('schud'); }
       return;
     }
+    const hadFocus = document.activeElement === knop;
     const f = fam.familieVan(k.id);
     const plek = f.plekken.find((p) => p.karakter === k.id);
     const van = knop.getBoundingClientRect();
@@ -238,6 +239,13 @@ export function start({ root, dag, info, klaar, zoek = false }) {
     werkKaartenBij();
     const alles = fam.alleCompleet(gekocht());
     if (alles) bezig = true;
+    // Toetsenbord: het gekochte kaartje is weg, dus de focus gaat naar het volgende kaartje dat er nog is.
+    if (!alles && hadFocus) {
+      const lijst = Object.values(kaartKnoppen);
+      const i = lijst.indexOf(knop);
+      const volgende = [...lijst.slice(i + 1), ...lijst.slice(0, i)].find((b) => !b.disabled);
+      if (volgende) volgende.focus();
+    }
     // Het karakter vliegt van het kaartje naar zijn lege plek en springt daar pas tevoorschijn
     // (beeldfeedback, besluit 210). Met reduced motion is vlieg meteen klaar.
     onderweg.add(k.id);

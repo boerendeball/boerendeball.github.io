@@ -1,6 +1,6 @@
 # Spel 9 · Help de lulletjes rozenwater
 
-**Status:** gebouwd, te beoordelen · Dag 9 · 2 december · Conditie +2 · Koken +2 · Charisma +1 (besluit 164) · rendering: canvas
+**Status:** goedgekeurd (Benjamin, 23 november 2026) · Dag 9 · 2 december · Conditie +2 · Koken +2 · Charisma +1 (besluit 164) · rendering: canvas
 Previews: `Spel9.png`, `Spel9-Klaar.png`, `Spel9-Sprites.png` · Artboards: `Spel9*.dc.html` · Generator: `spel9_build2.py`, `spel9_sprites.py`
 Code: `advent/js/spellen/spel9.js` (canvas, DOM, resultaat) en `advent/js/spellen/vang.js` (regels en afstelwaarden zonder DOM)
 
@@ -74,7 +74,7 @@ Canvas met `role="img"` en `aria-label`; de teller is `role="status"` met "n bab
 - [x] Geen worp na 17 s; na 20 s zonder misser het gehaald-scherm met beloning, `scores[9]` gevuld.
 - [x] Eerste misser: direct het niet-gehaald-scherm, zonder beloning.
 - [x] `?schoenen=0`: hakken, wiebel, duidelijk trager; `?schoenen=1`: sneakers en stofwolkjes.
-- [ ] Door Benjamin gespeeld op een telefoon: is het met schoenen haalbaar en zonder niet? (afstelwaarden in `vang.js`)
+- [x] Door Benjamin gespeeld op een telefoon: is het met schoenen haalbaar en zonder niet? (afstelwaarden in `vang.js`) (Benjamin, 23 november)
 
 ## Test-URL's
 - `/advent/?test=1&schoenen=1#/spel/9` en `…&schoenen=0#/spel/9`

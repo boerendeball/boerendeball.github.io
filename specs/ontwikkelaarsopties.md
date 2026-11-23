@@ -1,6 +1,6 @@
 # Ontwikkelaarsopties
 
-**Status:** gebouwd, te beoordelen
+**Status:** goedgekeurd (Benjamin, 23 november 2026)
 Geen preview of artboard (dit scherm is niet ontworpen en is er alleen voor het testen) · Code: `advent/js/ontwikkelaar.js` (`schermOntwikkelaar`), `advent/css/ontwikkelaar.css`, `devModus()` in `advent/js/datum.js`, de knop in `advent/js/kalender.js` · Route `#/dev`
 
 ## Doel
@@ -65,12 +65,12 @@ Echte `<button>`s, `<label>` bij elke schakelaar en elk veld, `aria-pressed` op 
 ## Acceptatiecriteria
 
 - [x] Op `http://localhost:3000/advent/` staat rechtsonder de knop. *Nog na te lopen na publicatie:* op de echte site (`boerendeball.github.io/advent/`) niet, behalve met `?dev=1`.
-- [ ] `#/dev` buiten devmodus toont "Dit deurtje bestaat niet" (pas na publicatie te testen).
+- [x] `#/dev` buiten devmodus toont "Dit deurtje bestaat niet" (pas na publicatie te testen). (Benjamin, 23 november)
 - [x] "Alle deurtjes open" aan → terug naar de kalender: alle deurtjes zijn open; de badge op de knop toont 1.
 - [x] Dag 5 kiezen → de nu-kaart toont 28 november, dag 5; deurtje 5 staat op "Vandaag". Daarna een vaste datum kiezen haalt `dag` uit de URL.
 - [x] Testvoorraad vullen → de samenvatting toont geld ≥ 240 en edelstenen 6/5/6 (groen/blauw/rood, besluit 192), zonder herladen.
 - [x] Staat wissen vraagt eerst bevestiging; daarna is de samenvatting leeg.
-- [ ] Familie/niveau zijn uitgeschakeld zonder `test=1` en werken met `test=1` (uitschakelen en de URL gecontroleerd; spel 4/5 zelf met de gekozen waarde nog niet nagelopen).
+- [x] Familie/niveau zijn uitgeschakeld zonder `test=1` en werken met `test=1` (uitschakelen en de URL gecontroleerd; spel 4/5 zelf met de gekozen waarde nog niet nagelopen). (spel 4 met `familie=somchai` en spel 5 met `niveau=moeilijk` nagelopen door Claude, 23 november)
 - [x] Vinkje "gespeeld" bij dag 3 → de kalender toont deurtje 3 als "Gespeeld"; uitvinken zet het terug.
 - [x] Een schakelaar omzetten onderaan de pagina laat de pagina op dezelfde scrollpositie terugkomen.
 - [x] Op 390×844 past alles zonder horizontaal scrollen (gecontroleerd op 375 breed).

@@ -1,6 +1,6 @@
 # Spel 2 · Waar is die groene vogel nou!?
 
-**Status:** gebouwd, te beoordelen (herontwerp 15 november 2026, besluiten #166–#175; `advent/js/spellen/spel2.js`, logica in `advent/js/spellen/hex.js`; gedeeld: `ui/taartmenu.js`, `ui/edelstenen.js`, `ui/resultaat.js`, `spellen/zoeken.js`, `css/spel.css`)
+**Status:** goedgekeurd (Benjamin, 23 november 2026) (herontwerp 15 november 2026, besluiten #166–#175; `advent/js/spellen/spel2.js`, logica in `advent/js/spellen/hex.js`; gedeeld: `ui/taartmenu.js`, `ui/edelstenen.js`, `ui/resultaat.js`, `spellen/zoeken.js`, `css/spel.css`)
 **Dag 2 · 25 november · Logica +2 · Techniek +2 · Koken +2 · Creativiteit +1 (besluit 164)**
 Previews (verouderd, zie hieronder): `design/previews/Spel2*.png` · Generator: `design/generators/spel2_sprites.py`
 Rendering: **SVG-DOM** (kalm spel) met een camera.
@@ -172,7 +172,7 @@ Welke tegel waar past, ontdekt ze zelf: het menu toont alleen passende tegels. D
   - weg ervoor: de taxi staat vóór haar, maar alleen met de lage achterkant onder haar voeten (de omkaders overlappen 7 px);
   - daarna stapt ze in en verdwijnt ze.
 - [x] Geen consolefouten.
-- [ ] Beoordeling door Benjamin: sfeer, schaal, effecten, taxi.
+- [x] Beoordeling door Benjamin: sfeer, schaal, effecten, taxi. (Benjamin, 23 november)
 
 ## Test-URL's
 

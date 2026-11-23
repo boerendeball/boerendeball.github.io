@@ -1,6 +1,6 @@
 # Spel 5 · Miss... Miss... 12 euro?
 
-**Status:** gebouwd, te beoordelen (`advent/js/spellen/spel5.js`, regels in `advent/js/spellen/markt.js`; besluiten #58–#79) · Dag 5 · 28 november · Charisma +4 · Koken +2 · Logica +1 (besluit 164) · rendering: SVG-DOM
+**Status:** goedgekeurd (Benjamin, 23 november 2026) (`advent/js/spellen/spel5.js`, regels in `advent/js/spellen/markt.js`; besluiten #58–#79) · Dag 5 · 28 november · Charisma +4 · Koken +2 · Logica +1 (besluit 164) · rendering: SVG-DOM
 Previews: `Spel5.png`, `Spel5-Onderhandel.png`, `Spel5-Klaar.png`, `Spel5-Sprites.png` · Generator: `spel5_build2.py`, `spel5_sprites.py`
 Sprites nieuw: `s5-lampion s5-gloed s5-kraam-achter s5-kraam-voor s5-waar-sieraden s5-waar-fruit s5-waar-stof s5-waar-lampion s5-put s5-mat s5-kruk s5-ketting s5-stemming-twijfel (oranje, besluit 78) s5-stemming-blij s5-stemming-boos s5-praat s5-wegloop` `b-boos b-twijfel s5-stemming-verdrietig s5-kniebeschermers s5-spray s5-schoenen s5-waar-wissel` (wisselkraam = `s5-kraam-*` op 75 % met paarse luifel + `s5-waar-wissel`, besluit 69)
 

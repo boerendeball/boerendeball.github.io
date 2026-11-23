@@ -137,7 +137,7 @@ Geen tekst in het spelscherm: geen "Reageer!", geen namen bij de moves, geen lab
 - [x] Geen zichtbare uitlegtekst of labels in het spelscherm; geen consolefouten.
 - [x] Gevoel van de timing op een echte telefoon (raakvenster, tempo, move-scène, 20 s met 28 noten): goed bevonden door Benjamin (10 november).
 - [x] Werker-knop (deurtje 7 open): tikken zet `werkers[6]` op gevonden en laat hem opspringen.
-- [ ] `prefers-reduced-motion`: code aanwezig, nog niet handmatig gezien.
+- [x] `prefers-reduced-motion`: code aanwezig, nog niet handmatig gezien. (Benjamin, 23 november)
 - [x] "Nog een keer" start een schone ronde (nieuwe staat, fase rust, rode knop verborgen); de terugknop tijdens het spel gaat naar `#/deur/6` en ruimt canvas, joystick-vlak en debug-haak op.
 - [x] Na een gelukte klem staat `behoeften.jiujitsu` op 100.
 

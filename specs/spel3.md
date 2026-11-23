@@ -1,6 +1,6 @@
 # Spel 3 · 6 rooie, 2 blauwe, 2 groene
 
-**Status:** gebouwd, te beoordelen (`advent/js/spellen/spel3.js`, gegevens en regels in `advent/js/spellen/familie.js`; gedeeld: `ui/edelstenen.js`, `ui/resultaat.js`, `css/spel.css`)
+**Status:** goedgekeurd (Benjamin, 23 november 2026) (`advent/js/spellen/spel3.js`, gegevens en regels in `advent/js/spellen/familie.js`; gedeeld: `ui/edelstenen.js`, `ui/resultaat.js`, `css/spel.css`)
 **Dag 3 · 26 november · Creativiteit +3 · Logica +2 · Charisma +1 (besluit 164)**
 Previews: `design/previews/Spel3.png`, `Spel3-Klaar.png`, `Spel3-Sprites.png` · Artboards: `design/artboards/Spel3*.dc.html` · Generator: `design/generators/spel3_build2.py`, `spel3_sprites.py`
 Rendering: **SVG-DOM** (kalm spel). Sprites: `b-lijf b-jurk b-hoofd b-blij b-bedroefd bh-* acc-* d-lam d-gansje d-biggetje huis-villa huis-paal huis-shop plek` + `gem` (spel 2) + `werker` (spel 4). Nieuw voor dit spel: `b-bedroefd` (besluit 40).
@@ -70,16 +70,16 @@ Weggelaten uit het artboard: de familienamen op de scènes, de kop "Karakterkaar
 
 ## Acceptatiecriteria
 
-- [ ] Beginstand: zes volwassenen en twee kinderen kijken bedroefd; vier vraagteken-plekken; vier kaarten met prijzen; geen tekst behalve kopbalk.
-- [ ] Zonder edelstenen zijn alle kaarten dof en schudden ze bij een tik.
-- [ ] Kopen trekt de juiste edelstenen af (pil werkt live bij), de kaart verdwijnt, het karakter verschijnt met sterretjes bij de juiste familie.
-- [ ] Een complete familie kijkt blij en hupt; de eerste complete familie komt in `staat.familie`.
-- [ ] Na de vierde kaart: resultaatscherm zonder scoretegels, met Creativiteit +1, zonder "Nog een keer".
-- [ ] Herladen halverwege behoudt de gekochte karakters; na afronden blijft alles compleet.
-- [ ] Werker alleen aanklikbaar als deurtje 7 open is; aantikken zet `werkers[3]`.
+- [x] Beginstand: zes volwassenen en twee kinderen kijken bedroefd; vier vraagteken-plekken; vier kaarten met prijzen; geen tekst behalve kopbalk. (nagelopen door Claude, 23 november, 375×812)
+- [x] Zonder edelstenen zijn alle kaarten dof en schudden ze bij een tik. (nagelopen door Claude, 23 november, 375×812)
+- [x] Kopen trekt de juiste edelstenen af (pil werkt live bij), de kaart verdwijnt, het karakter verschijnt met sterretjes bij de juiste familie. (nagelopen door Claude, 23 november, 375×812)
+- [x] Een complete familie kijkt blij en hupt; de eerste complete familie komt in `staat.familie`. (nagelopen door Claude, 23 november, 375×812)
+- [x] Na de vierde kaart: resultaatscherm zonder scoretegels, met de beloning van besluit 164 (Creativiteit +3 · Logica +2 · Charisma +1), zonder "Nog een keer". (nagelopen door Claude, 23 november, 375×812)
+- [x] Herladen halverwege behoudt de gekochte karakters; na afronden blijft alles compleet. (nagelopen door Claude, 23 november, 375×812)
+- [x] Werker alleen aanklikbaar als deurtje 7 open is; aantikken zet `werkers[3]`. (nagelopen door Claude, 23 november, 375×812)
 - [x] Vanuit spel 7 (`#/spel/3?zoek=1`): na de vondst terug naar het album van spel 7 (besluit 101).
-- [ ] Spel 4 zonder complete familie toont de popup met de bedroefde Nguyễns (zie `spel4.md`).
-- [ ] Toetsenbord en reduced motion werken.
+- [x] Spel 4 zonder complete familie toont de popup met de bedroefde Nguyễns (zie `spel4.md`). (nagelopen door Claude, 23 november, 375×812)
+- [x] Toetsenbord en reduced motion werken. Na een koop met het toetsenbord gaat de focus naar het volgende kaartje (verbeterd 23 november). (toetsenbord nagelopen door Claude; reduced motion beoordeeld door Benjamin, 23 november)
 
 ## Test-URL's
 

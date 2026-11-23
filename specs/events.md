@@ -12,7 +12,7 @@ De Sims-momenten rondom de spellen. Alles behalve het resultaatscherm is gebouwd
 | Laadscherm | "Open deurtje" of "Speel nu" | `ui/laadscherm.js`, route `#/laden/n` → `#/spel/n` | gebouwd |
 | Resultaatscherm | einde van een spel | `ui/resultaat.js` | gebouwd (spel 1) |
 | Melding (toast) | bovenaan dialogen; los via `toonMelding` | `ui/overlay.js` | gebouwd |
-| Finale | einde spel 10 | `spellen/spel10.js` | gebouwd, te beoordelen (spec in spel10.md) |
+| Finale | einde spel 10 | `spellen/spel10.js` | goedgekeurd (spec in spel10.md) |
 
 ## Taartmenu (`Taartmenu.png`)
 

@@ -105,9 +105,11 @@ De stepper gaat nooit hoger dan het geld. Is het geld plus de waarde van de edel
   - **Matig, de handelaar met korting:** een bod tussen P en V → twijfel (zie boven), elke keer, tot hij langs is gekomen. Een bod onder P is een gewone nee. Is hij langs geweest, dan is zijn vraagprijs P: een bod van P is ja, elk lager bod maakt hem boos (zie hieronder).
   - **b ≥ G → ja.** De badge wordt blij, Pino betaalt b en de ronde is klaar → resultaatscherm.
   - **b < G → nee.** De handelaar schudt kort zijn hoofd en wordt verdrietig (eerste keer) of boos (daarna) De nee-teller van die handelaar gaat +1.
-- **Beledigd:** na de derde nee blijft de badge boos en accepteert de handelaar de rest van dit bezoek alleen nog b = V (de stepper springt naar V; lager bieden geeft nee/boos). Kan Pino V niet betalen, dan is deze handelaar dit bezoek af; bij een volgend bezoek is hij weer blij (besluit 198). De teller zelf is onzichtbaar.
+- **Beledigd:** na de derde nee blijft de badge boos en accepteert de handelaar de rest van dit bezoek alleen nog b = V (de stepper springt naar V en de −-knop krijgt een slotje, besluit 218). Kan Pino V niet betalen, dan is deze handelaar dit bezoek af; bij een volgend bezoek is hij weer blij (besluit 198). De teller zelf is onzichtbaar.
+  - **Zichtbaar beledigd** (besluit 218): de −-knop is grijs met een klein slotje (`s8-slot`); een tik erop laat het slotje wiebelen en verandert het bod niet (`aria-label` "Bod verlagen kan niet meer"). Bij het portret en in de markt boven zijn hoofd staat een vast boos wolkje (`bub-wolk` + `bub-boos`, 28 px, ook als hij rondloopt), zolang hij dit bezoek beledigd is. Zo verschilt beledigd (alleen nog V) van boos (na de tweede nee, lager bieden kan dan nog).
 - **Simpel:** dezelfde regel met G = V, dus elk lager bod is nee. Beledigd zijn verandert in Simpel niets aan de prijs.
 - **Moeilijk, samenzweerders:** grens G = K, verder zoals hierboven.
+- **Moeilijk, tegenbod** (besluit 218): na elk afgewezen bod roept de handelaar (alle vier, zolang hij niet beledigd is) een **tegenbod** in een wolkje boven zijn portret: munt + bedrag, eerst V − 10, daarna steeds 10 lager, maar nooit onder K (`TEGEN_STAP`, `volgendTegenbod()` in `markt.js`, bewaard als `tegen` bij de handelaar; een nieuw bezoek wist het). Een tik op het wolkje zet het bod op dat bedrag; bieden op het tegenbod is altijd ja. Zo is te zien dat afdingen in Moeilijk wél kan. De vierde handelaar verraadt niets: zijn "nog een keer vragen" (hetzelfde bod) blijft goedkoper dan K. In Simpel en Matig is er geen tegenbod.
 - **Moeilijk, de vierde (die niet samenspant):**
   - b ≥ K → direct ja, net als de anderen.
   - B ≤ b < K → de eerste keer **nee** (hij wordt wel verdrietig of boos), maar dat telt niet mee voor de nee-teller. Is het **volgende bod bij hem precies hetzelfde**, dan zegt hij **ja**. "Nog een keer vragen" is dus hetzelfde bod nog een keer doen; er is geen extra knop.
@@ -205,7 +207,7 @@ Zoals `Spel5-Klaar.png`, met het product van de ronde in de bol: "Deal!", Pino e
 - Geen zin die verraadt of het de laagste prijs was, en geen niveau-aanduiding.
 
 ## Geen uitleg
-Uitzondering (besluit 141): het tekstwolkje "miss! miss! wait!" van de handelaar die in Matig naar Pino toe rent; dat is wat hij roept, geen uitleg. Verder: geen niveaunaam, geen teller voor het aantal biedingen, geen tekst bij "nee", bij het samenspannen of bij de wisselkraam (geen koers). In het album geen productnamen en geen datums: alleen productsymbool, stempel, slot en munt + bedrag; geen deurtje-icoon of andere aanwijzing voor welk spel een product is. Alleen de badge (blij/twijfel/boos), de hoofdschud-animatie, de wolkjes en de munt-teller vertellen iets.
+Uitzondering (besluit 141): het tekstwolkje "miss! miss! wait!" van de handelaar die in Matig naar Pino toe rent; dat is wat hij roept, geen uitleg. Ook het tegenbod in Moeilijk (besluit 218) is wat de handelaar roept: alleen munt + bedrag. Verder: geen niveaunaam, geen teller voor het aantal biedingen, geen tekst bij "nee", bij het samenspannen of bij de wisselkraam (geen koers). In het album geen productnamen en geen datums: alleen productsymbool, stempel, slot en munt + bedrag; geen deurtje-icoon of andere aanwijzing voor welk spel een product is. Alleen de badge (blij/twijfel/boos), de hoofdschud-animatie, de wolkjes en de munt-teller vertellen iets.
 
 ## Toegankelijkheid
 - Kaartjes in het album zijn `role="img"` met `aria-label` (bv. "Kniebeschermers, gekocht, 160 munten" of "Spray, op slot"); de marktknop is een `<button>`.
@@ -222,6 +224,7 @@ Uitzondering (besluit 141): het tekstwolkje "miss! miss! wait!" van de handelaar
 - [x] Simpel: vier verschillende vraagprijzen; elk bod onder V wordt geweigerd; bieden op V lukt.
 - [x] Matig: alle vier dezelfde V; drie handelaars weigeren alles onder V; de vierde twijfelt bij elk bod tussen P en V (telt niet mee). Na een gesprek met een andere handelaar stopt na 1 s de besturing, loopt hij naar Pino toe en opent het scherm met vraagprijs P; P → deal, lager → boos en terug naar V (geen deal meer); weglopen → hij loopt terug en Pino kan weer lopen. Hij komt maar één keer.
 - [x] Moeilijk: de drie samenzweerders (gastheer Mai of Minh, plus Siti en Arun) accepteren K en weigeren K − 5; de vierde weigert een bod tussen B en K de eerste keer en accepteert hetzelfde bod direct daarna; een bod onder B blijft nee.
+- [x] Moeilijk: na een te laag bod een tegenbod (V − 10, dan 10 lager, nooit onder K); een tik zet het bod erop en bieden geeft een deal. Na de derde nee: geen tegenbod, slotje op de −-knop (wiebelt, bod blijft V), boos wolkje bij het portret en boven de handelaar in de markt (besluit 218; 23 november, 375×812, geen consolefouten).
 - [x] Stemming: blij bij het eerste openen, verdrietig (blauw) na het eerste afgewezen bod, boos (rood) daarna, in Matig twijfel (oranje) bij een genoeg-bod aan de handelaar met korting (ook tijdens het aanlopen), blij bij een deal; het gezicht in het portret en in de scène hoort er steeds bij.
 - [x] Na drie keer nee accepteert een handelaar alleen nog V; de "vrije" nee van wie niet samenspant telt niet mee.
 - [x] Alleen in Moeilijk lopen Siti en Arun naar de kraam van de gastheer (Mai of Minh) en praten ze daar met z'n drieën boos; de vierde blijft staan. Zolang dat duurt, kan Pino met geen van de drie praten. Het gebeurt één keer per ronde, pas na het eerste afgewezen bod onder de vraagprijs.
@@ -235,7 +238,7 @@ Uitzondering (besluit 141): het tekstwolkje "miss! miss! wait!" van de handelaar
 - `?test=1&reset=1&vul=1#/spel/5` — ronde 1 (ketting) met 240 munten en 3/3/3 edelstenen.
 - `?test=1&niveau=matig#/spel/5` — dwingt het niveau van de lopende ronde af (`simpel`, `matig`, `moeilijk`; alleen in testmodus).
 - `?dag=6#/spel/5` (na de ketting) — album met de kniebeschermers aan de beurt en spray/schoenen op slot; `?dag=5` laat alles behalve de ketting op slot zien.
-- `window.pinoDebug` (testmodus): `ronde` (prijzen en grenzen) en `pino` (positie).
+- `window.pinoDebug` (testmodus): `ronde` (prijzen en grenzen), `pino` (positie) en `praat(id)` (opent het onderhandelscherm met die handelaar).
 
 ## Open punten
 Zie `besluiten.md`.

@@ -18,6 +18,7 @@ export const KOERS = { groen: 25, blauw: 35, rood: 20 };
 
 export const STAP = 5;          // stepper en alle bedragen: veelvouden van 5
 export const MAX_NEE = 3;       // daarna beledigd: alleen nog de vraagprijs
+export const TEGEN_STAP = 10;   // Moeilijk: elk tegenbod ligt zoveel lager dan het vorige, nooit onder de grens (besluit 218)
 
 export function product(id) {
   return PRODUCTEN.find((p) => p.id === id) || null;
@@ -180,7 +181,12 @@ export function bied(ronde, id, bod) {
       h.nee += 1;
       if (h.nee >= MAX_NEE) h.beledigd = true;
     }
-    return { ja: false, stemming: stemmingVan(h), ronde: nieuw };
+    // Moeilijk (besluit 218): wie nog niet beledigd is, roept een tegenbod. Het eerste ligt TEGEN_STAP onder de
+    // vraagprijs, elk volgend weer TEGEN_STAP lager, maar nooit onder de samenzweergrens K. Zo zie je dat afdingen
+    // hier kan; een bod van het tegenbod is altijd ja. Wat de vierde handelaar met hetzelfde bod nog doet, verraadt het niet.
+    const tegenbod = ronde.niveau === 'moeilijk' && !h.beledigd ? volgendTegenbod(ronde, h) : null;
+    if (tegenbod) h.tegen = tegenbod;
+    return { ja: false, stemming: stemmingVan(h), ronde: nieuw, tegenbod };
   };
 
   // Beledigd: alleen de vraagprijs is nog goed.
@@ -222,6 +228,12 @@ export function bied(ronde, id, bod) {
   return nee();
 }
 
+/** Moeilijk: het volgende tegenbod van handelaar h (besluit 218); null als er geen grens K is. */
+export function volgendTegenbod(ronde, h) {
+  if (ronde.k == null) return null;
+  return Math.max(ronde.k, (h.tegen ?? h.v) - TEGEN_STAP);
+}
+
 /**
  * Matig (besluit 140/214): heeft de handelaar met korting getwijfeld en is hij nog niet gekomen of boos? Dan komt hij
  * nog naar Pino toe: 1 s nadat ze met een ander heeft gepraat (moetKomen), of na 5 s als ze met niemand anders praat.
@@ -260,6 +272,7 @@ export function nieuwBezoek(ronde) {
   const handelaars = {};
   for (const [id, oud] of Object.entries(ronde.handelaars)) {
     const h = { ...oud, nee: 0, afgewezen: 0, beledigd: false, twijfelt: false, vrijeNee: false };
+    delete h.tegen;
     if (ronde.niveau === 'matig' && id === ronde.korting) {
       h.v = oud.oudeV ?? oud.v;
       h.g = laagstePrijs(ronde);

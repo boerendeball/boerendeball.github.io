@@ -82,6 +82,18 @@ function lampion(x, y, kleur, { zwaai = true } = {}) {
 }
 
 /** Portret van een handelaar (hoofd en schouders), voor het onderhandelscherm en het resultaat. */
+/**
+ * Een vast boos wolkje (bub-wolk + bub-boos, 28 px) met de punt op (x, y): boven het hoofd van een beledigde handelaar
+ * in de scène en bij zijn portret (besluit 218). Zelfde maat en plek als het korte wolkje van boosWolk().
+ */
+function boosWolkVast(x, y) {
+  const m = 28;
+  const ic = m * 0.52;
+  return el('g', { class: 's5-boos-vast', 'aria-hidden': 'true', transform: `translate(${x - m / 2} ${y - m * 0.95})` }, [
+    use('bub-wolk', 0, 0, m, m), use('bub-boos', (m - ic) / 2, m * 0.4 - ic / 2, ic, ic),
+  ]);
+}
+
 function portretSvg(id, gezicht = 'b-blij', w = 68, hg = 62) {
   return el('svg', { class: 'ic', viewBox: '0 -4 48 44', width: w, height: hg, 'aria-hidden': 'true' }, [persoon(0, 0, { ...INFO[id].persoon, gezicht })]);
 }
@@ -396,14 +408,17 @@ function markt({ root, dag, info, klaar, opnieuw, kijken = false, zoek = false }
 
   /** Teken een handelaar thuis (in zijn kraam, verschoven met dx) of los op de markt. */
   const plek = {};
+  /** Beledigd (besluit 218): een vast boos wolkje boven zijn hoofd, zolang hij beledigd is (dit bezoek). */
+  const beledigd = (id) => !!ronde?.handelaars?.[id]?.beledigd;
   function zet(id, { x, y, binnen = true }, wip, gezicht, flip, kantel = 0) {
     plek[id] = { x, y, binnen, flip };
-    const sleutel = `${gezicht}|${flip}`;
+    const bel = beledigd(id);
+    const sleutel = `${gezicht}|${flip}|${bel}`;
     if (binnen) {
       if (los[id] && los[id].sleutel) { los[id].knoop.replaceChildren(); los[id].sleutel = ''; }
       if (getekend[id] !== sleutel) {
         getekend[id] = sleutel;
-        handelaarKnoop[id].replaceChildren(persoon(41, 28, { ...INFO[id].persoon, gezicht, flip }));
+        handelaarKnoop[id].replaceChildren(persoon(41, 28, { ...INFO[id].persoon, gezicht, flip }), bel ? boosWolkVast(65, 31) : null);
       }
       const dx = x - THUIS[id].x;
       handelaarKnoop[id].setAttribute('transform', dx || wip ? `translate(${dx.toFixed(1)} ${wip.toFixed(2)})` : '');
@@ -412,7 +427,7 @@ function markt({ root, dag, info, klaar, opnieuw, kijken = false, zoek = false }
       if (getekend[id]) { handelaarKnoop[id].replaceChildren(); getekend[id] = ''; }
       if (los[id].sleutel !== sleutel) {
         los[id].sleutel = sleutel;
-        los[id].knoop.replaceChildren(persoon(-24, -72, { ...INFO[id].persoon, gezicht, flip }));
+        los[id].knoop.replaceChildren(persoon(-24, -72, { ...INFO[id].persoon, gezicht, flip }), bel ? boosWolkVast(0, -68) : null);
       }
       los[id].knoop.setAttribute('transform', `translate(${x.toFixed(1)} ${(y + wip).toFixed(2)})${kantel ? ` rotate(${kantel})` : ''}`);
       los[id].ding.y = y;
@@ -711,6 +726,10 @@ function markt({ root, dag, info, klaar, opnieuw, kijken = false, zoek = false }
 
     const badge = h('span', { class: 's5-badge', role: 'img' });
     const uitsnede = h('div', { class: 's5-portret-uitsnede' });
+    // Beledigd (besluit 218): hetzelfde boze wolkje als in de scène, bij het portret.
+    const portretWolk = h('span', { class: 's5-portret-wolk', 'aria-hidden': 'true', hidden: true }, [
+      el('svg', { class: 'ic', viewBox: '0 0 28 28', width: 30, height: 30 }, [boosWolkVast(14, 26.6)]),
+    ]);
     // Badge én gezicht tonen dezelfde stemming; ook de handelaar in de scène kijkt zo (besluit 77).
     let vorigeStemming = null;
     const zetStemming = (stemming) => {
@@ -720,11 +739,32 @@ function markt({ root, dag, info, klaar, opnieuw, kijken = false, zoek = false }
       badge.replaceChildren(svgIcoon(`s5-stemming-${stemming}`, 26));
       badge.setAttribute('aria-label', STEMMING_LABEL[stemming]);
       uitsnede.replaceChildren(portretSvg(id, GEZICHT[stemming]));
+      const was = !portretWolk.hidden;
+      portretWolk.hidden = !hd.beledigd;
+      if (hd.beledigd && !was && vorigeStemming) sap.pop(portretWolk, { duur: 360 });
       const p = plek[id] || { ...THUIS[id], binnen: true, flip: false };
       zet(id, p, 0, GEZICHT[stemming], p.flip);
     };
     zetStemming(M.stemmingVan(hd));
-    const portret = h('div', { class: 's5-portret', style: { background: i.portret } }, [uitsnede, badge]);
+    // Moeilijk (besluit 218): na een te laag bod roept de handelaar een tegenbod (munt + bedrag) in een wolkje bij
+    // zijn portret. Een tik erop zet het bod op dat bedrag.
+    const tegenGetal = h('span', { class: 'kop' }, '');
+    const tegen = h('button', { type: 'button', class: 's5-tegen', hidden: true, onclick: () => neemTegenbod() }, [munt(20), tegenGetal]);
+    function toonTegenbod(bedrag, nieuw) {
+      if (!bedrag || hd.beledigd || dealt) { tegen.hidden = true; return; }
+      tegenGetal.textContent = String(bedrag);
+      tegen.setAttribute('aria-label', `${i.naam} zegt: ${bedrag} munten. Tik om dat te bieden`);
+      tegen.hidden = false;
+      if (nieuw) sap.pop(tegen, { duur: 380 });
+    }
+    function neemTegenbod() {
+      if (dealt || !hd.tegen) return;
+      bod = hd.tegen;
+      toonBod();
+      sap.puls(bodGetal.parentElement, { schaal: 1.12, duur: 220 });
+      bied.focus();
+    }
+    const portret = h('div', { class: 's5-portret', style: { background: i.portret } }, [uitsnede, badge, portretWolk, tegen]);
 
     const vraag = h('div', { class: 's5-vraag', role: 'img', 'aria-label': `${i.naam} vraagt ${hd.v} munten` }, [
       svgIcoon(product.symbool, 40), h('span', { class: 's5-bedrag' }, [munt(26), h('span', { class: 'kop s5-vraagprijs' }, String(hd.v))]),
@@ -732,7 +772,13 @@ function markt({ root, dag, info, klaar, opnieuw, kijken = false, zoek = false }
 
     const bodGetal = h('span', { class: 'kop s5-bod' }, '');
     const biedGetal = h('span', { class: 'kop' }, '');
-    const min = h('button', { type: 'button', class: 's5-stap', 'aria-label': 'Bod verlagen' }, '−');
+    const minSlot = h('span', { class: 's5-min-slot', 'aria-hidden': 'true' }, [svgIcoon('s8-slot', 22)]);
+    const min = h('button', { type: 'button', class: 's5-stap', 'aria-label': 'Bod verlagen' }, [h('span', {}, '−'), minSlot]);
+    let slotAnim = null;
+    function schudSlot() {
+      if (rustig || (slotAnim && slotAnim.playState === 'running')) return;
+      slotAnim = minSlot.animate([{ transform: 'rotate(0)' }, { transform: 'rotate(-18deg)' }, { transform: 'rotate(16deg)' }, { transform: 'rotate(-10deg)' }, { transform: 'rotate(0)' }], { duration: 380 });
+    }
     const plus = h('button', { type: 'button', class: 's5-stap', 'aria-label': 'Bod verhogen' }, '+');
     const weg = h('button', { type: 'button', class: 's5-weg', 'aria-label': 'Weglopen', onclick: () => d.sluit() }, [svgIcoon('s5-wegloop', 26, { kleur: '#4F6B7E' })]);
     const bied = h('button', { type: 'button', class: 's5-bied', onclick: doeBod }, [
@@ -742,16 +788,23 @@ function markt({ root, dag, info, klaar, opnieuw, kijken = false, zoek = false }
     function toonBod() {
       const max = M.maxBod(hd, geld());
       bod = Math.max(Math.min(M.STAP, max), Math.min(bod, max));
+      if (dealt) tegen.hidden = true;
       bodGetal.textContent = String(bod);
       biedGetal.textContent = String(bod);
       bied.setAttribute('aria-label', `Bied ${bod} munten`);
-      min.disabled = dealt || bod <= M.STAP;
+      // Beledigd (besluit 218): de min-knop krijgt een slotje; lager bieden kan bij hem niet meer.
+      const opSlot = !dealt && !!hd.beledigd;
+      min.classList.toggle('s5-stap-slot', opSlot);
+      min.setAttribute('aria-label', opSlot ? 'Bod verlagen kan niet meer' : 'Bod verlagen');
+      if (opSlot) min.setAttribute('aria-disabled', 'true'); else min.removeAttribute('aria-disabled');
+      min.disabled = dealt || (!opSlot && bod <= M.STAP);
       plus.disabled = dealt || bod >= max;
       bied.disabled = dealt || bod < M.STAP;
       weg.disabled = dealt;
     }
     function stap(richting) {
       if (dealt) return;
+      if (richting < 0 && hd.beledigd) { schudSlot(); return; }
       const voor = bod;
       bod += richting * M.STAP;
       toonBod();
@@ -799,6 +852,7 @@ function markt({ root, dag, info, klaar, opnieuw, kijken = false, zoek = false }
       }
       if (!rustig) portret.animate([{ transform: 'translateX(0)' }, { transform: 'translateX(-5px)' }, { transform: 'translateX(5px)' }, { transform: 'translateX(-3px)' }, { transform: 'translateX(0)' }], { duration: 350 });
       if (hd.beledigd) bod = M.maxBod(hd, geld());
+      toonTegenbod(uit.tegenbod, true);
       // Matig: de handelaar die naar Pino toe kwam, gaat na een te laag bod terug naar zijn oude vraagprijs (besluit 140).
       vraag.querySelector('.s5-vraagprijs').textContent = String(hd.v);
       vraag.setAttribute('aria-label', `${i.naam} vraagt ${hd.v} munten`);
@@ -832,6 +886,8 @@ function markt({ root, dag, info, klaar, opnieuw, kijken = false, zoek = false }
     }
     d.element.addEventListener('keydown', opToets);
     toonBod();
+    // Een eerder tegenbod (dit bezoek) staat er nog als Pino terugkomt.
+    toonTegenbod(hd.tegen, false);
     queueMicrotask(() => bied.focus());
   }
 
@@ -935,7 +991,7 @@ function markt({ root, dag, info, klaar, opnieuw, kijken = false, zoek = false }
   teken();
   lus.start();
   const wachtAnimaties = sap.leven(svg);
-  if (datum.isTest()) window.pinoDebug = { spel: 5, get ronde() { return ronde; }, pino: pinoStaat, stap: (ms) => { update(ms / 1000); teken(); } };
+  if (datum.isTest()) window.pinoDebug = { spel: 5, get ronde() { return ronde; }, pino: pinoStaat, stap: (ms) => { update(ms / 1000); teken(); }, praat: (id) => { if (ronde && !bezig) onderhandel(id); } };
 
   return () => {
     gestopt = true;

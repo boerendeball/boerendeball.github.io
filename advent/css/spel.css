@@ -363,6 +363,27 @@
   touch-action: none; user-select: none; -webkit-user-select: none;
 }
 .s5-stap:disabled { opacity: 0.4; cursor: default; }
+.s5-stap { position: relative; }
+/* beledigd (besluit 218): slotje op de min-knop, het boze wolkje bij het portret */
+.s5-min-slot { position: absolute; right: -7px; top: -9px; width: 22px; height: 22px; display: none; }
+.s5-min-slot > svg { display: block; width: 22px; height: 22px; }
+.s5-stap.s5-stap-slot { background: var(--vlak); color: #9FB3C1; cursor: default; }
+.s5-stap.s5-stap-slot .s5-min-slot { display: block; }
+.s5-portret-wolk { position: absolute; left: -14px; top: -22px; width: 40px; height: 40px; pointer-events: none; }
+.s5-portret-wolk > svg { width: 40px; height: 40px; }
+.s5-portret-wolk > svg { display: block; }
+.s5-portret-wolk[hidden], .s5-tegen[hidden] { display: none; }
+/* Moeilijk (besluit 218): het tegenbod van de handelaar, een wolkje met munt + bedrag boven zijn portret */
+.s5-tegen {
+  position: absolute; left: 50px; bottom: calc(100% - 12px); z-index: 2;
+  display: inline-flex; align-items: center; gap: 5px; padding: 6px 12px 6px 10px; white-space: nowrap;
+  border: 0; border-radius: 16px 16px 16px 4px; background: #fff; cursor: pointer;
+  box-shadow: 0 0 0 3px var(--geel), 0 5px 0 0 var(--kaart-schaduw);
+  font-family: var(--font-kop); font-weight: 700; font-size: 20px; color: var(--geel-tekst);
+  -webkit-tap-highlight-color: transparent;
+}
+.s5-tegen:active { transform: translateY(3px); }
+.s5-tegen:focus-visible { outline: 3px solid var(--teal); outline-offset: 3px; }
 .s5-acties { display: flex; gap: 10px; }
 .s5-weg {
   width: 54px; min-height: 54px; border-radius: 999px; border: 0; padding: 0; cursor: pointer;

@@ -302,7 +302,14 @@
   "s10-gans-boos",
   "s10-taart-kaal",
   "s10-vlam",
-  "s10-rook"
+  "s10-rook",
+  "s10-toren",
+  "s10-pand-nacht",
+  "s10-stoep-nacht",
+  "s10-klinker-nacht",
+  "s10-boom-nacht",
+  "s10-koplicht-zij",
+  "s10-koplicht-top"
  ],
  "kamer": [
   "km-plank",

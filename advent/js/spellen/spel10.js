@@ -34,9 +34,19 @@ const LONTEN = [[15.5, 11], [24, 9], [32.5, 11]];   // de lontjes op s10-taart-k
 
 /* ---------- scène (design/generators/spel10_build2.py) ---------- */
 const { B, H } = R;
-const NACHT = '#2B4A66';
-const PANDEN = [[-8, '#C98B5A'], [50, '#FFF1D6'], [108, '#8AA0AF'], [166, '#C43B38'], [224, '#E8A9C4'], [282, '#FFF1D6'], [340, '#C98B5A']];
-const STERREN = [[20, 12, 8], [60, 30, 6], [120, 10, 7], [180, 26, 5], [240, 14, 6], [340, 40, 5], [90, 44, 5]];
+// Spel 10 speelt om middernacht (besluit 220): nachttinten voor lucht en grond, de figuren blijven helder.
+const NACHT = '#1E3A4C';      // lucht (ook het zwart tussen stad en weg)
+const GRAS = '#2F5D3A';
+const WEI = '#3D6E45';
+const WEI_LIJN = '#2F5D3A';
+const ASFALT = '#3A4F60';
+const RAND = '#DDE7EE';
+const LICHT = '#FFE08A';
+// Grachtenpanden met gedempte gevels; op de plek van null staat de kerktoren met de klok op 12.
+const PANDEN = [[-8, '#8A5E3E'], [50, '#B8AC96'], [108, '#5E7080'], [166, null], [224, '#A87A8E'], [282, '#B8AC96'], [340, '#8A5E3E']];
+const TOREN = { w: 56, h: 110, klok: [28, 48] };
+const STERREN = [[20, 12, 8], [44, 34, 5], [60, 22, 6], [96, 8, 5], [120, 14, 7], [146, 30, 5], [200, 4, 6], [240, 22, 6],
+  [268, 36, 5], [340, 48, 5], [90, 40, 5], [8, 30, 5], [232, 6, 5], [352, 8, 4]];
 // lantaarns op de bovenste stoep en op de startstoep: [x, hoogte boven de rij-bovenkant, schaal]
 const LANTAARNS_STAD = [[R.DOELRIJ, 40, 28, 0.8], [R.DOELRIJ, 300, 28, 0.8], [0, 24, 12, 0.9], [0, 316, 12, 0.9]];
 const WIP_SCHAAP = [16, 1.6];   // rad/s en px: het huppeltje van een lopend schaap
@@ -49,13 +59,14 @@ const HUIS_KLEUR = '#FFF1D6';
 const MOEDER_KLEUR = '#FF6FAE';
 const HART_KLEUR = '#FF6FAE';
 
-const LABEL_STAD = 'Avondstad: Pino staat met haar tas op de stoep. Voor haar klinkerpaden met ganzen, weilanden met schapen en twee wegen met auto\'s; helemaal aan de overkant staat het witte ziekenhuisautootje';
-const LABEL_WEG = 'Avondweg van boven: Pino rijdt in het witte ziekenhuisautootje tussen het andere verkeer door';
+const LABEL_STAD = 'Stad om middernacht, de torenklok staat op twaalf: Pino staat met haar tas op de stoep. Voor haar klinkerpaden met ganzen, weilanden met schapen en twee wegen met auto\'s met hun koplampen aan; helemaal aan de overkant staat het witte ziekenhuisautootje';
+const LABEL_WEG = 'De weg om middernacht van boven: Pino rijdt in het witte ziekenhuisautootje tussen het andere verkeer door, alle auto\'s met hun koplampen aan';
 
 function spriteLijst() {
-  const lijst = ['s10-maan', 's10-ster', 's10-gloed', 's10-ambu', 's10-stoep', 's10-stoeprand', 's10-ambu-top', 's10-politie-top',
-    's10-paaltje', 's10-tas', 's9-lantaarn', 's9-klinker', 's8-boom', 'd-lam', 's10-lam-graas', 'd-gansje', 's10-gans', 's10-gans-boos', 'pino-loop', 's9-stetho'].map((id) => ({ id }));
-  for (const kleur of new Set(PANDEN.map(([, k]) => k))) lijst.push({ id: 's10-pand', kleur });
+  const lijst = ['s10-maan', 's10-ster', 's10-gloed', 's10-ambu', 's10-stoep-nacht', 's10-stoeprand', 's10-ambu-top', 's10-politie-top',
+    's10-paaltje', 's10-tas', 's9-lantaarn', 's10-klinker-nacht', 's10-boom-nacht', 's10-toren', 's10-koplicht-zij', 's10-koplicht-top',
+    'd-lam', 's10-lam-graas', 'd-gansje', 's10-gans', 's10-gans-boos', 'pino-loop', 's9-stetho'].map((id) => ({ id }));
+  for (const kleur of new Set(PANDEN.map(([, k]) => k).filter(Boolean))) lijst.push({ id: 's10-pand-nacht', kleur });
   for (const kleur of R.AUTO_KLEUREN) lijst.push({ id: 's10-auto', kleur });
   for (const kleur of [...R.TEGEN_KLEUR, ...R.SLOOM_KLEUR]) lijst.push({ id: 's10-auto-top', kleur });
   lijst.push({ id: 's9-huisje', kleur: HUIS_KLEUR }, { id: 's9-moeder', kleur: MOEDER_KLEUR }, { id: 's9-hart', kleur: HART_KLEUR });
@@ -373,6 +384,11 @@ function speel({ root, dag, info, klaar, opnieuw }) {
   const stad = maakLaag(B, R.STAD_H);
 
   function lantaarn(g, x, y, k) {
+    // lichtplas op de grond (vlakke ellips, geen gradient), dan de gloed en de lantaarn zelf
+    g.save();
+    g.globalAlpha = 0.22; g.fillStyle = LICHT;
+    g.beginPath(); g.ellipse(x + 12 * k, y + 78 * k, 30 * k, 9 * k, 0, 0, Math.PI * 2); g.fill();
+    g.restore();
     tekenSprite(g, 's10-gloed', x - 28 * k, y - 26 * k, { w: 80 * k, h: 80 * k });
     tekenSprite(g, 's9-lantaarn', x, y, { w: 24 * k, h: 80 * k });
   }
@@ -380,7 +396,7 @@ function speel({ root, dag, info, klaar, opnieuw }) {
   function stoep(g, y, hoogte) {
     g.save();
     g.beginPath(); g.rect(0, y, B, hoogte); g.clip();
-    for (let yy = 0; yy < hoogte; yy += 32) for (let x = 0; x < B; x += 32) tekenSprite(g, 's10-stoep', x, y + yy, { w: 32, h: 32 });
+    for (let yy = 0; yy < hoogte; yy += 32) for (let x = 0; x < B; x += 32) tekenSprite(g, 's10-stoep-nacht', x, y + yy, { w: 32, h: 32 });
     g.restore();
   }
 
@@ -397,30 +413,36 @@ function speel({ root, dag, info, klaar, opnieuw }) {
     const top = R.rijTop;
     const hh = R.RIJ_H;
     const stoepBoven = top(R.DOELRIJ);
-    PANDEN.forEach(([x, kleur], i) => tekenSprite(g, 's10-pand', x, stoepBoven - 90 + (i % 2) * 6, { w: 56, h: 90, kleur }));
-    g.fillStyle = '#4E9A3E'; g.fillRect(0, stoepBoven, B, R.STAD_H - stoepBoven);
+    PANDEN.forEach(([x, kleur], i) => {
+      if (kleur) { tekenSprite(g, 's10-pand-nacht', x, stoepBoven - 90 + (i % 2) * 6, { w: 56, h: 90, kleur }); return; }
+      // kerktoren met de klok op 12, met een zachte gloed om de wijzerplaat (besluit 220)
+      const ty = stoepBoven - TOREN.h;
+      tekenSprite(g, 's10-gloed', x + TOREN.klok[0] - 40, ty + TOREN.klok[1] - 40, { w: 80, h: 80 });
+      tekenSprite(g, 's10-toren', x, ty, { w: TOREN.w, h: TOREN.h });
+    });
+    g.fillStyle = GRAS; g.fillRect(0, stoepBoven, B, R.STAD_H - stoepBoven);
     const soort = (rij) => R.RIJ_SOORT[rij];
     for (let rij = 1; rij < R.DOELRIJ; rij += 1) {
       const y = top(rij);
       if (soort(rij) === 'weg') {
         // rijstrook: witte rand aan de buitenkant, gele streep tussen twee stroken
-        g.fillStyle = '#4F6B7E'; g.fillRect(0, y, B, hh);
-        g.fillStyle = '#FFFFFF';
+        g.fillStyle = ASFALT; g.fillRect(0, y, B, hh);
+        g.fillStyle = RAND;
         if (soort(rij + 1) !== 'weg') g.fillRect(0, y, B, 3);
         if (soort(rij - 1) !== 'weg') g.fillRect(0, y + hh - 3, B, 3);
         else {
-          g.strokeStyle = '#FFE08A'; g.lineWidth = 3; g.setLineDash([22, 22]);
+          g.strokeStyle = LICHT; g.lineWidth = 3; g.setLineDash([22, 22]);
           g.beginPath(); g.moveTo(0, y + hh); g.lineTo(B, y + hh); g.stroke(); g.setLineDash([]);
         }
       } else if (soort(rij) === 'wei') {
-        g.fillStyle = '#8BD35A'; g.fillRect(0, y, B, hh);
-        g.strokeStyle = '#5FB05A'; g.lineWidth = 2;
+        g.fillStyle = WEI; g.fillRect(0, y, B, hh);
+        g.strokeStyle = WEI_LIJN; g.lineWidth = 2;
         for (const yy of [y, y + hh]) { g.beginPath(); g.moveTo(0, yy); g.lineTo(B, yy); g.stroke(); }
       } else if (soort(rij) === 'pad') {
         // ganzenpad: klinkerstrook
         g.save();
         g.beginPath(); g.rect(0, y, B, hh); g.clip();
-        for (let r = 0; r < 2; r += 1) for (let x = 0; x < B; x += 32) tekenSprite(g, 's9-klinker', x, y + r * 32, { w: 32, h: 32 });
+        for (let r = 0; r < 2; r += 1) for (let x = 0; x < B; x += 32) tekenSprite(g, 's10-klinker-nacht', x, y + r * 32, { w: 32, h: 32 });
         g.restore();
       }
     }
@@ -453,6 +475,12 @@ function speel({ root, dag, info, klaar, opnieuw }) {
         const y = R.rijTop(rij) - boven;
         tekenSprite(ctx, 's10-gloed', x - 28 * k, y - 26 * k, { w: 80 * k, h: 80 * k, alpha: 0.35 * (0.5 + 0.5 * Math.sin(s.klok * 1.8 + i)) });
       });
+    }
+    // Koplichten liggen op de weg: eerst alle bundels, dan pas de auto's en de rest (besluit 220).
+    for (const e of verkeer) {
+      if (e.soort !== 'auto' || e.y + e.h < cam - 10 || e.y > cam + H + 10) continue;
+      const naarLinks = e.strook.v < 0;
+      tekenSprite(ctx, 's10-koplicht-zij', naarLinks ? e.x + 6 - 60 : e.x + 66, e.y + 11.5, { w: 60, h: 20, flip: naarLinks });
     }
     const lagen = [];
     for (const e of verkeer) {
@@ -506,13 +534,13 @@ function speel({ root, dag, info, klaar, opnieuw }) {
     const huisY = R.HUIS.y - tekort;
     const eindInBeeld = eindY > -10;
     const wegBoven = Math.max(0, eindY);
-    ctx.fillStyle = '#4E9A3E'; ctx.fillRect(0, 0, B, H);
-    ctx.fillStyle = '#4F6B7E'; ctx.fillRect(60, wegBoven, 238, H - wegBoven);
-    ctx.fillStyle = '#FFFFFF'; ctx.fillRect(60, wegBoven, 5, H - wegBoven); ctx.fillRect(293, wegBoven, 5, H - wegBoven);
+    ctx.fillStyle = GRAS; ctx.fillRect(0, 0, B, H);
+    ctx.fillStyle = ASFALT; ctx.fillRect(60, wegBoven, 238, H - wegBoven);
+    ctx.fillStyle = RAND; ctx.fillRect(60, wegBoven, 5, H - wegBoven); ctx.fillRect(293, wegBoven, 5, H - wegBoven);
     if (eindInBeeld) ctx.fillRect(60, eindY, 238, 5);
     ctx.save();
     ctx.beginPath(); ctx.rect(0, wegBoven + 14, B, H); ctx.clip();
-    ctx.strokeStyle = '#FFE08A'; ctx.lineWidth = 4; ctx.setLineDash([30, 30]); ctx.lineDashOffset = -(af % 60);
+    ctx.strokeStyle = LICHT; ctx.lineWidth = 4; ctx.setLineDash([30, 30]); ctx.lineDashOffset = -(af % 60);
     ctx.beginPath(); ctx.moveTo(179, -60); ctx.lineTo(179, H); ctx.stroke();
     ctx.setLineDash([]); ctx.lineDashOffset = 0;
     ctx.restore();
@@ -524,7 +552,7 @@ function speel({ root, dag, info, klaar, opnieuw }) {
       tekenSprite(ctx, 's10-paaltje', 320, y, { w: 10, h: 26 });
     }
     const decor = [];
-    for (const [x, y0] of BOMEN_WEG) decor.push({ x, y: (y0 + af) % H, f: (y) => tekenSprite(ctx, 's8-boom', x, y, { w: 44, h: 56 }) });
+    for (const [x, y0] of BOMEN_WEG) decor.push({ x, y: (y0 + af) % H, f: (y) => tekenSprite(ctx, 's10-boom-nacht', x, y, { w: 44, h: 56 }) });
     for (const [x, y0, k] of LANTAARNS_WEG) decor.push({ x, y: (y0 + af) % H, f: (y) => lantaarn(ctx, x, y, k) });
     decor.sort((a, b) => a.y - b.y);
     for (const d of decor) {
@@ -546,6 +574,16 @@ function speel({ root, dag, info, klaar, opnieuw }) {
     }
 
     const objecten = [...rit.objecten].sort((a, b) => a.y - b.y);
+    // Koplichten eerst (ze liggen op de weg), zodat een bundel nooit over een auto valt (besluit 220).
+    // Tegenliggers rijden naar beneden: hun bundel ligt onder de auto en draait mee (hoek 180°).
+    for (const o of objecten) {
+      if (o.soort === 'gans') continue;
+      const alpha = Math.max(0, Math.min(1, o.alpha));
+      if (o.soort === 'tegen') tekenSprite(ctx, 's10-koplicht-top', o.x - 28, o.y + 90, { w: 56, h: 80, alpha, hoek: Math.PI });
+      else tekenSprite(ctx, 's10-koplicht-top', o.x - 28, o.y + 6 - 80, { w: 56, h: 80, alpha });
+    }
+    const ak = R.AUTO_B / 56;
+    tekenSprite(ctx, 's10-koplicht-top', R.autoX(rit.afstand, rit.x) - R.AUTO_B / 2, R.autoY(rit.afstand) + (6 - 80) * ak, { w: R.AUTO_B, h: 80 * ak });
     for (const o of objecten) {
       const alpha = Math.max(0, Math.min(1, o.alpha));
       if (o.soort === 'gans') {

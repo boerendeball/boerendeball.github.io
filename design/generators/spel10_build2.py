@@ -1,5 +1,25 @@
 # Bouwt Spel10.dc.html (te voet), Spel10-Auto.dc.html, Spel10-Finale.dc.html en Spel10-Sprites.dc.html (poppenhuisstijl)
+# rechtstreeks in design/artboards. Spel 10 speelt om middernacht (besluit 220): nachttinten, torenklok op 12, lichtplassen, koplichten.
+from pathlib import Path
 from spel10_sprites import DEFS, use, pino, dier, persoon, auto, pino_tas10, lantaarn_aan
+UIT = Path(__file__).resolve().parent.parent / 'artboards'
+# middernacht (besluit 220)
+LUCHT, GRAS, WEI, WEI_LIJN, ASFALT, RAND = '#1E3A4C', '#2F5D3A', '#3D6E45', '#2F5D3A', '#3A4F60', '#DDE7EE'
+PANDEN_NACHT = [(-8,'#8A5E3E'),(50,'#B8AC96'),(108,'#5E7080'),(166,None),(224,'#A87A8E'),(282,'#B8AC96'),(340,'#8A5E3E')]
+STERREN = [(20,12,8),(44,34,5),(60,22,6),(96,8,5),(120,14,7),(146,30,5),(200,4,6),(240,22,6),(268,36,5),(340,48,5),(90,40,5),(8,30,5),(232,6,5),(352,8,4)]
+def plas(x,y,k=1.0):
+    # lichtplas onder een lantaarn (voet van s9-lantaarn op x+12k, y+78k): vlakke ellips, geen gradient
+    return f'<ellipse cx="{x+12*k:.1f}" cy="{y+78*k:.1f}" rx="{30*k:.1f}" ry="{9*k:.1f}" fill="#FFE08A" opacity="0.22"/>'
+def lantaarn_nacht(x,y,k=1.0): return plas(x,y,k)+lantaarn_aan(x,y,k)
+def koplicht_zij(x,y,flip=False):
+    # bundel voor een auto van opzij (72x40 op x,y), in de rijrichting
+    if flip: return f'<g transform="translate({x+6} {y+11.5}) scale(-1 1)">'+use('s10-koplicht-zij',0,0,60,20)+'</g>'
+    return use('s10-koplicht-zij',x+66,y+11.5,60,20)
+def koplicht_top(x,y,w=56,omlaag=False):
+    # twee bundels voor een auto van boven (56x96 op x,y); omlaag = tegenligger
+    k=w/56
+    if omlaag: return f'<g transform="rotate(180 {x+w/2:.1f} {y+96*k-6*k+40*k:.1f})">'+use('s10-koplicht-top',x,y+96*k-6*k,w,80*k)+'</g>'
+    return use('s10-koplicht-top',x,y+6*k-80*k,w,80*k)
 HEAD='''<!doctype html>
 <html lang="nl">
 <head>
@@ -76,14 +96,14 @@ def stuur(rot):
 REM='<svg class="ic" viewBox="0 0 48 48" width="36" height="36" aria-hidden="true"><path d="M12 8 h24 l4 26 h-32z" fill="#FFFFFF"/><path d="M16 14 h16 M15 20 h18 M14 26 h20" stroke="#FF5E5B" stroke-width="2.5" stroke-linecap="round"/><rect x="20" y="34" width="8" height="8" rx="2" fill="#FFFFFF"/><rect x="14" y="40" width="20" height="4" rx="2" fill="#FFFFFF"/></svg>'
 
 def lucht(h):
-    s=f'<rect x="0" y="0" width="358" height="{h}" fill="#2B4A66"/>'+use('s10-maan',296,6,40,40)
-    for x,y,sz in [(20,12,8),(60,30,6),(120,10,7),(180,26,5),(240,14,6),(340,40,5),(90,44,5)]:
+    s=f'<rect x="0" y="0" width="358" height="{h}" fill="{LUCHT}"/>'+use('s10-maan',296,6,40,40)
+    for x,y,sz in STERREN:
         s+=use('s10-ster',x,y,sz,sz)
     return s
 def stoep(y,h):
     s=f'<svg x="0" y="{y}" width="358" height="{h}" viewBox="0 0 358 {h}">'
     for yy in range(0,h,32):
-        for xx in range(0,358,32): s+=use('s10-stoep',xx,yy,32,32)
+        for xx in range(0,358,32): s+=use('s10-stoep-nacht',xx,yy,32,32)
     return s+'</svg>'
 def stoeprand(y):
     return ''.join(use('s10-stoeprand',x,y,24,6) for x in range(0,358,24))
@@ -93,58 +113,63 @@ H1=640
 def stad():
     s=lucht(60)
     # grachtenpanden op de bovenste stoep
-    for i,(x,k) in enumerate([(-8,'#C98B5A'),(50,'#FFF1D6'),(108,'#8AA0AF'),(166,'#C43B38'),(224,'#E8A9C4'),(282,'#FFF1D6'),(340,'#C98B5A')]):
-        s+=use('s10-pand',x,36+(i%2)*6,56,90,k)
-    s+=f'<rect x="0" y="126" width="358" height="{H1-126}" fill="#4E9A3E"/>'
+    for i,(x,k) in enumerate(PANDEN_NACHT):
+        if k is None: s+=use('s10-gloed',x-12,24,80,80)+use('s10-toren',x,16,56,110)   # torenklok op 12 (besluit 220)
+        else: s+=use('s10-pand-nacht',x,36+(i%2)*6,56,90,k)
+    s+=f'<rect x="0" y="126" width="358" height="{H1-126}" fill="{GRAS}"/>'
     # bovenste stoep met het ziekenhuisautootje
     s+=stoep(126,52)+stoeprand(174)
-    s+=lantaarn_aan(40,104,0.8)+lantaarn_aan(300,104,0.8)
+    s+=lantaarn_nacht(40,104,0.8)+lantaarn_nacht(300,104,0.8)
     s+=f'<g transform="translate(150 136)">{use("s10-ambu",0,0,72,40)}</g>'
     # weg: twee rijstroken
-    s+='<rect x="0" y="206" width="358" height="80" fill="#4F6B7E"/><rect x="0" y="206" width="358" height="3" fill="#FFFFFF"/><rect x="0" y="283" width="358" height="3" fill="#FFFFFF"/>'
+    s+=f'<rect x="0" y="206" width="358" height="80" fill="{ASFALT}"/><rect x="0" y="206" width="358" height="3" fill="{RAND}"/><rect x="0" y="283" width="358" height="3" fill="{RAND}"/>'
     s+='<path d="M0 246 h358" stroke="#FFE08A" stroke-width="3" stroke-dasharray="22 22"/>'
-    s+=auto(30,208,'#FF5E5B')+auto(230,208,'#FFC93C')+auto(120,248,'#5BC0EB',flip=True)+auto(300,248,'#39D353',flip=True)
+    for x,y,k,f in [(30,208,'#FF5E5B',False),(230,208,'#FFC93C',False),(120,248,'#5BC0EB',True),(300,248,'#39D353',True)]:
+        s+=koplicht_zij(x,y,f)+auto(x,y,k,flip=f)
     # weilanden met schapen (bermen = iets donkerder gras ertussen)
-    s+='<rect x="0" y="316" width="358" height="40" fill="#8BD35A"/>'+'<rect x="0" y="386" width="358" height="40" fill="#8BD35A"/>'
-    s+='<path d="M0 316 h358 M0 356 h358 M0 386 h358 M0 426 h358" stroke="#5FB05A" stroke-width="2"/>'
+    s+=f'<rect x="0" y="316" width="358" height="40" fill="{WEI}"/>'+f'<rect x="0" y="386" width="358" height="40" fill="{WEI}"/>'
+    s+=f'<path d="M0 316 h358 M0 356 h358 M0 386 h358 M0 426 h358" stroke="{WEI_LIJN}" stroke-width="2"/>'
     for x,y in [(36,318),(206,318),(106,388),(286,388)]:
         s+=dier(x,y,'lam',0.85)
     # ganzenpad: klinkerstrook met ganzen
-    s+='<svg x="0" y="456" width="358" height="40" viewBox="0 0 358 40">'+''.join(use('s9-klinker',x,0,32,32)+use('s9-klinker',x,32,32,32) for x in range(0,358,32))+'</svg>'
+    s+='<svg x="0" y="456" width="358" height="40" viewBox="0 0 358 40">'+''.join(use('s10-klinker-nacht',x,0,32,32)+use('s10-klinker-nacht',x,32,32,32) for x in range(0,358,32))+'</svg>'
     for x in [106,146,186,226,266]:
         s+=dier(x,452,'gansje',0.85)
     # startstoep met Pino
     s+=stoep(526,H1-526)+stoeprand(526)
-    s+=lantaarn_aan(24,540,0.9)+lantaarn_aan(316,540,0.9)
+    s+=lantaarn_nacht(24,540,0.9)+lantaarn_nacht(316,540,0.9)
     s+=pino_tas10(160,548)
     return s
 h=HEAD.format(title='Spel 10 – Bereik de bevalling (te voet)')+DEFS
 h+='<div class="vloer" style="width: 390px; height: 844px; box-sizing: border-box; background-color: #BFE6FA; display: flex; flex-direction: column; overflow: hidden; position: relative;">'+kopbalk(4)
 h+=f'''
-  <!-- Avondstad te voet: stroken als patroon in de grond -->
-  <div role="img" aria-label="Nederlandse avondstad in driekwartaanzicht: maan en sterren boven een rij grachtenpanden, daaronder van boven naar beneden een stoep met het witte ziekenhuisautootje, een weg met twee rijstroken vol auto's, twee weilanden met schapen, een klinkerpad met ganzen en de startstoep waar Pino met haar verloskundigentas staat; lantaarns branden" style="position: relative; margin: 12px 16px 0; height: {H1}px; border-radius: 22px; background: #2B4A66; box-shadow: 0 6px 0 0 #CDE4F0; overflow: hidden;">
+  <!-- Stad om middernacht te voet: stroken als patroon in de grond -->
+  <div role="img" aria-label="Nederlandse stad om middernacht in driekwartaanzicht: maan en sterren boven een rij grachtenpanden met een kerktoren waarvan de klok op twaalf staat, daaronder van boven naar beneden een stoep met het witte ziekenhuisautootje, een weg met twee rijstroken vol auto's, twee weilanden met schapen, een klinkerpad met ganzen en de startstoep waar Pino met haar verloskundigentas staat; lantaarns branden en auto's rijden met hun koplampen aan" style="position: relative; margin: 12px 16px 0; height: {H1}px; border-radius: 22px; background: {LUCHT}; box-shadow: 0 6px 0 0 #CDE4F0; overflow: hidden;">
     <svg class="ic" viewBox="0 0 358 {H1}" width="358" height="{H1}" aria-hidden="true">{stad()}</svg>
   </div>'''
 h+=knoppen(PIJL_L,PIJL_O,PIJL_R,'#1FA3DC','#0E7FB5','Naar links','Vooruit','Naar rechts')
 h+='</div>'+TAIL%('{"$preview":{"width":390,"height":844}}','{}')
-open('pino/project/Spel10.dc.html','w').write(h)
+open(UIT/'Spel10.dc.html','w',encoding='utf-8',newline='\n').write(h)
 
 # ---------- Spel10-Auto: de weg van boven ----------
 H2=640
 def weg():
-    s=f'<rect x="0" y="0" width="358" height="{H2}" fill="#4E9A3E"/>'
-    s+='<rect x="60" y="0" width="238" height="640" fill="#4F6B7E"/><rect x="60" y="0" width="5" height="640" fill="#FFFFFF"/><rect x="293" y="0" width="5" height="640" fill="#FFFFFF"/>'
+    s=f'<rect x="0" y="0" width="358" height="{H2}" fill="{GRAS}"/>'
+    s+=f'<rect x="60" y="0" width="238" height="640" fill="{ASFALT}"/><rect x="60" y="0" width="5" height="640" fill="{RAND}"/><rect x="293" y="0" width="5" height="640" fill="{RAND}"/>'
     s+='<path d="M179 0 v640" stroke="#FFE08A" stroke-width="4" stroke-dasharray="30 30"/>'
     for y in range(40,640,110):
         s+=use('s10-paaltje',30,y,10,26)+use('s10-paaltje',320,y,10,26)
     for x,y in [(2,120),(316,60),(0,420),(318,330),(8,560)]:
-        s+=use('s8-boom',x,y,44,56)
-    s+=lantaarn_aan(36,230,0.9)+lantaarn_aan(322,460,0.9)
+        s+=use('s10-boom-nacht',x,y,44,56)
+    s+=lantaarn_nacht(36,230,0.9)+lantaarn_nacht(322,460,0.9)
     # ganzen steken ver vooruit over
     for x,y in [(150,-6),(190,2),(228,-6)]:
         s+=dier(x,y,'gansje',0.9)
     # tegenligger (linker baan), slome auto, Pino's ziekenhuisauto, politie erachter
-    s+=use('s10-auto-top',96,60,56,96,'#FFC93C')
+    # eerst alle koplichten, dan de auto's (een bundel valt nooit over een auto); de tegenligger rijdt naar beneden
+    # (zoals in de app, hoek 180 graden)
+    s+=koplicht_top(96,60,omlaag=True)+koplicht_top(212,232)+koplicht_top(214,366,52)+koplicht_top(212,486)
+    s+='<g transform="rotate(180 124 108)">'+use('s10-auto-top',96,60,56,96,'#FFC93C')+'</g>'
     s+=use('s10-auto-top',212,232,56,96,'#5BC0EB')
     s+=use('s10-ambu-top',214,366,52,88)
     s+=use('s10-politie-top',212,486,56,96)
@@ -153,12 +178,12 @@ h=HEAD.format(title='Spel 10 – Bereik de bevalling (in de auto)')+DEFS
 h+='<div class="vloer" style="width: 390px; height: 844px; box-sizing: border-box; background-color: #BFE6FA; display: flex; flex-direction: column; overflow: hidden; position: relative;">'+kopbalk(2)
 h+=f'''
   <!-- De weg vanuit de auto -->
-  <div role="img" aria-label="Avondweg van boven met gras, bomen en brandende lantaarns aan beide kanten: Pino's witte ziekenhuisautootje onderaan, een gele tegenligger links, een slome blauwe auto vlak voor haar, een politieauto met zwaailicht achter haar en ganzen die ver vooruit oversteken" style="position: relative; margin: 12px 16px 0; height: {H2}px; border-radius: 22px; background: #4E9A3E; box-shadow: 0 6px 0 0 #CDE4F0; overflow: hidden;">
+  <div role="img" aria-label="De weg om middernacht van boven, met donker gras, bomen en brandende lantaarns aan beide kanten; alle auto's rijden met hun koplampen aan: Pino's witte ziekenhuisautootje onderaan, een gele tegenligger links, een slome blauwe auto vlak voor haar, een politieauto met zwaailicht achter haar en ganzen die ver vooruit oversteken" style="position: relative; margin: 12px 16px 0; height: {H2}px; border-radius: 22px; background: {GRAS}; box-shadow: 0 6px 0 0 #CDE4F0; overflow: hidden;">
     <svg class="ic" viewBox="0 0 358 {H2}" width="358" height="{H2}" aria-hidden="true">{weg()}</svg>
   </div>'''
 h+=knoppen(stuur(-35),REM,stuur(35),'#FF5E5B','#C43B38','Stuur naar links','Remmen','Stuur naar rechts')
 h+='</div>'+TAIL%('{"$preview":{"width":390,"height":844}}','{}')
-open('pino/project/Spel10-Auto.dc.html','w').write(h)
+open(UIT/'Spel10-Auto.dc.html','w',encoding='utf-8',newline='\n').write(h)
 
 # ---------- Spel10-Finale ----------
 fin=HEAD.format(title='Spel 10 – finale: Pino is jarig')+DEFS
@@ -211,36 +236,39 @@ fin+=f'''<div class="vloer" style="width: 390px; height: 844px; box-sizing: bord
     <a href="Main.dc.html" class="knop" style="width: 100%; box-sizing: border-box; background: #FF6FAE; color: #FFFFFF; box-shadow: 0 5px 0 0 #B23A6A;">Terug naar de kalender</a>
   </div>
 </div>'''+TAIL%('{"$preview":{"width":390,"height":844}}','{}')
-open('pino/project/Spel10-Finale.dc.html','w').write(fin)
+open(UIT/'Spel10-Finale.dc.html','w',encoding='utf-8',newline='\n').write(fin)
 
 # ---------- sprite sheet ----------
 sheet=HEAD.format(title='Spel 10 – sprite-set')+DEFS
-sheet+='''<div class="vloer" style="width: 1000px; height: 720px; box-sizing: border-box; background-color: #BFE6FA; padding: 28px 32px; display: flex; flex-direction: column; gap: 16px;">
+sheet+='''<div class="vloer" style="width: 1000px; height: 780px; box-sizing: border-box; background-color: #BFE6FA; padding: 28px 32px; display: flex; flex-direction: column; gap: 16px;">
   <div style="display: flex; justify-content: space-between; align-items: baseline;">
     <h1 class="kop" style="margin: 0; font-size: 26px;">Sprite-set spel 10 · Bereik de bevalling</h1>
     <span class="stat-label">AUTO'S VIA currentColor (ZIJ- EN BOVENAANZICHT) · SCHAPEN = LAM, GANZEN = GANSJE UIT SPEL 3 · LANTAARN UIT SPEL 9 MET GLOED · FINALE: TAART, BALLON, SLINGER</span>
   </div>
   <div class="kaart" style="padding: 14px 16px; display: flex; flex-direction: column; gap: 8px;">
-    <span class="stat-label">TE VOET · PINO MET TAS EN STETHOSCOOP · AUTO'S ZIJAANZICHT · ZIEKENHUISAUTOOTJE · GRACHTENPAND (currentColor) · STOEPTEGEL · MAAN · LANTAARN AAN</span>
+    <span class="stat-label">TE VOET · PINO MET TAS EN STETHOSCOOP · AUTO'S ZIJAANZICHT · ZIEKENHUISAUTOOTJE · GRACHTENPAND (currentColor) · TOREN MET KLOK OP 12 · STOEP EN KLINKERS IN NACHTTINTEN · MAAN · LANTAARN MET LICHTPLAS · KOPLICHT</span>
     <div style="display: flex; gap: 18px; align-items: flex-end; flex-wrap: wrap;">'''
 sheet+=f'<div class="vak"><svg class="ic" viewBox="0 -12 56 84" width="64" height="98">{pino_tas10(0,0)}</svg><span class="lbl">Pino te voet</span></div>'
 for k in ['#FF5E5B','#FFC93C','#5BC0EB','#39D353']:
     sheet+=f'<div class="vak"><svg class="ic" viewBox="0 0 72 40" width="72" height="40">{auto(0,0,k)}</svg><span class="lbl">auto</span></div>'
 sheet+=f'<div class="vak"><svg class="ic" viewBox="0 0 72 40" width="72" height="40">{use("s10-ambu",0,0,72,40)}</svg><span class="lbl">ziekenhuisautootje</span></div>'
-for k in ['#C98B5A','#FFF1D6','#8AA0AF','#C43B38','#E8A9C4']:
-    sheet+=f'<div class="vak"><svg class="ic" viewBox="0 0 56 90" width="42" height="68">{use("s10-pand",0,0,56,90,k)}</svg><span class="lbl">pand</span></div>'
-sheet+=f'<div class="vak"><svg class="ic" viewBox="0 0 64 32" width="64" height="32">{use("s10-stoep",0,0,32,32)}{use("s10-stoep",32,0,32,32)}</svg><span class="lbl">stoep</span></div>'
-sheet+=f'<div class="vak"><svg class="ic" viewBox="0 0 48 48" width="44" height="44" style="background:#2B4A66;border-radius:8px">{use("s10-maan",0,0,48,48)}{use("s10-ster",4,4,8,8)}{use("s10-ster",36,34,6,6)}</svg><span class="lbl">maan + ster</span></div>'
-sheet+=f'<div class="vak"><svg class="ic" viewBox="-28 -26 80 106" width="60" height="80" style="background:#4E9A3E;border-radius:8px">{lantaarn_aan(0,0)}</svg><span class="lbl">lantaarn aan</span></div>'
+for k in ['#8A5E3E','#B8AC96','#5E7080','#A87A8E']:
+    sheet+=f'<div class="vak"><svg class="ic" viewBox="0 0 56 90" width="42" height="68">{use("s10-pand-nacht",0,0,56,90,k)}</svg><span class="lbl">pand (nacht)</span></div>'
+sheet+=f'<div class="vak"><svg class="ic" viewBox="0 0 56 110" width="42" height="82" style="background:{LUCHT};border-radius:8px">{use("s10-toren",0,0,56,110)}</svg><span class="lbl">toren, klok op 12</span></div>'
+sheet+=f'<div class="vak"><svg class="ic" viewBox="0 0 64 32" width="64" height="32">{use("s10-stoep-nacht",0,0,32,32)}{use("s10-stoep-nacht",32,0,32,32)}</svg><span class="lbl">stoep (nacht)</span></div>'
+sheet+=f'<div class="vak"><svg class="ic" viewBox="0 0 64 32" width="64" height="32">{use("s10-klinker-nacht",0,0,32,32)}{use("s10-klinker-nacht",32,0,32,32)}</svg><span class="lbl">klinkers (nacht)</span></div>'
+sheet+=f'<div class="vak"><svg class="ic" viewBox="0 0 48 48" width="44" height="44" style="background:{LUCHT};border-radius:8px">{use("s10-maan",0,0,48,48)}{use("s10-ster",4,4,8,8)}{use("s10-ster",36,34,6,6)}</svg><span class="lbl">maan + ster</span></div>'
+sheet+=f'<div class="vak"><svg class="ic" viewBox="-28 -26 80 116" width="60" height="87" style="background:{GRAS};border-radius:8px">{lantaarn_nacht(0,0)}</svg><span class="lbl">lantaarn + lichtplas</span></div>'
+sheet+=f'<div class="vak"><svg class="ic" viewBox="0 0 132 40" width="132" height="40" style="background:{ASFALT};border-radius:8px">{koplicht_zij(0,0)}{auto(0,0,"#FF5E5B")}</svg><span class="lbl">koplicht (opzij)</span></div>'
 sheet+='''    </div>
   </div>
   <div class="kaart" style="padding: 14px 16px; display: flex; flex-direction: column; gap: 8px;">
-    <span class="stat-label">IN DE AUTO (BOVENAANZICHT) · TEGENLIGGER · ZIEKENHUISAUTO · POLITIE MET ZWAAILICHT · BERMPAALTJE · FINALE</span>
+    <span class="stat-label">IN DE AUTO (BOVENAANZICHT) · TEGENLIGGER · ZIEKENHUISAUTO · POLITIE MET ZWAAILICHT, ALLEMAAL MET KOPLICHTEN · BERMPAALTJE · BOOM (NACHT) · FINALE</span>
     <div style="display: flex; gap: 22px; align-items: flex-end; flex-wrap: wrap;">'''
 for lab,id,k in [('auto','s10-auto-top','#FFC93C'),('slome auto','s10-auto-top','#5BC0EB'),('ziekenhuisauto','s10-ambu-top',None),('politie','s10-politie-top',None)]:
-    sheet+=f'<div class="vak"><svg class="ic" viewBox="0 0 56 96" width="56" height="96" style="background:#4F6B7E;border-radius:8px">{use(id,0,0,56,96,k)}</svg><span class="lbl">{lab}</span></div>'
-sheet+=f'<div class="vak"><svg class="ic" viewBox="-4 -2 18 30" width="36" height="60" style="background:#4E9A3E;border-radius:8px">{use("s10-paaltje",0,0,10,26)}</svg><span class="lbl">paaltje</span></div>'
-sheet+=f'<div class="vak"><svg class="ic" viewBox="0 0 48 48" width="40" height="40">{use("s8-boom",2,-4,44,56)}</svg><span class="lbl">boom (spel 8)</span></div><span style="width:12px"></span>'
+    sheet+=f'<div class="vak"><svg class="ic" viewBox="0 -60 56 156" width="40" height="111" style="background:{ASFALT};border-radius:8px">{koplicht_top(0,0)}{use(id,0,0,56,96,k)}</svg><span class="lbl">{lab}</span></div>'
+sheet+=f'<div class="vak"><svg class="ic" viewBox="-4 -2 18 30" width="36" height="60" style="background:{GRAS};border-radius:8px">{use("s10-paaltje",0,0,10,26)}</svg><span class="lbl">paaltje</span></div>'
+sheet+=f'<div class="vak"><svg class="ic" viewBox="0 0 48 48" width="40" height="40" style="background:{GRAS};border-radius:8px">{use("s10-boom-nacht",2,-4,44,56)}</svg><span class="lbl">boom (nacht)</span></div><span style="width:12px"></span>'
 sheet+=f'<div class="vak"><svg class="ic" viewBox="0 0 48 48" width="72" height="72">{use("s10-taart",0,0,48,48)}</svg><span class="lbl">taart</span></div>'
 for k in ['#1FA3DC','#FFC93C','#9B6BFF','#FF6FAE']:
     sheet+=f'<div class="vak"><svg class="ic" viewBox="0 0 40 70" width="36" height="63">{use("s10-ballon",0,0,40,70,k)}</svg><span class="lbl">ballon</span></div>'
@@ -250,6 +278,6 @@ for lab,p in [('stuur links',stuur(-35)),('rem',REM),('stuur rechts',stuur(35))]
     sheet+=f'<div class="vak"><span style="width:52px;height:52px;border-radius:14px;background:{bg};display:flex;align-items:center;justify-content:center;color:{col}">{p}</span><span class="lbl">{lab}</span></div>'
 sheet+='''    </div>
   </div>
-</div>'''+TAIL%('{"$preview":{"width":1000,"height":720}}','{}')
-open('pino/project/Spel10-Sprites.dc.html','w').write(sheet)
+</div>'''+TAIL%('{"$preview":{"width":1000,"height":780}}','{}')
+open(UIT/'Spel10-Sprites.dc.html','w',encoding='utf-8',newline='\n').write(sheet)
 print('ok')

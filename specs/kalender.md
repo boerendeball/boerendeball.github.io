@@ -55,4 +55,4 @@ Kop "Vaardigheden" · badge "Vandaag: +5 vaardigheid" (paars, de som van de belo
 
 ## Open punten
 
-Behoefte-koppeling en beginwaarden: besloten in besluit 164. Nog open: labels Techniek/Conditie, teksten van de chips op de Sim-kaart.
+Behoefte-koppeling en beginwaarden: besloten in besluit 164. De labels Techniek en Conditie zijn bevestigd (besluit 5). De chips op de Sim-kaart blijven zoals in het ontwerp (Benjamin, 23 november). Geen open punten meer.

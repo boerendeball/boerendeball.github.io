@@ -122,5 +122,5 @@ Nagelopen op 2026-11-08 in de browser (390×844 en 390×680, touch en Tab/Enter)
 
 ## Open punten
 Alle besluiten voor spel 4 (44–57 in `besluiten.md`) zijn genomen. Bewust zo gelaten (Benjamin, 2026-11-08): de vader op de markt mag na de foto door het jongetje heen lopen, en de kraam op het strand mag voorlopig zo makkelijk blijven (91 % schoon).
-- Bij spel 5: is het geld uit spel 4 (Nguyễn 100, Somchai 80, Tan 60) genoeg?
+- Het geld uit spel 4 (Nguyễn 100, Somchai 80, Tan 60, samen 240) is precies genoeg voor de ketting in spel 5 (ronde 1, P = 240; Benjamin, 23 november).
 - PNG-previews van `Spel4-Berg`, `Spel4-Markt` en `Spel4-Sprites2` in `design/previews/` ontbreken nog.

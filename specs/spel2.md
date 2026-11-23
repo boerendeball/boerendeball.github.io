@@ -182,5 +182,5 @@ Welke tegel waar past, ontdekt ze zelf: het menu toont alleen passende tegels. D
 
 ## Open punten
 
-- De sfeer, de schaal (camerabreedte 310) en de volgorde van de middens zijn eigen keuzes (#171, #173), te bevestigen.
+- De sfeer, de schaal (camerabreedte 310) en de volgorde van de middens (#171, #173) zijn bevestigd (Benjamin, 22 en 23 november).
 - De previews en artboards van spel 2 zijn nog van het oude ontwerp.

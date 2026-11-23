@@ -132,6 +132,5 @@ Canvas met `role="img"` en een `aria-label` per fase; de afstandskaart is een `p
 
 ## Open punten
 
-- De tekst van het laatste briefje (Benjamin, zie `besluiten.md`).
-- Afstelling na het spelen op een telefoon: snelheden en het aantal situaties in 30 s. De werking van de rem, de politie, de boze gans, de schapen en de stad van 25 stappen zijn bevestigd (besluiten 153, 156, 157, 159 en 163; Benjamin, 14 november 2026).
+- Afstelling (snelheden en het aantal situaties in 30 s): goed zo (Benjamin, 23 november). De werking van de rem, de politie, de boze gans, de schapen en de stad van 25 stappen zijn bevestigd (besluiten 153, 156, 157, 159 en 163; Benjamin, 14 november 2026).
 - De bevallende vrouw is een figuurtje achter het raam van het huisje aan het einde van de weg (bestaande sprites, nu groter). Een eigen sprite voor de aankomst kan via `spel10_sprites.py`.

@@ -1,4 +1,4 @@
-// Spel 8 · Check mate — zie specs/spel8.md.
+// Spel 8 · Schaken op nieuw niveau — zie specs/spel8.md.
 // Kalm spel (SVG-DOM): vijf levels op een stenen 8×8-bord in de jungle, elk tegen roofdieren die bewegen als
 // een schaakstuk (level 1: drie pythons, daarna één dier). Pino zet per beurt hooguit één stap en één wissel met een stam (en
 // eventueel de spray), daarna de zandloper: de dieren denken na (wolkje met lampje) en zetten na elkaar. Regels zonder DOM in spellen/schaak.js, kaarten in schaak-levels.js.

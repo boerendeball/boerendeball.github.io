@@ -1,4 +1,4 @@
-// Spel 10 · Bereik de bevalling — regels en afstelwaarden zonder DOM (specs/spel10.md).
+// Spel 10 · Op naar de bevalling — regels en afstelwaarden zonder DOM (specs/spel10.md).
 // Fase 1: te voet door de avondstad (stap voor stap). Fase 2: in de auto over de weg (baanwissel per tik).
 
 export const B = 358;

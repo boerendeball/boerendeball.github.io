@@ -10,7 +10,9 @@ export function kopbalk({ label, titel, rechts = null, terugNaar = '/', terugLab
     h('button', { type: 'button', class: 'knop-rond', 'aria-label': terugLabel, onclick: terugActie || (() => ga(terugNaar)) }, [icoon('terug', 24)]),
     h('div', { class: 'kopbalk-tekst' }, [
       label ? h('div', { class: 'kopbalk-label' }, label) : null,
-      h('h1', { class: 'kop kopbalk-titel' }, titel),
+      // Lange speltitels (besluit 219) krijgen een kleinere letter, zodat ze op twee regels passen; een getal blijft
+      // aan het woord erna vast ("6 rooie").
+      h('h1', { class: `kop kopbalk-titel${String(titel || '').length > 18 ? ' kopbalk-titel-lang' : ''}` }, typeof titel === 'string' ? titel.replace(/(\d) /g, '$1 ') : titel),
     ]),
     rechts ? h('div', { class: 'kopbalk-rechts' }, rechts) : null,
   ]);

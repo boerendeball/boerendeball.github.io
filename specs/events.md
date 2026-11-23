@@ -48,7 +48,7 @@ Kaart met bol (icoon van het spel), `DAG 4 · 27 NOVEMBER`, titel, "wordt gelade
 
 Gedeelde component `ui/resultaat.js`:
 ```
-toonResultaat({ root, dag, icoon, label: 'PRINCESS PRESENCE · KLAAR', titel, zin,
+toonResultaat({ root, dag, icoon, label: 'PRINCESS ALLURE · KLAAR', titel, zin,
   tegels: [{ label, waarde, kleur }], beloning: { vaardigheid, eersteKeer, extra: 'Er rammelt iets…' },
   opnieuw: fn })
 ```

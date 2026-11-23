@@ -1,4 +1,4 @@
-# Spel 10 · Bereik de bevalling + finale
+# Spel 10 · Op naar de bevalling + finale
 
 **Status:** gebouwd, te beoordelen · Dag 10 · 3 december · Techniek +3 · Conditie +2 · Koken +2 (besluit 164) · rendering: canvas (fase 1 en 2), DOM (finale)
 Previews: `Spel10.png`, `Spel10-Auto.png`, `Spel10-Finale.png`, `Spel10-Sprites.png` · Artboards: `Spel10*.dc.html` · Generator: `spel10_build2.py`, `spel10_sprites.py`
@@ -84,7 +84,7 @@ Alle getallen staan als constanten in `bevalling.js`.
 
 ## Resultaatscherm
 
-- **Botsing**: `toonResultaat` met label "BEREIK DE BEVALLING", titel "Oeps…", tafereel met verdrietige Pino (`pino-sip` + `s9-stetho`) en een gansje, geen tegels, geen beloning, geen confetti. "Nog een keer" begint altijd weer te voet (besluit 151).
+- **Botsing**: `toonResultaat` met label "OP NAAR DE BEVALLING", titel "Oeps…", tafereel met verdrietige Pino (`pino-sip` + `s9-stetho`) en een gansje, geen tegels, geen beloning, geen confetti. "Nog een keer" begint altijd weer te voet (besluit 151).
 - **Aangekomen**: geen resultaatscherm, direct de finale.
 
 ## Finale (DOM, mag tekst)

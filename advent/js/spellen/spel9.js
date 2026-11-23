@@ -1,4 +1,4 @@
-// Spel 9 · Vang de baby — zie specs/spel9.md.
+// Spel 9 · Help de lulletjes rozenwater — zie specs/spel9.md.
 // Canvas-actiespel: Pino loopt over de vangstrook en duwt de mannen met hun laken onder de vallende bundeltjes.
 
 import { h } from '../ui/dom.js';

@@ -1,4 +1,4 @@
-// Spel 7 · Spot the peasant (specs/spel7.md, design/artboards/Spel7*.dc.html).
+// Spel 7 · Zie de peasants in het veld (specs/spel7.md, design/artboards/Spel7*.dc.html).
 // Een fotoalbum met vijf polaroids, één per spel 2–6. Een tik op een polaroid opent dat spel in de zoekmodus
 // (#/spel/n?zoek=1); wie daar de verstopte werker aantikt, komt hier terug (spellen/zoeken.js). Bij 5/5 is het spel af.
 

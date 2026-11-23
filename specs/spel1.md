@@ -1,4 +1,4 @@
-# Spel 1 · Princess Presence
+# Spel 1 · Princess Allure
 
 **Status:** gebouwd, te beoordelen (`advent/js/spellen/spel1.js`; gedeeld: `spellen/lus.js`, `spellen/spritesheet.js`, `spellen/canvas.js`, `invoer.js`, `ui/resultaat.js`, `css/spel.css`)
 **Dag 1 · 24 november · Conditie +3 · Charisma +2 (besluit 164)**
@@ -13,7 +13,7 @@ Verborgen keten: elke gelukte onderbreking levert een **token** (in code en staa
 
 ## Scherm (390×844, van boven naar beneden)
 
-1. **Kopbalk** (`ui/kopbalk.js`): terugknop (44 px rond) → `#/deur/1`; label `DAG 1 · 24 NOVEMBER`; titel `Princess Presence` (Fredoka 20). **Geen teller rechts**: het artboard toont een kroon-pil met score, maar er worden geen kroontjes verzameld (besluit 19). Het aantal onderbrekingen is pas op het resultaatscherm te zien.
+1. **Kopbalk** (`ui/kopbalk.js`): terugknop (44 px rond) → `#/deur/1`; label `DAG 1 · 24 NOVEMBER`; titel `Princess Allure` (Fredoka 20). **Geen teller rechts**: het artboard toont een kroon-pil met score, maar er worden geen kroontjes verzameld (besluit 19). Het aantal onderbrekingen is pas op het resultaatscherm te zien.
 2. **Tijdkaart** (`.kaart`, 12 px marge): klok-icoon (`s9-klok`, 22 px) + balk (14 px hoog, `#E6EFF5`, vulling `#FFC93C` met schaduw `#D97A00`, krimpt van 100 % naar 0 %) + resttijd `m:ss` (Fredoka 18, `#D97A00`, min-width 44 px, rechts uitgelijnd). **Geen tekst "TIJD"** (artboard heeft dat wel; de regel wint).
 3. **Scène**: canvas 358×500 CSS-px in een afgeronde kaart (radius 22, schaduw `0 6px 0 0 #CDE4F0`, `overflow: hidden`). Interne resolutie × `devicePixelRatio` (max 3).
 4. **Onder de scène: leeg.** Het besturingspaneel uit het artboard (D-pad, rode actieknop) is vervangen door de virtuele joystick die op de drukplek verschijnt (besluiten.md #22–24; zie events.md "Joystick").
@@ -124,7 +124,7 @@ Constanten staan bovenaan `spel1.js` en zijn tuning-waarden:
 
 ## Resultaatscherm (`Spel1-Klaar`, via gedeeld `ui/resultaat.js`)
 
-Kaart gecentreerd, confetti-stipjes op de achtergrond. Bol 128 px (`#FFE0EE`, ring `#FF6FAE`) met kroon 84 px · label `PRINCESS PRESENCE · KLAAR` · titel **De hofhouding is onder de indruk!** · zin "Niemand durfde te gapen in het bijzijn van prinses Pino. Nou ja, bijna niemand." (bij minder dan 6 onderbroken: "Er werd flink gegaapt vanavond. Morgen beter!") · geen sterren (artboard heeft er drie; weggelaten, besluit 16) · één scoretegel **ONDERBROKEN** (groen `#1F7A3A`; het artboard toont ook GEMIST en HIGHSCORE, die zijn weggelaten, besluit 15) · beloningsblok paars: "VAARDIGHEID VERDIEND", "Conditie +1 · Behoefte "Verjaardag" +10%", cursief "Er rammelt iets in je jurkzak…" (de enige hint naar de tegels; bij 0 onderbroken blijft die regel weg) · knoppen **Terug naar de kalender** (groen, → `#/`) en **Nog een keer** (grijs, herstart). Bij een herspeelde beurt toont het beloningsblok "Conditie al verdiend" in plaats van +1.
+Kaart gecentreerd, confetti-stipjes op de achtergrond. Bol 128 px (`#FFE0EE`, ring `#FF6FAE`) met kroon 84 px · label `PRINCESS ALLURE · KLAAR` · titel **De hofhouding is onder de indruk!** · zin "Niemand durfde te gapen in het bijzijn van prinses Pino. Nou ja, bijna niemand." (bij minder dan 6 onderbroken: "Er werd flink gegaapt vanavond. Morgen beter!") · geen sterren (artboard heeft er drie; weggelaten, besluit 16) · één scoretegel **ONDERBROKEN** (groen `#1F7A3A`; het artboard toont ook GEMIST en HIGHSCORE, die zijn weggelaten, besluit 15) · beloningsblok paars: "VAARDIGHEID VERDIEND", "Conditie +1 · Behoefte "Verjaardag" +10%", cursief "Er rammelt iets in je jurkzak…" (de enige hint naar de tegels; bij 0 onderbroken blijft die regel weg) · knoppen **Terug naar de kalender** (groen, → `#/`) en **Nog een keer** (grijs, herstart). Bij een herspeelde beurt toont het beloningsblok "Conditie al verdiend" in plaats van +1.
 
 ## Geen uitleg
 

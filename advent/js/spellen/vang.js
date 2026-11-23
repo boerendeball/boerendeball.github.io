@@ -1,4 +1,4 @@
-// Spel 9 · Vang de baby — regels zonder DOM (specs/spel9.md).
+// Spel 9 · Help de lulletjes rozenwater — regels zonder DOM (specs/spel9.md).
 // Posities zijn voetpunten (midden-onder van een personage) in scène-eenheden (358 × 680).
 
 /* ---------- tuning ---------- */

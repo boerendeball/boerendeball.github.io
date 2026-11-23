@@ -1,4 +1,4 @@
-// Spel 2 · Tuin van de koningin — logica van de jungletocht, zonder DOM (zie specs/spel2.md, besluit 166).
+// Spel 2 · Waar is die groene vogel nou!? — logica van de jungletocht, zonder DOM (zie specs/spel2.md, besluit 166).
 //
 // De wereld is een onbegrensd hexraster met spitse bovenkant in axiale coördinaten: een vak is "q,r".
 // Een minispeelveld is een bloem van 7 vakken: een midden (kano, tempel, boeddha of waterval) en 6 ringplekken.

@@ -1,4 +1,4 @@
-# Spel 9 · Vang de baby
+# Spel 9 · Help de lulletjes rozenwater
 
 **Status:** gebouwd, te beoordelen · Dag 9 · 2 december · Conditie +2 · Koken +2 · Charisma +1 (besluit 164) · rendering: canvas
 Previews: `Spel9.png`, `Spel9-Klaar.png`, `Spel9-Sprites.png` · Artboards: `Spel9*.dc.html` · Generator: `spel9_build2.py`, `spel9_sprites.py`
@@ -56,8 +56,8 @@ Zoals spel 1 (besluit 125): vasthouden op het scherm → joystick (250 ms), of p
 
 ## Resultaatscherm (besluit 132)
 Geen scoretegels.
-- **Gehaald**: label "VANG DE BABY · KLAAR", titel "Allemaal veilig geland!", tafereel met blije Pino en drie blije vrouwen met een baby in hun armen, confetti, de verdiende vaardigheid, "Terug naar de kalender" en "Nog een keer".
-- **Niet gehaald**: label "VANG DE BABY", titel "Oeps…" (voorstel), tafereel met verdrietige Pino en de ooievaar die een vleugel om haar heen slaat (`pino-sip` + `s9-ooievaar-troost`), geen confetti, geen beloning.
+- **Gehaald**: label "HELP DE LULLETJES ROZENWATER · KLAAR", titel "Allemaal veilig geland!", tafereel met blije Pino en drie blije vrouwen met een baby in hun armen, confetti, de verdiende vaardigheid, "Terug naar de kalender" en "Nog een keer".
+- **Niet gehaald**: label "HELP DE LULLETJES ROZENWATER", titel "Oeps…" (voorstel), tafereel met verdrietige Pino en de ooievaar die een vleugel om haar heen slaat (`pino-sip` + `s9-ooievaar-troost`), geen confetti, geen beloning.
 
 ## Geen uitleg
 Geen tekst in het spelscherm. Uit het eerste ontwerp vervallen: hartjes, ronde-teller, wandelaar-teller, klok, en de tegels GEVANGEN / RONDES / GEMIST op het resultaatscherm. Nergens staat dat de schoenen het verschil maken.

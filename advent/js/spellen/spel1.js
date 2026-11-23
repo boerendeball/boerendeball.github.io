@@ -1,4 +1,4 @@
-// Spel 1 · Princess Presence — zie specs/spel1.md.
+// Spel 1 · Princess Allure — zie specs/spel1.md.
 // Canvas-actiespel: Pino loopt door de slaapzaal en onderbreekt gapende kinderen.
 
 import { h } from '../ui/dom.js';

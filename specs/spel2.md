@@ -1,4 +1,4 @@
-# Spel 2 · Tuin van de koningin
+# Spel 2 · Waar is die groene vogel nou!?
 
 **Status:** gebouwd, te beoordelen (herontwerp 15 november 2026, besluiten #166–#175; `advent/js/spellen/spel2.js`, logica in `advent/js/spellen/hex.js`; gedeeld: `ui/taartmenu.js`, `ui/edelstenen.js`, `ui/resultaat.js`, `spellen/zoeken.js`, `css/spel.css`)
 **Dag 2 · 25 november · Logica +2 · Techniek +2 · Koken +2 · Creativiteit +1 (besluit 164)**
@@ -25,7 +25,7 @@ Welke tegel waar past, ontdekt ze zelf: het menu toont alleen passende tegels. D
 1. **Kopbalk** (`ui/kopbalk.js`):
    - terugknop → `#/deur/2` (in de zoekmodus van spel 7: terug naar het album);
    - label `DAG 2 · 25 NOVEMBER`;
-   - titel `Tuin van de koningin`;
+   - titel `Waar is die groene vogel nou!?`;
    - **rechts niets**: geen edelsteenteller in spel 2 (#35).
 2. **Scène**: één SVG die de hele ruimte onder de kopbalk vult (`.tuin-ruimte` → `.tuin-kaart` → `.tuin-scene`).
    - Het scherm is één venster hoog (`100dvh`). Er hoeft nooit gescrold te worden (#43, #173).
@@ -130,7 +130,7 @@ Welke tegel waar past, ontdekt ze zelf: het menu toont alleen passende tegels. D
 
 ## Resultaatscherm
 
-- Bol met het icoon `tuin` en label `TUIN VAN DE KONINGIN · KLAAR`.
+- Bol met het icoon `tuin` en label `WAAR IS DIE GROENE VOGEL NOU!? · KLAAR`.
 - Titel **Van kano tot taxi!**
 - Zin: "Tempels, boeddha's en watervallen: Pino heeft de hele tuin van de koningin doorkruist." (#175)
 - Eén scoretegel **TEGELS**; geen EDELSTENEN (#35), geen sterren of highscore.

@@ -1,4 +1,4 @@
-# Spel 6 · Selfdefense
+# Spel 6 · Maak Jeff trots
 
 **Status:** goedgekeurd (Benjamin, 10 november 2026) (`advent/js/spellen/spel6.js`, regels in `spellen/klem.js`; gedeeld: `spellen/lus.js`, `spellen/spritesheet.js`, `spellen/canvas.js`, `invoer.js`, `ui/resultaat.js`, `ui/ontbreekt.js`, `css/spel.css`; popup zonder ketting in `spellen/index.js`)
 **Dag 6 · 29 november · Conditie +3 · Techniek +2 (besluit 164)**
@@ -15,7 +15,7 @@ Verborgen ketens: zonder ketting uit spel 5 valt er niets te stelen (popup). Zon
 
 ## Scherm (390×844, van boven naar beneden)
 
-1. **Kopbalk** (`ui/kopbalk.js`): terugknop → `#/deur/6`; label `DAG 6 · 29 NOVEMBER`; titel `Selfdefense`. **Geen munt rechts** (besluit 84).
+1. **Kopbalk** (`ui/kopbalk.js`): terugknop → `#/deur/6`; label `DAG 6 · 29 NOVEMBER`; titel `Maak Jeff trots`. **Geen munt rechts** (besluit 84).
 2. **Politiekaart** (`.kaart.tijdkaart.s6-politie`): politieauto (`s6-politie`, 34 px) + balk (14 px, vulling teal, loopt van 0 % naar 100 %) + resttijd `0:20` → `0:00` (Fredoka 16, `#0E6A98`). Heeft altijd haar plek, maar is in fase 1 onzichtbaar (`visibility: hidden`) en verdwijnt weer als de dief ontsnapt.
 3. **Scène**: canvas 358×530 in een afgeronde kaart (radius 22, achtergrond `#556B8E`).
 4. **Strook onder de scène** (150 px hoog, even breed als de scène):
@@ -105,8 +105,8 @@ Constanten staan bovenaan `spel6.js` (fase 1, animatie) en `klem.js` (fase 2); h
 
 ## Resultaatscherm (via `ui/resultaat.js`)
 
-- **Gelukt**: bol met de gi · label `SELFDEFENSE · KLAAR` · titel **Osssuu** · tafereel op een lichtblauw vlak: Pino in witte gi met blauwe band (`pino-gi`), de dief boos ernaast, de politieauto naast hem · tegels **REACTIE** (bv. `0,4s`, groen) en **MOVES** (raak/totaal, teal) · beloning "Conditie +1 · Behoefte "Verjaardag" +10%" (bij herspelen "al verdiend") · knoppen Terug naar de kalender / Nog een keer.
-- **Mislukt**: bol met de ketting · label `SELFDEFENSE` · titel **Gestolen!** · tafereel: Pino in haar gewone jurk met verdrietig gezicht (`pino-sip`), de dief blij ernaast (`z-blij`) met de ketting in zijn hand · tegels REACTIE en MOVES voor zover die fase bereikt is (te laat gedrukt: geen tegels) · geen beloning, geen confetti · dezelfde twee knoppen.
+- **Gelukt**: bol met de gi · label `MAAK JEFF TROTS · KLAAR` · titel **Osssuu** · tafereel op een lichtblauw vlak: Pino in witte gi met blauwe band (`pino-gi`), de dief boos ernaast, de politieauto naast hem · tegels **REACTIE** (bv. `0,4s`, groen) en **MOVES** (raak/totaal, teal) · beloning "Conditie +1 · Behoefte "Verjaardag" +10%" (bij herspelen "al verdiend") · knoppen Terug naar de kalender / Nog een keer.
+- **Mislukt**: bol met de ketting · label `MAAK JEFF TROTS` · titel **Gestolen!** · tafereel: Pino in haar gewone jurk met verdrietig gezicht (`pino-sip`), de dief blij ernaast (`z-blij`) met de ketting in zijn hand · tegels REACTIE en MOVES voor zover die fase bereikt is (te laat gedrukt: geen tegels) · geen beloning, geen confetti · dezelfde twee knoppen.
 
 ## Werker (spel 7)
 

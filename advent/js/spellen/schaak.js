@@ -1,4 +1,4 @@
-// Spel 8 · Check mate — regels zonder DOM (zie specs/spel8.md).
+// Spel 8 · Schaken op nieuw niveau — regels zonder DOM (zie specs/spel8.md).
 //
 // Bord: 8×8, een vak is [kolom, rij] met rij 0 bovenaan. Een level is een kaart van 8 strings:
 //   .  leeg vak        ~  rivier (vast)     B  boom (vast)     b  bamboe (vast)

@@ -1,4 +1,4 @@
-// Spel 6 · Selfdefense — zie specs/spel6.md.
+// Spel 6 · Maak Jeff trots — zie specs/spel6.md.
 // Canvas-actiespel in twee fasen. Fase 1: Pino loopt de eerste START_PAUZE ms vrij over de nachtmarkt (joystick of
 // pijltjes, zoals spel 1 en 5); dan gaat de besturing uit, loopt een dief naar haar toe en grijpt naar haar ketting;
 // de rode knop verschijnt en ze heeft REACTIE ms. Fase 2: Pino houdt hem in een armklem tot de politie er is;

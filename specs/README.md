@@ -6,15 +6,15 @@ Per scherm één spec: wat het precies doet, hoe het eruitziet (met verwijzing n
 |---|---|
 | [kalender.md](kalender.md) | gebouwd, te beoordelen |
 | [events.md](events.md) — taartmenu, telefoon, vergrendeld, briefje, laadscherm, resultaatscherm, meldingen | gebouwd, te beoordelen |
-| [spel1.md](spel1.md) — Princess Presence | gebouwd, te beoordelen |
-| [spel2.md](spel2.md) — Tuin van de koningin | gebouwd, te beoordelen |
-| [spel3.md](spel3.md) — Complete the family | gebouwd, te beoordelen |
-| [spel4.md](spel4.md) — (Social)ize the family | goedgekeurd |
-| [spel5.md](spel5.md) — Negotiate trade deal | gebouwd, te beoordelen |
-| [spel6.md](spel6.md) — Selfdefense | goedgekeurd |
-| [spel7.md](spel7.md) — Spot the peasant | goedgekeurd |
-| [spel9.md](spel9.md) — Vang de baby | gebouwd, te beoordelen |
-| [spel10.md](spel10.md) — Bereik de bevalling + finale | gebouwd, te beoordelen |
+| [spel1.md](spel1.md) — Princess Allure | gebouwd, te beoordelen |
+| [spel2.md](spel2.md) — Waar is die groene vogel nou!? | gebouwd, te beoordelen |
+| [spel3.md](spel3.md) — 6 rooie, 2 blauwe, 2 groene | gebouwd, te beoordelen |
+| [spel4.md](spel4.md) — Het CFM'etje | goedgekeurd |
+| [spel5.md](spel5.md) — Miss... Miss... 12 euro? | gebouwd, te beoordelen |
+| [spel6.md](spel6.md) — Maak Jeff trots | goedgekeurd |
+| [spel7.md](spel7.md) — Zie de peasants in het veld | goedgekeurd |
+| [spel9.md](spel9.md) — Help de lulletjes rozenwater | gebouwd, te beoordelen |
+| [spel10.md](spel10.md) — Op naar de bevalling + finale | gebouwd, te beoordelen |
 | [spel8.md](spel8.md) | zie de spec zelf |
 | [kamer.md](kamer.md) — Pino's kamer: verzamelde spullen en aandenkens (`#/kamer`) | gebouwd, te beoordelen |
 | [beeldfeedback.md](beeldfeedback.md) — "sap": animaties, deeltjes, schudden en trillen in plaats van geluid, per scherm en per spel | in aanbouw |

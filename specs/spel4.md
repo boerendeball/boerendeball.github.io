@@ -1,4 +1,4 @@
-# Spel 4 · (Social)ize the family
+# Spel 4 · Het CFM'etje
 
 **Status:** goedgekeurd (Benjamin, 2026-11-08) · Dag 4 · 27 november · Charisma +2 · Creativiteit +2 · Techniek +2 · Koken +2 (besluit 164) · rendering: SVG-DOM
 Previews: `Spel4.png`, `Spel4-Klaar.png`, `Spel4-Sprites.png` (alleen het strand; berg en markt krijgen nieuwe artboards) · Generator: `spel4_build.py`, `spel4_sprites.py`
@@ -75,7 +75,7 @@ Alle getallen zijn constanten in `spellen/fotos.js`.
 - `?vul=1` zorgt dat familie Tan echt compleet is (`karakters` bevat `biggetje`). Nieuwe dev-schakelaar `?familie=nguyen|tan|somchai` forceert een familie in spel 4 (alleen in testmodus).
 
 ## Resultaatscherm (preview `Spel4-Klaar.png`)
-- Bol met Pino en de camera, label "(SOCIAL)IZE THE FAMILY · KLAAR", titel "Drie plaatjes voor het album!", geen uitlegzin.
+- Bol met Pino en de camera, label "HET CFM'ETJE · KLAAR", titel "Drie plaatjes voor het album!", geen uitlegzin.
 - Drie polaroids (scheef, overlappend) met de drie gemaakte foto's: het decor uitgesneden op de framerechthoek met alleen de gefotografeerde familieleden lachend op hun plek (opgebouwd uit de gegevens met `foto(familie, plek)`, dezelfde foto's als in het album; de werker staat er niet op). Daarvoor krijgt `ui/resultaat.js` een vrij inhoudsvak.
 - Eén tegel: VERDIEND munt + bedrag van deze familie (FOTO'S en MISKLIKS vervallen, besluit 51). Het aantal opnames en miskliks wordt wel bewaard in `scores[4]`.
 - Beloning: de vaardigheden en behoeften van dag 4 (besluit 164) de eerste keer, daarna "Al verdiend".

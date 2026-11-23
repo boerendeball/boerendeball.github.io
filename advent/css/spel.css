@@ -102,7 +102,7 @@
 .resultaat-knoppen { width: 100%; display: flex; flex-direction: column; gap: 10px; margin-top: 4px; }
 .resultaat-knoppen .knop-pil { min-height: 54px; font-size: 18px; }
 
-/* ---------- spel 2 · Tuin van de koningin (design/artboards/Spel2*.dc.html) ---------- */
+/* ---------- spel 2 · Waar is die groene vogel nou!? (design/artboards/Spel2*.dc.html) ---------- */
 .spel2 .kopbalk-titel { font-size: 20px; }
 
 /* Het scherm is precies zo hoog als het zichtbare venster (dvh: zonder adresbalk/navigatiebalk); de scène vult
@@ -186,7 +186,7 @@
 .edelsteen-pil { gap: 8px; padding: 6px 12px; font-size: 15px; }
 .edelsteen-teller { display: inline-flex; align-items: center; gap: 3px; }
 
-/* ---------- spel 3 · Complete the family (design/artboards/Spel3.dc.html) ---------- */
+/* ---------- spel 3 · 6 rooie, 2 blauwe, 2 groene (design/artboards/Spel3.dc.html) ---------- */
 .spel3 { gap: 10px; }
 .families { display: flex; flex-direction: column; gap: 10px; }
 .familie {
@@ -243,7 +243,7 @@
   .fam-sterren { display: none; }
 }
 
-/* ---------- spel 4 · (Social)ize the family (design/artboards/Spel4.dc.html) ---------- */
+/* ---------- spel 4 · Het CFM'etje (design/artboards/Spel4.dc.html) ---------- */
 /* Zoals spel 2: het scherm is één venster hoog en de scène (358×670) schaalt mee, zodat er nooit gescrold hoeft te worden. */
 .spel4 { height: 100vh; height: 100dvh; min-height: 0; overflow: hidden; gap: 10px; }
 .s4-teller { color: #0E6A98; }
@@ -310,7 +310,7 @@
 .s4-album-bekijk { display: block; border: 0; padding: 0; margin: 0 auto; background: transparent; cursor: pointer; font: inherit; color: inherit; }
 .s4-album-bekijk:focus-visible { outline: 3px solid var(--teal); outline-offset: 4px; border-radius: 12px; }
 
-/* ---------- spel 5 · Negotiate trade deal (design/artboards/Spel5*.dc.html) ---------- */
+/* ---------- spel 5 · Miss... Miss... 12 euro? (design/artboards/Spel5*.dc.html) ---------- */
 /* Zoals spel 2 en 4: één venster hoog, de scène (358×582) schaalt mee; D-pad en praatknop eronder. */
 .spel5 { height: 100vh; height: 100dvh; min-height: 0; overflow: hidden; gap: 10px; }
 .s5-geld { color: var(--geel-tekst); }
@@ -461,7 +461,7 @@ button.s5-kaartje:focus-visible { outline: 3px solid var(--teal); outline-offset
 .s5-markt-knop:focus-visible { outline: 3px solid var(--teal); outline-offset: 5px; }
 @media (prefers-reduced-motion: reduce) { .s5-markt-knop { animation: none; } }
 
-/* ---------- spel 6 · Selfdefense (design/artboards/Spel6*.dc.html, specs/spel6.md) ---------- */
+/* ---------- spel 6 · Maak Jeff trots (design/artboards/Spel6*.dc.html, specs/spel6.md) ---------- */
 /* Eén venster hoog. De kolom (358×690) bevat de scène (358×530), 10 px ruimte en een strook van 150 px met de
    rode knop of de vier move-knoppen. Alles in de kolom schaalt mee, zodat de banen boven de knoppen blijven staan
    en het notencanvas (over de hele kolom) een noot precies op zijn knop laat landen. */
@@ -584,7 +584,7 @@ button.s7-foto:focus-visible { outline: 3px solid #FFC93C; outline-offset: -4px;
   .s7-foto, .s7-foto svg { width: 100%; height: auto; }
 }
 
-/* ---------- spel 8: Check mate (Spel8-Levels.dc.html, Spel8.dc.html) ---------- */
+/* ---------- spel 8: Schaken op nieuw niveau (Spel8-Levels.dc.html, Spel8.dc.html) ---------- */
 .spel8 { height: 100vh; height: 100dvh; min-height: 0; overflow: hidden; }
 .s8-teller { color: var(--tekst); }
 .s8-teller-van { font-size: 13px; color: var(--gedempt); }
@@ -722,14 +722,14 @@ button.s7-foto:focus-visible { outline: 3px solid #FFC93C; outline-offset: -4px;
   .s8u-dier { transform: translateX(-36px); }
 }
 
-/* ---------- spel 9 · Vang de baby (design/artboards/Spel9*.dc.html, specs/spel9.md) ---------- */
+/* ---------- spel 9 · Help de lulletjes rozenwater (design/artboards/Spel9*.dc.html, specs/spel9.md) ---------- */
 /* Eén venster hoog: de scène (358×680) krimpt mee met de ruimte onder de kopbalk. */
 .spel9 { height: 100vh; height: 100dvh; min-height: 0; overflow: hidden; gap: 12px; }
 .s9-veld { flex: 1 1 auto; min-height: 0; container-type: size; display: flex; justify-content: center; align-items: flex-start; }
 .s9-kaart { flex: none; width: min(100cqw, calc((100cqh - 6px) * 358 / 680)); max-width: none; margin: 0; aspect-ratio: 358 / 680; background: #8ED8F8; }
 .s9-tafereel { max-width: 100%; height: auto; }
 
-/* ---------- Spel 10 · Bereik de bevalling (specs/spel10.md) ---------- */
+/* ---------- Spel 10 · Op naar de bevalling (specs/spel10.md) ---------- */
 .spel10 { height: 100vh; height: 100dvh; min-height: 0; overflow: hidden; gap: 10px; }
 .s10-afstand { flex: none; padding: 8px 14px; }
 .s10-afstand.s10-weg { visibility: hidden; }

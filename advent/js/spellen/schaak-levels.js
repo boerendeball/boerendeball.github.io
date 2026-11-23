@@ -1,4 +1,4 @@
-// Spel 8 · Check mate — de vijf levelkaarten (tekens: zie schaak.js).
+// Spel 8 · Schaken op nieuw niveau — de vijf levelkaarten (tekens: zie schaak.js).
 // Gezocht met een computerzoeker en gecontroleerd met `node design/generators/spel8_levels_check.mjs`:
 // level 1–4 zijn zonder spray te halen, level 5 alleen met spray.
 

@@ -223,6 +223,9 @@ html:has(.wolken) { overflow-x: hidden; } /* 100vw telt de schuifbalk mee */
 .kopbalk-tekst { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
 .kopbalk-label { font-size: 12px; font-weight: 800; color: var(--teal-schaduw); letter-spacing: 1px; }
 .kopbalk-titel { margin: 0; font-size: 22px; }
+/* lange speltitels (besluit 219): kleiner, regels in balans, hooguit twee */
+.kopbalk-titel { text-wrap: balance; }
+.kopbalk .kopbalk-titel.kopbalk-titel-lang { font-size: 17px; line-height: 1.15; }
 .kopbalk-rechts { margin-left: auto; display: flex; align-items: center; gap: 8px; }
 
 /* ---------- Open deurtje ---------- */

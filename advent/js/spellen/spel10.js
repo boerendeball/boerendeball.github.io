@@ -1,4 +1,4 @@
-// Spel 10 · Bereik de bevalling + finale — zie specs/spel10.md.
+// Spel 10 · Op naar de bevalling + finale — zie specs/spel10.md.
 // Canvas-actiespel in twee fasen: te voet door de avondstad (stap voor stap), dan in de auto over de weg
 // (baanwissel per tik, rem). Botsen = voorbij. Aangekomen bij het huis volgt de verjaardagsfinale (DOM).
 

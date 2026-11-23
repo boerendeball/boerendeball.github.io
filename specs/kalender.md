@@ -25,7 +25,7 @@ Kop "Behoeften" · rechts **dagen tot 3 dec** (Fredoka 28 `#D97A00`) · pijl (dr
 Elk deurtje is een `<button class="deur" data-deur="n">`:
 - **gespeeld / open / vandaag**: datum "24 NOV" (desktop ook), bol 58 px (84 desktop) in de kleur van het icoon (`BOL_KLEUR` in `ui/iconen.js`), icoon 40 px, pil: "Gespeeld" (groen), "Vandaag!" (teal met schaduw) of "Te spelen" (geel; open maar nog niet gespeeld). `vandaag` krijgt de dikke teal ring.
 - **dicht**: groot dagnummer (Fredoka 30/44 `#4F6B7E`), maand, slotje rechtsboven. Dag 10 is roze (`#FFE0EE`, rand `#FFB8D4`, tekst `#B23A6A`, "DEC · JARIG", taartje linksboven).
-- `aria-label`: "27 november, vandaag: (Social)ize the family" / "28 november, nog gesloten".
+- `aria-label`: "27 november, vandaag: Het CFM'etje" / "28 november, nog gesloten".
 - Tikken opent het **taartmenu** (zie events.md), ook op een dicht deurtje.
 
 Iconen per dag (besluit 185, gekozen door Benjamin op 15 november uit een voorstelblad): `kroon` (Pino's kroon), `tuin` (hex met boompje), `familie` (ouders met lege plek), `camera` (met flits), `bod` (twee tekstballonnen met munten; verving de handdruk van besluit 109), `gi`, `loepFoto` (loep op polaroid), `schaak` (pion tegenover tijger-toren), `vangen` (bundeltje boven laken), `ziekenauto`. Alle tien zijn 48×48-paden in `ui/iconen.js`; de sprites `loep`, `baby` en `taart` blijven in gebruik als teller (spel 7, spel 9) en als taartje op het deurtje van 3 december.

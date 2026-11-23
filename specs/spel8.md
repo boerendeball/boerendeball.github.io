@@ -1,4 +1,4 @@
-# Spel 8 · Check mate
+# Spel 8 · Schaken op nieuw niveau
 
 **Status:** gebouwd, te beoordelen (`advent/js/spellen/spel8.js`, regels en oplosser in `spellen/schaak.js`, levels in `spellen/schaak-levels.js`; controle `design/generators/spel8_levels_check.mjs`; besluiten #110–#124)
 **Dag 8 · 1 december · Logica +3 · Techniek +1 · Creativiteit +1 · Bordspellen +40 % (besluit 164) · rendering: SVG-DOM**
@@ -121,12 +121,12 @@ Glijders stoppen vóór elk obstakel en elke stam.
 
 ## Resultaatschermen (via `ui/resultaat.js`)
 - **Level 1–4 gehaald**:
-  - bol met de Pino-pion, label "CHECK MATE · LEVEL n", titel "Level n!";
+  - bol met de Pino-pion, label "SCHAKEN OP NIEUW NIVEAU · LEVEL n", titel "Level n!";
   - de rij van vijf stukken (gehaald in kleur, de rest 30 %);
   - tegels LEVELS `g/5` en GEVANGEN `n×`;
   - knoppen **Volgend level** (groen; nieuwe optie `verder` in `toonResultaat`) en "Nog een keer".
 - **Level 5 gehaald** (zoals `Spel8-Klaar.png`, zonder ZETTEN):
-  - titel "Schaakmat!", label "CHECK MATE · KLAAR";
+  - titel "Schaakmat!", label "SCHAKEN OP NIEUW NIVEAU · KLAAR";
   - stukkenrij met de tempel, tegels LEVELS en GEVANGEN;
   - beloning Logica +3 · Techniek +1 · Creativiteit +1 (besluit 164);
   - knoppen "Terug naar de kalender" en "Nog een keer" (naar het leveloverzicht).

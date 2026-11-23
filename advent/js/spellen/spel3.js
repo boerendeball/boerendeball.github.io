@@ -1,4 +1,4 @@
-// Spel 3 · Complete the family — zie specs/spel3.md.
+// Spel 3 · 6 rooie, 2 blauwe, 2 groene — zie specs/spel3.md.
 // Kalm spel (SVG-DOM): koop met de edelstenen uit spel 2 karakterkaarten; elk karakter springt
 // met sterretjes op zijn vaste plek bij een familie. Een complete familie kijkt weer blij.
 

@@ -1,4 +1,4 @@
-// Spel 5 · Negotiate trade deal (specs/spel5.md, design/artboards/Spel5*.dc.html).
+// Spel 5 · Miss... Miss... 12 euro? (specs/spel5.md, design/artboards/Spel5*.dc.html).
 // Pino loopt over de nachtmarkt (joystick of pijltjestoetsen) en dingt bij vier handelaars af op het product van de
 // ronde. Vanaf ronde 2 staat er een wisselkraam voor edelstenen. Na de ketting is het productenalbum het startpunt.
 // De regels (prijzen, niveaus, bieden) staan in markt.js.

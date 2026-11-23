@@ -1,4 +1,4 @@
-# Spel 3 · Complete the family
+# Spel 3 · 6 rooie, 2 blauwe, 2 groene
 
 **Status:** gebouwd, te beoordelen (`advent/js/spellen/spel3.js`, gegevens en regels in `advent/js/spellen/familie.js`; gedeeld: `ui/edelstenen.js`, `ui/resultaat.js`, `css/spel.css`)
 **Dag 3 · 26 november · Creativiteit +3 · Logica +2 · Charisma +1 (besluit 164)**
@@ -56,7 +56,7 @@ Tuning (bovenin `spel3.js`): `POP_DUUR` 520 ms, `HUP_VERTRAGING` 420 ms, `EIND_P
 
 ## Resultaatscherm
 
-Icoon `familie`, label `COMPLETE THE FAMILY · KLAAR`, titel "Iedereen is weer thuis!", zin "Drie huizen, drie families en niemand die nog iets mist. Zelfs het biggetje knort tevreden.", geen scoretegels, beloning Creativiteit +1 en "Verjaardag" +10 %. Geen sterren, geen GEKOPPELD/FOUT, geen EDELSTENEN OVER, geen "Nog een keer" (besluit 42). Het aantal overgebleven edelstenen wordt wel als `score.over` bewaard.
+Icoon `familie`, label `6 ROOIE, 2 BLAUWE, 2 GROENE · KLAAR`, titel "Iedereen is weer thuis!", zin "Drie huizen, drie families en niemand die nog iets mist. Zelfs het biggetje knort tevreden.", geen scoretegels, beloning Creativiteit +1 en "Verjaardag" +10 %. Geen sterren, geen GEKOPPELD/FOUT, geen EDELSTENEN OVER, geen "Nog een keer" (besluit 42). Het aantal overgebleven edelstenen wordt wel als `score.over` bewaard.
 
 ## Geen uitleg
 

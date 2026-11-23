@@ -1,4 +1,4 @@
-// Spel 2 · Tuin van de koningin — zie specs/spel2.md (herontwerp, besluit 166).
+// Spel 2 · Waar is die groene vogel nou!? — zie specs/spel2.md (herontwerp, besluit 166).
 // Kalm spel (SVG-DOM): een jungletocht over minispeelveldjes. Pino begint in een kano, legt tegels rond het
 // midden van een veld en daarna een brug in de jungle, waarna er een nieuw veld groeit. Het zevende veld ligt
 // aan een weg; een tegel naast de weg laat een taxi komen. Tegels passen als ze precies één eigenschap delen;

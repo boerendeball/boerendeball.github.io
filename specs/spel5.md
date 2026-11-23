@@ -1,4 +1,4 @@
-# Spel 5 · Negotiate trade deal
+# Spel 5 · Miss... Miss... 12 euro?
 
 **Status:** gebouwd, te beoordelen (`advent/js/spellen/spel5.js`, regels in `advent/js/spellen/markt.js`; besluiten #58–#79) · Dag 5 · 28 november · Charisma +4 · Koken +2 · Logica +1 (besluit 164) · rendering: SVG-DOM
 Previews: `Spel5.png`, `Spel5-Onderhandel.png`, `Spel5-Klaar.png`, `Spel5-Sprites.png` · Generator: `spel5_build2.py`, `spel5_sprites.py`

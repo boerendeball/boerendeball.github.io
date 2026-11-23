@@ -1,4 +1,4 @@
-// Spel 4 · (Social)ize the family (specs/spel4.md, design/artboards/Spel4.dc.html).
+// Spel 4 · Het CFM'etje (specs/spel4.md, design/artboards/Spel4.dc.html).
 // De familie uit spel 3 loopt los over het strand; op een vast moment staat iemand precies goed en lacht.
 // Tik dan op hem of haar: Pino loopt erheen en maakt de foto. Te vroeg, te laat of iemand anders in beeld:
 // een rood frame. Drie foto's per familie; de familie betaalt (besluit 48).

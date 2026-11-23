@@ -1,4 +1,4 @@
-# Spel 7 · Spot the peasant
+# Spel 7 · Zie de peasants in het veld
 
 **Status:** goedgekeurd (10 november 2026; `advent/js/spellen/spel7.js`, zoekmodus in `spellen/zoeken.js` + spel 2–6; router: query in de hash; besluiten #101–#107)
 **Dag 7 · 30 november · Creativiteit +3 · Logica +2 (besluit 164) · rendering: SVG-DOM**
@@ -67,7 +67,7 @@ Het resultaatscherm toont de vijf werkers elk met zijn eigen prop. Het kader vol
 
 ## Resultaatscherm
 `toonResultaat` met:
-- icoon loep, label "SPOT THE PEASANT · KLAAR", titel "Gevonden!";
+- icoon loep, label "ZIE DE PEASANTS IN HET VELD · KLAAR", titel "Gevonden!";
 - inhoud: de vijf werkers op een rij, elk met de prop uit zijn spel, met Pino (`pino-vinger`, gespiegeld) ernaast;
 - één tegel "GEVONDEN 5/5";
 - beloning Creativiteit +3 · Logica +2 (besluit 164).
@@ -96,5 +96,5 @@ Geen tekst op of bij de polaroids. Het album zegt niet dat er iemand gezocht moe
 - `?test=1#/spel/6?zoek=1`: spel 6 in de zoekmodus (deurtje 6 moet gespeeld zijn).
 
 ## Open punten
-- Geen. De speltitel blijft "Spot the peasant" (bevestigd door Benjamin).
+- Geen. De speltitel is "Zie de peasants in het veld" (Benjamin, 23 november, besluit 219).
 - Niet gedaan: de artboards en previews van spel 7 zijn niet opnieuw gegenereerd (daar staan nog het oude werkertje en de tas in scène 6).

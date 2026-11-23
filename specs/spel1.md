@@ -91,6 +91,7 @@ Constanten staan bovenaan `spel1.js` en zijn tuning-waarden:
 | `BOOS_SCHUD` | 1,5 px | uitslag van het hoofdschudden in de boze fase, 3× binnen `BOOS_DUUR` (besluit 183) |
 | `INTERVAL_START` / `INTERVAL_EIND` | 4,0 s → 2,2 s | tijd tussen nieuwe gapen, lineair over de speelduur |
 | `MAX_TEGELIJK` | 2 (eerste 30 s), daarna 3 | gelijktijdig gapende kinderen |
+| `DRUK` | tussentijd × 0,7 · `GAAP_KANS` 0,9 · `MAX_TEGELIJK` + 1 | vanaf dag 2 (deurtje 2 open, ook in testmodus): vaker gapen, zodat een ronde meer tegels voor spel 2 oplevert (besluit 221). In een gesimuleerde ronde ± 23 gapen tegen ± 13 op dag 1 |
 | `RUST` | 6 s | een kind gaapt niet twee keer binnen deze tijd |
 | `DEKEN_DUUR` | 0,4 s | de deken loopt na een onderbreking van donker terug naar normaal |
 | `LAPJE_DUUR` / `LAPJE_HOOGTE` / `LAPJE_MAAT` | 0,6 s / 90 px / 30 px | de tegel die uit de deken vliegt (besluit 200) |

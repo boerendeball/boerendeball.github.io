@@ -23,6 +23,9 @@ const GAAP_KANS = 0.7;        // kans dat een wakker kind gaat gapen; anders val
 const GAAP_DUUR = 3.5;        // s zo lang gaapt een kind
 const INTERVAL_START = 4.0;   // s tussen kinderen die wakker worden, aan het begin
 const INTERVAL_EIND = 2.2;    // s tussen kinderen die wakker worden, aan het eind
+// Vanaf dag 2 (deurtje 2 open, ook in testmodus) gapen de kinderen vaker, zodat een ronde meer tegels voor spel 2
+// oplevert (besluit 221): kortere tussentijden, vaker gapen na het wakker worden en één kind meer tegelijk.
+const DRUK = { intervalFactor: 0.7, gaapKans: 0.9, extraTegelijk: 1 };
 const RUST = 6;               // s een kind wordt niet twee keer wakker binnen deze tijd
 const SCHAARS_FACTOR = 0.5;   // kansfactor per tegel die Pino méér heeft dan van de schaarste tegel (besluit 188)
 const SCHAARS_MIN = 0.05;     // ondergrens van het gewicht: ook een kind met een volle voorraad wordt soms wakker
@@ -106,6 +109,11 @@ export function start({ root, dag, info, klaar }) {
 
 function speel({ root, dag, info, klaar, opnieuw }) {
   const rustig = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // Vanaf dag 2 vaker gapen (besluit 221).
+  const druk = datum.deurOpen(2);
+  const gaapKans = druk ? DRUK.gaapKans : GAAP_KANS;
+  const intervalFactor = druk ? DRUK.intervalFactor : 1;
+  const extraTegelijk = druk ? DRUK.extraTegelijk : 0;
   let gestopt = false;
 
   /* ---------- DOM ---------- */
@@ -170,7 +178,7 @@ function speel({ root, dag, info, klaar, opnieuw }) {
   /* ---------- regels ---------- */
   function interval(t) {
     const f = Math.max(0, Math.min(1, t / DUUR));
-    return INTERVAL_START + (INTERVAL_EIND - INTERVAL_START) * f;
+    return (INTERVAL_START + (INTERVAL_EIND - INTERVAL_START) * f) * intervalFactor;
   }
 
   // Besluit 188: kinderen met een tegel waarvan Pino er het minst heeft, worden eerder wakker. Gewogen loting:
@@ -190,7 +198,7 @@ function speel({ root, dag, info, klaar, opnieuw }) {
   // Een slapend kind wordt wakker; of het daarna gaat gapen, beslist GAAP_KANS na WAKKER_DUUR.
   function wordtWakker() {
     const actief = bedden.filter((b) => b.status === 'wakker' || b.status === 'gaap').length;
-    const max = s.verstreken < DUUR / 2 ? 2 : 3;
+    const max = (s.verstreken < DUUR / 2 ? 2 : 3) + extraTegelijk;
     if (actief >= max) return;
     const kandidaten = bedden.filter((b) => b.status === 'slaap' && b.rustTot <= 0);
     if (!kandidaten.length) return;
@@ -317,7 +325,7 @@ function speel({ root, dag, info, klaar, opnieuw }) {
       if (b.status === 'wakker') {
         b.wakkerTot -= dt;
         if (b.wakkerTot <= 0) {
-          if (Math.random() < GAAP_KANS) { b.status = 'gaap'; b.gaapTot = GAAP_DUUR; }
+          if (Math.random() < gaapKans) { b.status = 'gaap'; b.gaapTot = GAAP_DUUR; }
           else { b.status = 'slaap'; b.rustTot = RUST; }
         }
       } else if (b.status === 'gaap') {

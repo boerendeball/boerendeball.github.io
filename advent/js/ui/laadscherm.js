@@ -11,14 +11,14 @@ import * as staat from '../staat.js';
 import { verschijn, pop, puls } from './sap.js';
 
 let laadteksten = null;
-// Lang genoeg om een paar laadzinnen en de tip te lezen (besluit 199): vier zinnen van 1,25 s, dus ± 5 s tot "Klaar!".
-// Bij een spel dat al gespeeld is (de tip is dan bekend) drie zinnen van 1,1 s. Ook met ?test=1 even lang, zodat je
-// het laadscherm ziet zoals Pino het ziet.
-const STAP_MS = 1250;
+// Lang genoeg om een paar laadzinnen en de tip rustig te lezen (besluit 199, iets langzamer in besluit 222): vier
+// zinnen van 1,5 s, dus ± 6 s tot "Klaar!" en dan 0,8 s. Bij een spel dat al gespeeld is (de tip is dan bekend) drie
+// zinnen van 1,3 s. Ook met ?test=1 even lang, zodat je het laadscherm ziet zoals Pino het ziet.
+const STAP_MS = 1500;
 const MIN_STAPPEN = 4;
-const STAP_MS_OPNIEUW = 1100;
+const STAP_MS_OPNIEUW = 1300;
 const MIN_STAPPEN_OPNIEUW = 3;
-const KLAAR_MS = 600;
+const KLAAR_MS = 800;
 
 async function haalTeksten() {
   if (laadteksten) return laadteksten;

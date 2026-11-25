@@ -4,7 +4,7 @@
 //   richtingen: { omhoog: knopEl, omlaag: knopEl, links: knopEl, rechts: knopEl },   // optioneel (D-pad)
 //   acties: { actie: knopEl },                                                     // optioneel (actieknop)
 //   joystick: { element: schermEl, vertraging: 250, tik: 'actie' },                // optioneel (ui/joystick.js)
-//   bijActie(naam) {},                                                             // 'actie' | 'terug'
+//   bijActie(naam, punt) {},       // 'actie' | 'terug'; punt = { x, y } (client) bij een joystick-tik, anders undefined
 // });
 // invoer.richting → { omhoog, omlaag, links, rechts } (booleans, live; alleen lezen)
 // invoer.los() → alle vastgehouden toetsen/knoppen loslaten
@@ -46,7 +46,7 @@ export function maakInvoer({ richtingen = {}, acties = {}, joystick = null, bijA
   let stick = null;
   if (joystick && joystick.element) {
     const { tik = null, ...rest } = joystick;
-    stick = maakJoystick({ ...rest, bijTik: tik ? () => bijActie(tik) : null });
+    stick = maakJoystick({ ...rest, bijTik: tik ? (punt) => bijActie(tik, punt) : null });
     opruimers.push(() => stick.vernietig());
   }
 

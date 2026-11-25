@@ -5,7 +5,8 @@
 // Kracht (besluit 197): dicht bij het midden langzaam, aan de rand van de ring de volle snelheid; verder slepen dan
 // de rand geeft niet meer dan 1, dus de loopsnelheid van het spel is ook het maximum. Tussen doodzone en rand loopt
 // de kracht op met een kromme (macht KROMME), zodat er bij het midden ruimte is om rustig te lopen.
-// Loslaten: de joystick verdwijnt en as() is weer (0, 0). Een korte tik zonder beweging roept bijTik aan.
+// Loslaten: de joystick verdwijnt en as() is weer (0, 0). Een korte tik zonder beweging roept bijTik({ x, y }) aan,
+// met de clientcoördinaten van de druk (spel 1 gebruikt die om op een kind te tikken, besluit 225).
 //
 // const joystick = maakJoystick({ element: schermEl, vertraging: 250, bijTik: () => onderbreek() });
 // joystick.as() → { dx, dy }   joystick.actief   joystick.vernietig()
@@ -76,6 +77,7 @@ export function maakJoystick({ element, vertraging = STANDAARD.vertraging, straa
   function stop({ tik = false } = {}) {
     if (timer) { clearTimeout(timer); timer = null; }
     const wasActief = actief;
+    const punt = begin ? { x: begin.x, y: begin.y } : null;
     actief = false;
     vector = { dx: 0, dy: 0 };
     pointerId = null;
@@ -85,7 +87,7 @@ export function maakJoystick({ element, vertraging = STANDAARD.vertraging, straa
     knop.style.transform = '';
     ring.remove();
     if (wasActief && bijStop) bijStop();
-    if (tik && bijTik) bijTik();
+    if (tik && bijTik) bijTik(punt);
   }
 
   function opKnop(ev) {

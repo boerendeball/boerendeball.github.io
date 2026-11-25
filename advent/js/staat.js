@@ -37,6 +37,7 @@ export function legeStaat() {
     telefoonGezien: 0,            // laatste dag waarop de telefoon-notificatie is getoond
     kamer: { gezien: [] },        // Pino's kamer: voorwerp-id's die bij het laatste bezoek zichtbaar waren (besluit 205)
     uitleg: [],                   // uitleg-pop-ups die Pino al zag, bv. 'spel8-spray' (besluit 215)
+    chopChop: false,              // spel 1: Chop chop-modus staat aan (vanaf dag 5, besluit 225)
   };
 }
 
@@ -59,6 +60,7 @@ function migreer(data) {
   uit.markt = { ...basis.markt, ...(data.markt && typeof data.markt === 'object' ? data.markt : {}) };
   uit.kamer = { gezien: Array.isArray(data.kamer?.gezien) ? data.kamer.gezien : [] };
   if (!Array.isArray(uit.uitleg)) uit.uitleg = [];
+  uit.chopChop = data.chopChop === true;
   // Spel 2 is herontworpen (besluit 166): een tuin uit het oude 6×14-raster kan niet verder. Wis hem en geef de
   // tegels die erin lagen terug aan de voorraad, zodat er niemand tegels kwijtraakt.
   if (uit.tuin && typeof uit.tuin === 'object' && !Array.isArray(uit.tuin.velden)) {

@@ -14,6 +14,9 @@ import { tril } from '../ui/sap.js';
 import * as staat from '../staat.js';
 import * as datum from '../datum.js';
 import { ga } from '../router.js';
+import { el, use } from '../sprites.js';
+import { zoekPad } from './pad.js';
+import * as chopUitleg from './spel1-uitleg.js';
 
 /* ---------- tuning (specs/spel1.md) ---------- */
 const DUUR = 60;              // s speelduur
@@ -26,6 +29,15 @@ const INTERVAL_EIND = 2.2;    // s tussen kinderen die wakker worden, aan het ei
 // Vanaf dag 2 (deurtje 2 open, ook in testmodus) gapen de kinderen vaker, zodat een ronde meer tegels voor spel 2
 // oplevert (besluit 221): kortere tussentijden, vaker gapen na het wakker worden en één kind meer tegelijk.
 const DRUK = { intervalFactor: 0.7, gaapKans: 0.9, extraTegelijk: 1 };
+// Chop chop (vanaf dag 5, besluit 225): een schakelknop in de kopbalk. Aan = de ronde op dubbel tempo (60 s speltijd
+// in 30 s echte tijd, dus ook 2× zo vaak wakker worden), twee kinderen meer tegelijk, Pino 2× zo snel, en een tik op
+// een gapend kind laat Pino er vanzelf heen lopen en het onderbreken. Een gaap blijft GAAP_DUUR in echte tijd.
+const CHOP = { tempo: 2, snelheid: 2, extraTegelijk: 2 };
+const CHOP_DAG = 5;
+const RAAK_MARGE = 6;         // px rond een bed waarbinnen een tik nog op het kind telt
+const PLEK = [-38, 54];       // Pino's x t.o.v. bed-x om links of rechts naast het bed te staan (zie naastBed)
+const TIK_DUUR = 0.3;         // s het ringetje op de plek van een tik die een kind kiest
+const TIK_R = [10, 16];       // px straal van het ringetje, van begin tot eind
 const RUST = 6;               // s een kind wordt niet twee keer wakker binnen deze tijd
 const SCHAARS_FACTOR = 0.5;   // kansfactor per tegel die Pino méér heeft dan van de schaarste tegel (besluit 188)
 const SCHAARS_MIN = 0.05;     // ondergrens van het gewicht: ook een kind met een volle voorraad wordt soms wakker
@@ -114,6 +126,10 @@ function speel({ root, dag, info, klaar, opnieuw }) {
   const gaapKans = druk ? DRUK.gaapKans : GAAP_KANS;
   const intervalFactor = druk ? DRUK.intervalFactor : 1;
   const extraTegelijk = druk ? DRUK.extraTegelijk : 0;
+  // Chop chop (besluit 225): de knop is er vanaf dag 5 (in testmodus altijd); de stand staat in de spelstaat.
+  const chopBeschikbaar = datum.deurOpen(CHOP_DAG);
+  let chop = false;
+  if (chopBeschikbaar) { try { chop = staat.lees().chopChop === true; } catch { /* zonder staat: uit */ } }
   let gestopt = false;
 
   /* ---------- DOM ---------- */
@@ -128,8 +144,15 @@ function speel({ root, dag, info, klaar, opnieuw }) {
 
   // Geen besturingspaneel (besluiten.md #22): touch/muis gaat via de joystick (vasthouden op het scherm,
   // besluiten.md #23) en een tik om te onderbreken (#24); daarnaast toetsenbord (pijltjes/WASD, spatie/Enter).
+  // Chop chop-knop rechts in de kopbalk (daar staat geen teller, besluit 19): icoon-only, aria-pressed. Na een klik
+  // met muis of vinger gaat de focus eraf, anders zou de volgende spatie (onderbreken) de knop weer omzetten.
+  const chopKnop = chopBeschikbaar ? h('button', {
+    type: 'button', class: 'knop-rond s1-chop', 'aria-label': 'Chop chop', 'aria-pressed': String(chop),
+    onclick: (ev) => { zetChop(!chop); if (ev.detail > 0) chopKnop.blur(); },
+  }, [el('svg', { class: 'ic', viewBox: '0 0 48 48', width: 34, height: 34, 'aria-hidden': 'true' }, [use('s1-haas', 0, 0, 48, 48)])]) : null;
+
   const scherm = h('div', { class: 'scherm spel' }, [
-    kopbalk({ label: datum.dagLabel(dag), titel: info.titel, terugNaar: `/deur/${dag}`, terugLabel: 'Terug naar het deurtje' }),
+    kopbalk({ label: datum.dagLabel(dag), titel: info.titel, terugNaar: `/deur/${dag}`, terugLabel: 'Terug naar het deurtje', rechts: chopKnop }),
     tijdKaart,
     h('div', { class: 'scene-kaart' }, [canvas]),
   ]);
@@ -141,24 +164,160 @@ function speel({ root, dag, info, klaar, opnieuw }) {
     // status: slaap → wakker → (gaap →) slaap; onderbroken: gaap → verrast → boos → slaap (besluiten.md #142, #143)
     bedden.push({ x: KOLOM[c], y: RIJ[r], deken, motief, huid, haar, haarkleur, status: 'slaap', wakkerTot: 0, wekTot: 0, gaapTot: 0, verrastTot: 0, schrikTot: 0, boosTot: 0, rustTot: 0, dekenTot: 0 });
   }));
-  const pino = { x: PINO_START.x, y: PINO_START.y, richting: 1, pose: 'staan', poseTot: 0, loopTijd: 0, beweegt: false, arm: null };
+  // doel: { bed, punten } zolang Pino in Chop chop vanzelf naar een gekozen kind loopt (besluit 225)
+  const pino = { x: PINO_START.x, y: PINO_START.y, richting: 1, pose: 'staan', poseTot: 0, loopTijd: 0, beweegt: false, arm: null, doel: null };
   const s = {
     tijd: DUUR, verstreken: 0, gestart: false, wacht: 0, klaar: false, bevries: 0,
     score: 0, gemist: 0, gaapTimer: START_PAUZE, klok: 0,
   };
   const lapjes = [];   // tegels die net uit een deken vliegen (besluit 200)
   const plussen = [];  // "+1" boven een onderbroken kind (beeldfeedback, besluit 210)
+  const tikken = [];   // ringetje waar een tik in Chop chop een kind koos (besluit 225)
   const deeltjes = maakDeeltjes();
-  if (datum.isTest()) window.pinoDebug = { spel: 1, s, pino, bedden, lapjes, plussen, stap: (ms) => { update(ms / 1000); effecten(ms / 1000); teken(); } };
+  if (datum.isTest()) {
+    window.pinoDebug = {
+      spel: 1, s, pino, bedden, lapjes, plussen,
+      stap: (ms) => { update(ms / 1000); effecten(ms / 1000); teken(); },
+      get chop() { return chop; },
+      set chop(aan) { if (chopBeschikbaar) zetChop(!!aan); },
+      /** Kies bed i zoals een tik in Chop chop (besluit 225). */
+      kies: (i) => kiesKind(bedden[i]),
+      /** Toont de Chop chop-uitleg opnieuw (besluit 225). */
+      uitleg: () => toonUitleg(),
+    };
+  }
 
   /* ---------- invoer ---------- */
+  let uitlegDialoog = null;
   const invoer = maakInvoer({
     joystick: { element: scherm, vertraging: JOYSTICK_VERTRAGING, tik: 'actie' },
-    bijActie(naam) {
+    bijActie(naam, punt) {
+      if (uitlegDialoog) return;
       if (naam === 'terug') { ga(`/deur/${dag}`); return; }
-      if (naam === 'actie') onderbreek();
+      if (naam === 'actie') actie(punt);
     },
   });
+
+  /* ---------- Chop chop (besluit 225) ---------- */
+  function zetChop(aan) {
+    chop = aan;
+    if (chopKnop) chopKnop.setAttribute('aria-pressed', String(aan));
+    try { staat.schrijf((st) => { st.chopChop = aan; }); } catch { /* storage geweigerd: alleen deze ronde */ }
+    if (!aan) pino.doel = null; // uitgezet onderweg: Pino blijft staan waar ze is
+    // Vóór de start (bv. achter de uitlegkaart) loopt update nog niet: de resttijd hier al goed zetten.
+    tijdTekst.textContent = formatteerTijd(Math.ceil(s.tijd / (aan ? CHOP.tempo : 1) - 1e-9));
+  }
+
+  const loopSnelheid = () => SNELHEID * (chop ? CHOP.snelheid : 1);
+  // Onderweg of na een automatische onderbreking nog aan het wijzen: geen ander kind kiezen, niet zelf lopen.
+  const vergrendeld = () => !!pino.doel || pino.poseTot > 0;
+
+  // Tik (punt = clientcoördinaten), spatie of Enter.
+  function actie(punt) {
+    if (!chop) { onderbreek(); return; }
+    if (s.klaar || gestopt || vergrendeld()) return;
+    if (punt) {
+      const p = naarScene(punt);
+      const bed = p && bedden.find((b) => b.status === 'gaap'
+        && p.x >= b.x - RAAK_MARGE && p.x <= b.x + 64 + RAAK_MARGE && p.y >= b.y - RAAK_MARGE && p.y <= b.y + 84 + RAAK_MARGE);
+      if (bed && kiesKind(bed)) { tikken.push({ x: p.x, y: p.y, t: 0 }); return; }
+      // Alleen een tik óp het gapende kind onderbreekt; elders steekt Pino alleen haar vinger uit, zonder treffer.
+      misPose();
+      return;
+    }
+    // Toetsenbord: naast een gapend kind meteen onderbreken, anders naar het gapende kind met het kortste pad.
+    if (bedden.some((b) => b.status === 'gaap' && naastBed(b))) { onderbreek(); return; }
+    let beste = null;
+    for (const b of bedden) {
+      if (b.status !== 'gaap') continue;
+      const r = padNaar(b);
+      if (r && (!beste || r.lengte < beste.r.lengte)) beste = { b, r };
+    }
+    if (beste) loopNaar(beste.b, beste.r);
+    else onderbreek();
+  }
+
+  // De pose van een misser (arm recht vooruit aan de kijkkant), ook als Pino naast een gapend kind staat.
+  function misPose() {
+    s.gestart = true;
+    if (pino.poseTot > 0 || pino.doel) return;
+    wijs(null);
+    pino.poseTot = POSE_MIS;
+  }
+
+  function naarScene(punt) {
+    const r = canvas.getBoundingClientRect();
+    if (!r.width || !r.height) return null;
+    const x = ((punt.x - r.left) * B) / r.width;
+    const y = ((punt.y - r.top) * H) / r.height;
+    return x >= 0 && x <= B && y >= 0 && y <= H ? { x, y } : null;
+  }
+
+  const vrij = (x, y) => x >= GRENS.xMin && x <= GRENS.xMax && y >= GRENS.yMin && y <= GRENS.yMax && !botst(x, y);
+
+  // Kortste pad naar een plek links of rechts naast het bed; { punten: [] } als Pino er al naast staat.
+  function padNaar(bed) {
+    if (naastBed(bed)) return { punten: [], lengte: 0 };
+    let beste = null;
+    for (const dx of PLEK) {
+      const doel = { x: bed.x + dx, y: bed.y };
+      if (!vrij(doel.x, doel.y)) continue; // buiten de vloer (buitenste kolommen) of tegen een bed
+      const r = zoekPad({ x: pino.x, y: pino.y }, doel, vrij, { grens: GRENS });
+      if (r && (!beste || r.lengte < beste.lengte)) beste = r;
+    }
+    return beste;
+  }
+
+  function kiesKind(bed) {
+    if (!bed || bed.status !== 'gaap' || s.klaar || gestopt || vergrendeld()) return false;
+    const r = padNaar(bed);
+    if (!r) return false;
+    loopNaar(bed, r);
+    return true;
+  }
+
+  function loopNaar(bed, r) {
+    s.gestart = true;
+    if (!r.punten.length) { onderbreek(bed); return; }
+    pino.doel = { bed, punten: r.punten.map((p) => ({ x: p.x, y: p.y })) };
+  }
+
+  // Volgt het pad met de loopsnelheid. Stopt het kind onderweg met gapen, dan blijft Pino staan (geen pose, geen straf).
+  function volgDoel(dt) {
+    const d = pino.doel;
+    if (d.bed.status !== 'gaap') { pino.doel = null; loopPose(dt, false); return; }
+    let rest = loopSnelheid() * dt;
+    while (rest > 0 && d.punten.length) {
+      const p = d.punten[0];
+      const ax = p.x - pino.x;
+      const ay = p.y - pino.y;
+      const afstand = Math.hypot(ax, ay);
+      if (Math.abs(ax) > 0.5) pino.richting = ax > 0 ? 1 : -1;
+      if (afstand <= rest) { pino.x = p.x; pino.y = p.y; rest -= afstand; d.punten.shift(); }
+      else { pino.x += (ax / afstand) * rest; pino.y += (ay / afstand) * rest; rest = 0; }
+    }
+    if (d.punten.length) { loopPose(dt, true); return; }
+    pino.doel = null;
+    loopPose(dt, false);
+    onderbreek(d.bed);
+  }
+
+  function toonUitleg() {
+    return new Promise((ok) => {
+      if (uitlegDialoog) { ok(); return; }
+      invoer.los();
+      lus.pauzeer();
+      uitlegDialoog = chopUitleg.toonChopUitleg({
+        bijSluiten: () => {
+          // Pas na deze toetsaanslag vrijgeven: Escape sluit de kaart én zou anders via invoer.js het spel verlaten.
+          setTimeout(() => { uitlegDialoog = null; }, 0);
+          invoer.los();
+          lus.hervat();
+          ok();
+        },
+      });
+    });
+  }
 
   /* ---------- achtergrond (één keer) ---------- */
   const achtergrond = maakLaag(B, H);
@@ -198,7 +357,7 @@ function speel({ root, dag, info, klaar, opnieuw }) {
   // Een slapend kind wordt wakker; of het daarna gaat gapen, beslist GAAP_KANS na WAKKER_DUUR.
   function wordtWakker() {
     const actief = bedden.filter((b) => b.status === 'wakker' || b.status === 'gaap').length;
-    const max = (s.verstreken < DUUR / 2 ? 2 : 3) + extraTegelijk;
+    const max = (s.verstreken < DUUR / 2 ? 2 : 3) + extraTegelijk + (chop ? CHOP.extraTegelijk : 0);
     if (actief >= max) return;
     const kandidaten = bedden.filter((b) => b.status === 'slaap' && b.rustTot <= 0);
     if (!kandidaten.length) return;
@@ -236,12 +395,13 @@ function speel({ root, dag, info, klaar, opnieuw }) {
     pino.arm = { kant, hoek, rek };
   }
 
-  function onderbreek() {
+  // voorkeur: het bed dat in Chop chop gekozen is; dat gaat voor als Pino ook naast een ander gapend kind staat.
+  function onderbreek(voorkeur = null) {
     if (s.klaar || gestopt) return;
     s.gestart = true;
-    if (pino.poseTot > 0) return;
-    let doel = null;
-    let afstand = Infinity;
+    if (pino.poseTot > 0 || pino.doel) return;
+    let doel = voorkeur && voorkeur.status === 'gaap' && naastBed(voorkeur) ? voorkeur : null;
+    let afstand = doel ? -1 : Infinity;
     for (const b of bedden) {
       if (b.status !== 'gaap' || !naastBed(b)) continue;
       const d = Math.hypot(b.x + 32 - (pino.x + 24), b.y + 42 - (pino.y + 64));
@@ -278,13 +438,17 @@ function speel({ root, dag, info, klaar, opnieuw }) {
       if (s.bevries <= 0) einde();
       return;
     }
+    // Speltijd tegenover echte tijd (Chop chop, besluit 225): klok, wakker worden en rust lopen op `tdt`; gapen,
+    // gezichten, poses en effecten blijven op echte tijd (`dt`), zodat een gaap even lang duurt en alles leesbaar blijft.
+    const tempo = chop ? CHOP.tempo : 1;
+    const tdt = dt * tempo;
     const { dx, dy } = invoer.as();
     if (!s.gestart) {
       s.wacht += dt;
       if (dx || dy || s.wacht >= 2) s.gestart = true;
     }
     if (s.gestart) {
-      s.tijd = Math.max(0, s.tijd - dt);
+      s.tijd = Math.max(0, s.tijd - tdt);
       s.verstreken = DUUR - s.tijd;
     }
 
@@ -293,23 +457,19 @@ function speel({ root, dag, info, klaar, opnieuw }) {
       pino.poseTot -= dt;
       pino.beweegt = false;
       if (pino.poseTot <= 0) { pino.pose = 'staan'; pino.arm = null; }
+    } else if (pino.doel) {
+      volgDoel(dt);
     } else {
       pino.beweegt = !!(dx || dy);
       if (dx) pino.richting = dx > 0 ? 1 : -1;
       if (pino.beweegt) {
-        const nx = Math.max(GRENS.xMin, Math.min(GRENS.xMax, pino.x + dx * SNELHEID * dt));
+        const v = loopSnelheid();
+        const nx = Math.max(GRENS.xMin, Math.min(GRENS.xMax, pino.x + dx * v * dt));
         if (!botst(nx, pino.y)) pino.x = nx;
-        const ny = Math.max(GRENS.yMin, Math.min(GRENS.yMax, pino.y + dy * SNELHEID * dt));
+        const ny = Math.max(GRENS.yMin, Math.min(GRENS.yMax, pino.y + dy * v * dt));
         if (!botst(pino.x, ny)) pino.y = ny;
-        pino.loopTijd += dt;
-        const pose = Math.floor(pino.loopTijd / 0.18) % 2 === 0 ? 'loop' : 'staan';
-        // Een stofje bij elke stap (beeldfeedback, besluit 210).
-        if (pose === 'loop' && pino.pose !== 'loop') deeltjes.voeg('stof', pino.x + 24, pino.y + 70, { aantal: 2 });
-        pino.pose = pose;
-      } else {
-        pino.loopTijd = 0;
-        pino.pose = 'staan';
       }
+      loopPose(dt, pino.beweegt);
     }
 
     // Lapjes die uit een deken vliegen
@@ -318,12 +478,12 @@ function speel({ root, dag, info, klaar, opnieuw }) {
 
     // Kinderen
     for (const b of bedden) {
-      if (b.rustTot > 0) b.rustTot -= dt;
+      if (b.rustTot > 0) b.rustTot -= tdt;
       if (b.dekenTot > 0) b.dekenTot -= dt;
       if (b.wekTot > 0) b.wekTot -= dt;
       if (b.schrikTot > 0) b.schrikTot -= dt;
       if (b.status === 'wakker') {
-        b.wakkerTot -= dt;
+        b.wakkerTot -= tdt;
         if (b.wakkerTot <= 0) {
           if (Math.random() < gaapKans) { b.status = 'gaap'; b.gaapTot = GAAP_DUUR; }
           else { b.status = 'slaap'; b.rustTot = RUST; }
@@ -340,25 +500,39 @@ function speel({ root, dag, info, klaar, opnieuw }) {
       }
     }
     if (s.gestart) {
-      s.gaapTimer -= dt;
+      s.gaapTimer -= tdt;
       if (s.verstreken >= START_PAUZE && s.gaapTimer <= 0) {
         wordtWakker();
         s.gaapTimer = interval(s.verstreken) * (0.8 + 0.4 * Math.random());
       }
     }
 
-    // Tijd-UI; in de laatste seconden wordt de tijdkaart rood en pulseert hij (besluit 210).
+    // Tijd-UI; in de laatste seconden wordt de tijdkaart rood en pulseert hij (besluit 210). De tekst toont de
+    // echte resttijd: in Chop chop dus 0:30 bij de start (besluit 225).
     tijdBalk.style.width = `${(s.tijd / DUUR) * 100}%`;
-    const tekst = formatteerTijd(Math.ceil(s.tijd));
+    const echteRest = s.tijd / tempo;
+    const tekst = formatteerTijd(Math.ceil(echteRest - 1e-9));
     if (tijdTekst.textContent !== tekst) tijdTekst.textContent = tekst;
-    const haast = s.gestart && s.tijd > 0 && s.tijd <= HAAST;
+    const haast = s.gestart && s.tijd > 0 && echteRest <= HAAST;
     if (tijdKaart.classList.contains('sap-haast') !== haast) tijdKaart.classList.toggle('sap-haast', haast);
 
     if (s.gestart && s.tijd <= 0) {
       s.klaar = true;
       s.bevries = BEVRIES;
+      pino.doel = null;
       for (const b of bedden) if (b.status === 'gaap' || b.status === 'wakker') { b.status = 'slaap'; }
     }
+  }
+
+  // Looppose: `pino-loop` en `pino-staan` wisselen elke 0,18 s zolang Pino beweegt (zelf of vanzelf).
+  function loopPose(dt, beweegt) {
+    pino.beweegt = beweegt;
+    if (!beweegt) { pino.loopTijd = 0; pino.pose = 'staan'; return; }
+    pino.loopTijd += dt;
+    const pose = Math.floor(pino.loopTijd / 0.18) % 2 === 0 ? 'loop' : 'staan';
+    // Een stofje bij elke stap (beeldfeedback, besluit 210).
+    if (pose === 'loop' && pino.pose !== 'loop') deeltjes.voeg('stof', pino.x + 24, pino.y + 70, { aantal: 2 });
+    pino.pose = pose;
   }
 
   function botst(nx, ny) {
@@ -544,6 +718,20 @@ function speel({ root, dag, info, klaar, opnieuw }) {
     for (const l of lapjes) tekenLapje(l);
     deeltjes.teken(ctx);
     for (const p of plussen) tekenPlus(p);
+    for (const t of tikken) tekenTik(t);
+  }
+
+  // Een wit ringetje waar de tik een kind koos (Chop chop, besluit 225): groeit en vervaagt; met reduced motion
+  // groeit hij niet.
+  function tekenTik(t) {
+    const p = Math.min(1, t.t / TIK_DUUR);
+    const r = rustig ? (TIK_R[0] + TIK_R[1]) / 2 : TIK_R[0] + (TIK_R[1] - TIK_R[0]) * p;
+    ctx.save();
+    ctx.globalAlpha = 1 - p;
+    ctx.strokeStyle = '#FFFFFF';
+    ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.arc(t.x, t.y, r, 0, Math.PI * 2); ctx.stroke();
+    ctx.restore();
   }
 
   // Effecten lopen ook door tijdens de hit-stop (lus.bevries).
@@ -551,6 +739,8 @@ function speel({ root, dag, info, klaar, opnieuw }) {
     deeltjes.update(dt);
     for (const p of plussen) p.t += dt;
     for (let i = plussen.length - 1; i >= 0; i -= 1) if (plussen[i].t >= PLUS_DUUR) plussen.splice(i, 1);
+    for (const t of tikken) t.t += dt;
+    for (let i = tikken.length - 1; i >= 0; i -= 1) if (tikken[i].t >= TIK_DUUR) tikken.splice(i, 1);
   }
 
   // Een tegel zoals in spel 2 (hx-tegel + motief), klein, die uit de deken omhoog schiet en vervaagt (besluit 200).
@@ -612,15 +802,25 @@ function speel({ root, dag, info, klaar, opnieuw }) {
 
   /* ---------- start ---------- */
   const lus = maakLus({ update, teken, effecten });
+  // De eerste keer vanaf dag 5: eerst de Chop chop-uitleg zonder tekst; de klok wacht tot de kaart dicht is.
+  // Die eerste keer gaat Chop chop ook meteen aan (de knop wordt geel), zodat Pino de modus direct speelt.
+  let eersteUitleg = false;
+  try { eersteUitleg = chopBeschikbaar && !chopUitleg.alGezien(); } catch { /* zonder staat geen uitleg */ }
+  if (eersteUitleg) zetChop(true);
+  const wachtOpUitleg = eersteUitleg ? toonUitleg() : Promise.resolve();
   voorbereid().then(() => {
-    if (gestopt) return;
+    if (gestopt) return null;
     tekenAchtergrond();
     teken();
+    return wachtOpUitleg;
+  }).then(() => {
+    if (gestopt) return;
     lus.start();
   }).catch((e) => console.error(e));
 
   return () => {
     gestopt = true;
+    if (uitlegDialoog) uitlegDialoog.sluit();
     lus.stop();
     invoer.vernietig();
     if (window.pinoDebug && window.pinoDebug.s === s) delete window.pinoDebug;

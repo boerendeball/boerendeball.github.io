@@ -793,3 +793,49 @@ body.s10-feest { background-color: #FFE0EE; }
 .s10-briefje p { margin: 0; font-size: 15px; line-height: 1.4; color: #35505F; white-space: pre-line; }
 .s10-feest-knop { background: var(--roze); color: #fff; box-shadow: 0 5px 0 0 var(--roze-schaduw); }
 @media (prefers-reduced-motion: reduce) { .s10-ballon { animation: none; } }
+
+/* ---------- Spel 1: Chop chop (besluit 225) ---------- */
+/* Schakelknop rechts in de kopbalk (knop-rond, 44 px) met de haas; aan = geel, zonder animatie. */
+.s1-chop { cursor: pointer; -webkit-tap-highlight-color: transparent; transition: background 0.12s ease; }
+.s1-chop[aria-pressed='true'] { background: var(--geel); box-shadow: 0 4px 0 0 var(--geel-schaduw); }
+.s1-chop[aria-pressed='true']:active { box-shadow: 0 1px 0 0 var(--geel-schaduw); }
+
+/* Uitlegkaart zonder tekst (spel1-uitleg.js): opmaak van spel 8 (.s8u-*), eigen plaatjes in de slaapzaal. */
+.s8u-vak.s1u-vak { background: #F6EBDD; }
+/* bovenaan een titel in plaats van de bol van spel 8 */
+.dialoog.s8-uitleg.s1-uitleg { padding-top: 20px; }
+.s1u-titel { color: var(--tekst); text-align: center; }
+/* pagina 1: tik op de haasknop, de knop wordt geel, Pino rent (lus van 4 s) */
+@keyframes s1u-tik { 0%, 6% { opacity: 0; transform: scale(0.4); } 12% { opacity: 1; transform: scale(1); } 24%, 100% { opacity: 0; transform: scale(1.5); } }
+@keyframes s1u-knop-aan { 0%, 14% { opacity: 0; } 16%, 100% { opacity: 1; } }
+@keyframes s1u-ren { 0%, 24% { transform: translateX(0); } 60%, 100% { transform: translateX(112px); } }
+@keyframes s1u-ren-staan { 0%, 24% { opacity: 1; } 25%, 59% { opacity: 0; } 60%, 100% { opacity: 1; } }
+@keyframes s1u-ren-loop { 0%, 24% { opacity: 0; } 25%, 59% { opacity: 1; } 60%, 100% { opacity: 0; } }
+@keyframes s1u-strepen { 0%, 25% { opacity: 0; } 28%, 56% { opacity: 1; } 60%, 100% { opacity: 0; } }
+.s1u-tik-knop, .s1u-tik-kind { transform-box: fill-box; transform-origin: 50% 50%; }
+.s1u-tik-knop { animation: s1u-tik 4s ease-out infinite; }
+.s1u-knop-aan { animation: s1u-knop-aan 4s linear infinite; }
+.s1u-ren { animation: s1u-ren 4s linear infinite; }
+.s1u-ren-staan { animation: s1u-ren-staan 4s linear infinite; }
+.s1u-ren-loop { animation: s1u-ren-loop 4s linear infinite; }
+.s1u-strepen { animation: s1u-strepen 4s linear infinite; }
+/* pagina 2: tik op het gapende kind, Pino loopt naast het bed en onderbreekt het */
+@keyframes s1u-tik-kind { 0%, 4% { opacity: 0; transform: scale(0.4); } 10% { opacity: 1; transform: scale(1); } 22%, 100% { opacity: 0; transform: scale(1.5); } }
+@keyframes s1u-loop { 0%, 20% { transform: translateX(0); } 46%, 100% { transform: translateX(78px); } }
+@keyframes s1u-loop-staan { 0%, 20% { opacity: 1; } 21%, 100% { opacity: 0; } }
+@keyframes s1u-loop-loop { 0%, 20% { opacity: 0; } 21%, 45% { opacity: 1; } 46%, 100% { opacity: 0; } }
+@keyframes s1u-na { 0%, 45% { opacity: 0; } 46%, 100% { opacity: 1; } }
+@keyframes s1u-voor { 0%, 45% { opacity: 1; } 46%, 100% { opacity: 0; } }
+.s1u-tik-kind { animation: s1u-tik-kind 4s ease-out infinite; }
+.s1u-loop { animation: s1u-loop 4s ease-in-out infinite; }
+.s1u-loop-staan { animation: s1u-loop-staan 4s linear infinite; }
+.s1u-loop-loop { animation: s1u-loop-loop 4s linear infinite; }
+.s1u-loop-wijs, .s1u-arm, .s1u-verrast { animation: s1u-na 4s linear infinite; }
+.s1u-gaap { animation: s1u-voor 4s linear infinite; }
+/* zonder beweging: een stilstaand eindbeeld (knop geel en Pino rechts; Pino naast het bed met de vinger, kind verrast) */
+@media (prefers-reduced-motion: reduce) {
+  .s1u-vak * { animation: none !important; }
+  .s1u-tik-knop, .s1u-tik-kind, .s1u-ren-loop, .s1u-strepen, .s1u-loop-staan, .s1u-loop-loop, .s1u-gaap { opacity: 0; }
+  .s1u-ren { transform: translateX(112px); }
+  .s1u-loop { transform: translateX(78px); }
+}

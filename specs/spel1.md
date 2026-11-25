@@ -1,6 +1,6 @@
 # Spel 1 · Princess Allure
 
-**Status:** goedgekeurd (Benjamin, 23 november 2026) (`advent/js/spellen/spel1.js`; gedeeld: `spellen/lus.js`, `spellen/spritesheet.js`, `spellen/canvas.js`, `invoer.js`, `ui/resultaat.js`, `css/spel.css`)
+**Status:** goedgekeurd (Benjamin, 23 november 2026); Chop chop (besluit 225) gebouwd, in review (`advent/js/spellen/spel1.js`, `spellen/spel1-uitleg.js`, `spellen/pad.js`; gedeeld: `spellen/lus.js`, `spellen/spritesheet.js`, `spellen/canvas.js`, `invoer.js`, `ui/resultaat.js`, `css/spel.css`)
 **Dag 1 · 24 november · Conditie +3 · Charisma +2 (besluit 164)**
 Previews: `design/previews/Spel1.png`, `Spel1-Klaar.png`, `Spel1-Sprites.png` · Artboards: `design/artboards/Spel1*.dc.html` · Generator: `design/generators/spel1_build.py`, `spel1_sprites.py`
 Rendering: **canvas** (actiespel), sprite sheet gerasterd uit `sprites.svg` (set spel1).
@@ -13,7 +13,7 @@ Verborgen keten: elke gelukte onderbreking levert een **token** (in code en staa
 
 ## Scherm (390×844, van boven naar beneden)
 
-1. **Kopbalk** (`ui/kopbalk.js`): terugknop (44 px rond) → `#/deur/1`; label `DAG 1 · 24 NOVEMBER`; titel `Princess Allure` (Fredoka 20). **Geen teller rechts**: het artboard toont een kroon-pil met score, maar er worden geen kroontjes verzameld (besluit 19). Het aantal onderbrekingen is pas op het resultaatscherm te zien.
+1. **Kopbalk** (`ui/kopbalk.js`): terugknop (44 px rond) → `#/deur/1`; label `DAG 1 · 24 NOVEMBER`; titel `Princess Allure` (Fredoka 20). **Geen teller rechts**: het artboard toont een kroon-pil met score, maar er worden geen kroontjes verzameld (besluit 19). Het aantal onderbrekingen is pas op het resultaatscherm te zien. Vanaf dag 5 staat rechts de **Chop chop-knop** (zie hieronder).
 2. **Tijdkaart** (`.kaart`, 12 px marge): klok-icoon (`s9-klok`, 22 px) + balk (14 px hoog, `#E6EFF5`, vulling `#FFC93C` met schaduw `#D97A00`, krimpt van 100 % naar 0 %) + resttijd `m:ss` (Fredoka 18, `#D97A00`, min-width 44 px, rechts uitgelijnd). **Geen tekst "TIJD"** (artboard heeft dat wel; de regel wint).
 3. **Scène**: canvas 358×500 CSS-px in een afgeronde kaart (radius 22, schaduw `0 6px 0 0 #CDE4F0`, `overflow: hidden`). Interne resolutie × `devicePixelRatio` (max 3).
 4. **Onder de scène: leeg.** Het besturingspaneel uit het artboard (D-pad, rode actieknop) is vervangen door de virtuele joystick die op de drukplek verschijnt (besluiten.md #22–24; zie events.md "Joystick").
@@ -100,6 +100,9 @@ Constanten staan bovenaan `spel1.js` en zijn tuning-waarden:
 | `ARM_LENGTE` / `ARM_REK_MAX` | 30 px / 1,6 | natuurlijke lengte van de wijzende arm en de maximale rek om de mond te halen |
 | `SNELHEID` | 130 px/s | loopsnelheid |
 | `POSE_DUUR` | 0,45 s | zo lang staat Pino met de arm uitgestoken (geen lopen) |
+| `CHOP` | tempo 2 · snelheid 2 · `extraTegelijk` 2 | Chop chop (vanaf dag 5, besluit 225): speltijd 2× zo snel (ronde 30 s), Pino 260 px/s, twee kinderen meer tegelijk (5, daarna 6). Gesimuleerd ± 24 gapen per ronde van 30 s |
+| `RAAK_MARGE` / `PLEK` | 6 px / −38 en +54 px | Chop chop: rand rond het bed waarbinnen een tik het kind kiest; Pino's x t.o.v. bed-x om links of rechts naast het bed te staan |
+| `TIK_DUUR` / `TIK_R` | 0,3 s / 10 → 16 px | Chop chop: wit ringetje op de plek van een tik die een kind kiest |
 
 - **Start**: Pino staat op (92, 232) (links van het middelste bed), kijkt naar rechts. De tijd begint te lopen bij de eerste invoer óf na 2 s, wat eerder is.
 - **Wakker worden** (besluit 142): op elk interval wordt een slapend kind dat niet in `RUST` zit wakker, gekozen met een gewogen loting naar de tegelvoorraad (besluit 188): het kind met de tegel waarvan Pino er het minst heeft, heeft de grootste kans; per tegel méér halveert de kans (`SCHAARS_FACTOR` 0,5, ondergrens `SCHAARS_MIN` 0,05) (`g-wakker`: ogen open, mondje dicht, geen z's). Als er al `MAX_TEGELIJK` kinderen wakker of gapend zijn, wacht het. Na `WAKKER_DUUR` gaat het met kans `GAAP_KANS` gapen (`g-gaap`), anders valt het weer in slaap (`RUST` start). Een wakker kind is nog niet te onderbreken en licht niet op.
@@ -109,6 +112,17 @@ Constanten staan bovenaan `spel1.js` en zijn tuning-waarden:
 - **Einde**: bij 0:00 bevriest de scène 0,8 s en opent het resultaatscherm. De terugknop tijdens het spel gaat terug zonder op te slaan (bevestiging is niet nodig: niets gaat verloren behalve deze poging).
 - **Slotzin**: bij minder dan 6 onderbroken "Er werd flink gegaapt vanavond. Morgen beter!", anders "Niemand durfde te gapen in het bijzijn van prinses Pino. Nou ja, bijna niemand." Geen sterren (besluit 16).
 - **Pauze**: `visibilitychange` (tab weg) pauzeert de lus; terugkomen hervat zonder sprong.
+
+## Chop chop (vanaf dag 5, besluit 225)
+
+- **Knop**: vanaf dag 5 (`datum.deurOpen(5)`, in testmodus altijd) rechts in de kopbalk een `button.knop-rond.s1-chop` (44 px) met het icoon `s1-haas` (34 px), `aria-label="Chop chop"`, `aria-pressed`. Aan = geel (`--geel`, schaduw `--geel-schaduw`), geen animatie. De knop werkt altijd, ook midden in een ronde; de stand staat in `chopChop` en blijft bewaard (ook na "Nog een keer" en de volgende dag). Na een klik met muis of vinger gaat de focus van de knop af, zodat spatie blijft onderbreken.
+- **Tempo**: speltijd = echte tijd × 2 voor de klok, het wakker worden (`gaapTimer`, `WAKKER_DUUR`) en `RUST`. `DUUR` blijft 60 s speltijd, dus een ronde duurt 30 s. Een gaap (`GAAP_DUUR`), de gezichten, poses, het lapje en de "+1" blijven in echte tijd. De tijdbalk loopt van vol naar leeg; de tekst toont de echte resttijd (`0:30` bij de start) en `HAAST` geldt voor de laatste 5 echte seconden.
+- **Meer tegelijk**: maximum wakker of gapend + 2 (5, na de helft 6).
+- **Pino** loopt 2× zo snel (260 px/s), met joystick, pijltjes en vanzelf.
+- **Tik op een gapend kind** (hele bed + `RAAK_MARGE`): Pino loopt vanzelf naar de dichtste plek links of rechts naast het bed (A* op een raster van 8 px, gladgestreken; `spellen/pad.js`; plekken buiten de vloer vallen af, dus de buitenste kolommen alleen van binnenuit) en onderbreekt het kind (het gekozen kind gaat voor). Een wit ringetje markeert de tik. Onderweg en tijdens het wijzen kan geen ander kind gekozen worden en doen joystick en pijltjes niets. Stopt het kind onderweg met gapen of gaat de knop uit, dan blijft Pino staan (geen pose, geen straf). Alleen een tik óp het gapende kind onderbreekt (staat Pino er al naast, dan meteen). Een tik op de vloer of op een niet-gapend kind geeft alleen de lege vingerpose (`POSE_MIS`), ook als Pino naast een gapend kind staat; in de gewone modus onderbreekt een tik overal (besluit 24).
+- **Toetsenbord**: spatie/Enter onderbreekt als Pino naast een gapend kind staat; anders loopt ze naar het gapende kind met het kortste pad; gaapt er niemand, dan de gewone misser.
+- **Uitleg** (`spellen/spel1-uitleg.js`): de eerste keer vanaf dag 5 opent bij de start een dialoogkaart zoals in spel 8 (besluit 215): bovenaan de titel **"Chop Chop Mode"** (`.dialoog-titel`, Fredoka 28; geen bol met icoon) en verder **geen tekst**: twee pagina's met bewegende plaatjes (lus van 4 s) in de slaapzaal: (1) tik-ring op de haasknop, de knop wordt geel, Pino rent; (2) tik-ring op een gapend kind, Pino loopt naast het bed, steekt haar vinger in de mond en het kind kijkt verrast. Knoppen pijl/terug/vinkje, vegen, pijltjestoetsen, Escape. De klok wacht tot de kaart dicht is. Eén keer ooit: `uitleg` krijgt `'spel1-chopchop'`. Die eerste keer gaat Chop chop ook automatisch aan (knop geel, `chopChop` = true); daarna bepaalt Pino het zelf met de knop. Met reduced motion een stilstaand eindbeeld.
+- **Ongewijzigd**: resultaatscherm, tegels per onderbreking (besluiten 188, 200) en beloning.
 
 ## Besturing
 
@@ -121,6 +135,7 @@ Constanten staan bovenaan `spel1.js` en zijn tuning-waarden:
 
 - In: niets (spel 1 is het begin van de keten).
 - Uit, per gelukte onderbreking: `voegTegelToe(kleur, figuur)` met kleur ∈ groen/geel/blauw en figuur ∈ vlinder/boom/vogel (sleutel `groen-vlinder` enz.).
+- Chop chop (besluit 225): `chopChop` (boolean, stand van de knop) en `uitleg` (`'spel1-chopchop'` na de uitlegkaart).
 - Uit, bij einde: `rondSpelAf(1, { score: { onderbroken } })`. Er wordt geen highscore bijgehouden (besluit 15). Vaardigheid en behoefte tellen alleen bij de **eerste** afronding (zie besluiten.md); tegels tellen bij **elke** speelbeurt.
 
 ## Resultaatscherm (`Spel1-Klaar`, via gedeeld `ui/resultaat.js`)
@@ -157,12 +172,20 @@ Weggelaten uit het artboard: het woord "TIJD" bij de balk. Niet aanwezig: de kro
 - [x] Geen zichtbare uitlegtekst of labels buiten titel/kopbalk; geen consolefouten.
 - [x] Joystick: verschijnt na de vertraging op de drukplek, knop volgt binnen de ring, Pino beweegt mee (ook diagonaal), loslaten verbergt en stopt; tik onderbreekt (gecontroleerd met gesimuleerde pointer-events).
 - [x] Beoordeling door Benjamin op telefoon (gevoel van de joystick, tik om te onderbreken) en desktop. (Benjamin, 23 november)
+- [x] Chop chop: met `?dag=4` geen knop en geen uitleg; met `?dag=5` en `?test=1` wel (gecontroleerd in de browser-preview, 25 november).
+- [x] Uitlegkaart verschijnt één keer en zet Chop chop dan aan, de klok staat stil tot hij dicht is, beide pagina's kloppen, Escape sluit zonder het spel te verlaten; na herladen komt hij niet terug.
+- [x] Knop: `aria-pressed` wisselt, aan = geel, `chopChop` bewaard en na herladen nog aan; ronde toont `0:30`; spatie na een klik zet de knop niet terug.
+- [x] Tik op een gapend kind: Pino loopt om de bedden heen naast het bed en onderbreekt het (tegel erbij); een tweede tik onderweg doet niets; tik op de vloer = lege vingerpose, ook naast een gapend kind (geen onderbreking); gaap stopt onderweg of knop uit → Pino blijft staan zonder pose.
+- [x] Spatie zonder kind in reik loopt naar het gapende kind met het kortste pad.
+- [x] Simulatie: ± 24 gapen per ronde van 30 s (gewone ronde ± 25 in 60 s), maximaal 6 tegelijk.
+- [ ] Beoordeling door Benjamin op telefoon: gevoel van het automatisch lopen, tempo, aantal kinderen tegelijk, icoon en uitlegkaart.
 
 In testmodus (`?test=1`) staat de spelstaat op `window.pinoDebug` (`s`, `pino`, `bedden`) om in de console te sturen, bijvoorbeeld `pinoDebug.s.tijd = 1` om het einde te forceren of `pinoDebug.bedden[4].status = 'gaap'`.
 
 ## Test-URL's
 
 - `?test=1&reset=1#/spel/1` schoon spelen.
+- `?dag=5&reset=1#/spel/1` Chop chop met uitlegkaart (de eerste keer); `?dag=4#/spel/1` zonder knop. In testmodus: `pinoDebug.chop = true`, `pinoDebug.kies(8)` (loop naar bed 8), `pinoDebug.uitleg()`.
 - `?test=1#/laden/1` inclusief laadscherm (sprite sheet wordt in `voorbereid()` gerasterd).
 - Na afloop `#/test` om `tegels` en `scores` te controleren; daarna `?test=1#/spel/2` (zodra dat bestaat) om de tegels terug te zien in het taartmenu.
 

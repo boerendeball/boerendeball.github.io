@@ -64,9 +64,13 @@ Eén sleutel (bijvoorbeeld `pino-advent`) met een JSON-object; versienummer erbi
   "levels": { "gehaald": [1], "actief": 2 },
   "vaardigheden": { "koken": 2, "mechanica": 2, "charisma": 3, "lichaam": 3, "logica": 4, "creativiteit": 4 },
   "behoeften": { "verjaardag": 30, "gansjes": 60, "lammetjes": 60, "snoepjes": 20, "jiujitsu": 45, "bordspellen": 60, "reizen": 40, "sieraden": 40 },
-  "scores": { "1": { "onderbroken": 7 }, "5": { "ketting": { "betaald": 240, "laagste": 240 }, "kniebeschermers": { "betaald": 180, "laagste": 160 } } }
+  "scores": { "1": { "onderbroken": 7 }, "5": { "ketting": { "betaald": 240, "laagste": 240 }, "kniebeschermers": { "betaald": 180, "laagste": 160 } } },
+  "uitleg": ["spel8-spray", "spel1-chopchop"],
+  "chopChop": true
 }
 ```
+
+`uitleg` onthoudt welke uitlegkaarten Pino al zag (besluiten 215 en 225); `chopChop` is de stand van de Chop chop-knop in spel 1 (vanaf dag 5, besluit 225).
 
 Dit is een voorstel uit het ontwerp, geen besluit: pas aan wat tijdens de implementatie handiger blijkt, maar houd de ketens hierboven intact.
 

@@ -2,9 +2,10 @@
 
 Alle tekeningen uit het ontwerp als SVG `<symbol>`-elementen, gegenereerd uit `design/generators/spel{n}_sprites.py`.
 
-- `sprites.svg` — alle symbolen van spel 1 t/m 10 en van Pino's kamer (287) in één bestand. Plaats de inhoud inline in de pagina (of laad het bestand en injecteer het in de DOM) en gebruik `<use href="#id">`. Externe `<use href="sprites.svg#id">` werkt ook voor symbolen zonder `currentColor`, maar kleurvarianten via `color="…"` zijn alleen betrouwbaar als de symbolen in hetzelfde document staan.
+- `sprites.svg` — alle symbolen van spel 1 t/m 10 en van Pino's kamer (303) in één bestand. Plaats de inhoud inline in de pagina (of laad het bestand en injecteer het in de DOM) en gebruik `<use href="#id">`. Externe `<use href="sprites.svg#id">` werkt ook voor symbolen zonder `currentColor`, maar kleurvarianten via `color="…"` zijn alleen betrouwbaar als de symbolen in hetzelfde document staan.
 - `spel{n}.svg` — alleen de symbolen die in spel n zijn geïntroduceerd. Spel n gebruikt ook symbolen uit eerdere spellen (bijvoorbeeld `persoon`-onderdelen uit spel 3, `werker` en `s4-munt` uit spel 4). Wil je per pagina alleen laden wat nodig is, neem dan spel 1..n.
 - `kamer.svg` — alleen de symbolen van Pino's kamer (`km-*`: meubels, spaarvarken, schaakbordje, liggende stethoscoop, kamerknop-icoon en glinster-ster; `specs/kamer.md`). Gemaakt met `design/generators/kamer_assets.py`, dat ook het kamerblok in `sprites.svg` (tussen `<!-- KAMER: begin -->` en `<!-- KAMER: einde -->`) en de sleutel `kamer` in `symbolen.json` bijwerkt.
+- `s1-haas` (icoon van de Chop chop-knop in spel 1, besluit 225) staat in de set van spel 1; `design/generators/spel1_assets.py` zet het in `spel1.svg`, `sprites.svg` en `symbolen.json`.
 - `symbolen.json` — index: per spel (en `kamer`) de lijst symbool-id's.
 
 ## Conventies
